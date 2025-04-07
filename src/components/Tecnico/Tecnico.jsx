@@ -16,6 +16,7 @@ function Tecnico() {
           </Nav>
       </Navbar>
       </div>
+      <div id="conainer_blanco">
 
       <ListGroup >
       <ListGroup.Item id="Conte">Cras justo odio</ListGroup.Item>
@@ -27,7 +28,7 @@ function Tecnico() {
       <ListGroup.Item id="Conte">Porta ac consectetur ac</ListGroup.Item>
       <ListGroup.Item id="Conte">Vestibulum at eros</ListGroup.Item>
     </ListGroup>
-  
+    </div>
       <div class="pie">
       <Pagination >
       <Pagination.Prev/>

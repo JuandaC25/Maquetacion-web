@@ -24,7 +24,7 @@
     
 }
 #Container1{
-    background-color:rgb(9, 180, 26);
+
     width: 100%;
 }
 #Conte{
@@ -34,4 +34,7 @@
    border-radius: 4px;
    margin-bottom: 5px;
    margin-top: 5px;
+}
+#container{
+    background-color: white;
 }
