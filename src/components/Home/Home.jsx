@@ -2,7 +2,7 @@ import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import { Container, Row, Col } from 'react-bootstrap';
 import CuadroPedidos from './Cuadro_pedidos';
 import Desplegable from './Desplegable';
-
+import './Estilos.css';
 
 function Home() {
   return (

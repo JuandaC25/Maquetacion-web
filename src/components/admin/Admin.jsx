@@ -1,15 +1,17 @@
- Ramalejo
-function Admin() {
-    return(
-        <div>
-        <h1>Este es Administrador</h1>
-        <h3>Cambios prueba</h3>
 import React from 'react';
 import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 
+function Admin() {
+  return (
+    <div>
+      <h1>Este es Administrador</h1>
+      <h3>Cambios prueba</h3>
+    </div>
+  );
+}
 
-function admin() {
+function AdminPanel() { // Cambié el nombre a AdminPanel para evitar la duplicación
   return (
     <div className="Admin-container">
       <div className="icon-container">
@@ -22,7 +24,6 @@ function admin() {
         <div className='custom-3-container'>
           <span></span>
           <FaUserCircle />
-main
         </div>
       </div>
       <Alert variant="success">
@@ -32,7 +33,5 @@ main
   );
 }
 
-
-export default admin;
-
+export default AdminPanel; // Exporta el componente que quieres usar
 
