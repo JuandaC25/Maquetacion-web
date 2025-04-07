@@ -1,12 +1,37 @@
-.new_cont{
+#solicitud{
+    width: 70%;
+    height: 60px;
+    text-align: center;
+    font-size: 200%;
+}
+#new_cont{
     background-color: rgb(9, 180, 26);
     width: 100%;
     display: flex;
     flex-direction: row;
 }
-#pie{
-    width: 50%;
+.pie{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: auto;
 }
-.nue{
-    width: 50%;
+
+#Nav1{
+    width: 30%;
+    margin-bottom: 20px;
+    padding-left: 230px;
+    
+}
+#Container1{
+    background-color:rgb(9, 180, 26);
+    width: 100%;
+}
+#Conte{
+    border: 1px solid black;
+    width: 80%;
+    margin: auto;
+   border-radius: 4px;
+   margin-bottom: 5px;
+   margin-top: 5px;
 }
