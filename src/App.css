@@ -47,15 +47,5 @@ form{
   padding-left: 230px;
   
 }
-#pie{
-width: 50%;
-}
-.nue{
-  width: 50%;
-}
-.new_cont{
-  background-color: rgb(9, 180, 26);
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-}
+
+
