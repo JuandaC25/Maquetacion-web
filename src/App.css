@@ -19,6 +19,34 @@ form{
   margin-top: 4rem;
   border-radius: 12px;
 }
+#Conte{
+  border: 1px solid black;
+  width: 80%;
+  margin: auto;
+ border-radius: 4px;
+ margin-bottom: 5px;
+ margin-top: 5px;
+}
+#solicitud{
+  width: 70%;
+  background-color:rgb(9, 180, 26);
+  height: 60px;
+  text-align: center;
+  font-size: 200%;
+  
+}
+#Container1{
+  background-color:rgb(9, 180, 26);
+  width: 100%;
+}
+#Nav1{
+  width: 30%;
+  background-color: rgb(9, 180, 26);
+  margin-bottom: 20px;
+  padding-left: 230px;
+  
+}
+
 div{
   text-align: center;
   background-color:rgb(52, 211, 52);
@@ -136,3 +164,4 @@ div{
 .menu-desplegable li:hover {
   background-color: #f0f0f0;
 }
+
