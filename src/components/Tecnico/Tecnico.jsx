@@ -1,6 +1,6 @@
 function Tecnico() {
     return(
-        <h1>Este es Tecnico</h1>
+        <h2>Cambios rama alejo</h2>
     )
 }
 export default Tecnico;
