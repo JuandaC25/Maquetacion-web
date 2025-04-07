@@ -19,6 +19,73 @@ form{
   margin-top: 4rem;
   border-radius: 12px;
 }
+#Conte{
+  border: 1px solid black;
+  width: 80%;
+  margin: auto;
+ border-radius: 4px;
+ margin-bottom: 5px;
+ margin-top: 5px;
+}
+#solicitud{
+  width: 70%;
+  background-color:rgb(9, 180, 26);
+  height: 60px;
+  text-align: center;
+  font-size: 200%;
+  
+}
+#Container1{
+  background-color:rgb(9, 180, 26);
+  width: 100%;
+}
+#Nav1{
+  width: 30%;
+  background-color: rgb(9, 180, 26);
+  margin-bottom: 20px;
+  padding-left: 230px;
+  
+}
+
+div{
+  text-align: center;
+  background-color:rgb(52, 211, 52);
+  color: white;
+}
+
+.admin-container {
+  position: relative;
+}
+
+.custom-buttons-container {
+  position: absolute;
+  top: 0rem;
+  right: 1rem;
+  display:flex;
+  gap: 0.5rem;
+  color: rgb(255, 255, 255);
+  text-decoration: underline;
+}
+.icon-container{
+  position: absolute;
+  font-size: 30px;
+  color: white;
+}
+
+.icon-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  color: #ffffff;
+}
+
+.success {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 .Conteiner1{
   background-color: #00AF00;
   height: 130px;
@@ -97,3 +164,4 @@ form{
 .menu-desplegable li:hover {
   background-color: #f0f0f0;
 }
+
