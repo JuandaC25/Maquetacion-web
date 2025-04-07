@@ -1,36 +1,26 @@
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import Placeholder from 'react-bootstrap/Placeholder';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
+import { Container, Row, Col } from 'react-bootstrap';
+import CuadroPedidos from './Cuadro_pedidos';
+import Desplegable from './Desplegable';
+
 
 function Home() {
   return (
-    <div className="d-flex justify-content-around">
-      <Card style={{ width: '18rem' }}>
-        <Card.Img variant="top" src="holder.js/100px180" />
-        <Card.Body>
-          <Card.Title>Card Title</Card.Title>
-          <Card.Text>
-            Some quick example text to build on the card title and make up the
-            bulk of the card's content.
-          </Card.Text>
-          <Button variant="primary">Go somewhere</Button>
-        </Card.Body>
-      </Card>
+  <div className='Conteiner1'> 
+    <Row className="justify-content-md-center">
+          <Col>
+          <Desplegable/>
+            <h1 className='Text1'>HEADER</h1></Col>
+      <Col><Breadcrumb className='Text2'>
+          <Breadcrumb.Item href="http://localhost:5173/Login">Home</Breadcrumb.Item>
+          <Breadcrumb.Item href="https://electricidadelectronicaytelecomu.blogspot.com/">Blogceet
+          </Breadcrumb.Item>
+        </Breadcrumb>
+      </Col>
+    </Row>
+    <CuadroPedidos/>
 
-      <Card style={{ width: '18rem' }}>
-        <Card.Img variant="top" src="holder.js/100px180" />
-        <Card.Body>
-          <Placeholder as={Card.Title} animation="glow">
-            <Placeholder xs={6} />
-          </Placeholder>
-          <Placeholder as={Card.Text} animation="glow">
-            <Placeholder xs={7} /> <Placeholder xs={4} /> <Placeholder xs={4} />{' '}
-            <Placeholder xs={6} /> <Placeholder xs={8} />
-          </Placeholder>
-          <Placeholder.Button variant="primary" xs={6} />
-        </Card.Body>
-      </Card>
-    </div>
+  </div>
   );
 }
 export default Home;
