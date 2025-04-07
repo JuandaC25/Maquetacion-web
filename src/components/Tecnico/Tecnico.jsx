@@ -7,7 +7,7 @@ import './stile_tec.css'
 function Tecnico() {
     return(
         <>
-        <div id="new_cont">
+      <div id="new_cont">  
       <Navbar data-bs-theme="dark" >
           <Navbar.Brand href="#home" id="solicitud">Solicitudes de equipos</Navbar.Brand>
           <Nav className="me-auto" id="Nav1">

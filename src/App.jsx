@@ -6,7 +6,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/Home/Home.jsx';
 import Admin from './components/admin/Admin';
 import Tecnico from './components/Tecnico/Tecnico';
-import Cuadro_pedidos from './components/Home/Cuadro_pedidos.jsx';
 function App() {
   return (
     <BrowserRouter>
