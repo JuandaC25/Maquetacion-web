@@ -7,8 +7,8 @@
 #new_cont{
     background-color: rgb(9, 180, 26);
     width: 100%;
-    display: flex;
-    flex-direction: row;
+    display: grid;grid-template-columns: 10% 70% 20%;
+    grid-template-rows: 100px;
 }
 .pie{
     width: 100%;
@@ -37,4 +37,8 @@
 }
 #container{
     background-color: white;
+}
+
+.new_colo{
+    margin: 1rem;
 }
