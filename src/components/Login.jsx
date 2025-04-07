@@ -13,7 +13,7 @@ function Login() {
         <Form.Control type="password" placeholder="Ingrese su contraseña" />
       </Form.Group>
       <ButtonGroup aria-label="Botones_inicio">
-      <Button href='/Home'>Iniciar sesión</Button>
+      <Button href='/Usuario'>Iniciar sesión</Button>
     </ButtonGroup>
     </Form>
   );
