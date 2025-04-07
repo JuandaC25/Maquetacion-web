@@ -1,3 +1,9 @@
+ Ramalejo
+function Admin() {
+    return(
+        <div>
+        <h1>Este es Administrador</h1>
+        <h3>Cambios prueba</h3>
 import React from 'react';
 import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
@@ -16,6 +22,7 @@ function admin() {
         <div className='custom-3-container'>
           <span></span>
           <FaUserCircle />
+main
         </div>
       </div>
       <Alert variant="success">

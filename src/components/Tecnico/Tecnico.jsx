@@ -5,6 +5,9 @@ import Pagination from 'react-bootstrap/Pagination';
 import ListGroup from 'react-bootstrap/ListGroup';
 function Tecnico() {
     return(
+Ramalejo
+        <h2>Cambios rama alejo</h2>
+
         <>
       <Navbar bg="dark" data-bs-theme="dark" id="new_cont">
           <Navbar.Brand href="#home" id="solicitud">Solicitudes de equipos</Navbar.Brand>
@@ -38,6 +41,7 @@ function Tecnico() {
     </Pagination>
     </div> 
     </>
+ main
     )
 }
 export default Tecnico;
