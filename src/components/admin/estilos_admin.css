@@ -1,0 +1,49 @@
+div{
+    text-align: center;
+    background-color:rgb(77, 255, 0);
+    color: white;
+  }
+  
+  .admin-container {
+    position: relative;
+  }
+  
+  .custom-buttons-container {
+    position: absolute;
+    top: 0rem;
+    right: 1rem;
+    display:flex;
+    gap: 0.5rem;
+    color: rgb(0, 255, 30);
+    text-decoration: underline;
+  }
+  .icon-container{
+    position: absolute;
+    font-size: 30px;
+    color: white;
+  }
+  
+  .icon-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 24px;
+    color: #ffffff;
+  }
+  
+  .success {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+.alert{
+    background-color: #ffffff;
+    text-align: start;
+}
+.custom-dropdown-button {
+background-color: #15ff00;
+  }
+  
+  

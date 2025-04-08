@@ -1,17 +1,10 @@
 import React from 'react';
 import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
+import Dropdown from 'react-bootstrap/Dropdown';
+import "./estilos_admin.css"
 
-function Admin() {
-  return (
-    <div>
-      <h1>Este es Administrador</h1>
-      <h3>Cambios prueba</h3>
-    </div>
-  );
-}
-
-function AdminPanel() { // Cambié el nombre a AdminPanel para evitar la duplicación
+function admin() {
   return (
     <div className="Admin-container">
       <div className="icon-container">
@@ -27,11 +20,34 @@ function AdminPanel() { // Cambié el nombre a AdminPanel para evitar la duplica
         </div>
       </div>
       <Alert variant="success">
-        ¡Esta es una alerta de éxito!
+        TICKET
+        <Dropdown>
+          <Dropdown.Toggle variant="success" id="dropdown-basic">
+            Elemento 
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item href="#/action-1">portatiles</Dropdown.Item>
+            <Dropdown.Item href="#/action-2">equipos de escritorio</Dropdown.Item>
+            <Dropdown.Item href="#/action-3">televisores</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </Alert>
+      <Alert variant="info">
+        INFORMACIÓN DEL TICKET
+      </Alert>
+
+      <Alert variant="warning">
+        ADVERTENCIA DEL TICKET
+      </Alert>
+
+      <Alert variant="danger">
+        ERROR DEL TICKET
       </Alert>
     </div>
   );
 }
 
-export default AdminPanel; // Exporta el componente que quieres usar
+export default admin;
+
 
