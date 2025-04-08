@@ -6,7 +6,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/Home/Home.jsx';
 import Admin from './components/admin/Admin';
 import Tecnico from './components/Tecnico/Tecnico';
-import Pe_port from "./components/Home/Pedidos_port/Pe_port.jsx";
 import Cuadro_pedidos from './components/Home/Cuadro_pedidos.jsx';
 function App() {
   return (
@@ -16,7 +15,6 @@ function App() {
       <Route path='/Usuario' element={<Home></Home>}></Route>
       <Route path='/Admin' element={<Admin></Admin>}></Route>
       <Route path='/Tecnico' element={<Tecnico></Tecnico>}></Route>
-      <Route path='/Solicitud-Portatiles' element={<Pe_port></Pe_port>}</Route>
     </Routes>
     </BrowserRouter>
   );
