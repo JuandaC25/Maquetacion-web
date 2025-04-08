@@ -8,8 +8,7 @@ function CuadroPedidos() {
         <Card className='cuadro'>
           <Card.Body>
             <Card.Title><h1>Portátiles</h1></Card.Title>
-            <Button className='boton'>Seleccionar</Button>
-            href=
+            <Button href='/Solicitar-Portatiles'>Seleccionar</Button>
           </Card.Body>
         </Card>
         <Card className='cuadro'>
