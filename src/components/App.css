@@ -1,0 +1,33 @@
+form {
+  background-color: #f8f9fa; /* Un gris claro de fondo */
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  max-width: 400px; 
+  margin-left: 5rem;
+  margin-right: auto;
+  margin-top: 10rem;
+}
+.iniciarsesion
+{
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+}
+.grupoinicio{
+  background-color: rgb(255, 255, 255);
+  color: black;
+}
+.grupocontraseña{
+  color: black;
+}
+.botton{
+  margin-top: 1rem;
+  background-color: rgb(9, 180, 26); ;
+  cursor: pointer;
+}
+
+
+
+
+
+
