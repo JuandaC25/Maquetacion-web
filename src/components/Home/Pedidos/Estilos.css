@@ -6,8 +6,7 @@
    margin-bottom: 5px;
    margin-top: 5px;
   }
-<<<<<<< HEAD:src/components/Home/Pedidos/Estilos.css
-=======
+
   #solicitud{
     width: 70%;
     background-color:rgb(9, 180, 26);
@@ -38,7 +37,7 @@
     position: relative;
   }
   
->>>>>>> main:src/components/Home/Estilos.css
+
   .custom-buttons-container {
     position: absolute;
     top: 0rem;
