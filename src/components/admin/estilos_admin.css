@@ -1,9 +1,12 @@
 div {
     text-align: center;
-    background-color: rgb(77, 255, 0);
+    background-color: rgb(255, 255, 255);
     color: white;
 }
 
+h1{
+    background-color: #15ff00;
+}
 .admin-container {
     position: relative;
 }
@@ -16,12 +19,7 @@ div {
     gap: 0.5rem;
     color: rgb(0, 255, 30);
     text-decoration: underline;
-}
-
-.icon-container {
-    position: absolute;
-    font-size: 30px;
-    color: white;
+    background-color: #15ff00;
 }
 
 .icon-container {
@@ -30,6 +28,7 @@ div {
     left: 10px;
     font-size: 24px;
     color: #ffffff;
+    background-color: #15ff00;
 }
 
 .success {
@@ -37,6 +36,7 @@ div {
     padding: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    background-color: #15ff00;
 }
 
 .alert {
@@ -48,29 +48,35 @@ div {
     background-color: #15ff00;
 }
 
-.lista-tickets {
-    padding: 20px;
-    background-color: #fdf3fc;
-}
-
 .ticket-item {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     background: white;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     padding: 10px 15px;
     margin-bottom: 12px;
+    color: black;
+}
+
+.izquierda,
+.derecha {
+    display: flex;
+    align-items: center;
+}
+
+.izquierda {
+    gap: 10px;
+}
+
+.derecha {
+    gap: 10px;
 }
 
 .icono,
-.estado,
-.ticket,
 .folder {
-    display: flex;
-    align-items: center;
-    margin-right: 10px;
+    font-size: 35px;
 }
 
 .estado span,
@@ -79,10 +85,7 @@ div {
     padding: 6px 16px;
     border-radius: 16px;
     font-weight: 600;
-}
-
-.folder {
-    font-size: 20px;
+    color: black;
 }
 
 .ver-boton {
@@ -90,6 +93,8 @@ div {
     border: 1px solid #000;
     padding: 5px 12px;
     border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
+}
+
+.ver-boton:hover {
+    background-color: #f0f0f0;
 }

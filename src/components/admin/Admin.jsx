@@ -7,19 +7,23 @@ import "./estilos_admin.css";
 const Ticketxd = ({ estado, ticket }) => {
   return (
     <div className="ticket-item">
-      <div className="icono">
-        <span role="img" aria-label="computadora">🖥️</span>
+      <div className="izquierda">
+        <div className="icono">
+          <span role="img" aria-label="computadora">🖥️</span>
+        </div>
+        <div className="estado">
+          <span>{estado}</span>
+        </div>
       </div>
-      <div className="estado">
-        <span>{estado}</span>
+      <div className="derecha">
+        <div className="ticket">
+          <span>{ticket}</span>
+        </div>
+        <div className="folder">
+          <span role="img" aria-label="folder">📁</span>
+        </div>
+        <button className="ver-boton">Ver</button>
       </div>
-      <div className="ticket">
-        <span>{ticket}</span>
-      </div>
-      <div className="folder">
-        <span role="img" aria-label="folder">📁</span>
-      </div>
-      <button className="ver-boton">Ver</button>
     </div>
   );
 };
@@ -80,4 +84,3 @@ function Admin() {
 }
 
 export default Admin;
-
