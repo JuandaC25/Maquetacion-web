@@ -1,0 +1,29 @@
+.Conteiner1{
+    background-color: #00AF00;
+    height: 130px;
+  }
+  .Text1{
+    color: rgb(255, 255, 255);
+    margin-left: 50rem;
+  }
+  .Text2{
+    margin-top: 1rem;
+    margin-left: 35rem;
+    color: rgb(255, 255, 255);
+  }
+  .boton{
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(255, 255, 255);
+  }
+  .cuadro{
+    background-color: rgb(216, 216, 216);
+    margin-top: 1rem;
+  }
+  .conteinercenter2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .boton-personalizado{
+    background-color: #00AF00;
+  }

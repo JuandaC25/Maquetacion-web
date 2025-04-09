@@ -8,6 +8,7 @@ function Cuadro_Pedidos() {
         <Card className='cuadro'>
           <Card.Body>
             <Card.Title><h1>Portátiles</h1></Card.Title>
+            <Button href='/Solicitar-Portatiles' className='boton'>Seleccionar</Button>
 
             
 
@@ -27,6 +28,7 @@ function Cuadro_Pedidos() {
           <Card.Body>
             <Card.Title><h1>Televisores</h1></Card.Title>
             <Button className='boton_TV'>Seleccionar</Button>
+            <Button href='/Solicitartelevisores' className='boton'>Seleccionar</Button>
           </Card.Body>
         </Card>
       </div>
