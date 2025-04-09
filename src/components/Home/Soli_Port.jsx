@@ -1,44 +1,69 @@
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import Pagination from 'react-bootstrap/Pagination';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import { Button } from 'react-bootstrap';
-function Soli_port() {
-    return(
-        <body id='soli_port'>
-      <Navbar>
-          <Navbar.Brand href="#home" id="solicitud1">Solicitar portatiles</Navbar.Brand>
-          <Breadcrumb className='Text2'>
-            <Breadcrumb.Item href="http://localhost:5173/Login">Home</Breadcrumb.Item>
-            <Breadcrumb.Item href="https://electricidadelectronicaytelecomu.blogspot.com/">Blogceet</Breadcrumb.Item>
-          </Breadcrumb>
-      </Navbar>
-      <Container id='Container_info'>
-      <ListGroup id='Lista_eq' >
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-    </ListGroup>
-    </Container>
-    <Container id='num_port'>
-      <Pagination>
-      <Pagination.Prev/>
-      <Pagination.Item active>{1}</Pagination.Item>
-      <Pagination.Item>{2}</Pagination.Item>
-      <Pagination.Item>{3}</Pagination.Item>
-      <Pagination.Ellipsis />
-      <Pagination.Item >{10}</Pagination.Item>
-      <Pagination.Next />
-    </Pagination>
-    </Container>
-    </body>
-    );
-  }
-export default Soli_port;
+import React from 'react';
+import { Button, Alert } from 'react-bootstrap';
+import { FaUserCircle, FaBars } from 'react-icons/fa';
+import Dropdown from 'react-bootstrap/Dropdown';
+
+
+const ConsultaItem = () => {
+  return (
+    <div className="ticket-item">
+      <div className="izquierda">
+        <div className="icono" role="img" aria-label="computadora">🖥️</div>
+        <div className="estado">
+          <span>Detalles del equipo</span>
+        </div>
+      </div>
+      <div className="derecha">
+        <div className="folder" role="img" aria-label="folder">📁</div>
+        <button className="ver-boton">ver</button>
+      </div>
+    </div>
+  );
+};
+
+const ListaConsultas = () => {
+  const elementos = new Array(7).fill(null); 
+  return (
+    <div name="lista-inventario">
+      {elementos.map((_, i) => (
+        <ConsultaItem key={i} />
+      ))}
+    </div>
+  );
+};
+
+function Soli_Port() {
+  return (
+    <div className="admin-container">
+      <div className="icon-container">
+        <FaBars />
+      </div>
+      <h1>Consultar inventario</h1>
+
+      <div className="custom-buttons-container">
+        <Button variant="custom-1">Home</Button>
+        <Button variant="custom-2">Blog CEET</Button>
+        <div className="custom-3-container">
+          <FaUserCircle />
+        </div>
+      </div>
+
+      <Alert variant="success" className="d-flex justify-content-between align-items-center">
+        <Dropdown>
+          <Dropdown.Toggle variant="success" id="dropdown-basic">
+            Portátiles
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item href="#/action-1">Portátiles</Dropdown.Item>
+            <Dropdown.Item href="#/action-2">Equipos de escritorio</Dropdown.Item>
+            <Dropdown.Item href="#/action-3">Televisores</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+        <Button className="añadir-boton">Añadir</Button>
+      </Alert>
+      <ListaConsultas />
+    </div>
+  );
+}
+
+export default Soli_Port;
