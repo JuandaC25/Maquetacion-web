@@ -1,25 +1,31 @@
-import React from 'react'
-import './App.css'
+import React from 'react';
+import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 import Login from './components/Login';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/Home/Home.jsx';
 import Admin from './components/admin/Admin';
+import Inventario from './components/admin/inventario.jsx'; // <-- Cambiado a mayúscula
 import Tecnico from './components/Tecnico/Tecnico';
-import Cuadro_pedidos from './components/Home/Cuadro_pedidos.jsx';
 import Soli_port from './components/Home/Soli_Port.jsx';
+
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
     <BrowserRouter>
-    <Routes>
-      <Route path='/login' element={<Login></Login>}></Route>
-      <Route path='/Usuario' element={<Home></Home>}></Route>
-      <Route path='/Admin' element={<Admin></Admin>}></Route>
-      <Route path='/Tecnico' element={<Tecnico></Tecnico>}></Route>
-      <Route path='/Solicitar-Portatiles' element={<Soli_port></Soli_port>}></Route>
-    </Routes>
+      <Routes>
+        <Route path='/' element={<Login />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/Usuario' element={<Home />} />
+        <Route path='/Admin' element={<Admin />} />
+        <Route path='/inventario' element={<Inventario />} />
+        <Route path='/Tecnico' element={<Tecnico />} />
+        <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
+      </Routes>
     </BrowserRouter>
   );
 }
+
 export default App;
+
