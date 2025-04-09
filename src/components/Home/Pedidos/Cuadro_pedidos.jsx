@@ -1,7 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 
-function CuadroPedidos() {
+function Cuadro_Pedidos() {
   return (
     <div className='Cuadros'> 
       <div className='fila-superior'>
@@ -9,7 +9,7 @@ function CuadroPedidos() {
           <Card.Body>
             <Card.Title><h1>Portátiles</h1></Card.Title>
 
-            <Button className='boton'>Seleccionar</Button>
+            
 
             <Button href='/Solicitar-Portatiles'>Seleccionar</Button>
 
@@ -18,7 +18,7 @@ function CuadroPedidos() {
         <Card className='cuadro'>
           <Card.Body>
             <Card.Title><h2>Equipos de escritorio</h2></Card.Title>
-            <Button className='boton'>Seleccionar</Button>
+            <Button className='boton_esc'>Seleccionar</Button>
           </Card.Body>
         </Card>
       </div>
@@ -26,7 +26,7 @@ function CuadroPedidos() {
         <Card className='cuadro'>
           <Card.Body>
             <Card.Title><h1>Televisores</h1></Card.Title>
-            <Button className='boton'>Seleccionar</Button>
+            <Button className='boton_TV'>Seleccionar</Button>
           </Card.Body>
         </Card>
       </div>
@@ -34,4 +34,4 @@ function CuadroPedidos() {
   );
 }
 
-export default CuadroPedidos;
+export default Cuadro_Pedidos;

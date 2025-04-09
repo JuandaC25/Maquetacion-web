@@ -8,3 +8,9 @@
     margin-left: 18rem;
     margin-right: auto;
 }
+#Button_ver{
+    background-color: black;
+}
+#Lista_eq{
+    justify-content: space-between;
+}

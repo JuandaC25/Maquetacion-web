@@ -10,7 +10,6 @@ import Tecnico from './components/Tecnico/Tecnico';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
 
 
-import Cuadro_pedidos from './components/Home/Cuadro_pedidos.jsx';
 import Soli_port from './components/Home/Soli_Port.jsx';
 
 
