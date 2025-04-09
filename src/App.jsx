@@ -16,7 +16,7 @@ function App() {
         <Route path='/Usuario' element={<Home />} />
         <Route path='/Admin' element={<Admin />} />
         <Route path='/Tecnico' element={<Tecnico />} />
-        <Route path='/Pie' element={<Pie />} /> {/* ✅ Pie funcionando */}
+        <Route path='/Pie' element={<Pie />} /> 
       </Routes>
     </BrowserRouter>
   );
