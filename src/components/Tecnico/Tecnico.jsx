@@ -103,6 +103,6 @@ function Tecnico() {
     </Pagination >
     </div> 
     </>
-    )
-}
+    );
+  }
 export default Tecnico;
