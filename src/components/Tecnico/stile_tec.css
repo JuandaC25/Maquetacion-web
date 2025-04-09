@@ -139,3 +139,30 @@
     border-radius: 8px;
 
 }
+#pregunta{
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+#cosos{
+    margin-left: 100px;
+    margin-bottom: 20px;
+    background-color: rgb(9, 180, 26);
+    border-radius: 4px;
+}
+#salida{
+    border-radius: 8px;
+    border: 1px solid black;
+    margin-top: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 80px;
+    padding-top: 40px;
+    width: 35%;
+}
+#dueño{
+    width: 100%;
+    
+}

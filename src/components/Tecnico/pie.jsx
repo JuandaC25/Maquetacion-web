@@ -69,7 +69,7 @@ function Pie() {
      
     
     </Stack>
-    <Button variant="primary" id='button'>Primary</Button>
+    <Button variant="primary" id='button' href='/Tercera'>finalizado</Button>
 
     </>
   );
