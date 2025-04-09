@@ -1,7 +1,6 @@
 import React from 'react';
-import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Login from './components/Login';
+import Login from './components/Login.jsx';
 import Home from './components/Home/Pedidos/Home.jsx';
 import Admin from './components/admin/Admin';
 import Inventario from './components/admin/inventario.jsx';
@@ -14,6 +13,8 @@ import Quinta from './components/Tecnico/Quinta.jsx';
 import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
 import Soli_port from './components/Home/Soli_Port.jsx';
+import './components/App.css';
+
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 
