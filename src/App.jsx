@@ -12,7 +12,6 @@ import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
 import Soli_port from './components/Home/Soli_Port.jsx';
 
-
 function App() {
   return (
     <BrowserRouter>
