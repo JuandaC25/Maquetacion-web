@@ -28,7 +28,7 @@ function Tecnico() {
               </NavDropdown.Item >
               </div>
               <div id="desplegable2">
-              <NavDropdown.Item href="#action/3.2">
+              <NavDropdown.Item href="/Cuarta">
               Tickets
               </NavDropdown.Item>
               </div>

@@ -8,7 +8,8 @@ import Admin from './components/admin/Admin';
 import Tecnico from './components/Tecnico/Tecnico';
 import Pie from './components/Tecnico/Pie.jsx';
 import Tercera from './components/Tecnico/tercera.jsx';
-import Cuarta from './components/Tecnico/Cuarta.jsx';
+import Cuarta from '/src/components/Tecnico/Cuarta.jsx'; 
+import Quinta from './components/Tecnico/Quinta.jsx';
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path='/Pie' element={<Pie />} /> 
         <Route path='/Tercera' element={<Tercera />} />
         <Route path='/Cuarta' element={<Cuarta />} />
+        <Route path='/Quinta'element={<Quinta />} />
       </Routes>
     </BrowserRouter>
   );
