@@ -1,2 +1,23 @@
 
+form{
+  height: 300px;
+  width: 45%;
+  text-align: center; 
+  background-color:rgb(138, 138, 119);
+  margin-top: 13rem;
+  margin-left: 10rem;
+  margin-right: 10rem;
+}
+#formBasicEmail{
+  width: 80%;
+  margin-left: 4rem;
+  margin-top: 2rem;
+  border-radius: 12px;
+}
+#formBasicPassword{
+  width: 80%;
+  margin-left: 4rem;
+  margin-top: 4rem;
+  border-radius: 12px;
+}
 

@@ -14,6 +14,13 @@ import Inventario from './components/admin/inventario.jsx';
 import AdCrear from './components/admin/adcrear.jsx'; 
 import Tecnico from './components/Tecnico/Tecnico';
 
+import Pie from './components/Tecnico/Pie.jsx';
+import Tercera from './components/Tecnico/tercera.jsx';
+import Cuarta from '/src/components/Tecnico/Cuarta.jsx'; 
+import Quinta from './components/Tecnico/Quinta.jsx';
+
+
+
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
 import Soli_port from './components/Home/Soli_Port.jsx';
 import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
@@ -23,10 +30,21 @@ import Soli_port from './components/Home/Soli_Port.jsx';
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        
+        <Route path='/login' element={<Login />} />
+        <Route path='/Usuario' element={<Home />} />
+        <Route path='/Admin' element={<Admin />} />
+        <Route path='/Tecnico' element={<Tecnico />} />
+        <Route path='/Pie' element={<Pie />} /> 
+        <Route path='/Tercera' element={<Tercera />} />
+        <Route path='/Cuarta' element={<Cuarta />} />
+        <Route path='/Quinta'element={<Quinta />} />
+      </Routes>
 
         <Route path='/' element={<Login />} />
         <Route path='/login' element={<Login />} />
@@ -56,6 +74,7 @@ function App() {
 
       <Route path='/Solicitar-Portatiles' element={<Soli_port></Soli_port>}></Route>
     </Routes>
+
 
     </BrowserRouter>
   );
