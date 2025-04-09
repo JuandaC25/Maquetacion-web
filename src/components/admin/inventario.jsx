@@ -4,7 +4,7 @@ import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Dropdown from 'react-bootstrap/Dropdown';
 import './estilos_admin.css';
 
-// Componente individual de "consulta"
+
 const ConsultaItem = () => {
   return (
     <div className="ticket-item">
@@ -22,9 +22,8 @@ const ConsultaItem = () => {
   );
 };
 
-// Lista de elementos consultados
 const ListaConsultas = () => {
-  const elementos = new Array(7).fill(null); // Mismo contenido repetido 7 veces
+  const elementos = new Array(7).fill(null); 
   return (
     <div name="lista-tickets">
       {elementos.map((_, i) => (
@@ -34,7 +33,6 @@ const ListaConsultas = () => {
   );
 };
 
-// Componente principal
 function ConsultasAdmin() {
   return (
     <div className="admin-container">
@@ -42,11 +40,8 @@ function ConsultasAdmin() {
       <div className="icon-container">
         <FaBars />
       </div>
-
-      {/* Título */}
       <h1>Consultar inventario</h1>
 
-      {/* Navegación derecha */}
       <div className="custom-buttons-container">
         <Button variant="custom-1">Home</Button>
         <Button variant="custom-2">Blog CEET</Button>
@@ -55,7 +50,6 @@ function ConsultasAdmin() {
         </div>
       </div>
 
-      {/* Filtros + botón añadir */}
       <Alert variant="success" className="d-flex justify-content-between align-items-center">
         <Dropdown>
           <Dropdown.Toggle variant="success" id="dropdown-basic">
@@ -69,8 +63,6 @@ function ConsultasAdmin() {
         </Dropdown>
         <Button className="añadir-boton">Añadir</Button>
       </Alert>
-
-      {/* Lista de consultas */}
       <ListaConsultas />
     </div>
   );
