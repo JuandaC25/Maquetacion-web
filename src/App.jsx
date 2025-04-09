@@ -9,6 +9,9 @@ import Tecnico from './components/Tecnico/Tecnico';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
 import Soli_port from './components/Home/Soli_Port.jsx';
 import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
+import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
+import Soli_port from './components/Home/Soli_Port.jsx';
+
 
 function App() {
   return (
@@ -22,6 +25,16 @@ function App() {
         <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
         <Route path='/Solicitartelevisores' element={<Solitelevisores/>} />
       </Routes>
+    <Routes>
+      <Route path='/login' element={<Login></Login>}></Route>
+      <Route path='/Usuario' element={<Home></Home>}></Route>
+      <Route path='/Admin' element={<Admin></Admin>}></Route>
+      <Route path='/Tecnico' element={<Tecnico></Tecnico>}></Route>
+
+      <Route path="/espacios" element={<Soliespacios />}></Route>
+
+      <Route path='/Solicitar-Portatiles' element={<Soli_port></Soli_port>}></Route>
+    </Routes>
     </BrowserRouter>
   );
 }

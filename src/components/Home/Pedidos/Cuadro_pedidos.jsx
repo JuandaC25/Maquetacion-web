@@ -9,6 +9,11 @@ function CuadroPedidos() {
           <Card.Body>
             <Card.Title><h1>Portátiles</h1></Card.Title>
             <Button href='/Solicitar-Portatiles' className='boton'>Seleccionar</Button>
+
+            <Button className='boton'>Seleccionar</Button>
+
+            <Button href='/Solicitar-Portatiles'>Seleccionar</Button>
+
           </Card.Body>
         </Card>
         <Card className='cuadro'>

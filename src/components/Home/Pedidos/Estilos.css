@@ -6,6 +6,36 @@
    margin-bottom: 5px;
    margin-top: 5px;
   }
+  #solicitud{
+    width: 70%;
+    background-color:rgb(9, 180, 26);
+    height: 60px;
+
+    font-size: 200%;
+    
+  }
+  #Container1{
+    background-color:rgb(9, 180, 26);
+    width: 100%;
+  }
+  #Nav1{
+    width: 80%;
+    justify-content: end;
+    margin-bottom: 20px;
+    padding-left: 230px;
+    
+  }
+  
+  div{
+    text-align: center;
+    background-color:rgb(52, 211, 52);
+    color: white;
+  }
+  
+  .admin-container {
+    position: relative;
+  }
+  
   .custom-buttons-container {
     position: absolute;
     top: 0rem;
