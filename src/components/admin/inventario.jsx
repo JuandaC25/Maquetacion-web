@@ -25,7 +25,7 @@ const ConsultaItem = () => {
 const ListaConsultas = () => {
   const elementos = new Array(7).fill(null); 
   return (
-    <div name="lista-tickets">
+    <div name="lista-inventario">
       {elementos.map((_, i) => (
         <ConsultaItem key={i} />
       ))}
@@ -33,10 +33,9 @@ const ListaConsultas = () => {
   );
 };
 
-function ConsultasAdmin() {
+function inventario() {
   return (
     <div className="admin-container">
-      {/* Ícono menú */}
       <div className="icon-container">
         <FaBars />
       </div>
@@ -68,4 +67,4 @@ function ConsultasAdmin() {
   );
 }
 
-export default ConsultasAdmin;
+export default inventario;
