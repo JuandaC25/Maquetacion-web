@@ -1,23 +1,3 @@
-form{
-    height: 300px;
-    width: 45%;
-    text-align: center; 
-    margin-top: 13rem;
-    margin-left: 10rem;
-    margin-right: 10rem;
-  }
-  #formBasicEmail{
-    width: 80%;
-    margin-left: 4rem;
-    margin-top: 2rem;
-    border-radius: 12px;
-  }
-  #formBasicPassword{
-    width: 80%;
-    margin-left: 4rem;
-    margin-top: 4rem;
-    border-radius: 12px;
-  }
   #Conte{
     border: 1px solid black;
     width: 80%;
@@ -26,36 +6,6 @@ form{
    margin-bottom: 5px;
    margin-top: 5px;
   }
-  #solicitud{
-    width: 70%;
-    background-color:rgb(9, 180, 26);
-    height: 60px;
-    text-align: center;
-    font-size: 200%;
-    
-  }
-  #Container1{
-    background-color:rgb(9, 180, 26);
-    width: 100%;
-  }
-  #Nav1{
-    width: 30%;
-    background-color: rgb(9, 180, 26);
-    margin-bottom: 20px;
-    padding-left: 230px;
-    
-  }
-  
-  div{
-    text-align: center;
-    background-color:rgb(52, 211, 52);
-    color: white;
-  }
-  
-  .admin-container {
-    position: relative;
-  }
-  
   .custom-buttons-container {
     position: absolute;
     top: 0rem;
@@ -115,15 +65,15 @@ form{
   .cuadro {
     text-align: center;
     background-color: #D9D9D9;
-    height: 130px;
-    width: 400px;
+    height: 160px;
+    width: 410px;
     margin: 5rem;
     box-shadow: 2px 2px 5px #888;
     border-radius: 8px;
   }
   .boton {
     margin-top: 1rem;
-    height: 45px;
+    height: 40px;
     width: 60%;
   }
   .navbar {
