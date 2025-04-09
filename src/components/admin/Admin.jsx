@@ -22,7 +22,7 @@ const Ticketxd = ({ estado, ticket }) => {
         <div className="folder">
           <span role="img" aria-label="folder">📁</span>
         </div>
-        <button className="ver-boton">Ver</button>
+        <button className="ver-boton"><Observar></Observar></button>
       </div>
     </div>
   );
