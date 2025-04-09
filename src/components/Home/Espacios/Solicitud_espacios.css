@@ -1,0 +1,53 @@
+.Conteiner1{
+    background-color: #00AF00;
+    height: 130px;
+  }
+  .Text1{
+    color: rgb(255, 255, 255);
+    margin-left: 50rem;
+  }
+  .Text2{
+    margin-top: 1rem;
+    margin-left: 35rem;
+    color: rgb(255, 255, 255);
+  }
+  .menuespa {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    margin-top: 18px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 20%;
+  }
+  .titulo1{
+    text-align: center;
+    margin-top: 4rem;
+  }
+
+  #inputPassword5 { 
+    width: 20%;
+    height: 2.5rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  .conteinercenter {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;    
+    justify-content: center;
+    margin-top: 6rem;
+    }
+  .conteinercenter2{
+    display: flex;
+    flex-direction: column; 
+    align-items: center;    
+    justify-content: center;
+    margin-top: 6rem;
+  }
+  .conteinercenter2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px;
+  }
