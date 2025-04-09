@@ -2,7 +2,6 @@ import Form from 'react-bootstrap/Form';
 import "./Solicitud_espacios.css";
 import Button from 'react-bootstrap/Button';
 
-
 function Datos_pedido() {
   return (
     <>

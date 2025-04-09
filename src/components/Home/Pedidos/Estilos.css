@@ -6,7 +6,6 @@
    margin-bottom: 5px;
    margin-top: 5px;
   }
-
   #solicitud{
     width: 70%;
     background-color:rgb(9, 180, 26);
@@ -37,7 +36,6 @@
     position: relative;
   }
   
-
   .custom-buttons-container {
     position: absolute;
     top: 0rem;
@@ -66,10 +64,6 @@
     padding: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
-  }
-  .Conteiner1{
-    background-color: #00AF00;
-    height: 130px;
   }
   .Text1{
     color: rgb(255, 255, 255);

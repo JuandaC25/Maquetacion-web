@@ -46,8 +46,11 @@
     margin-top: 6rem;
   }
   .conteinercenter2 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 60px;
+    border: 1px solid red; /* To see the container's boundaries */
+    padding: 10px;
+  }
+  
+  .boton-personalizado {
+    background-color: yellow;
+    color: black;
   }
