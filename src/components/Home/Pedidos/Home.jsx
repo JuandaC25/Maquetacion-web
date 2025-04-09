@@ -4,7 +4,6 @@ import { Row, Col } from 'react-bootstrap';
 import Desplegable from './Desplegable.jsx';
 import CuadroPedidos from './Cuadro_pedidos';
 
-
 function Home() {
   return (
     <div className='Conteiner1'> 

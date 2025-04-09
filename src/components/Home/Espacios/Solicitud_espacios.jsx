@@ -1,7 +1,7 @@
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import { Container, Row, Col } from 'react-bootstrap';
 import Datos_pedido from './Datos_pedido';
-
+import "./Solicitud_espacios.css";
 
 
 function Soliespacios() {
