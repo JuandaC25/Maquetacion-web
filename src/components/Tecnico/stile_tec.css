@@ -1,13 +1,16 @@
 #solicitud{
     width: 70%;
-    height: 60px;
+
     text-align: center;
-    font-size: 200%;
+    font-size: 300%;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+    
 }
 #new_cont{
     background-color: rgb(9, 180, 26);
     width: 100%;
-    display: grid;grid-template-columns: 10% 70% 20%;
+    display: grid;grid-template-columns: 13% 82% 5%;
     grid-template-rows: 100px;
 }
 .pie{
@@ -15,12 +18,16 @@
     display: flex;
     justify-content: center;
     padding: auto;
+    
 }
 
 #Nav1{
     width: 30%;
     margin-bottom: 20px;
-    padding-left: 230px;
+    padding-left: 300px;
+    font-size: 111%;
+    color: white;
+    padding-bottom: 40px;
     
 }
 #Container1{
@@ -28,12 +35,17 @@
     width: 100%;
 }
 #Conte{
-    border: 1px solid black;
-    width: 80%;
+    border: 2px solid black;
+    width: 70%;
+    height: 60px;
     margin: auto;
    border-radius: 4px;
    margin-bottom: 5px;
    margin-top: 5px;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+   position: relative;
+   z-index: 10;
+   display: flex;
 }
 #container{
     background-color: white;
@@ -41,4 +53,45 @@
 
 .new_colo{
     margin: 1rem;
+    
+}
+#basic-navbar-nav{
+    background-color: white;
+    border: 2px solid black;
+    height: 560px;
+    
+}
+#menu{
+    background-color: white;
+    margin-bottom: 35px;
+ 
+}
+#desplegable1{
+    background-color:rgb(9, 180, 26) ;
+    text-align: center;
+    border: 2px solid black;
+    font-size: 200%;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 8000;
+    
+  
+}
+#desplegable2{
+    height: 40px;
+    border: 2px solid black;
+    border-radius: 10px;
+    margin-top: 10px;
+    font-size: 120%;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 1000;
+}
+#font{
+    border: 1px solid black;
+    color: black !important;
+    background-color: #f0f0f0 !important;
+    color: #000 !important;
+}
+#part{
+    width: 90%;
+    margin-left: 50px;
 }
