@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Dropdown from 'react-bootstrap/Dropdown';
+import Pagination from 'react-bootstrap/Pagination';
 
 
 const ConsultaItem = () => {
@@ -14,20 +15,37 @@ const ConsultaItem = () => {
         </div>
       </div>
       <div className="derecha">
-        <div className="folder" role="img" aria-label="folder">📁</div>
-        <button className="ver-boton">ver</button>
+        <button className="ver-boton" href="Formulario-pedidos-portatiles">Ver</button>
       </div>
     </div>
   );
 };
 
 const ListaConsultas = () => {
-  const elementos = new Array(7).fill(null); 
+  const elementos = new Array(8).fill(null); 
   return (
     <div name="lista-inventario">
       {elementos.map((_, i) => (
         <ConsultaItem key={i} />
       ))}
+
+    <Pagination id='Pag_form'>
+      <Pagination.First />
+      <Pagination.Prev />
+      <Pagination.Item>{1}</Pagination.Item>
+      <Pagination.Ellipsis />
+
+      <Pagination.Item>{10}</Pagination.Item>
+      <Pagination.Item>{11}</Pagination.Item>
+      <Pagination.Item active>{12}</Pagination.Item>
+      <Pagination.Item>{13}</Pagination.Item>
+      <Pagination.Item disabled>{14}</Pagination.Item>
+
+      <Pagination.Ellipsis />
+      <Pagination.Item>{20}</Pagination.Item>
+      <Pagination.Next />
+      <Pagination.Last />
+    </Pagination>
     </div>
   );
 };
@@ -38,7 +56,7 @@ function Soli_Port() {
       <div className="icon-container">
         <FaBars />
       </div>
-      <h1>Consultar inventario</h1>
+      <h1>Solicitar portatiles</h1>
 
       <div className="custom-buttons-container">
         <Button variant="custom-1">Home</Button>
@@ -49,17 +67,7 @@ function Soli_Port() {
       </div>
 
       <Alert variant="success" className="d-flex justify-content-between align-items-center">
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Portátiles
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item href="#/action-1">Portátiles</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Equipos de escritorio</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">Televisores</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-        <Button className="añadir-boton">Añadir</Button>
+
       </Alert>
       <ListaConsultas />
     </div>
