@@ -130,13 +130,11 @@
     background-color: black;
     justify-content: left;
   }
-  /* Estilos.css */
   .header-row {
     display:flex;
-    align-items: center; /* Alinea verticalmente los elementos al centro */
-    justify-content: space-between; /* Distribuye el espacio entre los elementos (puedes usar otras opciones como flex-start, flex-end, center) */
+    align-items: center;
+    justify-content: space-between; 
   }
-
   .Text1 {
     margin-right: 20px;
     display: flex;
