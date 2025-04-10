@@ -1,69 +1,48 @@
+.Container1 {
+  width: 100%;
+}
 
-  #solicitud{
-    width: 70%;
-    height: 60px;
-    font-size: 200%;
-  }
-  .Container1{
-    background-color:rgb(0, 0, 0);
-    width: 100%;
-    height: 1px;
-  }
-  #Nav1{
-    width: 80%;
-    justify-content: end;
-    margin-bottom: 20px;
-    padding-left: 230px;
-    
-  }
-  
-  .admin-container {
-    position: relative;
-  }
-  
-  .custom-buttons-container {
-    position: absolute;
-    top: 0rem;
-    right: 1rem;
-    display:flex;
-    gap: 0.5rem;
-    color: rgb(255, 255, 255);
-    text-decoration: underline;
-  }
-  .icon-container{
-    position: absolute;
-    font-size: 30px;
-    color: white;
-  }
-  
-  .icon-container {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 24px;
-    color: #ffffff;
-  }
-  
-  .success {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  #Elementos{
-    display:inline-block;
-  }
-  .Texto1{
-    color: rgb(255, 255, 255);
-    height: auto;
-    width: 100%;
-  }
-  #Texto2{
-    color: rgb(255, 255, 255);
-    display:inline-block;
-  }
-  
+.Encabezado {
+  background-color: #00b000; /* verde brillante */
+  padding: 10px 20px;
+  color: white;
+}
 
+.HeaderContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Texto1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 20px;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.Texto2 {
+  background: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 10px;
+}
+
+.Navegacion {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.IconoPerfil {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+  
+  
   .Cuadros {
     display: flex;
     flex-direction: column;
