@@ -1,10 +1,7 @@
 import React from 'react';
 import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
-import Dropdown from 'react-bootstrap/Dropdown';
 import Pagination from 'react-bootstrap/Pagination';
-
-
 const ConsultaItem = () => {
   return (
     <div className="ticket-item">
@@ -29,23 +26,17 @@ const ListaConsultas = () => {
         <ConsultaItem key={i} />
       ))}
 
-    <Pagination id='Pag_form'>
-      <Pagination.First />
-      <Pagination.Prev />
-      <Pagination.Item>{1}</Pagination.Item>
+    <div id="piepor">
+    <Pagination>
+      <Pagination.Prev/>
+      <Pagination.Item  id="font">{1}</Pagination.Item>
+      <Pagination.Item id="font">{2}</Pagination.Item>
+      <Pagination.Item id="font">{3}</Pagination.Item>
       <Pagination.Ellipsis />
-
-      <Pagination.Item>{10}</Pagination.Item>
-      <Pagination.Item>{11}</Pagination.Item>
-      <Pagination.Item active>{12}</Pagination.Item>
-      <Pagination.Item>{13}</Pagination.Item>
-      <Pagination.Item disabled>{14}</Pagination.Item>
-
-      <Pagination.Ellipsis />
-      <Pagination.Item>{20}</Pagination.Item>
+      <Pagination.Item  id="font">{10}</Pagination.Item>
       <Pagination.Next />
-      <Pagination.Last />
-    </Pagination>
+    </Pagination >
+    </div>
     </div>
   );
 };
@@ -53,10 +44,11 @@ const ListaConsultas = () => {
 function Soli_Port() {
   return (
     <div className="admin-container">
+      <div className='general'>
       <div className="icon-container">
         <FaBars />
       </div>
-      <h1>Solicitar portatiles</h1>
+      <h1 id="h1raro">Solicitar portatiles</h1>
 
       <div className="custom-buttons-container">
         <Button variant="custom-1">Home</Button>
@@ -65,10 +57,9 @@ function Soli_Port() {
           <FaUserCircle />
         </div>
       </div>
+      </div>
 
-      <Alert variant="success" className="d-flex justify-content-between align-items-center">
-
-      </Alert>
+      
       <ListaConsultas />
     </div>
   );
