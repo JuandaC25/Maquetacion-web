@@ -10,11 +10,11 @@ const ConsultaItem = () => {
     <div className="ticket-item">
       <div className="izquierda">
         <div className="estado">
-          <span>Nombre,Correo,C.C</span>
+          <span>Nombre,Correo,C.C.</span>
         </div>
       </div>
       <div className="derecha">
-        <button className="ver-boton">ver</button>
+        <button className="ver-boton">Ver</button>
       </div>
     </div>
   );
