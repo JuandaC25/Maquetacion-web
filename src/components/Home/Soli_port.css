@@ -1,3 +1,6 @@
+#pagdif{
+   justify-content: center;
+}
 #solicitud1{
     justify-content: center;
     color: aliceblue;
@@ -15,5 +18,14 @@
     justify-content: space-between;
 }
 #Pag_form{
-    margin-left: 15rem;
+margin-left: 200px;
+}
+#piepor{ 
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.pagination{
+    justify-content: center;
 }

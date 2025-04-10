@@ -1,10 +1,10 @@
-div {
+.Cuadros {
     text-align: center;
     background-color: rgb(255, 255, 255);
     color: rgb(5, 5, 5);
 }
 
-h1 {
+.Hea_home {
     background-color: #15ff00;
     height: 80px;
 }
@@ -15,13 +15,13 @@ h1 {
 
 .custom-buttons-container {
     position: absolute;
-    top: 0rem;
+    top: 1rem;
     right: 1rem;
     display: flex;
     gap: 0.5rem;
     color: rgb(0, 255, 30);
     text-decoration: underline;
-    background-color: #15ff00;
+ 
 }
 
 .icon-container {

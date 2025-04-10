@@ -10,7 +10,7 @@ function Home() {
     <div className="admin-container">
       <div className="icon-container">
       </div>
-      <h1>Solicitar equipos</h1>
+      <h1 className='Hea_home'>Solicitar equipos</h1>
       <div className="custom-buttons-container">
         <Button variant="custom-1">Home</Button>
         <Button variant="custom-2">Blog CEET</Button>
@@ -18,7 +18,7 @@ function Home() {
           <FaUserCircle />
         </div>
       </div>
-      <Cuadro_Pedidos />
+      <Cuadro_Pedidos id="aja"/>
     </div>
   );
 }
