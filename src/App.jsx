@@ -26,14 +26,8 @@ function App() {
         <Route path='/Tercera' element={<Tercera />} />
         <Route path='/Cuarta' element={<Cuarta />} />
         <Route path='/Quinta'element={<Quinta />} />
-        <Route path='/' element={<Login />} />  
-        <Route path='/Usuario' element={<Home />} />
         <Route path='/inventario' element={<Inventario />} />
         <Route path='/adcrear' element={<AdCrear />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/Admin' element={<Admin />} />
-        <Route path='/Tecnico' element={<Tecnico />} />
-        <Route path='/espacios' element={<Soliespacios />} />
         <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
         <Route path='/Solicitartelevisores' element={<Solitelevisores/>} />
         <Route path='/login' element={<Login></Login>}></Route>
@@ -41,7 +35,6 @@ function App() {
         <Route path='/Admin' element={<Admin></Admin>}></Route>
         <Route path='/Tecnico' element={<Tecnico></Tecnico>}></Route>
         <Route path="/espacios" element={<Soliespacios />}></Route>
-        <Route path='/Solicitar-Portatiles' element={<Soli_port></Soli_port>}></Route>
     </Routes>
     </BrowserRouter>
   );
