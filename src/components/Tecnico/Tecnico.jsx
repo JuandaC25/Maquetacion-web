@@ -23,7 +23,7 @@ function Tecnico() {
               <NavDropdown.Item href="#action/3.1">Menu</NavDropdown.Item>
               </div>
               <div  id="desplegable2">
-              <NavDropdown.Item href='/pie' >
+              <NavDropdown.Item href='/tecnico' >
                 Solicitudes de equipos
               </NavDropdown.Item >
               </div>
@@ -42,7 +42,7 @@ function Tecnico() {
           <Navbar.Brand href="#home" id="solicitud">Solicitudes de equipos</Navbar.Brand>
           <Nav className="me-auto" id="Nav1">
             <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#features">Blog CEET</Nav.Link>
+            <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
           </Nav>
       </Navbar>
       </div>
@@ -51,41 +51,41 @@ function Tecnico() {
       <ListGroup >
       <ListGroup.Item id="Conte">
         <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-        <Nav.Link href="#link">ver</Nav.Link>
+        <Nav.Link href="/pie">ver</Nav.Link>
 
       </ListGroup.Item>
       <ListGroup.Item id="Conte">
       <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="#link">ver</Nav.Link>
+      <Nav.Link href="/pie">ver</Nav.Link>
 
       </ListGroup.Item>
       <ListGroup.Item id="Conte">
       <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="#link">ver</Nav.Link>
+      <Nav.Link href="/pie">ver</Nav.Link>
 
       </ListGroup.Item>
       <ListGroup.Item id="Conte">
       <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="#link">ver</Nav.Link>
+      <Nav.Link href="/pie">ver</Nav.Link>
 
       </ListGroup.Item>
       <ListGroup.Item id="Conte">
       <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="#link">ver</Nav.Link>
+      <Nav.Link href="/pie">ver</Nav.Link>
       </ListGroup.Item>
       <ListGroup.Item id="Conte">
       <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="#link">ver</Nav.Link>
+      <Nav.Link href="/pie">ver</Nav.Link>
 
       </ListGroup.Item>
       <ListGroup.Item id="Conte">
       <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="#link">ver</Nav.Link>
+      <Nav.Link href="/pie">ver</Nav.Link>
 
       </ListGroup.Item>
       <ListGroup.Item id="Conte">
       <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="#link">ver</Nav.Link>
+      <Nav.Link href="/pie">ver</Nav.Link>
 
       </ListGroup.Item>
     </ListGroup>

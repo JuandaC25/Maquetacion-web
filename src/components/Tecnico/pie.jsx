@@ -20,7 +20,7 @@ function Pie() {
                   <NavDropdown.Item href="#action/3.1">Menu</NavDropdown.Item>
                   </div>
                   <div  id="desplegable2">
-                  <NavDropdown.Item href='/pie'>
+                  <NavDropdown.Item href='/tecnico'>
                     Solicitudes de equipos
                   </NavDropdown.Item>
                   </div>
@@ -39,7 +39,7 @@ function Pie() {
               <Navbar.Brand href="#home" id="solicitud">Solicitudes de equipos</Navbar.Brand>
               <Nav className="me-auto" id="Nav1">
                 <Nav.Link href="#home">Home</Nav.Link>
-                <Nav.Link href="#features">Blog CEET</Nav.Link>
+                <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
               </Nav>
           </Navbar>
           </div>
