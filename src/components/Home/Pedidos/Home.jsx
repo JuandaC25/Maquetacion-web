@@ -1,26 +1,28 @@
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import './Estilos.css';
-import Desplegable from './Desplegable.jsx';
-import CuadroPedidos from './Cuadro_pedidos';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
+import Button from 'react-bootstrap/Button';
+import { FaBars, FaUserCircle } from 'react-icons/fa';
+import Alert from 'react-bootstrap/Alert';
+import Cuadro_Pedidos from './Cuadro_pedidos';
 
 function Home() {
   return (
-    <div className='Container1'>
-      <div className='Encabezado'>
-        <div className="HeaderContent">
-          <Desplegable />
-          <h1 className='Texto1'>Solicitar equipos</h1>
-          <div className="Navegacion">
-            <Breadcrumb className='Texto2'>
-              <Breadcrumb.Item href="http://localhost:5173/Login">Home</Breadcrumb.Item>
-              <Breadcrumb.Item href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Breadcrumb.Item>
-            </Breadcrumb>
-            <span className="IconoPerfil">👤</span>
-          </div>
+    <div className="admin-container">
+      <div className="icon-container">
+      </div>
+      <h1>Solicitar equipos</h1>
+      <div className="custom-buttons-container">
+        <Button variant="custom-1">Home</Button>
+        <Button variant="custom-2">Blog CEET</Button>
+        <div className="custom-3-container">
+          <FaUserCircle />
         </div>
       </div>
-      <CuadroPedidos />
+      <Cuadro_Pedidos />
     </div>
   );
 }
+
 export default Home;
+
+
