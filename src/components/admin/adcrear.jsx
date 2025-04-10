@@ -37,8 +37,7 @@ function adcrear() {
       <div className="icon-container">
         <FaBars />
       </div>
-      <h1>Crear usuario</h1>
-
+      <h1 className="ticket-title">ESTADO DEL TICKET</h1>
       <div className="custom-buttons-container">
         <Button variant="custom-1">Home</Button>
         <Button variant="custom-2">Blog CEET</Button>
