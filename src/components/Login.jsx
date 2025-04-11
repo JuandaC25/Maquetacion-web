@@ -1,20 +1,30 @@
+import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import './App.css';
 
 function Login() {
   return (
     <Form>
-        <h1>Iniciar sesión</h1>
-      <Form.Group className="mb-3" controlId="formBasicEmail">
-        <Form.Control type="email" placeholder="Ingrese su correo electronico" />
+      <h1 className='iniciarsesion'>Iniciar sesión</h1>
+      <Form.Group className="grupoinicio" controlId="formBasicEmail">
+        <Form.Control  
+          placeholder="Ingrese su correo electrónico" 
+          required 
+        />
       </Form.Group>
-      <Form.Group className="mb-3" controlId="formBasicPassword"> 
-        <Form.Control type="password" placeholder="Ingrese su contraseña" />
+
+      <Form.Group className="grupocontraseña" controlId="formBasicPassword"> 
+        <Form.Control 
+          type="password" 
+          placeholder="Ingrese su contraseña" 
+          required 
+        />
       </Form.Group>
-      <ButtonGroup aria-label="Botones_inicio">
-      <Button href='/Usuario'>Iniciar sesión</Button>
-    </ButtonGroup>
+
+      <Button className ="botton" href='/Usuario' variant="primary">
+        Iniciar sesión
+      </Button>
     </Form>
   );
 }

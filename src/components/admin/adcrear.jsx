@@ -10,11 +10,11 @@ const ConsultaItem = () => {
     <div className="ticket-item">
       <div className="izquierda">
         <div className="estado">
-          <span>Nombre,Correo,C.C</span>
+          <span>Nombre,Correo,C.C.</span>
         </div>
       </div>
       <div className="derecha">
-        <button className="ver-boton">ver</button>
+        <button className="ver-boton">Ver</button>
       </div>
     </div>
   );
@@ -37,8 +37,7 @@ function adcrear() {
       <div className="icon-container">
         <FaBars />
       </div>
-      <h1>Crear usuario</h1>
-
+      <h1 className="ticket-title">ESTADO DEL TICKET</h1>
       <div className="custom-buttons-container">
         <Button variant="custom-1">Home</Button>
         <Button variant="custom-2">Blog CEET</Button>

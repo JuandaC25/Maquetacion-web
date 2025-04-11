@@ -39,14 +39,11 @@ function inventario() {
       <div className="icon-container">
         <FaBars />
       </div>
-      <h1>Consultar inventario</h1>
-
+      <h1 className="ticket-title">ESTADO DEL TICKET</h1>
       <div className="custom-buttons-container">
         <Button variant="custom-1">Home</Button>
         <Button variant="custom-2">Blog CEET</Button>
-        <div className="custom-3-container">
           <FaUserCircle />
-        </div>
       </div>
 
       <Alert variant="success" className="d-flex justify-content-between align-items-center">

@@ -1,13 +1,14 @@
 import React from 'react';
-import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './components/Login';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Login from './components/Login.jsx';
 import Home from './components/Home/Pedidos/Home.jsx';
 import Admin from './components/admin/Admin';
 import Inventario from './components/admin/inventario.jsx';
 import AdCrear from './components/admin/adcrear.jsx'; 
 import Tecnico from './components/Tecnico/Tecnico';
+import Tecnico from './components/Tecnico/Tecnico.jsx';
 import Pie from './components/Tecnico/Pie.jsx';
 import Tercera from './components/Tecnico/tercera.jsx';
 import Cuarta from '/src/components/Tecnico/Cuarta.jsx'; 
@@ -16,11 +17,18 @@ import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
 import Soli_port from './components/Home/Soli_Port.jsx';
 import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
 import Sexta from './components/Tecnico/Sexta.jsx';
-import Septima from './components/Tecnico/Septima.jsx';
+import Septima from './components/Tecnico/Septima.jsx'; 
+import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
+import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
+import Soli_port from './components/Home/Soli_Port.jsx';
+import './components/App.css';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Pedidos_escritorio from './components/Home/Pedidos_escritorio/Pedidos_escritorio.jsx';
+
 function App() {
   return (
     <BrowserRouter>
-      <Routes>    
+      <Routes>
         <Route path='/Pie' element={<Pie />} /> 
         <Route path='/Tercera' element={<Tercera />} />
         <Route path='/Cuarta' element={<Cuarta />} />
@@ -37,7 +45,9 @@ function App() {
         <Route path='/Tecnico' element={<Tecnico></Tecnico>}></Route>
         <Route path='/Sexta' element={<Sexta></Sexta>}></Route>
         <Route path='/Septima' element={<Septima />}/>
-      </Routes>
+        <Route path="/espacios" element={<Soliespacios />}></Route>
+        <Route path="/Pedidoescritorio" element={<Pedidos_escritorio />}></Route>
+    </Routes>
     </BrowserRouter>
   );
 }

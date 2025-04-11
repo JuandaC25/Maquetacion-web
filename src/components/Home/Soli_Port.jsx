@@ -1,44 +1,68 @@
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
+import React from 'react';
+import { Button, Alert } from 'react-bootstrap';
+import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Pagination from 'react-bootstrap/Pagination';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import { Button } from 'react-bootstrap';
-function Soli_port() {
-    return(
-        <body id='soli_port'>
-      <Navbar>
-          <Navbar.Brand href="#home" id="solicitud1">Solicitar portatiles</Navbar.Brand>
-          <Breadcrumb className='Text2'>
-            <Breadcrumb.Item href="http://localhost:5173/Login">Home</Breadcrumb.Item>
-            <Breadcrumb.Item href="https://electricidadelectronicaytelecomu.blogspot.com/">Blogceet</Breadcrumb.Item>
-          </Breadcrumb>
-      </Navbar>
-      <Container id='Container_info'>
-      <ListGroup id='Lista_eq' >
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-      <ListGroup.Item id="Conte">Detalles del equipo <Button id='Button_ver'>Ver</Button></ListGroup.Item>
-    </ListGroup>
-    </Container>
-    <Container id='num_port'>
-      <Pagination>
+import './Soli_port.css';
+const ConsultaItem = () => {
+
+  return (
+    <div className="ticket-item2">
+      <div className="izquierda2">
+        <div className="icono" role="img" aria-label="computadora">🖥️</div>
+        <div className="estado1">
+          <span>Detalles del equipo</span>
+        </div>
+      </div>
+      <div className="derecha1">
+        <button className="ver-boton" href="Formulario-pedidos-portatiles">Ver</button>
+      </div>
+    </div>
+  );
+};
+
+const ListaConsultas = () => {
+  const elementos = new Array(8).fill(null); 
+  return (
+    <div name="lista-inventario1">
+      {elementos.map((_, i) => (
+        <ConsultaItem key={i} />
+      ))}
+
+    <div id="piepor">
+    <Pagination>
       <Pagination.Prev/>
-      <Pagination.Item active>{1}</Pagination.Item>
-      <Pagination.Item>{2}</Pagination.Item>
-      <Pagination.Item>{3}</Pagination.Item>
+      <Pagination.Item  id="font">{1}</Pagination.Item>
+      <Pagination.Item id="font">{2}</Pagination.Item>
+      <Pagination.Item id="font">{3}</Pagination.Item>
       <Pagination.Ellipsis />
-      <Pagination.Item >{10}</Pagination.Item>
+      <Pagination.Item  id="font">{10}</Pagination.Item>
       <Pagination.Next />
-    </Pagination>
-    </Container>
-    </body>
-    );
-  }
-export default Soli_port;
+    </Pagination >
+    </div>
+    </div>
+  );
+};
+
+function Soli_Port() {
+  return (
+    <div className="admin-container1">
+      <div className='general2'>
+      <div className="icon-container3">
+        <FaBars />
+      </div>
+      <h1 id="h1raro">Solicitar portatiles</h1>
+
+      <div className="custom-buttons-container1">
+        <Button variant="custom-1">Home</Button>
+        <Button variant="custom-2">Blog CEET</Button>
+        <div className="custom-3-container3">
+          <FaUserCircle />
+        </div>
+      </div>
+      </div>
+      <ListaConsultas />
+    </div>
+  );
+}
+
+export default Soli_Port;
