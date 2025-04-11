@@ -38,7 +38,7 @@ function Pie() {
           <Navbar data-bs-theme="dark" >
               <Navbar.Brand href="#home" id="solicitud">Solicitudes de equipos</Navbar.Brand>
               <Nav className="me-auto" id="Nav1">
-                <Nav.Link href="#home">Home</Nav.Link>
+                <Nav.Link href="http://localhost:5173/Login">Home</Nav.Link>
                 <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
               </Nav>
           </Navbar>

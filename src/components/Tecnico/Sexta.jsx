@@ -40,7 +40,7 @@ function Sexta() {
         <Navbar data-bs-theme="dark" >
             <Navbar.Brand href="#home" id="solicitud">Solicitudes de equipos</Navbar.Brand>
             <Nav className="me-auto" id="Nav1">
-              <Nav.Link href="#home">Home</Nav.Link>
+              <Nav.Link href="http://localhost:5173/Login">Home</Nav.Link>
               <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
             </Nav>
         </Navbar>
@@ -48,32 +48,7 @@ function Sexta() {
         <Stack gap={3} id="centro1">
        
 
-        <div id="supremof1"> <div id="contgr2">
-            <div id="escrito">
-            Fecha de reporte:
-            </div>
-            <div  ></div>
-            </div>
-            <div id="contgr2">
-            <div id="escrito">
-              Modelo de pc:
-              </div>
-            <div  ></div>
-            </div>
-            <div id="contgr2">
-            <div id="escrito">
-            Numero de serie:
-            </div>
-            <div ></div>
-            </div>
-            <div id="contgr2">
-            <div id="escrito">
-            Ambiente:
-            </div>
-            <div ></div>
-            </div>  
-            <Button variant="primary" id="button2" >Reportar</Button>    
-        </div>
+
         
         <div id="mega">
         <div id="nada">
@@ -113,13 +88,17 @@ function Sexta() {
 
             </div>
            <div id="mega2">
-            <h5>informe detallado errorews de equipo</h5>
+            <h5>Informe detallado errores de equipo</h5>
 
             
             <h5>Tecnico</h5>
-            <h5>10/12/2024</h5>
+            <h5 id='envidio'>10/12/2024</h5>
+             <Button variant="primary" id='button3' href='/Sexta'>ENVIAR REPORTE</Button>
+                  
 
            </div>
+           <Button variant="primary" id='button4' href='/Septima'>CERRAR TICKET</Button>
+                  
         </div>
       
       

@@ -71,7 +71,7 @@
 #basic-navbar-nav{
     background-color: white;
     border: 2px solid black;
-    height: 560px;
+    height: 690px;
     
 }
 #menu{
@@ -209,11 +209,36 @@
     background-color: rgb(9, 180, 26);
     border-radius: 8px;
 }
+#button3{
+    width: 20%;
+    background-color: white;
+    margin-left: 410px;
+    color: black;
+    border: 2px solid black;
+
+}
+#button4{
+    margin-top: 10px;
+    width: 15%;
+    background-color: white;
+    margin-left: 950px;
+    color: black;
+    border: 2px solid black;
+
+}
+
 #pregunta{
     width: 100%;
     margin-top: 20px;
     margin-bottom: 30px;
 }
+#pregunta1{
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+  text-align: center;
+}
+
 
 #cosos{
     margin-left: 100px;
@@ -232,8 +257,23 @@
     width: 35%;
     margin-left: 600px;
 }
+#salida1{
+    border-radius: 8px;
+    border: 1px solid black;
+    margin-top: 200px;
+    display: flex;
+    flex-direction: column; 
+    padding-top: 40px;
+    width: 35%;
+    margin-left: 600px;
+}
 #dueño{
     width: 100%;
+    
+}
+#dueño1{
+    width: 80%;
+    margin-left: 80px;
     
 }
 #ver{
@@ -276,11 +316,12 @@
 }
 #mega2{
     border: 2px solid black;
-    width: 80%;
+    width: 90%;
     padding-top: 10px;
     padding-bottom: 10px;
    margin-left: 50px;
    margin-top: 10px;
+   height: 438px;
 }
 #rey{
     width: 80%;
@@ -288,10 +329,12 @@
     margin-top: 10px;
     margin-left: 50px;
 }
-#escrito{
 
-}
 #nada{
     width: 80%;
     flex-direction: column;
+}
+#envidio{
+    margin-bottom: 295px;
+    
 }

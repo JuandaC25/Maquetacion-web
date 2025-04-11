@@ -15,9 +15,8 @@ import Quinta from './components/Tecnico/Quinta.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
 import Soli_port from './components/Home/Soli_Port.jsx';
 import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
-
 import Sexta from './components/Tecnico/Sexta.jsx';
-
+import Septima from './components/Tecnico/Septima.jsx';
 function App() {
   return (
     <BrowserRouter>
@@ -37,6 +36,7 @@ function App() {
         <Route path='/Admin' element={<Admin></Admin>}></Route>
         <Route path='/Tecnico' element={<Tecnico></Tecnico>}></Route>
         <Route path='/Sexta' element={<Sexta></Sexta>}></Route>
+        <Route path='/Septima' element={<Septima />}/>
       </Routes>
     </BrowserRouter>
   );
