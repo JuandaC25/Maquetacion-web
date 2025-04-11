@@ -7,7 +7,7 @@ import Cuadro_Pedidos from './Cuadro_pedidos';
 
 function Home() {
   return (
-    <div className="admin-container">
+    <div className="Usu-container">
       <div className="icon-container">
       </div>
       <h1 className='Hea_home'>Solicitar equipos</h1>
