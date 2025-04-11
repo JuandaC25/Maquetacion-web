@@ -1,15 +1,12 @@
-
-.Cuadros {
-
-
 .ticket-title{
     background-color: #15ff00;
     text-align: center;
+    height: 80px;
+}
 
 div {
 
     text-align: center;
-    background-color: rgb(255, 255, 255);
     color: rgb(5, 5, 5);
 }
 
@@ -29,7 +26,6 @@ div {
     gap: 0.5rem;
     color: rgb(0, 255, 30);
     text-decoration: underline;
- 
 }
 
 .icon-container {
