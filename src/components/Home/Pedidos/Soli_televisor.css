@@ -21,7 +21,7 @@
   }
 
   .boton-personalizado1{
-  background-color: #00AF00;
+  background-color: rgb(9, 180, 26);
   margin-left: auto;
   margin-right: auto;
   margin-top: 5rem;
@@ -29,5 +29,13 @@
   outline: none;
 }
 .boton-personalizado1:hover {
-  background-color: #00AF00;
+  background-color: rgb(9, 180, 26);
+}
+#Head_tv{
+  background-color: rgb(9, 180, 26);
+  height: 56px;
+  color:azure;
+}
+.custom-buttons-container{
+  color: azure;
 }

@@ -5,6 +5,7 @@ import './App.css';
 
 function Login() {
   return (
+    <div id='Form_login'>
     <Form>
       <h1 className='iniciarsesion'>Iniciar sesión</h1>
       <Form.Group className="grupoinicio" controlId="formBasicEmail">
@@ -26,6 +27,7 @@ function Login() {
         Iniciar sesión
       </Button>
     </Form>
+    </div>
   );
 }
 

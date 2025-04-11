@@ -1,8 +1,14 @@
 import React from 'react';
-import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Pagination from 'react-bootstrap/Pagination';
+import { useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Offcanvas from 'react-bootstrap/Offcanvas';
 const ConsultaItem = () => {
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <div className="ticket-item">
       <div className="izquierda">
@@ -26,7 +32,7 @@ const ListaConsultas = () => {
         <ConsultaItem key={i} />
       ))}
 
-    <div id="piepor">
+    <div className="piepor">
     <Pagination>
       <Pagination.Prev/>
       <Pagination.Item  id="font">{1}</Pagination.Item>
@@ -37,22 +43,25 @@ const ListaConsultas = () => {
       <Pagination.Next />
     </Pagination >
     </div>
+    <footer id='Pie_pag'><h1>Tech.Inventory/Sena</h1></footer>
     </div>
+    
   );
 };
 
 function Soli_Port() {
   return (
-    <div className="admin-container">
+    <div className="Usu-container">
       <div className='general'>
       <div className="icon-container">
         <FaBars />
       </div>
-      <h1 id="h1raro">Solicitar portatiles</h1>
-
+      <div id='h1head'>
+      <h1>Solicitar portatiles</h1>
+      </div>
       <div className="custom-buttons-container">
-        <Button variant="custom-1">Home</Button>
-        <Button variant="custom-2">Blog CEET</Button>
+        <Button variant="link">Home</Button>
+        <Button variant="link">Blog CEET</Button>
         <div className="custom-3-container">
           <FaUserCircle />
         </div>
