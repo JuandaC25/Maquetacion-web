@@ -4,7 +4,7 @@ import { Navbar, Nav, Container,NavDropdown } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 
  
-function Tercera() {
+function Septima() {
   return (
     <>
      <div id="new_cont">  
@@ -44,17 +44,17 @@ function Tercera() {
                    </Nav>
                </Navbar>
                </div>
-               <div id="salida">
-               <div id="pregunta">
-                <h2>¿Estas seguro de que quieres confirmar cierre de solicitud?</h2>
+               <div id="salida1">
+               <div id="pregunta1">
+                <h2>¿Estas seguro de que quieres cerrar ticket?</h2>
                </div>
-               <div id="dueño">
-               <Button variant="primary" id="cosos" href='Tecnico'>Aceptar</Button>
-               <Button variant="primary" id="cosos" href='/pie'>Cancelar</Button>
+               <div id="dueño1">
+               <Button variant="primary" id="cosos" href='Cuarta'>Aceptar</Button>
+               <Button variant="primary" id="cosos" href='/Sexta'>Cancelar</Button>
                </div>
                </div>
     </>
   );
 }
 
-export default Tercera;
+export default Septima;
