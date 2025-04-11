@@ -1,23 +1,19 @@
 import React from 'react';
+import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Pagination from 'react-bootstrap/Pagination';
-import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Offcanvas from 'react-bootstrap/Offcanvas';
+import './Soli_port.css';
 const ConsultaItem = () => {
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
   return (
-    <div className="ticket-item">
-      <div className="izquierda">
+    <div className="ticket-item2">
+      <div className="izquierda2">
         <div className="icono" role="img" aria-label="computadora">🖥️</div>
-        <div className="estado">
+        <div className="estado1">
           <span>Detalles del equipo</span>
         </div>
       </div>
-      <div className="derecha">
+      <div className="derecha1">
         <button className="ver-boton" href="Formulario-pedidos-portatiles">Ver</button>
       </div>
     </div>
@@ -27,12 +23,12 @@ const ConsultaItem = () => {
 const ListaConsultas = () => {
   const elementos = new Array(8).fill(null); 
   return (
-    <div name="lista-inventario">
+    <div name="lista-inventario1">
       {elementos.map((_, i) => (
         <ConsultaItem key={i} />
       ))}
 
-    <div className="piepor">
+    <div id="piepor">
     <Pagination>
       <Pagination.Prev/>
       <Pagination.Item  id="font">{1}</Pagination.Item>
@@ -43,32 +39,27 @@ const ListaConsultas = () => {
       <Pagination.Next />
     </Pagination >
     </div>
-    <footer id='Pie_pag'><h1>Tech.Inventory/Sena</h1></footer>
     </div>
-    
   );
 };
 
 function Soli_Port() {
   return (
-    <div className="Usu-container">
-      <div className='general'>
-      <div className="icon-container">
+    <div className="admin-container1">
+      <div className='general2'>
+      <div className="icon-container3">
         <FaBars />
       </div>
-      <div id='h1head'>
-      <h1>Solicitar portatiles</h1>
-      </div>
-      <div className="custom-buttons-container">
-        <Button variant="link">Home</Button>
-        <Button variant="link">Blog CEET</Button>
-        <div className="custom-3-container">
+      <h1 id="h1raro">Solicitar portatiles</h1>
+
+      <div className="custom-buttons-container1">
+        <Button variant="custom-1">Home</Button>
+        <Button variant="custom-2">Blog CEET</Button>
+        <div className="custom-3-container3">
           <FaUserCircle />
         </div>
       </div>
       </div>
-
-      
       <ListaConsultas />
     </div>
   );

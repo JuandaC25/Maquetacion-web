@@ -7,7 +7,7 @@
 div {
 
     text-align: center;
-    color: rgb(255, 255, 255);
+    color: rgb(5, 5, 5);
 }
 
 .Hea_home {
@@ -63,8 +63,9 @@ div {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     padding: 10px 15px;
     margin-bottom: 12px;
-    color: #f0f0f0;
+    color: black;
 }
+
 .izquierda,
 .derecha {
     display: flex;
