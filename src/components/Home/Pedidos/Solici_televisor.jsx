@@ -6,16 +6,18 @@ import { FaUserCircle } from 'react-icons/fa';
 
 function Solitelevisores() {
   return (
-    <div className="admin-container">
-      <div className="icon-container">
-      </div>
+    <>
+      <div className="admin-container">
+        <div className="icon-container">
+        </div>
+        <h1>Solicitar televisores</h1>
 
-      <h1>Solicitar televisores</h1>
-      <div className="custom-buttons-container">
-        <Button variant="custom-1">Home</Button>
-        <Button variant="custom-2">Blog CEET</Button>
-        <div className="custom-3-container">
-          <FaUserCircle />
+        <div className="custom-buttons-container">
+          <Button variant="custom-1">Home</Button>
+          <Button variant="custom-2">Blog CEET</Button>
+          <div className="custom-3-container">
+            <FaUserCircle />
+          </div>
         </div>
       </div>
 
@@ -26,7 +28,7 @@ function Solitelevisores() {
               <Form.Label htmlFor="inputCantidad" className="etiqueta-input">
                 <h3>Ingrese cantidad</h3>
               </Form.Label>
-              <Form.Control type="text" id="inputCantidad" />
+              <Form.Control type="number" id="inputCantidad" />
             </Card.Body>
           </Card>
 
@@ -52,14 +54,17 @@ function Solitelevisores() {
         </div>
       </div>
 
-      <Button type="submit" className="boton-personalizado1">
-        Enviar solicitud
-      </Button>
-    </div>
+      <div className="boton-container">
+        <Button type="submit" className="boton-personalizado1">
+          Enviar solicitud
+        </Button>
+      </div>
+    </>
   );
 }
 
 export default Solitelevisores;
+
 
   
 
