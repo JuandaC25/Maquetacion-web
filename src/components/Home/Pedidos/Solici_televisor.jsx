@@ -52,7 +52,6 @@ function Solitelevisores() {
         </div>
       </div>
 
-      {/* Botón de envío */}
       <Button type="submit" className="boton-personalizado1">
         Enviar solicitud
       </Button>
