@@ -1,8 +1,6 @@
 import './Estilos.css';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Button from 'react-bootstrap/Button';
 import { FaBars, FaUserCircle } from 'react-icons/fa';
-import Alert from 'react-bootstrap/Alert';
 import Cuadro_Pedidos from './Cuadro_pedidos';
 
 function Home() {

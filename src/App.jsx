@@ -14,8 +14,8 @@ import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
 import Soli_port from './components/Home/Soli_Port.jsx';
 import './components/App.css';
-
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Pedidos_escritorio from './components/Home/Pedidos_escritorio/Pedidos_escritorio.jsx';
 
 
 function App() {
@@ -35,6 +35,7 @@ function App() {
         <Route path='/Admin' element={<Admin></Admin>}></Route>
         <Route path='/Tecnico' element={<Tecnico></Tecnico>}></Route>
         <Route path="/espacios" element={<Soliespacios />}></Route>
+        <Route path="/Pedidoescritorio" element={<Pedidos_escritorio />}></Route>
     </Routes>
     </BrowserRouter>
   );
