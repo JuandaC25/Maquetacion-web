@@ -1,0 +1,32 @@
+.Usu-container {
+  display: flex;
+  align-items: center;
+  background-color: #00b000;
+  height: 80px;
+}
+
+.Hea_home1 {
+  flex: 1;
+  text-align: center;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.custom-buttons-container2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 1rem;
+  margin-left: auto;
+}
+
+.custom-buttons-container2 .btn {
+  background-color: transparent;
+  color: white;
+  border: none;
+  font-size: 14px;
+  padding: 5px 10px;
+  text-decoration: underline;
+}
+  

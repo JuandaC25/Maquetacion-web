@@ -22,7 +22,7 @@ function Cuarta() {
                 <NavDropdown.Item href="#action/3.1">Menu</NavDropdown.Item>
                 </div>
                 <div  id="desplegable2">
-                <NavDropdown.Item href='/pie' >
+                <NavDropdown.Item href='/tecnico' >
                   Solicitudes de equipos
                 </NavDropdown.Item >
                 </div>
@@ -40,8 +40,8 @@ function Cuarta() {
         <Navbar data-bs-theme="dark" >
             <Navbar.Brand href="#home" id="solicitud">Solicitudes de equipos</Navbar.Brand>
             <Nav className="me-auto" id="Nav1">
-              <Nav.Link href="#home">Home</Nav.Link>
-              <Nav.Link href="#features">Blog CEET</Nav.Link>
+              <Nav.Link href="http://localhost:5173/Login">Home</Nav.Link>
+              <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
             </Nav>
         </Navbar>
         </div>
@@ -56,6 +56,16 @@ function Cuarta() {
         <ListGroup.Item id="Conte1">
         <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
         <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
+        </ListGroup.Item>
+        <ListGroup.Item id="Conte1">
+        <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
+        <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
+  
+        </ListGroup.Item>
+        <ListGroup.Item id="Conte1">
+        <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
+        <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
+  
   
         </ListGroup.Item>
         <ListGroup.Item id="Conte1">

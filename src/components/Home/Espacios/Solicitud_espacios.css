@@ -2,6 +2,14 @@
     background-color: #00AF00;
     height: 130px;
   }
+  #h1raro{
+    background-color: #15ff00;
+    text-align: center;
+  }
+  .general{
+    background-color: #15ff00;
+    height: 80px;
+  }
   .Text1{
     color: rgb(255, 255, 255);
     margin-left: 50rem;
@@ -46,7 +54,7 @@
     margin-top: 6rem;
   }
   .conteinercenter2 {
-    border: 1px solid red; /* To see the container's boundaries */
+    border: 1px solid red; 
     padding: 10px;
   }
   

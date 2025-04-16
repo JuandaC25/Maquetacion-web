@@ -1,3 +1,42 @@
+.admin-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #00b300;
+  padding: 0.8rem 1.5rem;
+  color: white;
+  position: relative;
+  height: 80px;
+}
+
+.icon-container {
+  font-size: 1.5rem;
+  color: white;
+  margin-right: 1rem;
+}
+
+.admin-container h1 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.custom-buttons-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.custom-buttons-container button {
+  color: white;
+  transition: 0.3s ease;
+}
+
+
 .Conteiner1{
     background-color: #00AF00;
     height: 130px;

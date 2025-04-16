@@ -16,7 +16,7 @@ function Cuadro_Pedidos() {
         <Card className='cuadro2'>
           <Card.Body>
             <Card.Title><h2 className='escritorio'>Equipos de escritorio</h2></Card.Title>
-            <Button className='boton_esc'>Seleccionar</Button>
+            <Button href='/Pedidoescritorio'className='boton_esc'>Seleccionar</Button>
           </Card.Body>
         </Card>
       </div>

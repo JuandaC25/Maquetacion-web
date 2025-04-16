@@ -1,20 +1,19 @@
 import React from 'react';
 import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
-import Dropdown from 'react-bootstrap/Dropdown';
 import Pagination from 'react-bootstrap/Pagination';
-
-
+import './Soli_port.css';
 const ConsultaItem = () => {
+
   return (
-    <div className="ticket-item">
-      <div className="izquierda">
+    <div className="ticket-item2">
+      <div className="izquierda2">
         <div className="icono" role="img" aria-label="computadora">🖥️</div>
-        <div className="estado">
+        <div className="estado1">
           <span>Detalles del equipo</span>
         </div>
       </div>
-      <div className="derecha">
+      <div className="derecha1">
         <button className="ver-boton" href="Formulario-pedidos-portatiles">Ver</button>
       </div>
     </div>
@@ -24,51 +23,43 @@ const ConsultaItem = () => {
 const ListaConsultas = () => {
   const elementos = new Array(8).fill(null); 
   return (
-    <div name="lista-inventario">
+    <div name="lista-inventario1">
       {elementos.map((_, i) => (
         <ConsultaItem key={i} />
       ))}
 
-    <Pagination id='Pag_form'>
-      <Pagination.First />
-      <Pagination.Prev />
-      <Pagination.Item>{1}</Pagination.Item>
+    <div id="piepor">
+    <Pagination>
+      <Pagination.Prev/>
+      <Pagination.Item  id="font">{1}</Pagination.Item>
+      <Pagination.Item id="font">{2}</Pagination.Item>
+      <Pagination.Item id="font">{3}</Pagination.Item>
       <Pagination.Ellipsis />
-
-      <Pagination.Item>{10}</Pagination.Item>
-      <Pagination.Item>{11}</Pagination.Item>
-      <Pagination.Item active>{12}</Pagination.Item>
-      <Pagination.Item>{13}</Pagination.Item>
-      <Pagination.Item disabled>{14}</Pagination.Item>
-
-      <Pagination.Ellipsis />
-      <Pagination.Item>{20}</Pagination.Item>
+      <Pagination.Item  id="font">{10}</Pagination.Item>
       <Pagination.Next />
-      <Pagination.Last />
-    </Pagination>
+    </Pagination >
+    </div>
     </div>
   );
 };
 
 function Soli_Port() {
   return (
-    <div className="admin-container">
-      <div className="icon-container">
+    <div className="admin-container1">
+      <div className='general2'>
+      <div className="icon-container3">
         <FaBars />
       </div>
-      <h1>Solicitar portatiles</h1>
+      <h1 id="h1raro">Solicitar portatiles</h1>
 
-      <div className="custom-buttons-container">
+      <div className="custom-buttons-container1">
         <Button variant="custom-1">Home</Button>
         <Button variant="custom-2">Blog CEET</Button>
-        <div className="custom-3-container">
+        <div className="custom-3-container3">
           <FaUserCircle />
         </div>
       </div>
-
-      <Alert variant="success" className="d-flex justify-content-between align-items-center">
-
-      </Alert>
+      </div>
       <ListaConsultas />
     </div>
   );
