@@ -1,8 +1,8 @@
 form {
-  background-color: #f8f9fa; /* Un gris claro de fondo */
+  background-color: #f8f9fa;
   padding: 65px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombra suave */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
   max-width: 550px; 
   margin-left: 18rem;
   margin-right: auto;

@@ -2,19 +2,8 @@
 .ticket-title{
     background-color: #15ff00;
     text-align: center;
-    height: 80px;
 }
 
-div {
-
-    text-align: center;
-    color: rgb(5, 5, 5);
-}
-
-.Hea_home {
-    background-color: #15ff00;
-    height: 80px;
-}
 .admin-container {
     position: relative;
 }
