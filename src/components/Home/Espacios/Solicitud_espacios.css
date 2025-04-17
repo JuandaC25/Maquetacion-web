@@ -53,12 +53,8 @@
     justify-content: center;
     margin-top: 6rem;
   }
-  .conteinercenter2 {
-    border: 1px solid red; 
-    padding: 10px;
-  }
   
   .boton-personalizado {
-    background-color: yellow;
+    background-color: #15ff00;
     color: black;
   }
