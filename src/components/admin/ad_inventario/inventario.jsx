@@ -2,8 +2,6 @@ import React from 'react';
 import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Dropdown from 'react-bootstrap/Dropdown';
-import './estilos_admin.css';
-
 
 const ConsultaItem = () => {
   return (
