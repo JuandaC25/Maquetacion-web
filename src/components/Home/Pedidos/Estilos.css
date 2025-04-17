@@ -1,41 +1,103 @@
-.Usu-container {
-  display: flex;
-  align-items: center;
-  background-color: #00AF00;
-  height: 100px;
+#new_cont{
+  width: 100%;
+  display: grid;grid-template-columns: 13% 82% 5%;
+  grid-template-rows: 100px;
 }
+
+.new_colo{
+  margin: 1rem;
+}
+#basic-navbar-nav {
+  border: none ;
+  height: auto ;
+  width: 500%;
+}
+
+
+#desplegable1{
+  background-color:rgb(9, 180, 26) ;
+  text-align: center;
+  border: 2px solid black;
+  font-size: 200%;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 8000;
+
+}
+#desplegable2{
+  background-color: transparent;
+  border: none;
+  height: auto;
+  font-size: 1rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+}
+#desplegable3{
+  height: 40px;
+  border: 2px solid black;
+  border-radius: 10px;
+  margin-top: 14px;
+  font-size: 120%;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 1000;
+}
+#desplegable4{
+  height: 40px;
+  border: 2px solid black;
+  border-radius: 10px;
+  margin-top: 14px;
+  font-size: 120%;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 1000;
+}
+
+
+#menu {
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+#basic-navbar-nav {
+  background-color: transparent;
+  height: auto; 
+  border: none;
+}
+
+#solicitud{
+  width: 70%;
+  text-align: center;
+  font-size: 300%;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 900;
+  
+}
+#Nav1{
+  width: 30%;
+  margin-bottom: 20px;
+  padding-left: 300px;
+  font-size: 111%;
+  color: white;
+  padding-bottom: 40px;
+  
+}
+
+
+
+
+
+
+
+
+
 
 .icon-container {
   font-size: 24px;
   color: white;
 }
 
-.Hea_home1 {
-  flex: 1;
-  text-align: center;
-  color: white;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.custom-buttons-container2 {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.custom-buttons-container2 .btn {
-  background-color: transparent;
-  color: white;
-  border: none;
-  font-size: 14px;
-  padding: 5px 10px;
-  text-decoration: underline;
-}
-.custom-buttons-container2{
-  margin-right: 1rem;
-  margin-left: auto;
-}
 .form-grid {
   display: flex;
   flex-direction: column;
