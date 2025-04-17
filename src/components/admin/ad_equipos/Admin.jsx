@@ -1,3 +1,4 @@
+// mirar abajo de todo el codigo 
 import React from 'react';
 import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
@@ -47,3 +48,11 @@ function Admin() {
   )
 }
 export default Admin;
+// aqui se esta desarrollando el primero para despues guiarse con los otros 2 apartados 
+// adrian realmente estamos teniendo conflitos con el codigo de jeison ya que 
+// el los esta haciendo directamente y no esta mal la cosa es que lo bueno es dejar un 
+// diseño que quede bien y asi pero sin que el me autorice eso no puedo realizar mas
+// sorry adrian no pude hacer mucho las otras carpetas estan para estaban para no intevenir 
+// en los demas codigos pero imposible 
+// si quieres puedes ir implementando lo de la ventana emergente mirando 
+// esta interesante asi que creo que esa van a elegir 
