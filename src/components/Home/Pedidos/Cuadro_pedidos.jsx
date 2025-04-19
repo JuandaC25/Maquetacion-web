@@ -10,7 +10,6 @@ function Cuadro_Pedidos() {
           <Card.Body>
             <Card.Title><h1 className='portatiles'>Portátiles</h1></Card.Title>
             <Button href='/Solicitar-Portatiles' className='boton1'>Seleccionar</Button>
-
           </Card.Body>
         </Card>
         <Card className='cuadro2'>

@@ -10,7 +10,7 @@ function Soliespacios() {
       <div className='Conteiner1'> 
         <Row className="justify-content-md-center">
           <Col>
-            <h1 className='Text1'>HEADER</h1>
+            <h1 className='Head'>Solicitud espacios</h1>
           </Col>
           <Col>
             <Breadcrumb className='Text2'>

@@ -1,0 +1,65 @@
+.Cuadro_form {
+    height: 43rem;
+    width: 75rem;
+    margin-top: 5rem;
+    margin-left: 22rem;
+    display: flex;
+    flex-direction: column;
+    border-style:groove ;
+    background-color: rgb(255, 255, 255);
+    border-radius: 15px;
+}
+
+#Header_soli {
+    background-color:  rgb(9, 180, 26);
+    color: rgb(255, 255, 255);
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    text-align: center;
+    width: auto;
+    height: 5rem;
+}
+.Cont_gene {
+    display: flex;
+    flex-direction: row;
+    margin-top: 3rem;
+    border-color: black;
+}
+.Cont_1{
+    width: 25rem;
+    margin-left: 5rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+.Btn_Conf{
+    justify-content: center;
+    background-color:  rgb(9, 180, 26);
+    margin-top: 3rem;
+    border-color: azure;
+}
+.Btn_Conf:hover {
+    background-color: rgb(9, 180, 26); /* Mismo color de fondo al hacer hover */
+    border-color: azure; 
+}
+.Btn_Conf:focus {
+    background-color: rgb(9, 180, 26);
+    border-color: azure;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Ejemplo de indicador de foco */
+}
+.Btn_Conf:active {
+    background-color: rgb(0, 0, 0); 
+    border-color: azure; 
+    outline: none; 
+}
+.tx1{
+    border-color: black;
+
+}
+.Cua_der{
+    border-color: aliceblue;
+    margin-top: 5rem;
+    width: 90%;
+    margin-right: 2rem;
+    text-align: center;
+}

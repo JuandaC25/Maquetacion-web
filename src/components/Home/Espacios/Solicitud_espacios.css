@@ -6,17 +6,17 @@
     background-color: #15ff00;
     text-align: center;
   }
+  .Head{
+    margin-left: 55rem;
+    color: aliceblue;
+  }
   .general{
     background-color: #15ff00;
     height: 80px;
   }
-  .Text1{
-    color: rgb(255, 255, 255);
-    margin-left: 50rem;
-  }
   .Text2{
     margin-top: 1rem;
-    margin-left: 35rem;
+    margin-left: 2rem;
     color: rgb(255, 255, 255);
   }
   .menuespa {
@@ -54,11 +54,11 @@
     margin-top: 6rem;
   }
   .conteinercenter2 {
-    border: 1px solid red; 
     padding: 10px;
   }
   
   .boton-personalizado {
-    background-color: yellow;
+    background-color: #00b000;
     color: black;
+    border-radius: 8px;
   }
