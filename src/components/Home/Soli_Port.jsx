@@ -14,7 +14,7 @@ const ConsultaItem = () => {
         </div>
       </div>
       <div className="derecha1">
-        <button className="ver-boton" href="Formulario-pedidos-portatiles">Ver</button>
+        <button href='/Form_port' className="ver-boton">Ver</button>
       </div>
     </div>
   );
@@ -50,7 +50,7 @@ function Soli_Port() {
       <div className="icon-container3">
         <FaBars />
       </div>
-      <h1 id="h1raro">Solicitar portatiles</h1>
+      <h1 id="h1">Solicitar portatiles</h1>
 
       <div className="custom-buttons-container1">
         <Button variant="custom-1">Home</Button>

@@ -20,7 +20,6 @@ function Solitelevisores() {
           </div>
         </div>
       </div>
-
       <div className="Cuadros">
         <div className="fila-superior">
           <Card className="cuadro">

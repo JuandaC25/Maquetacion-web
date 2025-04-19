@@ -29,7 +29,7 @@ function Datos_pedido() {
       />
   </div>
   <div className="conteinercenter2">
-  <Button type="submit" className="boton-personalizado">
+  <Button type="boton" className="boton-personalizado">
     Enviar solicitud
   </Button>
 </div>

@@ -153,10 +153,6 @@
     background-color: #1e7e34;
   }
 
-
-
-
-
 #pagdif{
    justify-content: center;
 }
@@ -185,6 +181,4 @@ margin-left: 200px;
     justify-content: center;
     flex-direction: column;
 }
-.pagination{
-    justify-content: center;
-}
+
