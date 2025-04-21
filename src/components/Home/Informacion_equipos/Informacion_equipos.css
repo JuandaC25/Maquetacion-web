@@ -133,11 +133,85 @@
   .Reportar:hover {
     background-color: #ff0a22;
   }
-  
-
-
-
-
+  .Titul1{
+    text-align: center;
+  }
+.Header1{
+  background-color: rgb(9, 180, 26);
+  color: white;
+}
+.Cuerpovent{
+  height: 400px;
+  width: 100%;
+}
+.Cuadrito1{
+  display: flex;
+  align-items: center;
+  background-color: rgb(9, 180, 26); ;
+  color: white;
+  border-radius: 20px;
+  width: 30%;
+  height: 50px;
+}
+.Text1{
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+.mb-3{
+  margin-top: 1.2rem;
+  margin-left: auto;
+  margin-right: 1rem; 
+}
+.Conteiner01{
+  display: flex;
+  background-color: white;
+  width: 100%;
+  gap: 3rem;
+  grid-template-columns: repeat(3, 200px);
+  grid-template-rows: repeat(2, 100px);
+}
+.Conteiner02{
+  display: flex;
+  background-color: white;
+  width: 100%;
+  gap: 3rem;
+  grid-template-columns: repeat(3, 200px);
+  grid-template-rows: repeat(2, 100px);
+  margin-top: 1rem;
+}
+.Conteiner03{
+  margin-top: 1rem;
+  display: flex;
+  background-color: white;
+  width: 100%;
+  gap: 3rem;
+  grid-template-columns: repeat(3, 200px);
+  grid-template-rows: repeat(2, 100px);
+}
+.Text2{
+  margin-top: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  height: 7rem;
+}
+.Text3{
+  text-align: start;
+}
+.botoon{
+  margin-top: 1rem;
+  margin-left: 16rem;
+  margin-right: auto;
+  width: 30%;
+  background-color: rgb(9, 180, 26);
+  color: white;
+  outline: none;
+  border: none;
+}
+.botoon:hover{
+  background-color:rgb(9, 180, 26);
+  outline: none;
+}
 
 
 
