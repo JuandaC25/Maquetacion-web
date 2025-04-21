@@ -2,57 +2,16 @@ import Pagination from 'react-bootstrap/Pagination';
 import ListGroup from 'react-bootstrap/ListGroup';
 import './stile_tec.css'
 import React from "react";
-import { Navbar, Nav, Container,NavDropdown } from "react-bootstrap";
+import {Nav} from "react-bootstrap";
+import Footer from '../Footer/Footer';
+import Header_tec from '../header_tecnico/header_tec';
 
 
 function Tecnico() {
-    return(
-        <>
-    
-      <div id="new_cont1">  
-        
-    <Navbar expand="xxxl" className={'new_colo ${"bg-body-tertiary"}'}>
-
-    <Container>
-        <Navbar.Toggle id="menu"/>
-
-        <Navbar.Collapse id="basic-navbar-nav">
-
-          <Nav >
-
-            <div>
-
-              <div id="desplegable1">
-              <NavDropdown.Item href="#action/3.1">Menu</NavDropdown.Item>
-              </div>
-              <div  id="desplegable2">
-              <NavDropdown.Item href='/tecnico' >
-                Solicitudes de equipos
-              </NavDropdown.Item >
-              </div>
-              <div id="desplegable2">
-              <NavDropdown.Item href="/Cuarta">
-              Tickets
-              </NavDropdown.Item>
-              </div>
-              <NavDropdown.Divider />
-              </div>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-      <Navbar  >
-          <h1  id="solicitud10">Solicitudes de equipos</h1>
-         
-            <Nav.Link href="http://localhost:5173/Login" className='header101'>Home</Nav.Link>
-            <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/" className='header10'>Blog CEET</Nav.Link>
-             <Nav.Link href="#perfil" className='header102'>
-                        <i className="bi bi-person-circle" style={{ fontSize: '1.5rem', color: 'white' }}></i>
-            </Nav.Link>
-         
-      </Navbar>
-      </div>
-      <div id="container_blanco">
+return(
+  <>
+  <Header_tec></Header_tec>
+    <div id="container_blanco">
 
       <ListGroup >
       <ListGroup.Item id="Conte">
@@ -117,7 +76,8 @@ function Tecnico() {
       <Pagination.Next  href='/tecnico'/>
     </Pagination >
     </div> 
-    </>
-    );
+    <Footer></Footer>
+  </>
+  );
   }
 export default Tecnico;
