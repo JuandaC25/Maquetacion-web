@@ -3,8 +3,12 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import { FaUserCircle } from 'react-icons/fa';
+import Modal from 'react-bootstrap/Modal';
+import { useState } from 'react';
+
 
 function Solitelevisores() {
+  const [smShow, setSmShow] = useState(false);
   return (
     <>
       <div className="admin-container">
@@ -53,11 +57,53 @@ function Solitelevisores() {
         </div>
       </div>
 
-      <div className="boton-container">
-        <Button type="submit" className="boton-personalizado1">
-          Enviar solicitud
-        </Button>
+
+
+      <div 
+        style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          marginTop: '100px' 
+        }}
+      >
+        <Button 
+          onClick={() => setSmShow(true)} 
+          style={{ 
+            backgroundColor: '#00AF00', 
+            borderColor: '#00AF00',
+            fontSize: '18px', 
+            padding: '10px 20px',
+            color: 'white'
+          }}
+        >
+          Confirmar solicitud
+        </Button>        
       </div>
+      <Modal
+        size="sm"
+        show={smShow}
+        onHide={() => setSmShow(false)}
+        aria-labelledby="example-modal-sizes-title-sm"
+        centered
+      >
+        <Modal.Header 
+          closeButton 
+          style={{ 
+            backgroundColor: '#00AF00', 
+            color: 'white', 
+            borderBottom: 'none', 
+            padding: '1rem 1rem',
+            position: 'relative'
+          }}
+        >
+          <Modal.Title 
+            id="example-modal-sizes-title-sm"
+            style={{ margin: '0 auto', fontWeight: '500' }}
+          >
+            Solicitud confirmada
+          </Modal.Title>
+        </Modal.Header>
+      </Modal>
     </>
   );
 }

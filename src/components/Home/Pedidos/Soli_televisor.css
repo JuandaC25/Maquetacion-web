@@ -58,15 +58,3 @@
     background-color: rgb(216, 216, 216);
     margin-top: 1rem;
   }
-
-  .boton-personalizado1{
-  background-color: #00AF00;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 5rem;
-  border: none;
-  outline: none;
-}
-.boton-personalizado1:hover {
-  background-color: #00AF00;
-}

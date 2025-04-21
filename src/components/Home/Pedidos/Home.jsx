@@ -1,5 +1,4 @@
 import './Estilos.css';
-import Button from 'react-bootstrap/Button';
 import Cuadro_Pedidos from './Cuadro_pedidos';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
@@ -23,7 +22,7 @@ function Home() {
                   <NavDropdown.Item href="/Usuario">Solicitar equipos</NavDropdown.Item>
                 </div>
                 <div id="desplegable3">
-                  <NavDropdown.Item href="/inventario">Información de equipos</NavDropdown.Item>
+                  <NavDropdown.Item href="/Informacion_equipos">Información de equipos</NavDropdown.Item>
                 </div>
                 <div id="desplegable4">
                   <NavDropdown.Item href="/espacios">Solicitar espacios</NavDropdown.Item>
