@@ -1,13 +1,17 @@
-#solicitud{
-    width: 70%;
-
-    text-align: center;
+#solicitud10{
+    width: 100%;
     font-size: 300%;
     font-family: 'Roboto', sans-serif;
     font-weight: 900;
-    
+    color: white ;
+    text-align: center !important;
+
 }
-#new_cont{
+.fast{
+    width: 80%;
+}
+
+#new_cont1{
     background-color: rgb(9, 180, 26);
     width: 100%;
     display: grid;grid-template-columns: 13% 82% 5%;
@@ -21,13 +25,14 @@
     
 }
 
-#Nav1{
-    width: 30%;
+#Nav10{
+    width: 40%;
     margin-bottom: 20px;
     padding-left: 300px;
     font-size: 111%;
     color: white;
     padding-bottom: 40px;
+    text-decoration: underline white;
     
 }
 #Container1{
@@ -46,6 +51,7 @@
    position: relative;
    z-index: 10;
    display: flex;
+   margin-left: 300px;
 }
 #Conte1{
     border: 2px solid black;
@@ -69,6 +75,7 @@
     
 }
 #basic-navbar-nav{
+    margin-top: 8px;
     background-color: white;
     border: 2px solid black;
     height: 690px;
@@ -337,4 +344,23 @@
 #envidio{
     margin-bottom: 295px;
     
+}
+.header10{
+    width: 8%;
+    color: white;
+    text-decoration:underline white;
+    margin-bottom: 50px;
+}
+.header101{
+    width: 5%;
+    color: white;
+    text-decoration:underline white;
+    margin-bottom: 50px;
+}
+.header102{
+    width: auto;
+    color: white;
+
+    text-decoration:underline white;
+    margin-bottom: 50px;
 }
