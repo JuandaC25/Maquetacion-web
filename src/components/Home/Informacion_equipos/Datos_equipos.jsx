@@ -7,6 +7,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 function MyVerticallyCenteredModal(props) {
   return (
@@ -16,22 +18,85 @@ function MyVerticallyCenteredModal(props) {
       aria-labelledby="contained-modal-title-vcenter"
       centered
     >
-      <Modal.Header closeButton>
+       <Modal.Header className='Header1'closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Modal heading
+          <h1 className='Titul1'>Seleccione los componentes que presenta su dispositivo</h1>
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        <h4>Centered Modal</h4>
-        <p>
-          Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-          dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-          consectetur ac, vestibulum at eros.
-        </p>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={props.onHide}>Cerrar</Button>
-      </Modal.Footer>
+      <Modal.Body className='Cuerpovent'>
+
+
+      <div className='Conteiner01'>
+  <div className='Cuadrito1'>
+    <h5 className='Text1'>Problemas con el office</h5>
+    <Form.Group className="mb-3">
+      <Form.Check type="checkbox" />
+    </Form.Group>
+  </div>
+  <div className='Cuadrito1'>
+    <h5 className='Text1'>Problemas con el office</h5>
+    <Form.Group className="mb-3">
+      <Form.Check type="checkbox" />
+    </Form.Group>
+  </div>
+  <div className='Cuadrito1'>
+    <h5 className='Text1'>Problemas con el office</h5>
+    <Form.Group className="mb-3">
+      <Form.Check type="checkbox" />
+    </Form.Group>
+  </div>
+  </div>
+
+  <div className='Conteiner02'>
+  <div className='Cuadrito1'>
+    <h5 className='Text1'>Problemas con el office</h5>
+    <Form.Group className="mb-3">
+      <Form.Check type="checkbox" />
+    </Form.Group>
+  </div>
+  <div className='Cuadrito1'>
+    <h5 className='Text1'>Problemas con el office</h5>
+    <Form.Group className="mb-3">
+      <Form.Check type="checkbox" />
+    </Form.Group>
+  </div>
+  <div className='Cuadrito1'>
+    <h5 className='Text1'>Problemas con el office</h5>
+    <Form.Group className="mb-3">
+      <Form.Check type="checkbox" />
+    </Form.Group>
+  </div>
+  </div>
+
+
+  <div className='Conteiner03'>
+  <div className='Cuadrito1'>
+    <h5 className='Text1'>Problemas con el office</h5>
+    <Form.Group className="mb-3">
+      <Form.Check type="checkbox" />
+    </Form.Group>
+  </div>
+  <div className='Cuadrito1'>
+    <h5 className='Text1'>Problemas con el office</h5>
+    <Form.Group className="mb-3">
+      <Form.Check type="checkbox" />
+    </Form.Group>
+  </div>
+  <div className='Cuadrito1'>
+    <h5 className='Text1'>Problemas con el office</h5>
+    <Form.Group className="mb-3">
+      <Form.Check type="checkbox" />
+    </Form.Group>
+  </div>
+  </div>
+  
+  <InputGroup className='Text2'>
+          <Form.Control className='Text3'
+            placeholder="Observaciones(Opcional)"
+          />
+        </InputGroup>
+        <Button className="botoon"><h6>Confirmar reporte</h6></Button>
+</Modal.Body>
     </Modal>
   );
 }
@@ -57,6 +122,7 @@ function Datos_equipos() {
             </div>
             <span className="brand-text">
               Detalles del equipo (Accesorios, números de serie)
+              <i class="bi bi-tools"></i>
             </span>
             <div className="right-elements">
               <Button className="Reportar" variant="outline-primary" size="sm" onClick={() => setModalShow(true)}>
@@ -76,3 +142,5 @@ function Datos_equipos() {
 }
 
 export default Datos_equipos;
+
+
