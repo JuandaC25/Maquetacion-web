@@ -12,13 +12,16 @@ function Tecnico() {
       <div id="new_cont1">  
         
     <Navbar expand="xxxl" className={'new_colo ${"bg-body-tertiary"}'}>
+
     <Container>
-        <Navbar.Toggle id="menu" aria-controls="basic-navbar-nav" />
+        <Navbar.Toggle id="menu"/>
+
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-       
-           
+
+          <Nav >
+
             <div>
+
               <div id="desplegable1">
               <NavDropdown.Item href="#action/3.1">Menu</NavDropdown.Item>
               </div>
@@ -38,7 +41,7 @@ function Tecnico() {
         </Navbar.Collapse>
       </Container>
     </Navbar>
-      <Navbar  d >
+      <Navbar  >
           <h1  id="solicitud10">Solicitudes de equipos</h1>
          
             <Nav.Link href="http://localhost:5173/Login" className='header101'>Home</Nav.Link>
