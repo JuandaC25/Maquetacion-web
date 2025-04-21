@@ -9,7 +9,7 @@ function Tecnico() {
     return(
         <>
     
-      <div id="new_cont">  
+      <div id="new_cont1">  
         
     <Navbar expand="xxxl" className={'new_colo ${"bg-body-tertiary"}'}>
     <Container>
@@ -38,15 +38,18 @@ function Tecnico() {
         </Navbar.Collapse>
       </Container>
     </Navbar>
-      <Navbar data-bs-theme="dark" >
-          <Navbar.Brand  id="solicitud">Solicitudes de equipos</Navbar.Brand>
-          <Nav className="me-auto" id="Nav1">
-            <Nav.Link href="http://localhost:5173/Login">Home</Nav.Link>
-            <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
-          </Nav>
+      <Navbar  d >
+          <h1  id="solicitud10">Solicitudes de equipos</h1>
+         
+            <Nav.Link href="http://localhost:5173/Login" className='header101'>Home</Nav.Link>
+            <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/" className='header10'>Blog CEET</Nav.Link>
+             <Nav.Link href="#perfil" className='header102'>
+                        <i className="bi bi-person-circle" style={{ fontSize: '1.5rem', color: 'white' }}></i>
+            </Nav.Link>
+         
       </Navbar>
       </div>
-      <div id="conainer_blanco">
+      <div id="container_blanco">
 
       <ListGroup >
       <ListGroup.Item id="Conte">

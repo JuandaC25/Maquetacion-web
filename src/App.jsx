@@ -19,7 +19,11 @@ import './components/App.css';
 import Form_port from './components/Home/Formulario.jsx';
 import Pedidos_escritorio from './components/Home/Pedidos_escritorio/Pedidos_escritorio.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+import Header from './components/header/header.jsx';
+
 import Información_equipos from './components/Home/Informacion_equipos/Informacion_equipos.jsx';
+
 
 function App() {
   return (
@@ -42,7 +46,11 @@ function App() {
         <Route path='/Sexta' element={<Sexta />} />
         <Route path='/Septima' element={<Septima />} />
         <Route path="/Pedidoescritorio" element={<Pedidos_escritorio />} />
+
+        <Route path="/Header" element={<Header/>}/>
+
         <Route path="/Informacion_equipos" element={<Información_equipos/>} />
+
       </Routes>
     </BrowserRouter>
   );
