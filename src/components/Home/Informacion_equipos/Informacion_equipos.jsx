@@ -15,7 +15,7 @@ function Información_equipos() {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
           <div id="desplegable1">
-            <NavDropdown.Item href="#action/3.1">Menu</NavDropdown.Item>
+            <NavDropdown.Item href="#action/3.1">Menú</NavDropdown.Item>
           </div>
           <div id="desplegable2">
             <NavDropdown.Item href="/Usuario">Solicitar equipos</NavDropdown.Item>
