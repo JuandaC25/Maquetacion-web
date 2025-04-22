@@ -3,6 +3,7 @@ import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Pagination from 'react-bootstrap/Pagination';
 import './Soli_port.css';
+import Footer from '../Footer/Footer';
 const ConsultaItem = () => {
 
   return (
@@ -14,7 +15,7 @@ const ConsultaItem = () => {
         </div>
       </div>
       <div className="derecha1">
-        <button href='/Form_port' className="ver-boton">Ver</button>
+        <button href='/Formulario' className="ver-boton">Ver</button>
       </div>
     </div>
   );
@@ -61,6 +62,7 @@ function Soli_Port() {
       </div>
       </div>
       <ListaConsultas />
+      <Footer/>
     </div>
   );
 }

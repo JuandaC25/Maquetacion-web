@@ -1,6 +1,7 @@
 import './Pedidos_escritorio.css';
 import Button from 'react-bootstrap/Button';
 import Datos_escritorio from './Datos_escritorio'
+import Footer from '../../Footer/Footer';
 
 function Pedidos_escritorio() {
   return (
@@ -16,6 +17,7 @@ function Pedidos_escritorio() {
   </div>
 </div>
 <Datos_escritorio/>
+<Footer/>
   </>
   );
 }

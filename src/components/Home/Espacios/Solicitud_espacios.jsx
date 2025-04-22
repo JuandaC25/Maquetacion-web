@@ -2,7 +2,7 @@ import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import { Container, Row, Col } from 'react-bootstrap';
 import Datos_pedido from './Datos_pedido';
 import "./Solicitud_espacios.css";
-
+import Footer from '../../Footer/Footer';
 
 function Soliespacios() {
   return (
@@ -21,6 +21,7 @@ function Soliespacios() {
         </Row>
       </div>
       <Datos_pedido />
+      <Footer/>
     </div>
   );
 }
