@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import { FaUserCircle } from 'react-icons/fa';
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react';
+import Footer from "../../Footer/Footer";
 
 
 function Solitelevisores() {
@@ -57,8 +58,6 @@ function Solitelevisores() {
         </div>
       </div>
 
-
-
       <div 
         style={{ 
           display: 'flex', 
@@ -104,6 +103,7 @@ function Solitelevisores() {
           </Modal.Title>
         </Modal.Header>
       </Modal>
+      <Footer/>
     </>
   );
 }
