@@ -4,11 +4,9 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import './informacion_equipos.css';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
+
+
 
 function MyVerticallyCenteredModal(props) {
   return (
