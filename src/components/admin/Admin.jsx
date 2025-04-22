@@ -53,35 +53,9 @@ const Listaxd = () => {
 
 function Admin() {
   return (
-    <div className="Admin-container">
-      <div className="icon-container">
-        <FaBars />
-      </div>
-      <h1 className="ticket-title">ESTADO DEL TICKET</h1>
-      <div className="custom-buttons-container">
-        <Button variant="custom-1">Home</Button>
-        <Button variant="custom-2">Blog CEET</Button>
-        <div className='custom-3-container'>
-          <span></span>
-          <FaUserCircle />
-        </div>
-      </div>
-      <Alert variant="success">
-        TICKET
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Elemento 
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu>
-            <Dropdown.Item href="#/action-1">portatiles</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">equipos de escritorio</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">televisores</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </Alert>
+    <div>
       <Listaxd />
-    <Footer/>
+    <Footer></Footer>
     </div>
   );
 }
