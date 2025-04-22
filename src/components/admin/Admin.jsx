@@ -3,6 +3,8 @@ import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Dropdown from 'react-bootstrap/Dropdown';
 import "./estilos_admin.css";
+import Footer from '../Footer/Footer';
+
 
 const Ticketxd = ({ estado, ticket }) => {
   return (
@@ -79,6 +81,7 @@ function Admin() {
         </Dropdown>
       </Alert>
       <Listaxd />
+    <Footer/>
     </div>
   );
 }

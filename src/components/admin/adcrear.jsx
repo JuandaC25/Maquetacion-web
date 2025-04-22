@@ -3,6 +3,7 @@ import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Dropdown from 'react-bootstrap/Dropdown';
 import "./estilos_admin.css";
+import Header_tec from './header_admin/header_ad.jsx';
 
 
 const ConsultaItem = () => {
