@@ -36,7 +36,7 @@ function Pie() {
     
     </Stack>
     <div>
-    <Button variant="primary" id='button' href='/Tercera'>finalizado</Button>
+    <Button variant="primary" id='button102' href='/Tercera'>finalizado</Button>
     </div>
   
     <Footer/>

@@ -40,7 +40,7 @@ function Quinta() {
        
       
       </Stack>
-      <Button variant="primary" id='button' href='/Sexta'>Reportar</Button>
+      <Button variant="primary" id='button101' href='/Sexta'>Reportar</Button>
       <Footer></Footer>
         </>
     )

@@ -13,8 +13,8 @@ function Septima() {
                 <h2>¿Estas seguro de que quieres cerrar ticket?</h2>
                </div>
                <div id="dueño1">
-               <Button variant="primary" id="cosos" href='Cuarta'>Aceptar</Button>
-               <Button variant="primary" id="cosos" href='/Sexta'>Cancelar</Button>
+               <Button variant="primary" id="cosos101" href='Cuarta'>Aceptar</Button>
+               <Button variant="primary" id="cosos101" href='/Sexta'>Cancelar</Button>
                </div>
                </div>
                <Footer></Footer> 

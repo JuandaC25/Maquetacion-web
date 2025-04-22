@@ -10,7 +10,7 @@ function Cuarta() {
         <>
     
     <Header_tec></Header_tec>
-        <div id="conainer_blanco">
+        <div id="container_blanco">
   
         <ListGroup >
         <ListGroup.Item id="Conte1">

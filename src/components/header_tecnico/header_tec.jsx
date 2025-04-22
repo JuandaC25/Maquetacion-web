@@ -2,6 +2,7 @@ import React from 'react';
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './header_tec.css';
+import Desplegable from '../desplegable/desplegable';
 
 
 function Header_tec() {
@@ -43,9 +44,7 @@ function Header_tec() {
           
             <Nav.Link href="http://localhost:5173/Login" className='header1008'>Home</Nav.Link>
             <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/" className='header1009'>Blog CEET</Nav.Link>
-            <Nav.Link href="#perfil" className='header1010'>
-              <i className="bi bi-person-circle" style={{ fontSize: '2rem', color: 'white' }}></i>
-            </Nav.Link>
+        <Desplegable></Desplegable>
         
         </Container>
       </Navbar>
