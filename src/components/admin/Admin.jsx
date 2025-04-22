@@ -1,10 +1,8 @@
 import React from 'react';
-import { Button, Alert } from 'react-bootstrap';
+import { Button, Alert, Dropdown } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
-import Dropdown from 'react-bootstrap/Dropdown';
 import "./estilos_admin.css";
 import Footer from '../Footer/Footer';
-
 
 const Ticketxd = ({ estado, ticket }) => {
   return (
@@ -43,7 +41,22 @@ const Listaxd = () => {
   ];
 
   return (
-    <div name="lista-tickets">
+    <div className="lista-tickets">
+      <Alert variant="success">
+        <strong>TICKET</strong>
+        <Dropdown>
+          <Dropdown.Toggle variant="success" id="dropdown-basic">
+            Elemento
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item href="#/action-1">Portátiles</Dropdown.Item>
+            <Dropdown.Item href="#/action-2">Equipos de escritorio</Dropdown.Item>
+            <Dropdown.Item href="#/action-3">Televisores</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      </Alert>
+
       {tickets.map((t, i) => (
         <Ticketxd key={i} estado={t.estado} ticket={t.ticket} />
       ))}
@@ -51,13 +64,13 @@ const Listaxd = () => {
   );
 };
 
-function Admin() {
+const Admin = () => {
   return (
     <div>
       <Listaxd />
-    <Footer></Footer>
+      <Footer />
     </div>
   );
-}
+};
 
 export default Admin;
