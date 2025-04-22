@@ -3,6 +3,7 @@ import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Dropdown from 'react-bootstrap/Dropdown';
 import './estilos_admin.css';
+import Header_ad from '../admin/header_admin/header_ad';
 
 
 const ConsultaItem = () => {
@@ -57,6 +58,7 @@ function inventario() {
         <Button className="añadir-boton">Añadir</Button>
       </Alert>
       <ListaConsultas />
+      <Header_ad/>
     </div>
   );
 }

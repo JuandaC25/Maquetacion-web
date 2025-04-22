@@ -1,44 +1,43 @@
-/* Estilos para el contenedor principal de la página */
+
 .admin-container1 {
     display: flex;
-    flex-direction: column; /* Organiza los elementos verticalmente */
-    background-color: #f8f9fa; /* Un fondo gris claro */
-    min-height: 100vh; /* Asegura que el contenedor ocupe al menos la altura de la pantalla */
+    flex-direction: column; 
+    background-color: #f8f9fa; 
+    min-height: 100vh;
   }
   
-  /* Estilos para la barra superior (header) */
+
   .general2 {
-    background-color: #00b000; /* Fondo verde */
+    background-color: #00b000; 
     color: white;
     padding: 10px 20px;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Espacio entre el icono y el título, y los botones */
+    justify-content: space-between;
   }
   
-  /* Estilos para el icono de menú */
   .icon-container3 {
     font-size: 24px;
   }
   
-  .icon-container3 svg { /* Estilo para el icono FaBars */
+  .icon-container3 svg { 
     color: white;
   }
   
-  /* Estilos para el título */
+
   #h1raro {
-    margin: 0 auto; /* Centra el título horizontalmente */
+    margin: 0 auto;
     font-size: 24px;
   }
   
-  /* Estilos para el contenedor de los botones */
+
   .custom-buttons-container1 {
     display: flex;
     align-items: center;
     gap: 10px;
   }
   
-  /* Estilos para los botones */
+
   .custom-buttons-container1 .btn {
     background-color: transparent;
     color: white;
@@ -53,21 +52,20 @@
     background-color: rgba(255, 255, 255, 0.2);
   }
   
-  /* Estilos para el icono de usuario */
   .custom-buttons-container1 .custom-3-container3 {
     font-size: 24px;
   }
   
-  .custom-buttons-container1 .custom-3-container3 svg { /* Estilo para el icono FaUserCircle */
+  .custom-buttons-container1 .custom-3-container3 svg { 
     color: white;
   }
   
-  /* Estilos para la lista de consultas */
+
   [name="lista-inventario1"] {
     padding: 20px;
   }
   
-  /* Estilos para cada item de la consulta */
+
   .ticket-item2 {
     display: flex;
     justify-content: space-between;
@@ -96,7 +94,7 @@
   }
   
   .ticket-item2 .derecha1 .ver-boton {
-    background-color: #007bff; /* Azul */
+    background-color: #007bff;
     color: white;
     border: none;
     padding: 8px 15px;
@@ -109,8 +107,7 @@
   .ticket-item2 .derecha1 .ver-boton:hover {
     background-color: #0056b3;
   }
-  
-  /* Estilos para el pie de página con la paginación */
+
   #piepor {
     display: flex;
     justify-content: center;
@@ -118,7 +115,7 @@
   }
   
   .pagination {
-    justify-content: center; /* Centra los elementos de la paginación */
+    justify-content: center;
   }
   
   .pagination .page-item .page-link {
@@ -131,8 +128,7 @@
     border-color: #007bff;
     color: white;
   }
-  
-  /* Estilos para el botón "Confirmar solicitud" */
+
   .confirmar-solicitud-container {
     display: flex;
     justify-content: center;
@@ -140,7 +136,7 @@
   }
   
   .confirmar-solicitud-boton {
-    background-color: #28a745; /* Verde */
+    background-color: #28a745;
     color: white;
     border: none;
     padding: 10px 20px;
