@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Dropdown from 'react-bootstrap/Dropdown';
+import "./estilos_admin.css";
 
 
 const ConsultaItem = () => {
@@ -18,7 +19,6 @@ const ConsultaItem = () => {
     </div>
   );
 };
-
 const ListaConsultas = () => {
   const elementos = new Array(7).fill(null); 
   return (
@@ -29,7 +29,6 @@ const ListaConsultas = () => {
     </div>
   );
 };
-
 function adcrear() {
   return (
     <div className="admin-container">
@@ -44,7 +43,6 @@ function adcrear() {
           <FaUserCircle />
         </div>
       </div>
-
       <Alert variant="success" className="d-flex justify-content-between align-items-center">
         <Dropdown>
           <Dropdown.Toggle variant="success" id="dropdown-basic">
@@ -62,5 +60,4 @@ function adcrear() {
     </div>
   );
 }
-
 export default adcrear;
