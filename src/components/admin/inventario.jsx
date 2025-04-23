@@ -1,7 +1,9 @@
 import React from 'react';
-import { Button, Alert } from 'react-bootstrap';
+import { Button, Alert, Dropdown } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
-import Dropdown from 'react-bootstrap/Dropdown';
+import "./estilos_admin.css";
+import Footer from '../Footer/Footer';
+import Header_Inv from "./header_inv/header_inv.jsx"
 
 const ConsultaItem = () => {
   return (
@@ -31,19 +33,10 @@ const ListaConsultas = () => {
   );
 };
 
-function inventario() {
+const Admin = () => {
   return (
-    <div className="admin-container">
-      <div className="icon-container">
-        <FaBars />
-      </div>
-      <h1 className="ticket-title">ESTADO DEL TICKET</h1>
-      <div className="custom-buttons-container">
-        <Button variant="custom-1">Home</Button>
-        <Button variant="custom-2">Blog CEET</Button>
-          <FaUserCircle />
-      </div>
-
+    <div>
+      <Header_Inv/>
       <Alert variant="success" className="d-flex justify-content-between align-items-center">
         <Dropdown>
           <Dropdown.Toggle variant="success" id="dropdown-basic">
@@ -58,8 +51,9 @@ function inventario() {
         <Button className="añadir-boton">Añadir</Button>
       </Alert>
       <ListaConsultas />
+      <Footer />
     </div>
   );
-}
+};
 
-export default inventario;
+export default Admin;

@@ -1,0 +1,138 @@
+.alert {
+    background-color: #ffffff;
+    text-align: start;
+}
+
+.custom-dropdown-button {
+    background-color: #15ff00;
+}
+
+.ticket-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    padding: 10px 15px;
+    margin-bottom: 12px;
+    color: black;
+}
+
+.izquierda,
+.derecha {
+    display: flex;
+    align-items: center;
+}
+
+.izquierda {
+    gap: 10px;
+}
+
+.derecha {
+    gap: 10px;
+}
+
+.icono,
+.folder {
+    font-size: 35px;
+}
+
+.estado span,
+.ticket span {
+    background-color: #ccc;
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-weight: 600;
+    color: black;
+}
+
+.ver-boton {
+    background-color: white;
+    border: 1px solid #000;
+    padding: 5px 12px;
+    border-radius: 6px;
+}
+
+.ver-boton:hover {
+    background-color: #f0f0f0;
+}
+
+.formulario-container {
+    background-color: #f8f9fa;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+    max-width: 700px; 
+    min-width: 400px; 
+    margin: 30px auto; 
+}
+
+.custom-modal .modal-dialog {
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    min-height: 100vh;
+    max-width: 700px;
+    margin: auto;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; 
+    padding: 20px;
+    width: 100%;
+}
+
+.modal-body label {
+    font-weight: 600;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.modal-body input,
+.modal-body select,
+.modal-body textarea {
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+}

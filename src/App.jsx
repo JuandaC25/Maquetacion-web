@@ -2,9 +2,9 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './components/Login';
 import Home from './components/Home/Pedidos/Home.jsx';
-import Admin from './components/admin/ad_equipos/Admin.jsx';
-import Inventario from './components/admin/ad_inventario/inventario.jsx';
-import AdCrear from './components/admin/ad_crear/adcrear.jsx'; 
+import Admin from './components/admin/Admin';
+import Inventario from './components/admin/inventario.jsx';
+import AdCrear from './components/admin/adcrear.jsx'; 
 import Tecnico from './components/Tecnico/Tecnico.jsx';
 import Pie from './components/Tecnico/Pie.jsx';
 import Tercera from './components/Tecnico/tercera.jsx';
@@ -21,6 +21,7 @@ import Pedidos_escritorio from './components/Home/Pedidos_escritorio/Pedidos_esc
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Información_equipos from './components/Home/Informacion_equipos/Informacion_equipos.jsx';
 import Desplegable from './components/desplegable/desplegable.jsx';
+
 function App() {
   return (
     <BrowserRouter>
@@ -42,8 +43,8 @@ function App() {
         <Route path='/Sexta' element={<Sexta />} />
         <Route path='/Septima' element={<Septima />} />
         <Route path="/Pedidoescritorio" element={<Pedidos_escritorio />} />
-        <Route path="/Informacion_equipos" element={<Información_equipos/>} />
         <Route path='/Desplegable' element={<Desplegable />} />
+        <Route path='/Informacion_equiposs' element={<Información_equipos />} />
       </Routes>
     </BrowserRouter>
   );

@@ -105,7 +105,7 @@
     border-radius: 20px; 
     display: inline-block; 
     padding: 0.5rem 2rem;
-    margin-left: 7.5rem; 
+ 
     width: calc(100% - 15rem);
   }
   
@@ -121,6 +121,17 @@
     text-align: center;
     flex: 0%;
   }
+  .right-elements {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre ícono y botón */
+  }
+  
+  .herramientas-icono {
+    font-size: 1.2rem;
+    color: #000000; /* o el color que uses */
+  }
+  
 
   .Reportar {
     background-color: #8B9490;
@@ -136,7 +147,10 @@
   .Titul1{
     text-align: center;
   }
-
+.Header1{
+  background-color: rgb(9, 180, 26) ; 
+  color: white;
+}
 .Cuerpovent{
   height: 400px;
   width: 100%;
@@ -209,8 +223,14 @@
   background-color:rgb(9, 180, 26);
   outline: none;
 }
-
-
-
+.Ajustpagina{
+margin-top: 1.6rem;
+}
+.Ajustfooter{
+margin-top: 1rem;
+}
+.Blanco{
+padding-left: 20rem;
+}
 
   

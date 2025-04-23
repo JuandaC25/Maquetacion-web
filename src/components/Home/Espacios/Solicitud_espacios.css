@@ -60,10 +60,14 @@
   
   .boton-personalizado {
     background-color: #00b000;
+  }
 
   
   .boton-personalizado {
     background-color: #15ff00;
     color: black;
     border-radius: 8px;
+  }
+  .Ajustfot{
+    margin-top: 2.5rem;
   }
