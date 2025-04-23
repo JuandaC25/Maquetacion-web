@@ -6,25 +6,13 @@ import { FaUserCircle } from 'react-icons/fa';
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react';
 import Footer from "../../Footer/Footer";
-
+import Headertele from "./Header tele/Header";
 
 function Solitelevisores() {
   const [smShow, setSmShow] = useState(false);
   return (
     <>
-      <div className="admin-container">
-        <div className="icon-container">
-        </div>
-        <h1>Solicitar televisores</h1>
-
-        <div className="custom-buttons-container">
-          <Button variant="custom-1">Home</Button>
-          <Button variant="custom-2">Blog CEET</Button>
-          <div className="custom-3-container">
-            <FaUserCircle />
-          </div>
-        </div>
-      </div>
+    <Headertele/>
       <div className="Cuadros">
         <div className="fila-superior">
           <Card className="cuadro">
@@ -103,7 +91,9 @@ function Solitelevisores() {
           </Modal.Title>
         </Modal.Header>
       </Modal>
+      <div className="Ajustt">
       <Footer/>
+      </div>
     </>
   );
 }
