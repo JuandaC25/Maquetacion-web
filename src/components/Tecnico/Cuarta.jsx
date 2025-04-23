@@ -2,14 +2,14 @@ import './stile_tec.css'
 import React from "react";
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Nav} from "react-bootstrap";
-import Header_tec from '../header_tecnico/header_tec';
 import Footer from '../Footer/Footer';
+import Header_tickets from '../header_tecnico/header_ticket';
 function Cuarta() {
     
     return(
         <>
     
-    <Header_tec></Header_tec>
+   <Header_tickets></Header_tickets>
         <div id="container_blanco">
   
         <ListGroup >

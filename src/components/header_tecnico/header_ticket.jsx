@@ -5,7 +5,7 @@ import './header_tec.css';
 import Desplegable from '../desplegable/desplegable';
 
 
-function Header_tec() {
+function Header_tickets() {
   return (
     <div className='header1001'> 
 
@@ -40,7 +40,7 @@ function Header_tec() {
 
       <Navbar>
         <Container>
-          <h1 className='header1007'>Solicitudes de equipos</h1>
+          <h1 className='header1007'>Tickets</h1>
           
             <Nav.Link href='/tecnico' className='header1008'>Home</Nav.Link>
             <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/" className='header1009'>Blog CEET</Nav.Link>
@@ -52,4 +52,4 @@ function Header_tec() {
   );
 }
 
-export default Header_tec;
+export default Header_tickets;
