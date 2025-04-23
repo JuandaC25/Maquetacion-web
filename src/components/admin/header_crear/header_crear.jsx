@@ -1,36 +1,36 @@
 import React from 'react';
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import './header_ad.css';
+import './header_crear.css';
 import Desplegable from '../../desplegable/desplegable';
 
 
-function header_ad() {
+function header_crear() {
   return (
-    <div className='header1001'> 
+    <div className='header90001'> 
 
-      <Navbar expand="xxxl" className='header6002'>
+      <Navbar expand="xxxl" className='header90002'>
         <Container>
-          <Navbar.Toggle className='header6003' />
-          <Navbar.Collapse className='header6004'>
+          <Navbar.Toggle className='header90003' />
+          <Navbar.Collapse className='header90004'>
             <Nav>
 
             <div>
               
-              <div className='header6005'>
+              <div className='header90005'>
               <NavDropdown.Item href="#action/3.1">Menu</NavDropdown.Item>
               </div>
-              <div  className='header6006'>
+              <div  className='header90006'>
               <NavDropdown.Item href='/Admin' >
                 Estado del ticket
               </NavDropdown.Item >
               </div>
-              <div  className='header6006'>
+              <div  className='header90006'>
               <NavDropdown.Item href='/Adcrear' >
                 Gestionar usuarios
               </NavDropdown.Item >
               </div>
-              <div className='header6006'>
+              <div className='header90006'>
               <NavDropdown.Item href="/Inventario">
                 Consultar inventario
               </NavDropdown.Item>
@@ -45,10 +45,10 @@ function header_ad() {
 
       <Navbar>
         <Container>
-          <h1 className='header6007'>Solicitudes de equipos</h1>
+          <h1 className='header90007'>Gestionar usuarios</h1>
           
-            <Nav.Link href="http://localhost:5173/Login" className='header6008'>Home</Nav.Link>
-            <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/" className='header6009'>Blog CEET</Nav.Link>
+            <Nav.Link href="http://localhost:5173/Login" className='header90008'>Home</Nav.Link>
+            <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/" className='header90009'>Blog CEET</Nav.Link>
         <Desplegable></Desplegable>
         
         </Container>
@@ -57,4 +57,4 @@ function header_ad() {
   );
 }
 
-export default header_ad;
+export default header_crear;
