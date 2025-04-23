@@ -1,48 +1,36 @@
 import './informacion_equipos.css';
-import Navbar from 'react-bootstrap/Navbar';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import Datos_equipos from './Datos_equipos';
+import Headerpedidosescritorio from './Header/Header';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Paginas from './Paginas';
+import Footer from '../../Footer/Footer';
 
 function Información_equipos() {
   return (
     <>
-  <div id="new_cont">
-  <Navbar expand="xxxl" className="new_colo">
-    <Container>
-      <Navbar.Toggle id="menu" aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="me-auto">
-          <div id="desplegable1">
-            <NavDropdown.Item href="#action/3.1">Menu</NavDropdown.Item>
-          </div>
-          <div id="desplegable2">
-            <NavDropdown.Item href="/Usuario">Solicitar equipos</NavDropdown.Item>
-          </div>
-          <div id="desplegable3">
-            <NavDropdown.Item href="//Informacion_equipos">Información de equipos</NavDropdown.Item>
-          </div>
-          <div id="desplegable4">
-            <NavDropdown.Item href="/espacios">Solicitar espacios</NavDropdown.Item>
-          </div>
-          <NavDropdown.Divider />
-        </Nav>
-      </Navbar.Collapse>
-    </Container>
-  </Navbar>
-
-  <Navbar data-bs-theme="dark">
-    <Navbar.Brand id="solicitud">Solicitar equipos</Navbar.Brand>
-    <Nav className="me-auto" id="Nav1">
-      <Nav.Link href="http://localhost:5173/Login">Home</Nav.Link>
-      <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
-    </Nav>
-  </Navbar>
-    </div>
-    <Datos_equipos/>
+    <Headerpedidosescritorio />
+      <div className="inventario-header">
+        <h1 className="Nom_inventario">Inventario</h1>
+        <DropdownButton id="dropdown-basic-button" title="Portátiles" className="selector-inventario">
+          <Dropdown.Item>Equipos de escritorio</Dropdown.Item>
+          <Dropdown.Item>Televisores</Dropdown.Item>
+        </DropdownButton>
+      </div>
+      <Datos_equipos />
+      <Datos_equipos />
+      <Datos_equipos />
+      <Datos_equipos />
+      <Datos_equipos />
+<div className='Ajustpagina'>
+      <Paginas/>
+</div>
+<div className='Ajustfooter'>
+      <Footer/>
+</div>
     </>
   );
 }
 
-export default  Información_equipos;
+export default Información_equipos;
+
