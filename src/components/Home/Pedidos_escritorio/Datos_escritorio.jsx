@@ -44,7 +44,7 @@ function Datos_escritorio() {
         style={{ 
           display: 'flex', 
           justifyContent: 'center', 
-          marginTop: '100px' 
+          marginTop: '60px' 
         }}
       >
         <Button 
