@@ -4,6 +4,8 @@ import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Pagination from 'react-bootstrap/Pagination';
 import './Soli_port.css';
 import Footer from '../Footer/Footer';
+import Header_port from './Pedidos_port/Header_port/Header_port.jsx';
+import './Pedidos_port/Header_port/Header_port.css';
 const ConsultaItem = () => {
 
   return (
@@ -15,7 +17,7 @@ const ConsultaItem = () => {
         </div>
       </div>
       <div className="derecha1">
-        <button href='/Formulario' className="ver-boton">Ver</button>
+        <button href='/Formulario' className="Buton_Fomr">Ver</button>
       </div>
     </div>
   );
@@ -46,20 +48,9 @@ const ListaConsultas = () => {
 
 function Soli_Port() {
   return (
-    <div className="admin-container1">
+    <div className="Usu-container1">
       <div className='general2'>
-      <div className="icon-container3">
-        <FaBars />
-      </div>
-      <h1 id="h1">Solicitar portatiles</h1>
-
-      <div className="custom-buttons-container1">
-        <Button variant="custom-1">Home</Button>
-        <Button variant="custom-2">Blog CEET</Button>
-        <div className="custom-3-container3">
-          <FaUserCircle />
-        </div>
-      </div>
+        <Header_port/>
       </div>
       <ListaConsultas />
       <Footer/>

@@ -1,12 +1,11 @@
-
 .admin-container1 {
     display: flex;
     flex-direction: column; 
     background-color: #f8f9fa; 
+    min-height: 100vh; 
+  }
     min-height: 100vh;
   }
-  
-
   .general2 {
     background-color: #00b000; 
     color: white;
@@ -15,11 +14,18 @@
     align-items: center;
     justify-content: space-between;
   }
-  
   .icon-container3 {
     font-size: 24px;
   }
-  
+
+  .icon-container3 svg {
+    color: white;
+  }
+  #h1raro {
+    margin: 0 auto; 
+    font-size: 24px;
+  }
+
   .icon-container3 svg { 
     color: white;
   }
@@ -29,14 +35,12 @@
     margin: 0 auto;
     font-size: 24px;
   }
-  
 
   .custom-buttons-container1 {
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  
 
   .custom-buttons-container1 .btn {
     background-color: transparent;
@@ -47,25 +51,21 @@
     font-size: 14px;
     border-radius: 5px;
   }
-  
   .custom-buttons-container1 .btn:hover {
     background-color: rgba(255, 255, 255, 0.2);
   }
-  
   .custom-buttons-container1 .custom-3-container3 {
     font-size: 24px;
   }
-  
+  .custom-buttons-container1 .custom-3-container3 svg {
+    color: white;
+  }
   .custom-buttons-container1 .custom-3-container3 svg { 
     color: white;
   }
-  
-
   [name="lista-inventario1"] {
     padding: 20px;
   }
-  
-
   .ticket-item2 {
     display: flex;
     justify-content: space-between;
@@ -76,13 +76,11 @@
     background-color: white;
     border-radius: 5px;
   }
-  
   .ticket-item2 .izquierda2 {
     display: flex;
     align-items: center;
     gap: 15px;
   }
-  
   .ticket-item2 .icono {
     font-size: 2em;
     color: #555;
@@ -106,7 +104,7 @@
   
   .ticket-item2 .derecha1 .ver-boton:hover {
     background-color: #0056b3;
-  }
+}
 
   #piepor {
     display: flex;
@@ -128,7 +126,6 @@
     border-color: #007bff;
     color: white;
   }
-
   .confirmar-solicitud-container {
     display: flex;
     justify-content: center;
@@ -136,6 +133,7 @@
   }
   
   .confirmar-solicitud-boton {
+    background-color: #28a745; 
     background-color: #28a745;
     color: white;
     border: none;
