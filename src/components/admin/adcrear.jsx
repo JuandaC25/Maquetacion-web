@@ -1,64 +1,158 @@
-import React from 'react';
-import { Button, Alert } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Button, Alert, Modal, Form } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
-import Dropdown from 'react-bootstrap/Dropdown';
 import "./estilos_admin.css";
-import Header_tec from './header_admin/header_ad.jsx';
+import Footer from '../Footer/Footer';
+import HeaderCrear from "./header_crear/header_crear.jsx";
 
-
-const ConsultaItem = () => {
+const Ticketxd = ({ estado, ticket }) => {
   return (
     <div className="ticket-item">
       <div className="izquierda">
+        <div className="icono">
+          <span role="img" aria-label="computadora">🖥️</span>
+        </div>
         <div className="estado">
-          <span>Nombre,Correo,C.C.</span>
+          <span>{estado}</span>
         </div>
       </div>
       <div className="derecha">
+        <div className="ticket">
+          <span>{ticket}</span>
+        </div>
+        <div className="folder">
+          <span role="img" aria-label="folder">📁</span>
+        </div>
         <button className="ver-boton">Ver</button>
       </div>
     </div>
   );
 };
-const ListaConsultas = () => {
-  const elementos = new Array(7).fill(null); 
+
+const Listaxd = () => {
+  const tickets = [
+    { estado: 'En proceso', ticket: 'Primer ticket' },
+    { estado: 'En proceso', ticket: 'Segundo ticket' },
+    { estado: 'Pendiente', ticket: 'Tercer ticket' },
+    { estado: 'Pendiente', ticket: 'Primer ticket' },
+    { estado: 'En proceso', ticket: 'Primer ticket' },
+    { estado: 'Pendiente', ticket: 'Segundo ticket' },
+    { estado: 'Pendiente', ticket: 'Primer ticket' },
+    { estado: 'En proceso', ticket: 'Segundo ticket' },
+  ];
+
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    id: '',
+    correo: '',
+    nombre: '',
+    apellido: ''
+  });
+
+  const handleShow = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = () => {
+    console.log('Usuario añadido:', formData);
+    handleClose();
+  };
+
   return (
-    <div name="lista-crear">
-      {elementos.map((_, i) => (
-        <ConsultaItem key={i} />
+    <div className="lista-tickets">
+      <Alert variant="success" className="d-flex justify-content-between align-items-center">
+        <strong>TICKET</strong>
+        <Button className="añadir-boton" onClick={handleShow}>Añadir Usuario</Button>
+      </Alert>
+
+      {tickets.map((t, i) => (
+        <Ticketxd key={i} estado={t.estado} ticket={t.ticket} />
       ))}
+
+      <Modal
+        show={showModal}
+        onHide={handleClose}
+        className="custom-modal"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Añadir Usuario</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form className="formulario-container">
+            <Form.Group controlId="formIdUsuario">
+              <Form.Label>ID del usuario</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ingrese el ID"
+                name="id"
+                value={formData.id}
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formCorreoUsuario">
+              <Form.Label>Correo electrónico</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Ingrese el correo"
+                name="correo"
+                value={formData.correo}
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formNombreUsuario">
+              <Form.Label>Nombre</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ingrese el nombre"
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            
+            <Form.Group controlId="formApellidoUsuario">
+              <Form.Label>Apellido</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Ingrese el apellido"
+                name="apellido"
+                value={formData.apellido}
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            
+          </Form>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button variant="success" onClick={handleSubmit}>
+            Añadir Usuario
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
-function adcrear() {
+
+const Admin = () => {
   return (
-    <div className="admin-container">
-      <div className="icon-container">
-        <FaBars />
-      </div>
-      <h1 className="ticket-title">ESTADO DEL TICKET</h1>
-      <div className="custom-buttons-container">
-        <Button variant="custom-1">Home</Button>
-        <Button variant="custom-2">Blog CEET</Button>
-        <div className="custom-3-container">
-          <FaUserCircle />
-        </div>
-      </div>
-      <Alert variant="success" className="d-flex justify-content-between align-items-center">
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Usuarios
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item href="#/action-1">instructores</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">tecnico</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">administrador</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-        <Button className="añadir-boton">Añadir</Button>
-      </Alert>
-      <ListaConsultas />
+    <div>
+      <HeaderCrear/>
+      <Listaxd />
+      <Footer />
     </div>
   );
-}
-export default adcrear;
+};
+
+export default Admin;
