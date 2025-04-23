@@ -105,7 +105,7 @@
     border-radius: 20px; 
     display: inline-block; 
     padding: 0.5rem 2rem;
-    margin-left: 7.5rem; 
+ 
     width: calc(100% - 15rem);
   }
   
@@ -229,6 +229,8 @@ margin-top: 1.6rem;
 .Ajustfooter{
 margin-top: 1rem;
 }
-
+.Blanco{
+padding-left: 20rem;
+}
 
   
