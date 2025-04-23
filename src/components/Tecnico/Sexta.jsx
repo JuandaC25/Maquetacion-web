@@ -2,13 +2,13 @@ import './stile_tec.css'
 import React from "react";
 import Stack from 'react-bootstrap/Stack';
 import Button from 'react-bootstrap/Button'; 
-import Header_tec from '../header_tecnico/header_tec';
+import Header_tickets from '../header_tecnico/header_ticket';
 import Footer from '../Footer/Footer';
 function Sexta() {
     
     return(
         <>
-       <Header_tec></Header_tec>
+          <Header_tickets></Header_tickets>
         <Stack gap={3} id="centro1">
        
 

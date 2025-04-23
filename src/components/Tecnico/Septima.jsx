@@ -1,13 +1,13 @@
 import './stile_tec.css'
 import React from 'react';
 import Button from 'react-bootstrap/Button';
-import Header_tec from '../header_tecnico/header_tec';
+import Header_tickets from '../header_tecnico/header_ticket';
 import Footer from '../Footer/Footer';
  
 function Septima() {
   return (
     <>
-     <Header_tec></Header_tec>
+        <Header_tickets></Header_tickets>
                <div id="salida1">
                <div id="pregunta1">
                 <h2>¿Estas seguro de que quieres cerrar ticket?</h2>
