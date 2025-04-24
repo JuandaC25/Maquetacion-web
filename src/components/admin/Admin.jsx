@@ -1,11 +1,11 @@
-import React from 'react';
-import { Button, Alert, Dropdown } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Button, Alert, Dropdown, Modal, Form } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import "./estilos_admin.css";
 import Footer from '../Footer/Footer';
 import HeaderAd from './header_admin/header_ad.jsx';
 
-const Ticketxd = ({ estado, ticket }) => {
+const Ticketxd = ({ estado, ticket, onVerClick }) => {
   return (
     <div className="ticket-item">
       <div className="izquierda">
@@ -23,22 +23,22 @@ const Ticketxd = ({ estado, ticket }) => {
         <div className="folder">
           <span role="img" aria-label="folder">📁</span>
         </div>
-        <button className="ver-boton">Ver</button>
+        <button className="ver-boton" onClick={onVerClick}>Ver</button>
       </div>
     </div>
   );
 };
 
-const Listaxd = () => {
+const Listaxd = ({ onVerClick }) => {
   const tickets = [
-    { estado: 'En proceso', ticket: 'Primer ticket' },
-    { estado: 'En proceso', ticket: 'Segundo ticket' },
-    { estado: 'Pendiente', ticket: 'Tercer ticket' },
-    { estado: 'Pendiente', ticket: 'Primer ticket' },
-    { estado: 'En proceso', ticket: 'Primer ticket' },
-    { estado: 'Pendiente', ticket: 'Segundo ticket' },
-    { estado: 'Pendiente', ticket: 'Primer ticket' },
-    { estado: 'En proceso', ticket: 'Segundo ticket' },
+    { estado: 'En proceso', ticket: 'Primer ticket', detalles: { fecha: '2025-04-23', modelo: 'HP ProBook', serie: 'ABC123', tecnico: 'Juan Pérez', ambiente: 'Oficina 101', descripcion: 'El equipo presenta lentitud al iniciar.' } },
+    { estado: 'En proceso', ticket: 'Segundo ticket', detalles: { fecha: '2025-04-22', modelo: 'Dell Latitude', serie: 'DEF456', tecnico: 'María Gómez', ambiente: 'Laboratorio A', descripcion: 'La pantalla parpadea intermitentemente.' } },
+    { estado: 'Pendiente', ticket: 'Tercer ticket', detalles: { fecha: '2025-04-21', modelo: 'Lenovo ThinkPad', serie: 'GHI789', tecnico: 'Carlos López', ambiente: 'Recepción', descripcion: 'No se puede conectar a la red Wi-Fi.' } },
+    { estado: 'Pendiente', ticket: 'Primer ticket', detalles: { fecha: '2025-04-20', modelo: 'HP ProDesk', serie: 'JKL012', tecnico: 'Ana Rodríguez', ambiente: 'Sala de juntas', descripcion: 'El teclado no responde.' } },
+    { estado: 'En proceso', ticket: 'Primer ticket', detalles: { fecha: '2025-04-19', modelo: 'Dell OptiPlex', serie: 'MNO345', tecnico: 'Pedro Martínez', ambiente: 'Almacén', descripcion: 'Fallo en el disco duro.' } },
+    { estado: 'Pendiente', ticket: 'Segundo ticket', detalles: { fecha: '2025-04-18', modelo: 'Lenovo IdeaCentre', serie: 'PQR678', tecnico: 'Laura Sánchez', ambiente: 'Biblioteca', descripcion: 'El mouse no funciona correctamente.' } },
+    { estado: 'Pendiente', ticket: 'Primer ticket', detalles: { fecha: '2025-04-17', modelo: 'HP All-in-One', serie: 'STU901', tecnico: 'Sofía Ramírez', ambiente: 'Cafetería', descripcion: 'Problemas con el audio.' } },
+    { estado: 'En proceso', ticket: 'Segundo ticket', detalles: { fecha: '2025-04-16', modelo: 'Dell Inspiron', serie: 'VWX234', tecnico: 'Miguel Torres', ambiente: 'Aula Magna', descripcion: 'La impresora no imprime.' } },
   ];
 
   return (
@@ -59,17 +59,78 @@ const Listaxd = () => {
       </Alert>
 
       {tickets.map((t, i) => (
-        <Ticketxd key={i} estado={t.estado} ticket={t.ticket} />
+        <Ticketxd key={i} estado={t.estado} ticket={t.ticket} onVerClick={() => onVerClick(t.detalles)} />
       ))}
     </div>
   );
 };
 
 const Admin = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [modalDetalles, setModalDetalles] = useState(null);
+
+  const handleVerClick = (detalles) => {
+    setModalDetalles(detalles);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalDetalles(null);
+  };
+
   return (
     <div>
       <HeaderAd />
-      <Listaxd />
+      <Listaxd onVerClick={handleVerClick} />
+      <Modal show={showModal} onHide={handleCloseModal} className="custom-modal" centered>
+        <Modal.Header closeButton className="modal-header-verde">
+          <Modal.Title>Detalles del Ticket</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form className="formulario-container">
+            <Form.Group controlId="formFechaInforme">
+              <Form.Label>Fecha de informe</Form.Label>
+              <Form.Control type="text" value={modalDetalles?.fecha || ''} readOnly />
+            </Form.Group>
+
+            <Form.Group controlId="formModeloPc">
+              <Form.Label>Modelo de pc</Form.Label>
+              <Form.Control type="text" value={modalDetalles?.modelo || ''} readOnly />
+            </Form.Group>
+
+            <Form.Group controlId="formNumeroSerie">
+              <Form.Label>Número de serie</Form.Label>
+              <Form.Control type="text" value={modalDetalles?.serie || ''} readOnly />
+            </Form.Group>
+
+            <Form.Group controlId="formNombreTecnico">
+              <Form.Label>Nombre del técnico</Form.Label>
+              <Form.Control type="text" value={modalDetalles?.tecnico || ''} readOnly />
+            </Form.Group>
+
+            <Form.Group controlId="formAmbiente">
+              <Form.Label>Ambiente</Form.Label>
+              <Form.Control type="text" value={modalDetalles?.ambiente || ''} readOnly />
+            </Form.Group>
+
+            <div className="d-flex gap-2 mt-3">
+              <Button variant="outline-success" size="sm">Ticket</Button>
+              <Button variant="outline-warning" size="sm">Pendiente</Button>
+            </div>
+
+            <Form.Group controlId="formObservaciones" className="mt-3">
+              <Form.Label>Descripción</Form.Label>
+              <Form.Control as="textarea" rows={3} value={modalDetalles?.descripcion || ''} readOnly />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Footer />
     </div>
   );
