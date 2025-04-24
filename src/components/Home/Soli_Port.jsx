@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import { Button, Alert } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Pagination from 'react-bootstrap/Pagination';
@@ -17,7 +19,7 @@ const ConsultaItem = () => {
         </div>
       </div>
       <div className="derecha1">
-        <button href='/Formulario' className="Buton_Fomr">Ver</button>
+      <Link to="/Formulario" className="btn btn-primary Buton_Fomr">Ver</Link>
       </div>
     </div>
   );
