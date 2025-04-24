@@ -29,19 +29,19 @@ function MyVerticallyCenteredModal(props) {
 
       <div className='Conteiner01'>
   <div className='Cuadrito1'>
-    <h5 className='Text1'>Problemas con el office</h5>
+    <h6 className='Text1'>Problemas con el office</h6>
     <Form.Group className="mb-3">
       <Form.Check type="checkbox" />
     </Form.Group>
   </div>
   <div className='Cuadrito1'>
-    <h5 className='Text1'>Problemas con el office</h5>
+    <h6 className='Text1'>Problemas con el office</h6>
     <Form.Group className="mb-3">
       <Form.Check type="checkbox" />
     </Form.Group>
   </div>
   <div className='Cuadrito1'>
-    <h5 className='Text1'>Problemas con el office</h5>
+    <h6 className='Text1'>Problemas con el office</h6>
     <Form.Group className="mb-3">
       <Form.Check type="checkbox" />
     </Form.Group>
@@ -50,19 +50,19 @@ function MyVerticallyCenteredModal(props) {
 
   <div className='Conteiner02'>
   <div className='Cuadrito1'>
-    <h5 className='Text1'>Problemas con el office</h5>
+    <h6 className='Text1'>Problemas con el office</h6>
     <Form.Group className="mb-3">
       <Form.Check type="checkbox" />
     </Form.Group>
   </div>
   <div className='Cuadrito1'>
-    <h5 className='Text1'>Problemas con el office</h5>
+    <h6 className='Text1'>Problemas con el office</h6>
     <Form.Group className="mb-3">
       <Form.Check type="checkbox" />
     </Form.Group>
   </div>
   <div className='Cuadrito1'>
-    <h5 className='Text1'>Problemas con el office</h5>
+    <h6 className='Text1'>Problemas con el office</h6>
     <Form.Group className="mb-3">
       <Form.Check type="checkbox" />
     </Form.Group>
@@ -72,19 +72,19 @@ function MyVerticallyCenteredModal(props) {
 
   <div className='Conteiner03'>
   <div className='Cuadrito1'>
-    <h5 className='Text1'>Problemas con el office</h5>
+    <h6 className='Text1'>Problemas con el office</h6>
     <Form.Group className="mb-3">
       <Form.Check type="checkbox" />
     </Form.Group>
   </div>
   <div className='Cuadrito1'>
-    <h5 className='Text1'>Problemas con el office</h5>
+    <h6 className='Text1'>Problemas con el office</h6>
     <Form.Group className="mb-3">
       <Form.Check type="checkbox" />
     </Form.Group>
   </div>
   <div className='Cuadrito1'>
-    <h5 className='Text1'>Problemas con el office</h5>
+    <h6 className='Text1'>Problemas con el office</h6>
     <Form.Group className="mb-3">
       <Form.Check type="checkbox" />
     </Form.Group>
