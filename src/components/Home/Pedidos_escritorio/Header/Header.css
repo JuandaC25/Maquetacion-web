@@ -4,9 +4,6 @@
     display: grid;grid-template-columns: 13% 82% 5%;
     grid-template-rows: 100px;
 }
-.header1002{
-    margin: 1rem;    
-}
 .header1003{
     background-color: white;
     margin-bottom: 35px;
@@ -19,7 +16,7 @@
     height: 680px;
 }
 .header1005{
-    background-color:rgb(9, 180, 26) ;
+    background-color:rgb(9, 180, 26);
     text-align: center;
     border: 2px solid black;
     font-size: 200%;
@@ -64,3 +61,36 @@
 .Cuarta{
     text-align: end;
 }
+.cuadrito1{
+    color: rgb(0, 0, 0);
+    border-radius: 20px;
+    height: 50px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: 30rem;
+    text-align: center;
+    border-color: black;
+    border-style: solid;
+    margin-top: 1rem;
+}
+.header_menu{
+    background-color: rgb(9, 180, 26);
+    color: white;
+    text-align: center;
+    width: 100%;
+    height: 45px;
+}
+.header_menuuu{
+    background-color: rgb(9, 180, 26);
+    color: white;
+    text-align: center;
+    width: 100%;
+    border-radius: 1px;
+}
+.Icon_menu{
+    background-color:rgb(9, 180, 26) ;
+}
+.Icon_menu .bi-list {
+    font-size: 30px; 
+  }
+  
