@@ -5,14 +5,12 @@ import "./estilos_admin.css";
 import Footer from '../Footer/Footer';
 import HeaderAd from './header_admin/header_ad.jsx';
 
-const DetallesUsuarioModal = ({ show, onHide, detalles }) => {
-  if (!detalles) {
-    return null;
-  }
+const DetallesUsuarioModal = ({ show, onHide, detalles, onEliminar }) => {
+  if (!detalles) return null;
 
   return (
     <Modal show={show} onHide={onHide} className="custom-modal" centered>
-      <Modal.Header closeButton className="modal-header-verde"> {/* Aplicamos la clase aquí */}
+      <Modal.Header closeButton className="modal-header-verde">
         <Modal.Title>
           <div className="izquierda">
             <FaUserCircle className="icono" size={24} style={{ marginRight: '10px' }} />
@@ -28,22 +26,18 @@ const DetallesUsuarioModal = ({ show, onHide, detalles }) => {
             <Form.Label>Nombre completo</Form.Label>
             <Form.Control type="text" value={`${detalles.nombre || ''} ${detalles.apellido || ''}`} readOnly />
           </Form.Group>
-
           <Form.Group controlId="formCorreoElectronico">
             <Form.Label>Correo electrónico</Form.Label>
             <Form.Control type="email" value={detalles.correo || ''} readOnly />
           </Form.Group>
-
           <Form.Group controlId="formTipoDocumento">
             <Form.Label>Tipo de documento</Form.Label>
             <Form.Control type="text" value={detalles.tipoDocumento || ''} readOnly />
           </Form.Group>
-
           <Form.Group controlId="formNumeroDocumento">
             <Form.Label>Número de documento</Form.Label>
             <Form.Control type="text" value={detalles.id || ''} readOnly />
           </Form.Group>
-
           <Form.Group controlId="formRol">
             <Form.Label>Rol</Form.Label>
             <Form.Control type="text" value={detalles.rol || ''} readOnly />
@@ -51,9 +45,8 @@ const DetallesUsuarioModal = ({ show, onHide, detalles }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Cerrar
-        </Button>
+        <Button variant="danger" onClick={() => onEliminar(detalles.id)}>Eliminar</Button>
+        <Button variant="secondary" onClick={onHide}>Cerrar</Button>
       </Modal.Footer>
     </Modal>
   );
@@ -87,14 +80,7 @@ const Listaxd = () => {
   ];
 
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    id: '',
-    correo: '',
-    nombre: '',
-    apellido: '',
-    rol: '',
-    tipoDocumento: ''
-  });
+  const [formData, setFormData] = useState({ id: '', correo: '', nombre: '', apellido: '', rol: '', tipoDocumento: '' });
   const [showDetallesModal, setShowDetallesModal] = useState(false);
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
   const [usuarios, setUsuarios] = useState(usuariosData);
@@ -108,7 +94,6 @@ const Listaxd = () => {
   };
 
   const handleSubmit = () => {
-    console.log('Usuario añadido:', formData);
     const nuevoUsuario = { ...formData };
     setUsuarios(prevUsuarios => [...prevUsuarios, nuevoUsuario]);
     handleClose();
@@ -124,6 +109,15 @@ const Listaxd = () => {
     setUsuarioSeleccionado(null);
   };
 
+  const handleEliminarEquipo = (id) => {
+    const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este usuario?");
+    if (confirmacion) {
+      const nuevosUsuarios = usuarios.filter(usuario => usuario.id !== id);
+      setUsuarios(nuevosUsuarios);
+      setShowDetallesModal(false);
+    }
+  };
+
   const consultas = usuarios.map((usuario, index) => (
     <ConsultaItem key={index} usuario={usuario} onVerClick={handleVerDetalles} />
   ));
@@ -137,25 +131,15 @@ const Listaxd = () => {
 
       {consultas}
 
-      <Modal
-        show={showModal}
-        onHide={handleClose}
-        className="custom-modal"
-        centered
-      >
-        <Modal.Header closeButton className="modal-header-verde"> {/* Aplicamos la clase aquí */}
+      <Modal show={showModal} onHide={handleClose} className="custom-modal" centered>
+        <Modal.Header closeButton className="modal-header-verde">
           <Modal.Title>Añadir Usuario</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form className="formulario-container">
             <Form.Group controlId="formRolUsuario">
               <Form.Label>Rol</Form.Label>
-              <Form.Control
-                as="select"
-                name="rol"
-                value={formData.rol}
-                onChange={handleChange}
-              >
+              <Form.Control as="select" name="rol" value={formData.rol} onChange={handleChange}>
                 <option value="">Seleccionar rol</option>
                 <option value="tecnico">Técnico</option>
                 <option value="instructor">Instructor</option>
@@ -164,12 +148,7 @@ const Listaxd = () => {
 
             <Form.Group controlId="formTipoDocumentoUsuario">
               <Form.Label>Tipo de Documento</Form.Label>
-              <Form.Control
-                as="select"
-                name="tipoDocumento"
-                value={formData.tipoDocumento}
-                onChange={handleChange}
-              >
+              <Form.Control as="select" name="tipoDocumento" value={formData.tipoDocumento} onChange={handleChange}>
                 <option value="">Seleccionar tipo</option>
                 <option value="extranjeria">Extranjería</option>
                 <option value="cedula_ciudadania">Cédula de Ciudadanía</option>
@@ -178,57 +157,29 @@ const Listaxd = () => {
 
             <Form.Group controlId="formIdUsuario">
               <Form.Label>ID del usuario</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese el ID"
-                name="id"
-                value={formData.id}
-                onChange={handleChange}
-              />
+              <Form.Control type="text" placeholder="Ingrese el ID" name="id" value={formData.id} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group controlId="formCorreoUsuario">
               <Form.Label>Correo electrónico</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Ingrese el correo"
-                name="correo"
-                value={formData.correo}
-                onChange={handleChange}
-              />
+              <Form.Control type="email" placeholder="Ingrese el correo" name="correo" value={formData.correo} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group controlId="formNombreUsuario">
               <Form.Label>Nombre</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese el nombre"
-                name="nombre"
-                value={formData.nombre}
-                onChange={handleChange}
-              />
+              <Form.Control type="text" placeholder="Ingrese el nombre" name="nombre" value={formData.nombre} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group controlId="formApellidoUsuario">
               <Form.Label>Apellido</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Ingrese el apellido"
-                name="apellido"
-                value={formData.apellido}
-                onChange={handleChange}
-              />
+              <Form.Control type="text" placeholder="Ingrese el apellido" name="apellido" value={formData.apellido} onChange={handleChange} />
             </Form.Group>
           </Form>
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancelar
-          </Button>
-          <Button variant="success" onClick={handleSubmit}>
-            Añadir Usuario
-          </Button>
+          <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
+          <Button variant="success" onClick={handleSubmit}>Añadir Usuario</Button>
         </Modal.Footer>
       </Modal>
 
@@ -236,6 +187,7 @@ const Listaxd = () => {
         show={showDetallesModal}
         onHide={handleCloseDetallesModal}
         detalles={usuarioSeleccionado}
+        onEliminar={handleEliminarEquipo}
       />
     </div>
   );
