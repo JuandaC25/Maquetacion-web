@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { Button, Alert, Dropdown, Modal, Form } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
-import "./estilos_admin.css";
+import './estilos_admin.css';
 import Footer from '../Footer/Footer';
-import Header_Inv from "./header_inv/header_inv.jsx";
+import Header_Inv from './header_inv/header_inv.jsx';
 
-const DetallesEquipoModal = ({ show, onHide, detalles }) => {
-  if (!detalles) {
-    return null;
-  }
+const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
+  if (!detalles) return null;
 
   return (
     <Modal show={show} onHide={onHide} className="custom-modal" centered>
-      <Modal.Header closeButton className="modal-header-verde"> 
+      <Modal.Header closeButton className="modal-header-verde">
         <Modal.Title>
           <div className="izquierda">
             <div className="icono" role="img" aria-label="información">ℹ️</div>
@@ -28,27 +26,22 @@ const DetallesEquipoModal = ({ show, onHide, detalles }) => {
             <Form.Label>Id del elemento</Form.Label>
             <Form.Control type="text" value={detalles.id || ''} readOnly />
           </Form.Group>
-
           <Form.Group controlId="formNombreElemento">
             <Form.Label>Nombre del elemento</Form.Label>
             <Form.Control type="text" value={detalles.nombre || ''} readOnly />
           </Form.Group>
-
           <Form.Group controlId="formCategoria">
             <Form.Label>Categoría</Form.Label>
             <Form.Control type="text" value={detalles.categoria || ''} readOnly />
           </Form.Group>
-
           <Form.Group controlId="formAccesorios">
             <Form.Label>Accesorios</Form.Label>
             <Form.Control type="text" value={detalles.accesorios || ''} readOnly />
           </Form.Group>
-
           <Form.Group controlId="formSerie">
             <Form.Label>Número de serie</Form.Label>
             <Form.Control type="text" value={detalles.serie || ''} readOnly />
           </Form.Group>
-
           <Form.Group controlId="formObservaciones">
             <Form.Label>Observaciones</Form.Label>
             <Form.Control as="textarea" rows={3} value={detalles.observaciones || ''} readOnly />
@@ -56,40 +49,35 @@ const DetallesEquipoModal = ({ show, onHide, detalles }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
-          Cerrar
-        </Button>
+        <Button variant="danger" onClick={() => onEliminar(detalles.id)}>Eliminar</Button>
+        <Button variant="secondary" onClick={onHide}>Cerrar</Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-const ConsultaItem = ({ elemento, onVerClick }) => {
-  return (
-    <div className="ticket-item">
-      <div className="izquierda">
-        <div className="icono" role="img" aria-label="computadora">🖥️</div>
-        <div className="estado">
-          <span>Detalles del equipo</span>
-        </div>
-      </div>
-      <div className="derecha">
-        <div className="folder" role="img" aria-label="folder">📁</div>
-        <button className="ver-boton" onClick={() => onVerClick(elemento)}>ver</button>
+const ConsultaItem = ({ elemento, onVerClick }) => (
+  <div className="ticket-item">
+    <div className="izquierda">
+      <div className="icono" role="img" aria-label="computadora">🖥️</div>
+      <div className="estado">
+        <span>Detalles del equipo</span>
       </div>
     </div>
-  );
-};
+    <div className="derecha">
+      <div className="folder" role="img" aria-label="folder">📁</div>
+      <button className="ver-boton" onClick={() => onVerClick(elemento)}>ver</button>
+    </div>
+  </div>
+);
 
-const ListaConsultas = ({ elementos, onVerClick }) => {
-  return (
-    <div name="lista-inventario">
-      {elementos.map((elemento, i) => (
-        <ConsultaItem key={i} elemento={elemento} onVerClick={onVerClick} />
-      ))}
-    </div>
-  );
-};
+const ListaConsultas = ({ elementos, onVerClick }) => (
+  <div name="lista-inventario">
+    {elementos.map((elemento, i) => (
+      <ConsultaItem key={i} elemento={elemento} onVerClick={onVerClick} />
+    ))}
+  </div>
+);
 
 const Admin = () => {
   const [showModalEquipo, setShowModalEquipo] = useState(false);
@@ -105,8 +93,15 @@ const Admin = () => {
     { id: 'LAP003', nombre: 'MacBook Air', categoria: 'Portátil', accesorios: 'Cargador', serie: 'FGH22334', observaciones: 'Ligero y rápido' },
   ]);
 
+  const [nuevoEquipo, setNuevoEquipo] = useState({
+    id: '', nombre: '', categoria: '', accesorios: '', serie: '', observaciones: ''
+  });
+
   const handleShowEquipo = () => setShowModalEquipo(true);
-  const handleCloseEquipo = () => setShowModalEquipo(false);
+  const handleCloseEquipo = () => {
+    setShowModalEquipo(false);
+    setNuevoEquipo({ id: '', nombre: '', categoria: '', accesorios: '', serie: '', observaciones: '' });
+  };
 
   const handleVerDetalles = (elemento) => {
     setEquipoSeleccionado(elemento);
@@ -116,6 +111,26 @@ const Admin = () => {
   const handleCloseDetallesModal = () => {
     setShowDetallesModal(false);
     setEquipoSeleccionado(null);
+  };
+
+  const handleEliminarEquipo = (id) => {
+    const nuevosElementos = elementosInventario.filter(item => item.id !== id);
+    setElementosInventario(nuevosElementos);
+    handleCloseDetallesModal();
+  };
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setNuevoEquipo(prev => ({ ...prev, [id.replace('form', '').toLowerCase()]: value }));
+  };
+
+  const handleSubmit = () => {
+    if (!nuevoEquipo.id || !nuevoEquipo.nombre) {
+      alert('ID y nombre son obligatorios');
+      return;
+    }
+    setElementosInventario(prev => [...prev, nuevoEquipo]);
+    handleCloseEquipo();
   };
 
   return (
@@ -128,77 +143,60 @@ const Admin = () => {
             Elemento
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="#/action-1">Portátiles</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Equipos de escritorio</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">Televisores</Dropdown.Item>
+            <Dropdown.Item>Portátiles</Dropdown.Item>
+            <Dropdown.Item>Equipos de escritorio</Dropdown.Item>
+            <Dropdown.Item>Televisores</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
         <Button className="añadir-boton" onClick={handleShowEquipo}>Añadir Equipo</Button>
       </Alert>
+
       <ListaConsultas elementos={elementosInventario} onVerClick={handleVerDetalles} />
-      <Modal
-        show={showModalEquipo}
-        onHide={handleCloseEquipo}
-        className="custom-modal"
-        centered
-      >
-        <Modal.Header closeButton className="modal-header-verde"> 
+
+      <Modal show={showModalEquipo} onHide={handleCloseEquipo} className="custom-modal" centered>
+        <Modal.Header closeButton className="modal-header-verde">
           <Modal.Title>
             <div className="izquierda">
               <div className="icono" role="img" aria-label="computadora">🖥️</div>
-              <div className="estado">
-                <span>Añadir equipos</span>
-              </div>
+              <div className="estado"><span>Añadir equipos</span></div>
             </div>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form className="formulario-container">
-            <Form.Group controlId="formIdElemento">
+            <Form.Group controlId="formId">
               <Form.Label>Id del elemento</Form.Label>
-              <Form.Control type="text" placeholder="Ingrese el ID" />
+              <Form.Control type="text" value={nuevoEquipo.id} onChange={handleInputChange} />
             </Form.Group>
-
-            <Form.Group controlId="formNombreElemento">
+            <Form.Group controlId="formNombre">
               <Form.Label>Nombre del elemento</Form.Label>
-              <Form.Control type="text" placeholder="Nombre" />
+              <Form.Control type="text" value={nuevoEquipo.nombre} onChange={handleInputChange} />
             </Form.Group>
-
             <Form.Group controlId="formCategoria">
               <Form.Label>Categoría</Form.Label>
-              <Form.Control as="select">
-                <option>Portátiles</option>
+              <Form.Control as="select" value={nuevoEquipo.categoria} onChange={handleInputChange}>
+                <option>Portátil</option>
                 <option>Equipos de escritorio</option>
                 <option>Televisores</option>
               </Form.Control>
             </Form.Group>
-
             <Form.Group controlId="formAccesorios">
               <Form.Label>Accesorios</Form.Label>
-              <Form.Control as="select">
-                <option>Seleccionar</option>
-              </Form.Control>
+              <Form.Control type="text" value={nuevoEquipo.accesorios} onChange={handleInputChange} />
             </Form.Group>
-
             <Form.Group controlId="formSerie">
               <Form.Label>Número de serie</Form.Label>
-              <Form.Control type="text" placeholder="Número de serie" />
+              <Form.Control type="text" value={nuevoEquipo.serie} onChange={handleInputChange} />
             </Form.Group>
-
             <Form.Group controlId="formObservaciones">
               <Form.Label>Observaciones</Form.Label>
-              <Form.Control as="textarea" rows={3} />
+              <Form.Control as="textarea" rows={3} value={nuevoEquipo.observaciones} onChange={handleInputChange} />
             </Form.Group>
           </Form>
         </Modal.Body>
-
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseEquipo}>
-            Cancelar
-          </Button>
-          <Button variant="success" onClick={handleCloseEquipo}>
-            Añadir
-          </Button>
+          <Button variant="secondary" onClick={handleCloseEquipo}>Cancelar</Button>
+          <Button variant="success" onClick={handleSubmit}>Añadir Equipo</Button>
         </Modal.Footer>
       </Modal>
 
@@ -206,6 +204,7 @@ const Admin = () => {
         show={showDetallesModal}
         onHide={handleCloseDetallesModal}
         detalles={equipoSeleccionado}
+        onEliminar={handleEliminarEquipo}
       />
 
       <Footer />

@@ -1,181 +1,187 @@
 .alert {
-    background-color: #ffffff;
-    text-align: start;
-  }
-  
-  .custom-dropdown-button {
-    background-color: #00AF00;
-  }
-  
-  .ticket-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    padding: 10px 15px;
-    margin-bottom: 12px;
-    color: black;
-  }
-  
-  .izquierda,
-  .derecha {
-    display: flex;
-    align-items: center;
-  }
-  
-  .izquierda {
-    gap: 10px;
-  }
-  
-  .derecha {
-    gap: 10px;
-  }
-  
-  .icono,
-  .folder {
-    font-size: 35px;
-  }
-  
-  .estado span,
-  .ticket span {
-    background-color: #ccc;
-    padding: 6px 16px;
-    border-radius: 16px;
-    font-weight: 600;
-    color: black;
-  }
-  
-  .ver-boton {
-    background-color: white;
-    border: 1px solid #000;
-    padding: 5px 12px;
-    border-radius: 6px;
-  }
-  
-  .ver-boton:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .formulario-container {
-    background-color: #f8f9fa;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 750px;
-    min-width: 350px;
-    min-height: 700px;
-    margin: 60px auto 140px;
-    border: 1px solid #ced4da;
-    box-sizing: border-box;
-  }
+  background-color: #ffffff;
+  text-align: start;
+}
 
-  .custom-modal .modal-dialog {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    max-width: 800px;
-    margin: auto;
-  }
-  
-  .modal-body {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 70px 100px 70px 70px;
-    width: 100%;
-  }
-  
-  .modal-body .form-group {
-    margin-bottom: 20px;
-  }
-  
-  .modal-body label {
-    font-weight: 600;
-    color: #333;
-    display: block;
-    margin-bottom: 10px;
-  }
-  
-  .modal-body input,
-  .modal-body select,
-  .modal-body textarea {
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    padding: 12px;
-    margin-bottom: 18px;
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 16px;
-  }
-  
-  .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    padding: 20px;
-    border-top: 1px solid #e9ecef;
-  }
-  
-  .btn {
-    padding: 12px 25px;
-    font-size: 16px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    margin-left: 10px;
-  }
-  
-  .btn-primary {
-    background-color: #00AF00;
-    color: white;
-  }
-  
-  .btn-primary:hover {
-    background-color: #00AF00;
-  }
-  
-  .btn-secondary {
-    background-color: #6c757d;
-    color: white;
-  }
-  
-  .btn-secondary:hover {
-    background-color: #545b62;
-  }
-  
-  .btn-success {
-    background-color: #00AF00;
-    color: white;
-  }
-  
-  .btn-success:hover {
-    background-color: #1e7e34;
-  }
- 
-  .modal-header-verde {
-    background-color: #00AF00;
-    color: black;
+.custom-dropdown-button {
+  background-color: #00AF00;
+}
 
-  }
-  
-  .modal-header-info {
-    background-color: #00AF00;
-    color: #333; 
-    border-bottom: 1px solid #00AF00;
-    border-top-left-radius: 0.3rem;
-    border-top-right-radius: 0.3rem;
-    padding: 15px;
-  }
-  
-  .modal-title {
-    margin: 0;
-    font-weight: bold; 
-  }
-  
- 
-  
-  
+.ticket-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  padding: 10px 15px;
+  margin-bottom: 12px;
+  color: black;
+}
+
+.izquierda,
+.derecha {
+  display: flex;
+  align-items: center;
+}
+
+.izquierda {
+  gap: 10px;
+}
+
+.derecha {
+  gap: 10px;
+}
+
+.icono,
+.folder {
+  font-size: 35px;
+}
+
+.estado span,
+.ticket span {
+  background-color: #ccc;
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-weight: 600;
+  color: black;
+}
+
+.ver-boton {
+  background-color: white;
+  border: 1px solid #000;
+  padding: 5px 12px;
+  border-radius: 6px;
+}
+
+.ver-boton:hover {
+  background-color: #f0f0f0;
+}
+
+.formulario-container {
+  background-color: #f8f9fa;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 750px;
+  min-width: 350px;
+  min-height: 700px;
+  margin: 60px auto 140px;
+  border: 1px solid #ced4da;
+  box-sizing: border-box;
+}
+
+.custom-modal .modal-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  max-width: 800px;
+  margin: auto;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 70px 100px 70px 70px;
+  width: 100%;
+}
+
+.modal-body .form-group {
+  margin-bottom: 20px;
+}
+
+.modal-body label {
+  font-weight: 600;
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.modal-body input,
+.modal-body select,
+.modal-body textarea {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 12px;
+  margin-bottom: 18px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn {
+  padding: 12px 25px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: 10px;
+}
+
+.btn-primary {
+  background-color: #00AF00;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #00AF00;
+}
+
+.btn-secondary {
+  background-color: #818181;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #00AF00;
+}
+
+.btn-success {
+  background-color: #8B9490;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #8B9490;
+}
+
+.modal-header-verde {
+  background-color: #00AF00;
+  color: black;
+
+}
+
+.modal-header-info {
+  background-color: #00AF00;
+  color: #333; 
+  border-bottom: 1px solid #00AF00;
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  padding: 15px;
+}
+
+.modal-title {
+  margin: 0;
+  font-weight: bold; 
+}
+button.btn-danger {
+  background-color: #00AF00; 
+  color: white;
+
+}
+
+button.btn-danger:hover {
+  background-color: #00AF00;
+  transform: scale(1.05);
+}
