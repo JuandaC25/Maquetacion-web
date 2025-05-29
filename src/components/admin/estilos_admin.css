@@ -71,15 +71,12 @@
   border: 1px solid #ced4da;
   box-sizing: border-box;
 }
-/* ------------------ ESTILO MODAL ADAPTADO ------------------ */
 
-/* Ancho del modal */
 .custom-modal .modal-dialog {
   max-width: 75rem;
   margin: 2rem auto;
 }
 
-/* Contenedor del formulario */
 .formulario-container {
   background-color: #ffffff;
   padding: 30px;
@@ -90,7 +87,6 @@
   box-sizing: border-box;
 }
 
-/* Etiquetas centradas y negras */
 .formulario-container .form-label {
   font-weight: bold;
   text-align: center;
@@ -99,7 +95,6 @@
   width: 100%;
 }
 
-/* Inputs personalizados */
 .formulario-container .form-control,
 .modal-body input,
 .modal-body textarea {
@@ -110,15 +105,12 @@
   text-align: center;
 }
 
-/* Header verde del modal */
 .modal-header-verde {
   background-color: rgb(9, 180, 26);
   color: white;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
-
-/* ------------------ BOTONES ADAPTADOS ------------------ */
 
 .Btn_Conf,
 .estado-btn,
@@ -149,9 +141,6 @@ button.ver-boton:hover {
   border-color: azure;
   outline: none;
 }
-
-/* ------------------ CONTENEDORES ------------------ */
-
 .Cont_1 {
   width: 25rem;
   margin-left: 5rem;
