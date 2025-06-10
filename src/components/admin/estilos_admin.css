@@ -6,7 +6,6 @@
 .custom-dropdown-button {
   background-color: #00AF00;
 }
-
 .ticket-item {
   display: flex;
   justify-content: space-between;
@@ -25,18 +24,11 @@
   align-items: center;
 }
 
-.izquierda {
-  gap: 10px;
-}
-
-.derecha {
-  gap: 10px;
-}
+.izquierda { gap: 10px; }
+.derecha   { gap: 10px; }
 
 .icono,
-.folder {
-  font-size: 35px;
-}
+.folder { font-size: 35px; }
 
 .estado span,
 .ticket span {
@@ -54,55 +46,65 @@
   border-radius: 6px;
 }
 
-.ver-boton:hover {
-  background-color: #f0f0f0;
-}
-
-.formulario-container {
-  background-color: #f8f9fa;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 750px;
-  min-width: 350px;
-  min-height: 700px;
-  margin: 60px auto 140px;
-  border: 1px solid #ced4da;
-  box-sizing: border-box;
-}
-
-.custom-modal .modal-dialog {
-  max-width: 75rem;
-  margin: 2rem auto;
-}
-
+.ver-boton:hover { background-color: #f0f0f0; }
 .formulario-container {
   background-color: #ffffff;
   padding: 30px;
   border-radius: 12px;
   border: 2px groove black;
-  width: 90%;
+  width: 100%;         
+  max-width: 900px;     
   margin: 60px auto 140px;
   box-sizing: border-box;
+  min-height: 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;          
 }
 
-.formulario-container .form-label {
+.form-group-row {
+  display: flex;
+  align-items: center;  
+  gap: 1rem;           
+}
+.form-label {
+  flex: 0 0 200px;   
+  text-align: left;    
   font-weight: bold;
-  text-align: center;
   color: black;
-  display: block;
-  width: 100%;
+  margin-bottom: 0;     
 }
 
-.formulario-container .form-control,
-.modal-body input,
-.modal-body textarea {
+.form-control-wrapper {
+  flex: 1 1 auto;
+}
+
+.form-control,
+input.form-control,
+textarea.form-control {
   border-radius: 25px;
   border: 2px solid black;
   padding: 8px 15px;
-  margin-bottom: 10px;
-  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+textarea.form-control {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.custom-modal .modal-dialog {
+  max-width: 700px;
+  margin: 2rem auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.custom-modal .modal-content {
+  border-radius: 10px;
+  border: none;
 }
 
 .modal-header-verde {
@@ -110,7 +112,42 @@
   color: white;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
 }
+
+.modal-header-verde h5.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.modal-header .btn-close {
+  background-color: white;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  opacity: 1;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.modal-body {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-bottom-right-radius: 10px;
+}
+
 
 .Btn_Conf,
 .estado-btn,
@@ -123,40 +160,5 @@ button.ver-boton {
   font-weight: bold;
 }
 
-.Btn_Conf:hover,
-button.ver-boton:hover {
-  background-color: rgb(9, 180, 26);
-  border-color: azure;
-}
 
-.Btn_Conf:focus {
-  background-color: rgb(9, 180, 26);
-  border-color: azure;
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-.Btn_Conf:active {
-  background-color: black;
-  border-color: azure;
-  outline: none;
-}
-.Cont_1 {
-  width: 25rem;
-  margin-left: 5rem;
-  margin-top: 2rem;
-  text-align: center;
-}
-
-.tx1 {
-  border-color: black;
-}
-
-.Cua_der {
-  border-color: aliceblue;
-  margin-top: 5rem;
-  width: 90%;
-  margin-right: 2rem;
-  text-align: center;
-}
 

@@ -89,40 +89,52 @@ const Admin = () => {
         </Modal.Header>
         <Modal.Body>
           <Form className="formulario-container">
-            <Form.Group controlId="formFechaInforme">
-              <Form.Label>Fecha de informe</Form.Label>
-              <Form.Control type="text" value={modalDetalles?.fecha || ''} readOnly />
-            </Form.Group>
+            <div className="form-group-row">
+              <label className="form-label">Fecha de informe:</label>
+              <div className="form-control-wrapper">
+                <Form.Control type="text" value={modalDetalles?.fecha || ''} readOnly />
+              </div>
+            </div>
 
-            <Form.Group controlId="formModeloPc">
-              <Form.Label>Modelo de pc</Form.Label>
-              <Form.Control type="text" value={modalDetalles?.modelo || ''} readOnly />
-            </Form.Group>
+            <div className="form-group-row">
+              <label className="form-label">Modelo de PC:</label>
+              <div className="form-control-wrapper">
+                <Form.Control type="text" value={modalDetalles?.modelo || ''} readOnly />
+              </div>
+            </div>
 
-            <Form.Group controlId="formNumeroSerie">
-              <Form.Label>Número de serie</Form.Label>
-              <Form.Control type="text" value={modalDetalles?.serie || ''} readOnly />
-            </Form.Group>
+            <div className="form-group-row">
+              <label className="form-label">Número de serie:</label>
+              <div className="form-control-wrapper">
+                <Form.Control type="text" value={modalDetalles?.serie || ''} readOnly />
+              </div>
+            </div>
 
-            <Form.Group controlId="formNombreTecnico">
-              <Form.Label>Nombre del técnico</Form.Label>
-              <Form.Control type="text" value={modalDetalles?.tecnico || ''} readOnly />
-            </Form.Group>
+            <div className="form-group-row">
+              <label className="form-label">Nombre del técnico:</label>
+              <div className="form-control-wrapper">
+                <Form.Control type="text" value={modalDetalles?.tecnico || ''} readOnly />
+              </div>
+            </div>
 
-            <Form.Group controlId="formAmbiente">
-              <Form.Label>Ambiente</Form.Label>
-              <Form.Control type="text" value={modalDetalles?.ambiente || ''} readOnly />
-            </Form.Group>
+            <div className="form-group-row">
+              <label className="form-label">Ambiente:</label>
+              <div className="form-control-wrapper">
+                <Form.Control type="text" value={modalDetalles?.ambiente || ''} readOnly />
+              </div>
+            </div>
 
             <div className="d-flex gap-2 mt-3">
               <Button variant="outline-success" size="sm">Ticket</Button>
               <Button variant="outline-warning" size="sm">Pendiente</Button>
             </div>
 
-            <Form.Group controlId="formObservaciones" className="mt-3">
-              <Form.Label>Descripción</Form.Label>
-              <Form.Control as="textarea" rows={3} value={modalDetalles?.descripcion || ''} readOnly />
-            </Form.Group>
+            <div className="form-group-row mt-3">
+              <label className="form-label">Descripción:</label>
+              <div className="form-control-wrapper">
+                <Form.Control as="textarea" rows={3} value={modalDetalles?.descripcion || ''} readOnly />
+              </div>
+            </div>
           </Form>
         </Modal.Body>
         <Modal.Footer>

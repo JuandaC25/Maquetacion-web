@@ -22,26 +22,36 @@ const DetallesUsuarioModal = ({ show, onHide, detalles, onEliminar }) => {
       </Modal.Header>
       <Modal.Body>
         <Form className="formulario-container">
-          <Form.Group controlId="formNombreCompleto">
-            <Form.Label>Nombre completo</Form.Label>
-            <Form.Control type="text" value={`${detalles.nombre || ''} ${detalles.apellido || ''}`} readOnly />
-          </Form.Group>
-          <Form.Group controlId="formCorreoElectronico">
-            <Form.Label>Correo electrónico</Form.Label>
-            <Form.Control type="email" value={detalles.correo || ''} readOnly />
-          </Form.Group>
-          <Form.Group controlId="formTipoDocumento">
-            <Form.Label>Tipo de documento</Form.Label>
-            <Form.Control type="text" value={detalles.tipoDocumento || ''} readOnly />
-          </Form.Group>
-          <Form.Group controlId="formNumeroDocumento">
-            <Form.Label>Número de documento</Form.Label>
-            <Form.Control type="text" value={detalles.id || ''} readOnly />
-          </Form.Group>
-          <Form.Group controlId="formRol">
-            <Form.Label>Rol</Form.Label>
-            <Form.Control type="text" value={detalles.rol || ''} readOnly />
-          </Form.Group>
+          <div className="form-group-row">
+            <label className="form-label">Nombre completo:</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="text" value={`${detalles.nombre || ''} ${detalles.apellido || ''}`} readOnly />
+            </div>
+          </div>
+          <div className="form-group-row">
+            <label className="form-label">Correo electrónico:</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="email" value={detalles.correo || ''} readOnly />
+            </div>
+          </div>
+          <div className="form-group-row">
+            <label className="form-label">Tipo de documento:</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="text" value={detalles.tipoDocumento || ''} readOnly />
+            </div>
+          </div>
+          <div className="form-group-row">
+            <label className="form-label">Número de documento:</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="text" value={detalles.id || ''} readOnly />
+            </div>
+          </div>
+          <div className="form-group-row">
+            <label className="form-label">Rol:</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="text" value={detalles.rol || ''} readOnly />
+            </div>
+          </div>
         </Form>
       </Modal.Body>
       <Modal.Footer>
@@ -57,7 +67,7 @@ const ConsultaItem = ({ usuario, onVerClick }) => {
     <div className="ticket-item">
       <div className="izquierda">
         <div className="estado">
-          <span>Nombre Apellido CC</span>
+          <span>{`${usuario.nombre} ${usuario.apellido} ${usuario.id}`}</span>
         </div>
       </div>
       <div className="derecha">
@@ -69,14 +79,14 @@ const ConsultaItem = ({ usuario, onVerClick }) => {
 
 const Listaxd = () => {
   const usuariosData = [
-    { id: '12345', correo: 'usuario1@example.com', nombre: 'Juan', apellido: 'Pérez', rol: 'instructor', tipoDocumento: 'cedula_ciudadania' },
-    { id: '67890', correo: 'usuario2@example.com', nombre: 'María', apellido: 'Gómez', rol: 'tecnico', tipoDocumento: 'extranjeria' },
-    { id: '13579', correo: 'usuario3@example.com', nombre: 'Carlos', apellido: 'López', rol: 'instructor', tipoDocumento: 'cedula_ciudadania' },
-    { id: '24680', correo: 'usuario4@example.com', nombre: 'Ana', apellido: 'Rodríguez', rol: 'tecnico', tipoDocumento: 'extranjeria' },
-    { id: '11223', correo: 'usuario5@example.com', nombre: 'Pedro', apellido: 'Martínez', rol: 'instructor', tipoDocumento: 'cedula_ciudadania' },
-    { id: '44556', correo: 'usuario6@example.com', nombre: 'Laura', apellido: 'Sánchez', rol: 'tecnico', tipoDocumento: 'extranjeria' },
-    { id: '77889', correo: 'usuario7@example.com', nombre: 'Sofía', apellido: 'Ramírez', rol: 'instructor', tipoDocumento: 'cedula_ciudadania' },
-    { id: '99001', correo: 'usuario8@example.com', nombre: 'Miguel', apellido: 'Torres', rol: 'tecnico', tipoDocumento: 'extranjeria' },
+    { id: '12345', correo: 'juan.perez@example.com', nombre: 'Juan', apellido: 'Pérez', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía' },
+    { id: '67890', correo: 'maria.gomez@example.com', nombre: 'María', apellido: 'Gómez', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería' },
+    { id: '13579', correo: 'carlos.lopez@example.com', nombre: 'Carlos', apellido: 'López', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía' },
+    { id: '24680', correo: 'ana.rodriguez@example.com', nombre: 'Ana', apellido: 'Rodríguez', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería' },
+    { id: '11223', correo: 'pedro.martinez@example.com', nombre: 'Pedro', apellido: 'Martínez', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía' },
+    { id: '44556', correo: 'laura.sanchez@example.com', nombre: 'Laura', apellido: 'Sánchez', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería' },
+    { id: '77889', correo: 'sofia.ramirez@example.com', nombre: 'Sofía', apellido: 'Ramírez', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía' },
+    { id: '99001', correo: 'miguel.torres@example.com', nombre: 'Miguel', apellido: 'Torres', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería' },
   ];
 
   const [showModal, setShowModal] = useState(false);
@@ -86,7 +96,10 @@ const Listaxd = () => {
   const [usuarios, setUsuarios] = useState(usuariosData);
 
   const handleShow = () => setShowModal(true);
-  const handleClose = () => setShowModal(false);
+  const handleClose = () => {
+    setShowModal(false);
+    setFormData({ id: '', correo: '', nombre: '', apellido: '', rol: '', tipoDocumento: '' });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -94,9 +107,18 @@ const Listaxd = () => {
   };
 
   const handleSubmit = () => {
+    if (!formData.id || !formData.nombre || !formData.apellido || !formData.correo || !formData.rol || !formData.tipoDocumento) {
+      alert("Por favor, complete todos los campos.");
+      return;
+    }
+    if (usuarios.some(user => user.id === formData.id)) {
+      alert("Ya existe un usuario con este ID. Por favor, use un ID diferente.");
+      return;
+    }
+
     const nuevoUsuario = { ...formData };
     setUsuarios(prevUsuarios => [...prevUsuarios, nuevoUsuario]);
-    handleClose();
+    handleClose(); 
   };
 
   const handleVerDetalles = (usuario) => {
@@ -118,14 +140,15 @@ const Listaxd = () => {
     }
   };
 
-  const consultas = usuarios.map((usuario, index) => (
-    <ConsultaItem key={index} usuario={usuario} onVerClick={handleVerDetalles} />
+  const consultas = usuarios.map((usuario) => (
+    <ConsultaItem key={usuario.id} usuario={usuario} onVerClick={handleVerDetalles} />
   ));
 
   return (
     <div className="lista-tickets">
+      <HeaderAd />
       <Alert variant="success" className="d-flex justify-content-between align-items-center">
-        <strong>CONSULTAS</strong>
+        <strong>CONSULTAS DE USUARIOS</strong>
         <Button className="añadir-boton" onClick={handleShow}>Añadir Usuario</Button>
       </Alert>
 
@@ -137,43 +160,58 @@ const Listaxd = () => {
         </Modal.Header>
         <Modal.Body>
           <Form className="formulario-container">
-            <Form.Group controlId="formRolUsuario">
-              <Form.Label>Rol</Form.Label>
-              <Form.Control as="select" name="rol" value={formData.rol} onChange={handleChange}>
-                <option value="">Seleccionar rol</option>
-                <option value="tecnico">Técnico</option>
-                <option value="instructor">Instructor</option>
-              </Form.Control>
-            </Form.Group>
+            <div className="form-group-row">
+              <label className="form-label" htmlFor="rol">Rol</label>
+              <div className="form-control-wrapper">
+                <Form.Control as="select" id="rol" name="rol" value={formData.rol} onChange={handleChange}>
+                  <option value="">Seleccionar rol</option>
+                  <option value="instructor">Instructor</option>
+                  <option value="técnico">Técnico</option>
+                  <option value="administrador">Administrador</option>
+                  <option value="estudiante">Estudiante</option>
+                </Form.Control>
+              </div>
+            </div>
 
-            <Form.Group controlId="formTipoDocumentoUsuario">
-              <Form.Label>Tipo de Documento</Form.Label>
-              <Form.Control as="select" name="tipoDocumento" value={formData.tipoDocumento} onChange={handleChange}>
-                <option value="">Seleccionar tipo</option>
-                <option value="extranjeria">Extranjería</option>
-                <option value="cedula_ciudadania">Cédula de Ciudadanía</option>
-              </Form.Control>
-            </Form.Group>
+            <div className="form-group-row mt-2">
+              <label className="form-label" htmlFor="tipoDocumento">Tipo de Documento</label>
+              <div className="form-control-wrapper">
+                <Form.Control as="select" id="tipoDocumento" name="tipoDocumento" value={formData.tipoDocumento} onChange={handleChange}>
+                  <option value="">Seleccionar tipo</option>
+                  <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
+                  <option value="Tarjeta de Extranjería">Tarjeta de Extranjería</option>
+                  <option value="Pasaporte">Pasaporte</option>
+                </Form.Control>
+              </div>
+            </div>
 
-            <Form.Group controlId="formIdUsuario">
-              <Form.Label>ID del usuario</Form.Label>
-              <Form.Control type="text" placeholder="Ingrese el ID" name="id" value={formData.id} onChange={handleChange} />
-            </Form.Group>
+            <div className="form-group-row mt-2">
+              <label className="form-label" htmlFor="id">Número de Documento</label>
+              <div className="form-control-wrapper">
+                <Form.Control type="text" id="id" placeholder="Ingrese el número de documento" name="id" value={formData.id} onChange={handleChange} />
+              </div>
+            </div>
 
-            <Form.Group controlId="formCorreoUsuario">
-              <Form.Label>Correo electrónico</Form.Label>
-              <Form.Control type="email" placeholder="Ingrese el correo" name="correo" value={formData.correo} onChange={handleChange} />
-            </Form.Group>
+            <div className="form-group-row mt-2">
+              <label className="form-label" htmlFor="nombre">Nombre</label>
+              <div className="form-control-wrapper">
+                <Form.Control type="text" id="nombre" placeholder="Ingrese el nombre" name="nombre" value={formData.nombre} onChange={handleChange} />
+              </div>
+            </div>
 
-            <Form.Group controlId="formNombreUsuario">
-              <Form.Label>Nombre</Form.Label>
-              <Form.Control type="text" placeholder="Ingrese el nombre" name="nombre" value={formData.nombre} onChange={handleChange} />
-            </Form.Group>
+            <div className="form-group-row mt-2">
+              <label className="form-label" htmlFor="apellido">Apellido</label>
+              <div className="form-control-wrapper">
+                <Form.Control type="text" id="apellido" placeholder="Ingrese el apellido" name="apellido" value={formData.apellido} onChange={handleChange} />
+              </div>
+            </div>
 
-            <Form.Group controlId="formApellidoUsuario">
-              <Form.Label>Apellido</Form.Label>
-              <Form.Control type="text" placeholder="Ingrese el apellido" name="apellido" value={formData.apellido} onChange={handleChange} />
-            </Form.Group>
+            <div className="form-group-row mt-2">
+              <label className="form-label" htmlFor="correo">Correo electrónico</label>
+              <div className="form-control-wrapper">
+                <Form.Control type="email" id="correo" placeholder="Ingrese el correo electrónico" name="correo" value={formData.correo} onChange={handleChange} />
+              </div>
+            </div>
           </Form>
         </Modal.Body>
 
@@ -189,6 +227,7 @@ const Listaxd = () => {
         detalles={usuarioSeleccionado}
         onEliminar={handleEliminarEquipo}
       />
+      <Footer />
     </div>
   );
 };
@@ -196,9 +235,7 @@ const Listaxd = () => {
 const Admin = () => {
   return (
     <div>
-      <HeaderAd />
       <Listaxd />
-      <Footer />
     </div>
   );
 };
