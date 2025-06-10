@@ -126,10 +126,6 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
               <option>Portátil</option>
               <option>Equipos de escritorio</option>
               <option>Televisores</option>
-              <option>Impresoras</option>
-              <option>Proyectores</option>
-              <option>Monitores</option>
-              <option>Redes</option>
             </Form.Select>
           </div>
         </div>
