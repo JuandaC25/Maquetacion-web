@@ -125,8 +125,8 @@ const Admin = () => {
             </div>
 
             <div className="d-flex gap-2 mt-3">
-              <Button variant="outline-success" size="sm">Ticket</Button>
-              <Button variant="outline-warning" size="sm">Pendiente</Button>
+              <div className="outline-success" size="sm">Ticket</div>
+              <div className="outline-warning" size="sm">Pendiente</div>
             </div>
 
             <div className="form-group-row mt-3">
