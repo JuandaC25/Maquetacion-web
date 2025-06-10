@@ -244,8 +244,7 @@ const Admin = () => {
         onHide={closeDetalles}
         detalles={equipoSeleccionado}
         onEliminar={eliminarEquipo}
-      />
-
+      /> 
       <NuevoEquipoModal
         show={showNuevo}
         onHide={closeNuevo}
@@ -253,7 +252,6 @@ const Admin = () => {
         onChange={handleNuevoChange}
         onSubmit={submitNuevo}
       />
-
       <Footer />
     </div>
   );

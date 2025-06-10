@@ -168,7 +168,6 @@ const Listaxd = () => {
                   <option value="instructor">Instructor</option>
                   <option value="técnico">Técnico</option>
                   <option value="administrador">Administrador</option>
-                  <option value="estudiante">Estudiante</option>
                 </Form.Control>
               </div>
             </div>
