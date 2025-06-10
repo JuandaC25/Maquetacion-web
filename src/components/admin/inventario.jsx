@@ -232,10 +232,6 @@ const Admin = () => {
             <Dropdown.Item>Portátiles</Dropdown.Item>
             <Dropdown.Item>Equipos de escritorio</Dropdown.Item>
             <Dropdown.Item>Televisores</Dropdown.Item>
-            <Dropdown.Item>Impresoras</Dropdown.Item>
-            <Dropdown.Item>Proyectores</Dropdown.Item>
-            <Dropdown.Item>Monitores</Dropdown.Item>
-            <Dropdown.Item>Redes</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
         <Button className="añadir-boton" onClick={openNuevo}>
