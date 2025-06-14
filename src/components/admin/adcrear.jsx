@@ -94,31 +94,40 @@ const Listaxd = () => {
   const [showDetallesModal, setShowDetallesModal] = useState(false);
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
   const [usuarios, setUsuarios] = useState(usuariosData);
+  const [emailError, setEmailError] = useState('');
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => {
     setShowModal(false);
     setFormData({ id: '', correo: '', nombre: '', apellido: '', rol: '', tipoDocumento: '' });
+    setEmailError('');
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'correo') {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      setEmailError(emailRegex.test(value) ? '' : 'Ingrese un correo válido (ejemplo@dominio.com)');
+    }
   };
 
   const handleSubmit = () => {
-    if (!formData.id || !formData.nombre || !formData.apellido || !formData.correo || !formData.rol || !formData.tipoDocumento) {
-      alert("Por favor, complete todos los campos.");
+    const camposRequeridos = ['id', 'nombre', 'apellido', 'correo', 'rol', 'tipoDocumento'];
+    const campoFaltante = camposRequeridos.find(campo => !formData[campo]);
+    
+    if (campoFaltante) {
+      alert(`Por favor complete el campo: ${campoFaltante}`);
       return;
     }
-    if (usuarios.some(user => user.id === formData.id)) {
-      alert("Ya existe un usuario con este ID. Por favor, use un ID diferente.");
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(formData.correo)) {
+      alert("Por favor ingrese un correo electrónico válido (ejemplo: usuario@dominio.com)");
       return;
     }
-
     const nuevoUsuario = { ...formData };
     setUsuarios(prevUsuarios => [...prevUsuarios, nuevoUsuario]);
-    handleClose(); 
+    handleClose();
   };
 
   const handleVerDetalles = (usuario) => {
@@ -208,7 +217,18 @@ const Listaxd = () => {
             <div className="form-group-row mt-2">
               <label className="form-label" htmlFor="correo">Correo electrónico</label>
               <div className="form-control-wrapper">
-                <Form.Control type="email" id="correo" placeholder="Ingrese el correo electrónico" name="correo" value={formData.correo} onChange={handleChange} />
+                <Form.Control
+                  type="email"
+                  id="correo"
+                  placeholder="ejemplo@dominio.com"
+                  name="correo"
+                  value={formData.correo}
+                  onChange={handleChange}
+                  isInvalid={!!emailError}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {emailError}
+                </Form.Control.Feedback>
               </div>
             </div>
           </Form>
