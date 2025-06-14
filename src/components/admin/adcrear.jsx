@@ -115,7 +115,6 @@ const Listaxd = () => {
   const handleSubmit = () => {
     const camposRequeridos = ['id', 'nombre', 'apellido', 'correo', 'rol', 'tipoDocumento'];
     const campoFaltante = camposRequeridos.find(campo => !formData[campo]);
-    
     if (campoFaltante) {
       alert(`Por favor complete el campo: ${campoFaltante}`);
       return;
@@ -196,7 +195,21 @@ const Listaxd = () => {
             <div className="form-group-row mt-2">
               <label className="form-label" htmlFor="id">Número de Documento</label>
               <div className="form-control-wrapper">
-                <Form.Control type="text" id="id" placeholder="Ingrese el número de documento" name="id" value={formData.id} onChange={handleChange} />
+                <Form.Control
+                  type="text"
+                  id="id"
+                  placeholder="Ingrese el número de documento"
+                  name="id"
+                  value={formData.id}
+                  onChange={handleChange}
+                  inputMode="numeric"
+                  pattern="\d*"
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                />
               </div>
             </div>
 

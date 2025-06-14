@@ -3,6 +3,7 @@ import { Button, Alert, Dropdown, Modal, Form } from "react-bootstrap";
 import "./estilos_admin.css";
 import Footer from "../Footer/Footer";
 import HeaderInv from "./header_inv/header_inv.jsx";
+
 const EquipoItem = ({ elemento, onVerClick }) => (
   <div className="ticket-item">
     <div className="izquierda">
@@ -48,35 +49,30 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
               <Form.Control type="text" value={detalles.id} readOnly />
             </div>
           </div>
-
           <div className="form-group-row">
             <label className="form-label">Nombre:</label>
             <div className="form-control-wrapper">
               <Form.Control type="text" value={detalles.nombre} readOnly />
             </div>
           </div>
-
           <div className="form-group-row">
             <label className="form-label">Categoría:</label>
             <div className="form-control-wrapper">
               <Form.Control type="text" value={detalles.categoria} readOnly />
             </div>
           </div>
-
           <div className="form-group-row">
             <label className="form-label">Accesorios:</label>
             <div className="form-control-wrapper">
               <Form.Control type="text" value={detalles.accesorios} readOnly />
             </div>
           </div>
-
           <div className="form-group-row">
             <label className="form-label">Número de serie:</label>
             <div className="form-control-wrapper">
               <Form.Control type="text" value={detalles.serie} readOnly />
             </div>
           </div>
-
           <div className="form-group-row">
             <label className="form-label">Observaciones:</label>
             <div className="form-control-wrapper">
@@ -107,17 +103,15 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
         <div className="form-group-row">
           <label className="form-label" htmlFor="id">Id del elemento</label>
           <div className="form-control-wrapper">
-            <Form.Control type="text" id="id" value={nuevoEquipo.id} onChange={onChange} />
+            <Form.Control type="number" id="id" value={nuevoEquipo.id} onChange={onChange} />
           </div>
         </div>
-
         <div className="form-group-row mt-2">
           <label className="form-label" htmlFor="nombre">Nombre del elemento</label>
           <div className="form-control-wrapper">
             <Form.Control type="text" id="nombre" value={nuevoEquipo.nombre} onChange={onChange} />
           </div>
         </div>
-
         <div className="form-group-row mt-2">
           <label className="form-label" htmlFor="categoria">Categoría</label>
           <div className="form-control-wrapper">
@@ -129,21 +123,18 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
             </Form.Select>
           </div>
         </div>
-
         <div className="form-group-row mt-2">
           <label className="form-label" htmlFor="accesorios">Accesorios</label>
           <div className="form-control-wrapper">
             <Form.Control type="text" id="accesorios" value={nuevoEquipo.accesorios} onChange={onChange} />
           </div>
         </div>
-
         <div className="form-group-row mt-2">
           <label className="form-label" htmlFor="serie">Número de serie</label>
           <div className="form-control-wrapper">
             <Form.Control type="text" id="serie" value={nuevoEquipo.serie} onChange={onChange} />
           </div>
         </div>
-
         <div className="form-group-row mt-2">
           <label className="form-label" htmlFor="observaciones">Observaciones</label>
           <div className="form-control-wrapper">
@@ -165,18 +156,17 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
 
 const Admin = () => {
   const [elementosInventario, setElementosInventario] = useState([
-    { id: "LAP001", nombre: "Laptop Dell XPS 13", categoria: "Portátil", accesorios: "Cargador, Mouse inalámbrico", serie: "DELLXPS13-ABC", observaciones: "Excelente rendimiento para trabajo y estudio." },
-    { id: "DESK002", nombre: "PC de Escritorio HP Pavilion", categoria: "Equipos de escritorio", accesorios: "Teclado, Mouse, Monitor 24''", serie: "HPPV-XYZ-456", observaciones: "Ideal para oficina y tareas diarias." },
-    { id: "TV003", nombre: "Smart TV Samsung QLED 55''", categoria: "Televisores", accesorios: "Control remoto, Cable HDMI", serie: "SAMQLED55-QWE-789", observaciones: "Imagen 4K impresionante, perfecto para entretenimiento." },
-    { id: "PRN004", nombre: "Impresora Multifuncional Epson", categoria: "Impresoras", accesorios: "Cable USB, Cartuchos de tinta", serie: "EPSONMF-123-ABC", observaciones: "Funcionalidad de impresión, copia y escaneo." },
-    { id: "PROJ005", nombre: "Proyector Optoma HD", categoria: "Proyectores", accesorios: "Cable de alimentación, Control remoto", serie: "OPTHD-456-DEF", observaciones: "Ideal para presentaciones y cine en casa, buena luminosidad." },
-    { id: "LAP006", nombre: "Laptop Lenovo ThinkPad T14", categoria: "Portátil", accesorios: "Cargador USB-C", serie: "LENOVO-T14-789-GHI", observaciones: "Diseño robusto y batería de larga duración, enfocado en productividad." },
-    { id: "MON007", nombre: "Monitor LG UltraGear 27'' Gaming", categoria: "Monitores", accesorios: "Cable DisplayPort", serie: "LGUG27-GHI-JKL", observaciones: "Alta tasa de refresco para gaming, colores vibrantes." },
+    { id: "1", nombre: "Laptop Dell XPS 13", categoria: "Portátil", accesorios: "Cargador, Mouse inalámbrico", serie: "DELLXPS13-ABC", observaciones: "Excelente rendimiento para trabajo y estudio." },
+    { id: "2", nombre: "PC de Escritorio HP Pavilion", categoria: "Equipos de escritorio", accesorios: "Teclado, Mouse, Monitor 24''", serie: "HPPV-XYZ-456", observaciones: "Ideal para oficina y tareas diarias." },
+    { id: "3", nombre: "Smart TV Samsung QLED 55''", categoria: "Televisores", accesorios: "Control remoto, Cable HDMI", serie: "SAMQLED55-QWE-789", observaciones: "Imagen 4K impresionante, perfecto para entretenimiento." },
+    { id: "4", nombre: "Impresora Multifuncional Epson", categoria: "Impresoras", accesorios: "Cable USB, Cartuchos de tinta", serie: "EPSONMF-123-ABC", observaciones: "Funcionalidad de impresión, copia y escaneo." },
+    { id: "5", nombre: "Proyector Optoma HD", categoria: "Proyectores", accesorios: "Cable de alimentación, Control remoto", serie: "OPTHD-456-DEF", observaciones: "Ideal para presentaciones y cine en casa, buena luminosidad." },
+    { id: "6", nombre: "Laptop Lenovo ThinkPad T14", categoria: "Portátil", accesorios: "Cargador USB-C", serie: "LENOVO-T14-789-GHI", observaciones: "Diseño robusto y batería de larga duración, enfocado en productividad." },
+    { id: "7", nombre: "Monitor LG UltraGear 27'' Gaming", categoria: "Monitores", accesorios: "Cable DisplayPort", serie: "LGUG27-GHI-JKL", observaciones: "Alta tasa de refresco para gaming, colores vibrantes." },
   ]);
 
   const [showDetalles, setShowDetalles] = useState(false);
   const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
-
   const [showNuevo, setShowNuevo] = useState(false);
   const [nuevoEquipo, setNuevoEquipo] = useState({
     id: "",
@@ -186,6 +176,7 @@ const Admin = () => {
     serie: "",
     observaciones: "",
   });
+
   const openDetalles = (equipo) => {
     setEquipoSeleccionado(equipo);
     setShowDetalles(true);
@@ -200,7 +191,9 @@ const Admin = () => {
     setElementosInventario((prev) => prev.filter((e) => e.id !== id));
     closeDetalles();
   };
+
   const openNuevo = () => setShowNuevo(true);
+
   const closeNuevo = () => {
     setShowNuevo(false);
     setNuevoEquipo({ id: "", nombre: "", categoria: "", accesorios: "", serie: "", observaciones: "" });
@@ -219,6 +212,7 @@ const Admin = () => {
     setElementosInventario((prev) => [...prev, nuevoEquipo]);
     closeNuevo();
   };
+
   return (
     <div>
       <HeaderInv />
@@ -258,3 +252,4 @@ const Admin = () => {
 };
 
 export default Admin;
+
