@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Header.css';
@@ -6,6 +5,7 @@ import Desplegable from '../../../desplegable/desplegable';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
+import { Link } from 'react-router-dom';
 
 
 
@@ -23,18 +23,20 @@ function Headerpedidosescritorio() {
       </Button>
       <Offcanvas show={show} onHide={handleClose}>
       <Offcanvas.Header className='header_menuuu'>
-          <Offcanvas.Title className='header_menu'><h2>Menú</h2></Offcanvas.Title>
+          <Offcanvas.Title className='header_menu'><h1>Menú</h1></Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-            <button className='cuadrito1'href="/Usuario" >
-            <h3><i class="bi bi-plus-circle"></i> Solicitar equipos</h3>
-            </button>
-            <button className='cuadrito1' href="/Informacion_equiposs" >
-            <h3> <i class="bi bi-gear"></i>   informacion de equipos</h3>
-            </button>
-            <button className='cuadrito1' href="/espacios">
-            <h3> <i class="bi bi-person-plus"></i> Solicitar espacios</h3>
-            </button>
+          <Link to="/Usuario" className='cuadrito1'>
+            <h3><i className="bi bi-plus-circle"></i> Solicitar equipos</h3>
+          </Link>
+
+          <Link to="/Informacion_equiposs" className='cuadrito1'>
+            <h3> <i className="bi bi-gear"></i> Informacion de equipos</h3>
+          </Link>
+
+          <Link to="/espacios" className='cuadrito1'>
+            <h3> <i className="bi bi-person-plus"></i> Solicitar espacios</h3>
+          </Link>
         </Offcanvas.Body>
       </Offcanvas>
           </Container>
