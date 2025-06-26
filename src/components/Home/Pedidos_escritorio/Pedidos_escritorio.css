@@ -32,4 +32,40 @@
 .Ajust{
   margin-top: 1.9rem;
 }
-  
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px;
+  margin-top: 3rem;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.form-col {
+  flex: 1;
+  min-width: 250px;
+  margin-top: 1rem;
+}
+
+.form-input {
+  padding: 10px;
+  border-radius: 8px;
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid #ccc;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+}
+.form-col1 {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2rem;
+}

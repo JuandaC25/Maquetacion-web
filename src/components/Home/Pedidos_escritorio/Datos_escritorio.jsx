@@ -76,7 +76,7 @@ function Datos_escritorio() {
             borderBottom: 'none', 
             padding: '1rem 1rem',
             position: 'relative'
-          }}
+          }} 
         >
           <Modal.Title 
             id="example-modal-sizes-title-sm"

@@ -1,8 +1,4 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-
-import { Button, Alert } from 'react-bootstrap';
-import { FaUserCircle, FaBars } from 'react-icons/fa';
 import Pagination from 'react-bootstrap/Pagination';
 import './Soli_port.css';
 import Footer from '../Footer/Footer';

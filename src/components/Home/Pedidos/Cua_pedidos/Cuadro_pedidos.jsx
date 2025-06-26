@@ -1,6 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import './Estilos.css';
+import './Cuadro_Pedidos.css';
 
 function Cuadro_Pedidos() {
   return (

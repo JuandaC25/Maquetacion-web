@@ -1,4 +1,3 @@
-import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './components/Login';
 import Home from './components/Home/Pedidos/Home.jsx';
@@ -6,7 +5,6 @@ import Admin from './components/admin/Admin';
 import Inventario from './components/admin/inventario.jsx';
 import AdCrear from './components/admin/adcrear.jsx'; 
 import Tecnico from './components/Tecnico/Tecnico.jsx';
-import Pie from './components/Tecnico/Pie.jsx';
 import Tercera from './components/Tecnico/tercera.jsx';
 import Cuarta from './components/Tecnico/Cuarta.jsx'; 
 import Quinta from './components/Tecnico/Quinta.jsx';
@@ -16,7 +14,7 @@ import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
 import Sexta from './components/Tecnico/Sexta.jsx';
 import Septima from './components/Tecnico/Septima.jsx'; 
 import './components/App.css';
-import Formulario from './components/Home/Formulario.jsx';
+import Formulario from './components/Home/Formu_port/Formulario.jsx';
 import Pedidos_escritorio from './components/Home/Pedidos_escritorio/Pedidos_escritorio.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Información_equipos from './components/Home/Informacion_equipos/Informacion_equipos.jsx';
@@ -38,7 +36,7 @@ function App() {
         <Route path='/Formulario' element={<Formulario/>} />
         <Route path='/Solicitartelevisores' element={<Solitelevisores />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/Usuario' element={<Home />} />
+        <Route path='/Inicio' element={<Home />} />
         <Route path='/Admin' element={<Admin />} />
         <Route path='/Sexta' element={<Sexta />} />
         <Route path='/Septima' element={<Septima />} />
@@ -51,5 +49,3 @@ function App() {
 }
 
 export default App;
-
-

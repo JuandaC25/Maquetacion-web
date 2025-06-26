@@ -1,5 +1,4 @@
 import './Pedidos_escritorio.css';
-import Button from 'react-bootstrap/Button';
 import Datos_escritorio from './Datos_escritorio'
 import Footer from '../../Footer/Footer';
 import Headerpedidosescritorio from './Header/Header';
