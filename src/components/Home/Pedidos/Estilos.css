@@ -13,7 +13,6 @@
   width: 500%;
 }
 
-
 #desplegable1{
   background-color:rgb(9, 180, 26) ;
   text-align: center;
@@ -275,7 +274,7 @@ background-color: rgb(255, 255, 255);
   
   .boton_esc {
    
-    margin-top: 58px;
+    margin-top: 20px;
     padding: 10px 20px;
     background-color: rgb(133, 132, 132);
     color: white;
@@ -295,6 +294,7 @@ background-color: rgb(255, 255, 255);
     border-radius: 5px;
     cursor: pointer;
     width: auto;
+    
   }
 
 
@@ -326,7 +326,3 @@ background-color: rgb(255, 255, 255);
 .Ajusst{
   margin-top: 7.5rem;
 }
-
-
-  
-  
