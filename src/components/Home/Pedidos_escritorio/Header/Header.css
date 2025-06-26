@@ -1,11 +1,16 @@
 .header1001{
+    background-color: rgb(9, 180, 26);
     width: 100%;
     display: grid;grid-template-columns: 13% 82% 5%;
-    grid-template-rows: 10px;
+    grid-template-rows: 100px;
+}
+.header1002{
+    margin: 1rem;    
 }
 .header1003{
     background-color: white;
     margin-bottom: 35px;
+ 
 }
 .header1004{
     margin-top: 8px;
@@ -14,7 +19,7 @@
     height: 680px;
 }
 .header1005{
-    background-color:rgb(9, 180, 26);
+    background-color:rgb(9, 180, 26) ;
     text-align: center;
     border: 2px solid black;
     font-size: 200%;
@@ -59,41 +64,3 @@
 .Cuarta{
     text-align: end;
 }
-
-.cuadrito1{
-    display: block;
-    text-decoration: none;
-    color: rgb(0, 0, 0);
-    border-radius: 20px;
-    height: 50px;
-    width: 100%;
-    text-align: center;
-    border-style: solid;
-    margin-top: 1rem;
-    box-shadow: 7px 8px 8px rgba(0, 0, 0, 0.1);
-}
-.cuadrito1:hover{
-    background-color: rgb(207, 209, 207);
-    transform: translateY(-2px);
-}
-.header_menu{
-    background-color: rgb(9, 180, 26);
-    color: white;
-    text-align: center;
-    width: 100%;
-    height: 45px;
-}
-.header_menuuu{
-    background-color: rgb(9, 180, 26);
-    color: white;
-    text-align: center;
-    width: 100%;
-    border-radius: 1px;
-}
-.Icon_menu{
-    background-color:rgb(9, 180, 26) ;
-}
-.Icon_menu .bi-list {
-    font-size: 30px; 
-  }
-  
