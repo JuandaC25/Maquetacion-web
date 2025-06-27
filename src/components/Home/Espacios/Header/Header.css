@@ -1,66 +1,72 @@
-.header1001{
+.header1001 {
+        width: 100%;
+    height: 85px;
     background-color: rgb(9, 180, 26);
-    width: 100%;
-    display: grid;grid-template-columns: 13% 82% 5%;
-    grid-template-rows: 100px;
+    grid-template-rows: 10px;  
+    margin-bottom: 1rem; 
 }
-.header1002{
-    margin: 1rem;    
+
+.Icon_menu {
+    background-color: rgb(9, 180, 26);
 }
-.header1003{
-    background-color: white;
-    margin-bottom: 35px;
- 
+
+.Icon_menu .bi-list {
+    font-size: 30px; 
 }
-.header1004{
-    margin-top: 8px;
-    background-color: white;
-    border: 2px solid black;
-    height: 680px;
-}
-.header1005{
-    background-color:rgb(9, 180, 26) ;
+
+.header_menuuu {
+    background-color: rgb(9, 180, 26);
+    color: white;
     text-align: center;
-    border: 2px solid black;
-    font-size: 200%;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 8000;
+    width: 100%;
+    border-radius: 1px;
 }
-.header1006{
-    height: 40px;
-    border: 2px solid black;
-    border-radius: 10px;
-    margin-top: 10px;
-    font-size: 120%;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 1000;
+
+.header_menu {
+    background-color: rgb(9, 180, 26);
+    color: white;
+    text-align: center;
+    width: 100%;
+    height: 45px;
 }
-.header1007{
+
+.cuadrito1 {
+    color: rgb(0, 0, 0);
+    border-radius: 20px;
+    height: 50px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: 30rem;
+    text-align: center;
+    border-color: black;
+    border-style: solid;
+    margin-top: 1rem;
+    text-decoration: none;
+    display: block;
+}
+
+.cuadrito1:hover {
+    background-color: rgb(207, 209, 207);
+    transform: translateY(-3px);
+}
+
+.header1007 {
+    margin-top: 5rem;
     width: 100%;
     font-size: 300%;
     font-family: 'Roboto', sans-serif;
     font-weight: 900;
-    color: white ;
+    color: white;
     text-align: center !important;
+    
 }
-.header1008{
-    width: 5%;
+
+.Iconos{
+    gap: 1rem;
+    display: flex;
+    justify-content: end;
+    width: 15%;
+    margin-top: 5.5rem;
     color: white;
-    text-decoration:underline white;
-    margin-bottom: 50px;
-}
-.header1009{
-    width: 8%;
-    color: white;
-    text-decoration:underline white;
-    margin-bottom: 50px;
-}
-.header1010{
-    width: auto;
-    color: white;
-    text-decoration:underline white;
-    margin-bottom: 50px;
-}
-.Cuarta{
-    text-align: end;
+    text-decoration: underline white;
 }

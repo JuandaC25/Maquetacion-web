@@ -1,55 +1,58 @@
-import React from 'react';
-import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
+import { Navbar, Container, Nav} from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Header.css';
 import Desplegable from '../../../desplegable/desplegable';
+import { useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Offcanvas from 'react-bootstrap/Offcanvas';
+import { Link } from 'react-router-dom';
 
+function Headerpedidosescritorio() {
+  const [show, setShow] = useState(false);
 
-
-function Headerhome() {
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
     return (
       <div className='header1001'>
-        <Navbar expand="xxxl" className='header1002'>
+        <Navbar expand="xxxl" >
           <Container>
-            <Navbar.Toggle className='header1003' />
-            <Navbar.Collapse className='header1004'>
-              <Nav>
-                <div>
-                  <div className='header1005'>
-                    <NavDropdown.Item href="#action/3.1">Menu</NavDropdown.Item>
-                  </div>
-                  <div className='header1006'>
-                    <NavDropdown.Item href='/Usuario'>
-                      <i className="bi bi-plus-circle"></i> Solicitar equipos
-                    </NavDropdown.Item>
-                  </div>
-                  <div className='header1006'>
-                    <NavDropdown.Item href="/Informacion_equiposs">
-                      <i className="bi bi-gear"></i> Información de equipos
-                    </NavDropdown.Item>
-                  </div>
-                  <div className='header1006'>
-                    <NavDropdown.Item href="/espacios">
-                      <i className="bi bi-people-fill"></i> Solicitar espacios
-                    </NavDropdown.Item>
-                  </div>
-                  <NavDropdown.Divider />
-                </div>
-              </Nav>
-            </Navbar.Collapse>
+          <Button variant="primary" className='Icon_menu' onClick={handleShow}>
+          <i  class="bi bi-list"></i>
+      </Button>
+      <Offcanvas show={show} onHide={handleClose}>
+      <Offcanvas.Header className='header_menuuu'>
+          <Offcanvas.Title className='header_menu'><h1>Menú</h1></Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          <Link to="/Inicio" className='cuadrito1'>
+          <h3><i className="bi bi-plus-circle"></i> Solicitar equipos</h3>
+          </Link>
+          <Link to="/Informacion_equiposs" className='cuadrito1'>
+            <h3> <i className="bi bi-gear"></i> Informacion de equipos</h3>
+          </Link>
+          <Link to="/espacios" className='cuadrito1'>
+            <h3> <i className="bi bi-person-plus"></i> Solicitar espacios</h3>
+          </Link>
+        </Offcanvas.Body>
+      </Offcanvas>
           </Container>
         </Navbar>
   
         <Navbar>
           <Container>
-            <h1 className='header1007'>Solicitudes de equipos</h1>
+            <h1 className='header1007'>Solicitar equipos de escritorio</h1>
             <Nav.Link href="http://localhost:5173/Login" className='header1008'>Home</Nav.Link>
             <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/" className='header1009'>Blog CEET</Nav.Link>
-            <Desplegable /> {/* Asegúrate de que este componente esté definido */}
+            <Desplegable /> 
           </Container>
         </Navbar>
       </div>
     );
   }
   
-  export default Headerhome;
+  export default Headerpedidosescritorio;
+
+
+
+
+  

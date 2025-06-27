@@ -9,7 +9,7 @@ import Tercera from './components/Tecnico/tercera.jsx';
 import Cuarta from './components/Tecnico/Cuarta.jsx'; 
 import Quinta from './components/Tecnico/Quinta.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
-import Soli_port from './components/Home/Soli_Port.jsx';
+import Soli_port from './components/Home/Pedidos_port/Soli_Port.jsx';
 import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
 import Sexta from './components/Tecnico/Sexta.jsx';
 import Septima from './components/Tecnico/Septima.jsx'; 
@@ -35,7 +35,7 @@ function App() {
         <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
         <Route path='/Formulario' element={<Formulario/>} />
         <Route path='/Solicitartelevisores' element={<Solitelevisores />} />
-        <Route path='/login' element={<Login />} />
+        <Route path='/' element={<Login/>}/> 
         <Route path='/Inicio' element={<Home />} />
         <Route path='/Admin' element={<Admin />} />
         <Route path='/Sexta' element={<Sexta />} />

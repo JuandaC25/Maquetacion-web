@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
 import Pagination from 'react-bootstrap/Pagination';
 import './Soli_port.css';
-import Footer from '../Footer/Footer';
-import Header_port from './Pedidos_port/Header_port/Header_port.jsx';
-import './Pedidos_port/Header_port/Header_port.css';
+import Footer from '../../Footer/Footer.jsx';
+import Header_port from './Header/Header.jsx';
 const ConsultaItem = () => {
 
   return (
