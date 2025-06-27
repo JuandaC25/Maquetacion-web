@@ -40,7 +40,7 @@ function Headerespacios() {
   
         <Navbar>
           <Container>
-            <h1 className='header1007'>Información equipos</h1>
+            <h1 className='header1007'>Información equiposs</h1>
             <Container className='Iconos'>
             <Nav.Link href="http://localhost:5173/Login" >Home</Nav.Link>
             <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
