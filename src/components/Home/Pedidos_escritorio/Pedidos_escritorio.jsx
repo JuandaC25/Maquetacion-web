@@ -14,4 +14,4 @@ function Pedidos_escritorio() {
   );
 }
 
-export default Pedidos_escritorio;
+export default Pedidos_escritorio;  

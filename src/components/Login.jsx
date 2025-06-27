@@ -1,4 +1,3 @@
-import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './App.css';
@@ -23,7 +22,7 @@ function Login() {
           />
         </Form.Group>
 
-        <Button className="botton" href='/Usuario' variant="primary">
+        <Button className="botton" href='/Inicio' variant="primary">
           Iniciar sesión
         </Button>
       </Form>

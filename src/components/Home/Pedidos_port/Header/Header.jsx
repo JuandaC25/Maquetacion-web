@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 
 
 
-function Headerpedidosescritorio() {
+function Header_port() {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -42,7 +42,7 @@ function Headerpedidosescritorio() {
   
         <Navbar>
           <Container>
-            <h1 className='header1007'>Solicitar equipos de escritorio</h1>
+            <h1 className='header1007'>Solicitar portatiles</h1>
             <Nav.Link href="http://localhost:5173/Login" className='header1008'>Home</Nav.Link>
             <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/" className='header1009'>Blog CEET</Nav.Link>
             <Desplegable /> 
@@ -52,7 +52,7 @@ function Headerpedidosescritorio() {
     );
   }
   
-  export default Headerpedidosescritorio;
+  export default Header_port;
 
 
 

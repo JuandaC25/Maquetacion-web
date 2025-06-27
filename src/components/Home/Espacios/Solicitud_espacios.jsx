@@ -15,4 +15,3 @@ function Soliespacios() {
 }
 
 export default Soliespacios;
-  
