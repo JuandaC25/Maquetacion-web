@@ -45,6 +45,7 @@ function App() {
         <Route path='/Informacion_equiposs' element={<Información_equipos />} />
       </Routes>
     </BrowserRouter>
+
   );
 }
 

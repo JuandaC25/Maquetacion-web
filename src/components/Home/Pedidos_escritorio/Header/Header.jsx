@@ -41,9 +41,11 @@ function Headerpedidosescritorio() {
         <Navbar>
           <Container>
             <h1 className='header1007'>Solicitar equipos de escritorio</h1>
-            <Nav.Link href="http://localhost:5173/Login" className='header1008'>Home</Nav.Link>
-            <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/" className='header1009'>Blog CEET</Nav.Link>
+            <Container className='Iconos'>
+            <Nav.Link href="http://localhost:5173/Login" >Home</Nav.Link>
+            <Nav.Link className= "Blogc" href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
             <Desplegable /> 
+            </Container>
           </Container>
         </Navbar>
       </div>

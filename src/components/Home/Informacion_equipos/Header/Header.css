@@ -69,3 +69,10 @@
     text-decoration: underline white;
     margin-bottom: 50px;
 }
+.Iconos{
+    gap: 1rem;
+    margin-top: 7rem;
+}
+.Blogc{
+  white-space: nowrap;
+}

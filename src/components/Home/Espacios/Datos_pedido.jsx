@@ -18,7 +18,7 @@ function Datos_pedido() {
       </div>
       <div className='conteinercenter'>
         <Form.Label htmlFor="inputPassword5"><h3>Tiempo de uso</h3></Form.Label>
-        <Form.Control
+        <Form.Control className='Usotimp'
           type="textarea"
           id="inputPassword5"
           aria-describedby="passwordHelpBlock"
@@ -26,7 +26,7 @@ function Datos_pedido() {
       </div>
       <div className='conteinercenter2'>
         <Form.Label htmlFor="inputPassword5"><h3>Fecha de uso</h3></Form.Label>
-        <Form.Control
+        <Form.Control className='Usotimp'
           type="date"
           id="inputPassword5"
           aria-describedby="passwordHelpBlock"

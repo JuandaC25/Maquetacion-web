@@ -1,73 +1,45 @@
-.Conteiner1{
-    background-color: #00AF00;
-    height: 130px;
-  }
-  #h1raro{
-    background-color: #15ff00;
-    text-align: center;
-  }
-  .Head{
-    margin-left: 55rem;
-    color: aliceblue;
-  }
-  .general{
-    background-color: #15ff00;
-    height: 80px;
-  }
-  .Text2{
-    margin-top: 1rem;
-    margin-left: 2rem;
-    color: rgb(255, 255, 255);
-  }
-  .menuespa {
-    display: flex;
-    justify-content: center; 
-    align-items: center;
-    margin-top: 18px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 20%;
-  }
-  .titulo1{
-    text-align: center;
-    margin-top: 4rem;
-  }
+.titulo1 {
+  text-align: center;
+  margin-top: 2rem;
+}
 
-  #inputPassword5 { 
-    width: 20%;
-    height: 2.5rem;
-    padding: 0.375rem 0.75rem;
-    font-size: 0.8rem;
-  }
-  .conteinercenter {
-    display: flex;
-    flex-direction: column; 
-    align-items: center;    
-    justify-content: center;
-    margin-top: 6rem;
-    }
-  .conteinercenter2{
-    display: flex;
-    flex-direction: column; 
-    align-items: center;    
-    justify-content: center;
-    margin-top: 6rem;
-  }
+.menuespa {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 3rem auto;
+  width: 20%;
+}
 
-  .conteinercenter2 {
-    padding: 10px;
-  }
-  
-  .boton-personalizado {
-    background-color: #00b000;
-  }
+#inputPassword5 {
+  width: 20%;
+  height: 2.5rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.9rem;
+}
 
-  
-  .boton-personalizado {
-    background-color: #15ff00;
-    color: black;
-    border-radius: 8px;
-  }
-  .Ajustfot{
-    margin-top: 2.5rem;
-  }
+.conteinercenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.conteinercenter2{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 3rem auto;
+}
+
+.boton-personalizado {
+  background-color: #15ff00;
+  color: black;
+  border-radius: 8px;
+}
+.Usotimp{
+  margin-top: -6rem;
+}
+.Ajustfot{
+  margin-top: 5.2rem;
+}
