@@ -1,0 +1,86 @@
+.alert {
+  background-color: #ffffff00;
+  text-align: start;
+}
+.ticket-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  padding: 10px 15px;
+  margin-bottom: 12px;
+  color: black;
+}
+
+.izquierda,
+.derecha {
+  display: flex;
+  align-items: center;
+}
+
+.izquierda { gap: 10px; }
+.derecha { gap: 10px; }
+
+.icono,
+.folder { font-size: 35px; }
+
+.estado span,
+.ticket span {
+  background-color: #ccc;
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-weight: 600;
+  color: black;
+}
+
+.ver-boton {
+  background-color: white;
+  border: 1px solid #000;
+  padding: 5px 12px;
+  border-radius: 6px;
+}
+
+.ver-boton:hover { background-color: #f0f0f0; }
+
+/* Status Badges */
+.outline-success {
+  background-color: #00AF00;
+  color: #ffffff;
+  border-radius: 25px;
+  padding: 2px 10px;
+  font-size: 0.8rem;
+}
+
+.outline-warning {
+  background-color: #FFC107;
+  color: #000;
+  border-radius: 5px;
+  padding: 2px 10px;
+  font-size: 0.8rem;
+}
+/* Shared Button Styles */
+.ver-boton {
+  background-color: white;
+  border: 1px solid #000;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ver-boton:hover {
+  background-color: #f0f0f0;
+}
+
+/* Shared Modal Structure */
+.custom-modal .modal-dialog {
+  max-width: 700px;
+  margin: 2rem auto;
+}
+
+/* Shared Form Elements */
+.form-control {
+  border-radius: 25px;
+  border: 2px solid black;
+}

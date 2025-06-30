@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Alert, Dropdown, Modal, Form } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
-import "./estilos_admin.css";
-import Footer from '../Footer/Footer';
-import HeaderAd from './header_admin/header_ad.jsx';
+import "./admin.css";
+import Footer from '../../Footer/Footer.jsx';
+import HeaderAd from '../header_admin/header_ad.jsx';
 
 const Ticketxd = ({ estado, ticket, onVerClick }) => {
   return (

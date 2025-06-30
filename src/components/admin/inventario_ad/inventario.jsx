@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Button, Alert, Dropdown, Modal, Form } from "react-bootstrap";
-import "./estilos_admin.css";
-import Footer from "../Footer/Footer";
-import HeaderInv from "./header_inv/header_inv.jsx";
+import "./inventario.css";
+import Footer from "../../Footer/Footer.jsx";
+import HeaderInv from "../header_inv/header_inv.jsx";
 
 const EquipoItem = ({ elemento, onVerClick }) => (
   <div className="ticket-item">

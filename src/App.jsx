@@ -1,9 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './components/Login';
 import Home from './components/Home/Pedidos/Home.jsx';
-import Admin from './components/admin/Admin';
-import Inventario from './components/admin/inventario.jsx';
-import AdCrear from './components/admin/adcrear.jsx'; 
+import Admin from './components/admin/admin_ad/Admin.jsx';
+import Inventario from './components/admin/inventario_ad/inventario.jsx';
+import AdCrear from './components/admin/adcrear_ad/adcrear.jsx'; 
 import Tecnico from './components/Tecnico/Tecnico.jsx';
 import Tercera from './components/Tecnico/tercera.jsx';
 import Cuarta from './components/Tecnico/Cuarta.jsx'; 

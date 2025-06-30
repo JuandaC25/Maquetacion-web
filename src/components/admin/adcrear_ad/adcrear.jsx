@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Alert, Modal, Form } from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
-import "./estilos_admin.css";
-import Footer from '../Footer/Footer';
-import HeaderAd from './header_admin/header_ad.jsx';
+import "./adcrear_ad.css";
+import Footer from '../../Footer/Footer.jsx';
+import HeaderAd from '../header_admin/header_ad.jsx';
 
 const DetallesUsuarioModal = ({ show, onHide, detalles, onEliminar }) => {
   if (!detalles) return null;

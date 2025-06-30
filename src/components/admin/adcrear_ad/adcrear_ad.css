@@ -1,0 +1,47 @@
+.ticket-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  padding: 10px 15px;
+  margin-bottom: 12px;
+  color: black;
+}
+
+.izquierda,
+.derecha {
+  display: flex;
+  align-items: center;
+}
+
+.izquierda { gap: 10px; }
+.derecha { gap: 10px; }
+
+.estado span {
+  background-color: #ccc;
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-weight: 600;
+  color: black;
+}
+.Btn_Conf,
+.estado-btn {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border: 1px solid azure;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-weight: bold;
+}
+.custom-dropdown-button {
+  background-color: #00AF00;
+}
+.añadir-boton {
+  background-color: #00AF00;
+  color: white;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-weight: bold;
+}
