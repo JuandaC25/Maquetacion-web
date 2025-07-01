@@ -14,7 +14,6 @@ import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
 import Sexta from './components/Tecnico/Sexta.jsx';
 import Septima from './components/Tecnico/Septima.jsx'; 
 import './components/App.css';
-import Formulario from './components/Home/Formu_port/Formulario.jsx';
 import Pedidos_escritorio from './components/Home/Pedidos_escritorio/Pedidos_escritorio.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Información_equipos from './components/Home/Informacion_equipos/Informacion_equipos.jsx';
@@ -33,7 +32,6 @@ function App() {
         <Route path='/Tecnico' element={<Tecnico />} />
         <Route path='/espacios' element={<Soliespacios />} />
         <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
-        <Route path='/Formulario' element={<Formulario/>} />
         <Route path='/Solicitartelevisores' element={<Solitelevisores />} />
         <Route path='/' element={<Login/>}/> 
         <Route path='/Inicio' element={<Home />} />
