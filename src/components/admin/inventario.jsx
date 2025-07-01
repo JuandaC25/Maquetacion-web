@@ -26,7 +26,7 @@ const EquipoItem = ({ elemento, onVerClick }) => (
 );
 
 const ListaEquipos = ({ elementos, onVerClick }) => (
-  <div className="lista-tickets"> 
+  <div className="lista-tickets">
     {elementos.map((el) => (
       <EquipoItem key={el.id} elemento={el} onVerClick={onVerClick} />
     ))}
@@ -42,44 +42,43 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
         <Modal.Title>Detalles del Equipo</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form className="formulario-container">
-          <div className="form-group-row">
-            <label className="form-label">ID:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.id} readOnly />
-            </div>
+        {/* Aquí están los campos de detalles del equipo */}
+        <div className="form-group-row">
+          <label className="form-label">ID:</label>
+          <div className="form-control-wrapper">
+            <Form.Control type="text" value={detalles.id} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Nombre:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.nombre} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row">
+          <label className="form-label">Nombre:</label>
+          <div className="form-control-wrapper">
+            <Form.Control type="text" value={detalles.nombre} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Categoría:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.categoria} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row">
+          <label className="form-label">Categoría:</label>
+          <div className="form-control-wrapper">
+            <Form.Control type="text" value={detalles.categoria} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Accesorios:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.accesorios} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row">
+          <label className="form-label">Accesorios:</label>
+          <div className="form-control-wrapper">
+            <Form.Control type="text" value={detalles.accesorios} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Número de serie:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.serie} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row">
+          <label className="form-label">Número de serie:</label>
+          <div className="form-control-wrapper">
+            <Form.Control type="text" value={detalles.serie} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Observaciones:</label>
-            <div className="form-control-wrapper">
-              <Form.Control as="textarea" rows={3} value={detalles.observaciones} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row">
+          <label className="form-label">Observaciones:</label>
+          <div className="form-control-wrapper">
+            <Form.Control as="textarea" rows={3} value={detalles.observaciones} readOnly />
           </div>
-        </Form>
+        </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="danger" size="sm" onClick={() => onEliminar(detalles.id)}>
@@ -99,49 +98,49 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
       <Modal.Title>Añadir Equipo</Modal.Title>
     </Modal.Header>
     <Modal.Body>
-      <Form className="formulario-container">
-        <div className="form-group-row">
-          <label className="form-label" htmlFor="id">Id del elemento</label>
-          <div className="form-control-wrapper">
-            <Form.Control type="number" id="id" value={nuevoEquipo.id} onChange={onChange} />
-          </div>
+      {/* Eliminado el <Form className="formulario-container"> */}
+      {/* Los campos ahora están directamente dentro de Modal.Body */}
+      <div className="form-group-row">
+        <label className="form-label" htmlFor="id">Id del elemento</label>
+        <div className="form-control-wrapper">
+          <Form.Control type="number" id="id" value={nuevoEquipo.id} onChange={onChange} />
         </div>
-        <div className="form-group-row mt-2">
-          <label className="form-label" htmlFor="nombre">Nombre del elemento</label>
-          <div className="form-control-wrapper">
-            <Form.Control type="text" id="nombre" value={nuevoEquipo.nombre} onChange={onChange} />
-          </div>
+      </div>
+      <div className="form-group-row mt-2">
+        <label className="form-label" htmlFor="nombre">Nombre del elemento</label>
+        <div className="form-control-wrapper">
+          <Form.Control type="text" id="nombre" value={nuevoEquipo.nombre} onChange={onChange} />
         </div>
-        <div className="form-group-row mt-2">
-          <label className="form-label" htmlFor="categoria">Categoría</label>
-          <div className="form-control-wrapper">
-            <Form.Select id="categoria" value={nuevoEquipo.categoria} onChange={onChange}>
-              <option value="">Seleccionar...</option>
-              <option>Portátil</option>
-              <option>Equipos de escritorio</option>
-              <option>Televisores</option>
-            </Form.Select>
-          </div>
+      </div>
+      <div className="form-group-row mt-2">
+        <label className="form-label" htmlFor="categoria">Categoría</label>
+        <div className="form-control-wrapper">
+          <Form.Select id="categoria" value={nuevoEquipo.categoria} onChange={onChange}>
+            <option value="">Seleccionar...</option>
+            <option>Portátil</option>
+            <option>Equipos de escritorio</option>
+            <option>Televisores</option>
+          </Form.Select>
         </div>
-        <div className="form-group-row mt-2">
-          <label className="form-label" htmlFor="accesorios">Accesorios</label>
-          <div className="form-control-wrapper">
-            <Form.Control type="text" id="accesorios" value={nuevoEquipo.accesorios} onChange={onChange} />
-          </div>
+      </div>
+      <div className="form-group-row mt-2">
+        <label className="form-label" htmlFor="accesorios">Accesorios</label>
+        <div className="form-control-wrapper">
+          <Form.Control type="text" id="accesorios" value={nuevoEquipo.accesorios} onChange={onChange} />
         </div>
-        <div className="form-group-row mt-2">
-          <label className="form-label" htmlFor="serie">Número de serie</label>
-          <div className="form-control-wrapper">
-            <Form.Control type="text" id="serie" value={nuevoEquipo.serie} onChange={onChange} />
-          </div>
+      </div>
+      <div className="form-group-row mt-2">
+        <label className="form-label" htmlFor="serie">Número de serie</label>
+        <div className="form-control-wrapper">
+          <Form.Control type="text" id="serie" value={nuevoEquipo.serie} onChange={onChange} />
         </div>
-        <div className="form-group-row mt-2">
-          <label className="form-label" htmlFor="observaciones">Observaciones</label>
-          <div className="form-control-wrapper">
-            <Form.Control as="textarea" rows={3} id="observaciones" value={nuevoEquipo.observaciones} onChange={onChange} />
-          </div>
+      </div>
+      <div className="form-group-row mt-2">
+        <label className="form-label" htmlFor="observaciones">Observaciones</label>
+        <div className="form-control-wrapper">
+          <Form.Control as="textarea" rows={3} id="observaciones" value={nuevoEquipo.observaciones} onChange={onChange} />
         </div>
-      </Form>
+      </div>
     </Modal.Body>
     <Modal.Footer>
       <Button variant="secondary" onClick={onHide}>
@@ -238,7 +237,7 @@ const Admin = () => {
         onHide={closeDetalles}
         detalles={equipoSeleccionado}
         onEliminar={eliminarEquipo}
-      /> 
+      />
       <NuevoEquipoModal
         show={showNuevo}
         onHide={closeNuevo}
@@ -252,4 +251,3 @@ const Admin = () => {
 };
 
 export default Admin;
-

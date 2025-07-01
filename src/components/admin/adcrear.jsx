@@ -21,38 +21,38 @@ const DetallesUsuarioModal = ({ show, onHide, detalles, onEliminar }) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form className="formulario-container">
-          <div className="form-group-row">
-            <label className="form-label">Nombre completo:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={`${detalles.nombre || ''} ${detalles.apellido || ''}`} readOnly />
-            </div>
+        {/* Eliminado el <Form className="formulario-container"> */}
+        {/* Los campos ahora están directamente dentro de Modal.Body */}
+        <div className="form-group-row">
+          <label className="form-label">Nombre completo:</label>
+          <div className="form-control-wrapper">
+            <Form.Control type="text" value={`${detalles.nombre || ''} ${detalles.apellido || ''}`} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Correo electrónico:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="email" value={detalles.correo || ''} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row">
+          <label className="form-label">Correo electrónico:</label>
+          <div className="form-control-wrapper">
+            <Form.Control type="email" value={detalles.correo || ''} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Tipo de documento:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.tipoDocumento || ''} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row">
+          <label className="form-label">Tipo de documento:</label>
+          <div className="form-control-wrapper">
+            <Form.Control type="text" value={detalles.tipoDocumento || ''} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Número de documento:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.id || ''} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row">
+          <label className="form-label">Número de documento:</label>
+          <div className="form-control-wrapper">
+            <Form.Control type="text" value={detalles.id || ''} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Rol:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.rol || ''} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row">
+          <label className="form-label">Rol:</label>
+          <div className="form-control-wrapper">
+            <Form.Control type="text" value={detalles.rol || ''} readOnly />
           </div>
-        </Form>
+        </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="danger" onClick={() => onEliminar(detalles.id)}>Eliminar</Button>
@@ -167,84 +167,84 @@ const Listaxd = () => {
           <Modal.Title>Añadir Usuario</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form className="formulario-container">
-            <div className="form-group-row">
-              <label className="form-label" htmlFor="rol">Rol</label>
-              <div className="form-control-wrapper">
-                <Form.Control as="select" id="rol" name="rol" value={formData.rol} onChange={handleChange}>
-                  <option value="">Seleccionar rol</option>
-                  <option value="instructor">Instructor</option>
-                  <option value="técnico">Técnico</option>
-                  <option value="administrador">Administrador</option>
-                </Form.Control>
-              </div>
+          {/* Eliminado el <Form className="formulario-container"> */}
+          {/* Los campos ahora están directamente dentro de Modal.Body */}
+          <div className="form-group-row">
+            <label className="form-label" htmlFor="rol">Rol</label>
+            <div className="form-control-wrapper">
+              <Form.Control as="select" id="rol" name="rol" value={formData.rol} onChange={handleChange}>
+                <option value="">Seleccionar rol</option>
+                <option value="instructor">Instructor</option>
+                <option value="técnico">Técnico</option>
+                <option value="administrador">Administrador</option>
+              </Form.Control>
             </div>
+          </div>
 
-            <div className="form-group-row mt-2">
-              <label className="form-label" htmlFor="tipoDocumento">Tipo de Documento</label>
-              <div className="form-control-wrapper">
-                <Form.Control as="select" id="tipoDocumento" name="tipoDocumento" value={formData.tipoDocumento} onChange={handleChange}>
-                  <option value="">Seleccionar tipo</option>
-                  <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
-                  <option value="Tarjeta de Extranjería">Tarjeta de Extranjería</option>
-                  <option value="Pasaporte">Pasaporte</option>
-                </Form.Control>
-              </div>
+          <div className="form-group-row mt-2">
+            <label className="form-label" htmlFor="tipoDocumento">Tipo de Documento</label>
+            <div className="form-control-wrapper">
+              <Form.Control as="select" id="tipoDocumento" name="tipoDocumento" value={formData.tipoDocumento} onChange={handleChange}>
+                <option value="">Seleccionar tipo</option>
+                <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
+                <option value="Tarjeta de Extranjería">Tarjeta de Extranjería</option>
+                <option value="Pasaporte">Pasaporte</option>
+              </Form.Control>
             </div>
+          </div>
 
-            <div className="form-group-row mt-2">
-              <label className="form-label" htmlFor="id">Número de Documento</label>
-              <div className="form-control-wrapper">
-                <Form.Control
-                  type="text"
-                  id="id"
-                  placeholder="Ingrese el número de documento"
-                  name="id"
-                  value={formData.id}
-                  onChange={handleChange}
-                  inputMode="numeric"
-                  pattern="\d*"
-                  onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
-                />
-              </div>
+          <div className="form-group-row mt-2">
+            <label className="form-label" htmlFor="id">Número de Documento</label>
+            <div className="form-control-wrapper">
+              <Form.Control
+                type="text"
+                id="id"
+                placeholder="Ingrese el número de documento"
+                name="id"
+                value={formData.id}
+                onChange={handleChange}
+                inputMode="numeric"
+                pattern="\d*"
+                onKeyPress={(e) => {
+                  if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+              />
             </div>
+          </div>
 
-            <div className="form-group-row mt-2">
-              <label className="form-label" htmlFor="nombre">Nombre</label>
-              <div className="form-control-wrapper">
-                <Form.Control type="text" id="nombre" placeholder="Ingrese el nombre" name="nombre" value={formData.nombre} onChange={handleChange} />
-              </div>
+          <div className="form-group-row mt-2">
+            <label className="form-label" htmlFor="nombre">Nombre</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="text" id="nombre" placeholder="Ingrese el nombre" name="nombre" value={formData.nombre} onChange={handleChange} />
             </div>
+          </div>
 
-            <div className="form-group-row mt-2">
-              <label className="form-label" htmlFor="apellido">Apellido</label>
-              <div className="form-control-wrapper">
-                <Form.Control type="text" id="apellido" placeholder="Ingrese el apellido" name="apellido" value={formData.apellido} onChange={handleChange} />
-              </div>
+          <div className="form-group-row mt-2">
+            <label className="form-label" htmlFor="apellido">Apellido</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="text" id="apellido" placeholder="Ingrese el apellido" name="apellido" value={formData.apellido} onChange={handleChange} />
             </div>
+          </div>
 
-            <div className="form-group-row mt-2">
-              <label className="form-label" htmlFor="correo">Correo electrónico</label>
-              <div className="form-control-wrapper">
-                <Form.Control
-                  type="email"
-                  id="correo"
-                  placeholder="ejemplo@dominio.com"
-                  name="correo"
-                  value={formData.correo}
-                  onChange={handleChange}
-                  isInvalid={!!emailError}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {emailError}
-                </Form.Control.Feedback>
-              </div>
+          <div className="form-group-row mt-2">
+            <label className="form-label" htmlFor="correo">Correo electrónico</label>
+            <div className="form-control-wrapper">
+              <Form.Control
+                type="email"
+                id="correo"
+                placeholder="ejemplo@dominio.com"
+                name="correo"
+                value={formData.correo}
+                onChange={handleChange}
+                isInvalid={!!emailError}
+              />
+              <Form.Control.Feedback type="invalid">
+                {emailError}
+              </Form.Control.Feedback>
             </div>
-          </Form>
+          </div>
         </Modal.Body>
 
         <Modal.Footer>

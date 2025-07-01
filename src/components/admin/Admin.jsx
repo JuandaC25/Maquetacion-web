@@ -88,54 +88,54 @@ const Admin = () => {
           <Modal.Title>Detalles del Ticket</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form className="formulario-container">
-            <div className="form-group-row">
-              <label className="form-label">Fecha de informe:</label>
-              <div className="form-control-wrapper">
-                <Form.Control type="text" value={modalDetalles?.fecha || ''} readOnly />
-              </div>
+          <div className="form-group-row">
+            <label className="form-label">Fecha de informe:</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="text" value={modalDetalles?.fecha || ''} readOnly />
             </div>
+          </div>
 
-            <div className="form-group-row">
-              <label className="form-label">Modelo de PC:</label>
-              <div className="form-control-wrapper">
-                <Form.Control type="text" value={modalDetalles?.modelo || ''} readOnly />
-              </div>
+          <div className="form-group-row">
+            <label className="form-label">Modelo de PC:</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="text" value={modalDetalles?.modelo || ''} readOnly />
             </div>
+          </div>
 
-            <div className="form-group-row">
-              <label className="form-label">Número de serie:</label>
-              <div className="form-control-wrapper">
-                <Form.Control type="text" value={modalDetalles?.serie || ''} readOnly />
-              </div>
+          <div className="form-group-row">
+            <label className="form-label">Número de serie:</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="text" value={modalDetalles?.serie || ''} readOnly />
             </div>
+          </div>
 
-            <div className="form-group-row">
-              <label className="form-label">Nombre del técnico:</label>
-              <div className="form-control-wrapper">
-                <Form.Control type="text" value={modalDetalles?.tecnico || ''} readOnly />
-              </div>
+          <div className="form-group-row">
+            <label className="form-label">Nombre del técnico:</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="text" value={modalDetalles?.tecnico || ''} readOnly />
             </div>
+          </div>
 
-            <div className="form-group-row">
-              <label className="form-label">Ambiente:</label>
-              <div className="form-control-wrapper">
-                <Form.Control type="text" value={modalDetalles?.ambiente || ''} readOnly />
-              </div>
+          <div className="form-group-row">
+            <label className="form-label">Ambiente:</label>
+            <div className="form-control-wrapper">
+              <Form.Control type="text" value={modalDetalles?.ambiente || ''} readOnly />
             </div>
+          </div>
 
-            <div className="d-flex gap-2 mt-3">
-              <div className="outline-success" size="sm">Ticket</div>
-              <div className="outline-warning" size="sm">Pendiente</div>
-            </div>
+          {/* Cambiado a componentes Button de Bootstrap con clases y tamaño */}
+          {/* Añadido un div para que se muestren en línea y tengan un poco de espacio */}
+          <div className="d-flex gap-2 mb-3"> {/* Agregamos un pequeño margen inferior (mb-3) */}
+            <Button variant="success" size="sm" className="estado-ticket-btn">Ticket</Button>
+            <Button variant="warning" size="sm" className="estado-ticket-btn">Pendiente</Button>
+          </div>
 
-            <div className="form-group-row mt-3">
-              <label className="form-label">Descripción:</label>
-              <div className="form-control-wrapper">
-                <Form.Control as="textarea" rows={3} value={modalDetalles?.descripcion || ''} readOnly />
-              </div>
+          <div className="form-group-row mt-3">
+            <label className="form-label">Descripción:</label>
+            <div className="form-control-wrapper">
+              <Form.Control as="textarea" rows={3} value={modalDetalles?.descripcion || ''} readOnly />
             </div>
-          </Form>
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
