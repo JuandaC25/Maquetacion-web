@@ -5,20 +5,20 @@ import Footer from "../../Footer/Footer.jsx";
 import HeaderInv from "../header_inv/header_inv.jsx";
 
 const EquipoItem = ({ elemento, onVerClick }) => (
-  <div className="ticket-item">
-    <div className="izquierda">
-      <div className="icono">
+  <div className="ticket-item302">
+    <div className="izquierda303">
+      <div className="icono307">
         <span role="img" aria-label="computadora">🖥️</span>
       </div>
-      <div className="estado">
+      <div className="estado308">
         <span>{elemento.nombre}</span>
       </div>
     </div>
-    <div className="derecha">
-      <div className="folder">
+    <div className="derecha304">
+      <div className="folder306">
         <span role="img" aria-label="folder">📁</span>
       </div>
-      <button className="ver-boton" onClick={() => onVerClick(elemento)}>
+      <button className="ver-boton309" onClick={() => onVerClick(elemento)}>
         Ver
       </button>
     </div>
@@ -26,7 +26,7 @@ const EquipoItem = ({ elemento, onVerClick }) => (
 );
 
 const ListaEquipos = ({ elementos, onVerClick }) => (
-  <div className="lista-tickets"> 
+  <div className="lista-tickets301">
     {elementos.map((el) => (
       <EquipoItem key={el.id} elemento={el} onVerClick={onVerClick} />
     ))}
@@ -37,51 +37,49 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
   if (!detalles) return null;
 
   return (
-    <Modal show={show} onHide={onHide} className="custom-modal" centered>
-      <Modal.Header closeButton className="modal-header-verde">
+    <Modal show={show} onHide={onHide} className="custom-modal315" centered>
+      <Modal.Header closeButton className="modal-header-verde316">
         <Modal.Title>Detalles del Equipo</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        <Form className="formulario-container">
-          <div className="form-group-row">
-            <label className="form-label">ID:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.id} readOnly />
-            </div>
+      <Modal.Body className="modal-body317">
+        <div className="form-group-row310">
+          <label className="form-label311">ID:</label>
+          <div className="form-control-wrapper312">
+            <Form.Control type="text" value={detalles.id} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Nombre:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.nombre} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row310">
+          <label className="form-label311">Nombre:</label>
+          <div className="form-control-wrapper312">
+            <Form.Control type="text" value={detalles.nombre} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Categoría:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.categoria} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row310">
+          <label className="form-label311">Categoría:</label>
+          <div className="form-control-wrapper312">
+            <Form.Control type="text" value={detalles.categoria} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Accesorios:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.accesorios} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row310">
+          <label className="form-label311">Accesorios:</label>
+          <div className="form-control-wrapper312">
+            <Form.Control type="text" value={detalles.accesorios} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Número de serie:</label>
-            <div className="form-control-wrapper">
-              <Form.Control type="text" value={detalles.serie} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row310">
+          <label className="form-label311">Número de serie:</label>
+          <div className="form-control-wrapper312">
+            <Form.Control type="text" value={detalles.serie} readOnly />
           </div>
-          <div className="form-group-row">
-            <label className="form-label">Observaciones:</label>
-            <div className="form-control-wrapper">
-              <Form.Control as="textarea" rows={3} value={detalles.observaciones} readOnly />
-            </div>
+        </div>
+        <div className="form-group-row310">
+          <label className="form-label311">Observaciones:</label>
+          <div className="form-control-wrapper312">
+            <Form.Control as="textarea" rows={3} value={detalles.observaciones} readOnly />
           </div>
-        </Form>
+        </div>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="modal-footer318">
         <Button variant="danger" size="sm" onClick={() => onEliminar(detalles.id)}>
           Eliminar
         </Button>
@@ -94,56 +92,54 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
 };
 
 const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => (
-  <Modal show={show} onHide={onHide} className="custom-modal" centered>
-    <Modal.Header closeButton className="modal-header-verde">
+  <Modal show={show} onHide={onHide} className="custom-modal315" centered>
+    <Modal.Header closeButton className="modal-header-verde316">
       <Modal.Title>Añadir Equipo</Modal.Title>
     </Modal.Header>
-    <Modal.Body>
-      <Form className="formulario-container">
-        <div className="form-group-row">
-          <label className="form-label" htmlFor="id">Id del elemento</label>
-          <div className="form-control-wrapper">
-            <Form.Control type="number" id="id" value={nuevoEquipo.id} onChange={onChange} />
-          </div>
+    <Modal.Body className="modal-body317">
+      <div className="form-group-row310">
+        <label className="form-label311" htmlFor="id">Id del elemento</label>
+        <div className="form-control-wrapper312">
+          <Form.Control type="number" id="id" value={nuevoEquipo.id} onChange={onChange} />
         </div>
-        <div className="form-group-row mt-2">
-          <label className="form-label" htmlFor="nombre">Nombre del elemento</label>
-          <div className="form-control-wrapper">
-            <Form.Control type="text" id="nombre" value={nuevoEquipo.nombre} onChange={onChange} />
-          </div>
+      </div>
+      <div className="form-group-row310 mt-2">
+        <label className="form-label311" htmlFor="nombre">Nombre del elemento</label>
+        <div className="form-control-wrapper312">
+          <Form.Control type="text" id="nombre" value={nuevoEquipo.nombre} onChange={onChange} />
         </div>
-        <div className="form-group-row mt-2">
-          <label className="form-label" htmlFor="categoria">Categoría</label>
-          <div className="form-control-wrapper">
-            <Form.Select id="categoria" value={nuevoEquipo.categoria} onChange={onChange}>
-              <option value="">Seleccionar...</option>
-              <option>Portátil</option>
-              <option>Equipos de escritorio</option>
-              <option>Televisores</option>
-            </Form.Select>
-          </div>
+      </div>
+      <div className="form-group-row310 mt-2">
+        <label className="form-label311" htmlFor="categoria">Categoría</label>
+        <div className="form-control-wrapper312">
+          <Form.Select id="categoria" value={nuevoEquipo.categoria} onChange={onChange}>
+            <option value="">Seleccionar...</option>
+            <option>Portátil</option>
+            <option>Equipos de escritorio</option>
+            <option>Televisores</option>
+          </Form.Select>
         </div>
-        <div className="form-group-row mt-2">
-          <label className="form-label" htmlFor="accesorios">Accesorios</label>
-          <div className="form-control-wrapper">
-            <Form.Control type="text" id="accesorios" value={nuevoEquipo.accesorios} onChange={onChange} />
-          </div>
+      </div>
+      <div className="form-group-row310 mt-2">
+        <label className="form-label311" htmlFor="accesorios">Accesorios</label>
+        <div className="form-control-wrapper312">
+          <Form.Control type="text" id="accesorios" value={nuevoEquipo.accesorios} onChange={onChange} />
         </div>
-        <div className="form-group-row mt-2">
-          <label className="form-label" htmlFor="serie">Número de serie</label>
-          <div className="form-control-wrapper">
-            <Form.Control type="text" id="serie" value={nuevoEquipo.serie} onChange={onChange} />
-          </div>
+      </div>
+      <div className="form-group-row310 mt-2">
+        <label className="form-label311" htmlFor="serie">Número de serie</label>
+        <div className="form-control-wrapper312">
+          <Form.Control type="text" id="serie" value={nuevoEquipo.serie} onChange={onChange} />
         </div>
-        <div className="form-group-row mt-2">
-          <label className="form-label" htmlFor="observaciones">Observaciones</label>
-          <div className="form-control-wrapper">
-            <Form.Control as="textarea" rows={3} id="observaciones" value={nuevoEquipo.observaciones} onChange={onChange} />
-          </div>
+      </div>
+      <div className="form-group-row310 mt-2">
+        <label className="form-label311" htmlFor="observaciones">Observaciones</label>
+        <div className="form-control-wrapper312">
+          <Form.Control as="textarea" rows={3} id="observaciones" value={nuevoEquipo.observaciones} onChange={onChange} />
         </div>
-      </Form>
+      </div>
     </Modal.Body>
-    <Modal.Footer>
+    <Modal.Footer className="modal-footer318">
       <Button variant="secondary" onClick={onHide}>
         Cancelar
       </Button>
@@ -216,7 +212,7 @@ const Admin = () => {
   return (
     <div>
       <HeaderInv />
-      <Alert variant="success" className="d-flex justify-content-between align-items-center">
+      <Alert variant="success" className="alert301 d-flex justify-content-between align-items-center">
         <strong>INVENTARIO</strong>
         <Dropdown>
           <Dropdown.Toggle variant="success" id="dropdown-basic">
@@ -228,7 +224,7 @@ const Admin = () => {
             <Dropdown.Item>Televisores</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-        <Button className="añadir-boton" onClick={openNuevo}>
+        <Button className="añadir-boton322" onClick={openNuevo}>
           Añadir Equipo
         </Button>
       </Alert>
@@ -238,7 +234,7 @@ const Admin = () => {
         onHide={closeDetalles}
         detalles={equipoSeleccionado}
         onEliminar={eliminarEquipo}
-      /> 
+      />
       <NuevoEquipoModal
         show={showNuevo}
         onHide={closeNuevo}

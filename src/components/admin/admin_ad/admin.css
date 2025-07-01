@@ -1,8 +1,9 @@
-.alert {
+.alert201 {
   background-color: #ffffff00;
   text-align: start;
 }
-.ticket-item {
+
+.ticket-item202 {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -14,20 +15,19 @@
   color: black;
 }
 
-.izquierda,
-.derecha {
+.izquierda203,
+.derecha204 {
   display: flex;
   align-items: center;
 }
 
-.izquierda { gap: 10px; }
-.derecha { gap: 10px; }
+.izquierda203 { gap: 10px; }
+.derecha204   { gap: 10px; }
 
-.icono,
-.folder { font-size: 35px; }
+.icono207,
+.folder206 { font-size: 35px; }
 
-.estado span,
-.ticket span {
+.estado208 span {
   background-color: #ccc;
   padding: 6px 16px;
   border-radius: 16px;
@@ -35,52 +35,167 @@
   color: black;
 }
 
-.ver-boton {
+.ver-boton209 {
   background-color: white;
   border: 1px solid #000;
   padding: 5px 12px;
   border-radius: 6px;
 }
 
-.ver-boton:hover { background-color: #f0f0f0; }
+.ver-boton209:hover { background-color: #f0f0f0; }
 
-/* Status Badges */
-.outline-success {
+.form-group-row210 {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 15px;
+}
+
+.custom-modal215 .modal-body217 .form-group-row210:last-of-type {
+  margin-bottom: 0;
+}
+
+.form-label211 {
+  flex: 0 0 200px;
+  text-align: left;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 0;
+}
+
+.form-control-wrapper212 {
+  flex: 1 1 auto;
+}
+
+.form-control213,
+input.form-control213,
+textarea.form-control213 {
+  border-radius: 25px;
+  border: 2px solid black;
+  padding: 8px 15px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+textarea.form-control213 {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.custom-modal215 .modal-dialog {
+  max-width: 700px;
+  margin: 2rem auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.custom-modal215 .modal-content {
+  border-radius: 10px;
+  border: none;
+}
+
+.modal-header-verde216 {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.modal-header-verde216 h5.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.modal-header219 .btn-close {
+  background-color: white;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  opacity: 1;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.modal-body217 {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-bottom-right-radius: 10px;
+}
+
+.Btn_Conf220,
+button.ver-boton209 {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border: 1px solid azure;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-weight: bold;
+}
+
+.outline-success221 {
   background-color: #00AF00;
   color: #ffffff;
   border-radius: 25px;
-  padding: 2px 10px;
-  font-size: 0.8rem;
 }
 
-.outline-warning {
-  background-color: #FFC107;
-  color: #000;
-  border-radius: 5px;
-  padding: 2px 10px;
-  font-size: 0.8rem;
+.modal-footer218 .btn-success {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border: none;
+  font-weight: bold;
 }
-/* Shared Button Styles */
-.ver-boton {
-  background-color: white;
-  border: 1px solid #000;
-  padding: 5px 12px;
+
+.modal-footer218 .btn-danger {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+
+.modal-footer218 .btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+
+.añadir-boton222 {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border: none;
+  padding: 6px 16px;
   border-radius: 6px;
-  cursor: pointer;
+  font-weight: bold;
 }
 
-.ver-boton:hover {
-  background-color: #f0f0f0;
+.estado-ticket-div223 {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  min-width: 80px;
 }
 
-/* Shared Modal Structure */
-.custom-modal .modal-dialog {
-  max-width: 700px;
-  margin: 2rem auto;
-}
-
-/* Shared Form Elements */
-.form-control {
-  border-radius: 25px;
-  border: 2px solid black;
+.estado-ticket-div223:hover {
+  opacity: 0.9;
 }

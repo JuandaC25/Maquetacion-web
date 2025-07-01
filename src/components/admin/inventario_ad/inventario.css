@@ -1,5 +1,9 @@
-/* Inventory Item Styles */
-.ticket-item {
+.alert301 {
+  background-color: #ffffff00;
+  text-align: start;
+}
+
+.ticket-item302 {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -11,19 +15,19 @@
   color: black;
 }
 
-.izquierda,
-.derecha {
+.izquierda303,
+.derecha304 {
   display: flex;
   align-items: center;
 }
 
-.izquierda { gap: 10px; }
-.derecha { gap: 10px; }
+.izquierda303 { gap: 10px; }
+.derecha304   { gap: 10px; }
 
-.icono,
-.folder { font-size: 35px; }
+.icono307,
+.folder306 { font-size: 35px; }
 
-.estado span {
+.estado308 span {
   background-color: #ccc;
   padding: 6px 16px;
   border-radius: 16px;
@@ -31,20 +35,67 @@
   color: black;
 }
 
-/* Shared Modal Styles */
-.custom-modal .modal-dialog {
+.ver-boton309 {
+  background-color: white;
+  border: 1px solid #000;
+  padding: 5px 12px;
+  border-radius: 6px;
+}
+
+.ver-boton309:hover { background-color: #f0f0f0; }
+
+.form-group-row310 {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 15px;
+}
+
+.custom-modal315 .modal-body317 .form-group-row310:last-of-type {
+  margin-bottom: 0;
+}
+
+.form-label311 {
+  flex: 0 0 200px;
+  text-align: left;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 0;
+}
+
+.form-control-wrapper312 {
+  flex: 1 1 auto;
+}
+
+.form-control313,
+input.form-control313,
+textarea.form-control313 {
+  border-radius: 25px;
+  border: 2px solid black;
+  padding: 8px 15px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+textarea.form-control313 {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.custom-modal315 .modal-dialog {
   max-width: 700px;
   margin: 2rem auto;
   border-radius: 10px;
   overflow: hidden;
 }
 
-.custom-modal .modal-content {
+.custom-modal315 .modal-content {
   border-radius: 10px;
   border: none;
 }
 
-.modal-header-verde {
+.modal-header-verde316 {
   background-color: rgb(9, 180, 26);
   color: white;
   border-top-left-radius: 10px;
@@ -56,13 +107,13 @@
   position: relative;
 }
 
-.modal-header-verde h5.modal-title {
+.modal-header-verde316 h5.modal-title {
   margin: 0;
   font-size: 1.25rem;
   font-weight: bold;
 }
 
-.modal-header .btn-close {
+.modal-header319 .btn-close {
   background-color: white;
   border-radius: 50%;
   width: 25px;
@@ -79,82 +130,72 @@
   filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-.modal-body {
+.modal-body317 {
   background-color: #ffffff;
   padding: 40px 30px;
   border-bottom-right-radius: 10px;
 }
 
-/* Form Styles */
-.formulario-container {
-  background-color: #ffffff;
-  padding: 30px;
-  border-radius: 12px;
-  border: 2px groove black;
-  width: 100%;
-  max-width: 900px;
-  margin: 60px auto 140px;
-  box-sizing: border-box;
-  min-height: 700px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.form-group-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.form-label {
-  flex: 0 0 200px;
-  text-align: left;
-  font-weight: bold;
-  color: black;
-  margin-bottom: 0;
-}
-
-.form-control-wrapper {
-  flex: 1 1 auto;
-}
-
-.form-control,
-input.form-control,
-textarea.form-control {
-  border-radius: 25px;
-  border: 2px solid black;
-  padding: 8px 15px;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: left;
-}
-
-textarea.form-control {
-  min-height: 80px;
-  resize: vertical;
-}
-/* Shared Button Styles */
-.ver-boton {
-  background-color: white;
-  border: 1px solid #000;
-  padding: 5px 12px;
+.Btn_Conf320,
+button.ver-boton309 {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border: 1px solid azure;
   border-radius: 6px;
-  cursor: pointer;
+  padding: 6px 16px;
+  font-weight: bold;
 }
 
-.ver-boton:hover {
-  background-color: #f0f0f0;
-}
-
-/* Shared Modal Structure */
-.custom-modal .modal-dialog {
-  max-width: 700px;
-  margin: 2rem auto;
-}
-
-/* Shared Form Elements */
-.form-control {
+.outline-success321 {
+  background-color: #00AF00;
+  color: #ffffff;
   border-radius: 25px;
-  border: 2px solid black;
+}
+
+.modal-footer318 .btn-success {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+
+.modal-footer318 .btn-danger {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+
+.modal-footer318 .btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+
+.añadir-boton322 {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.estado-ticket-div323 {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  min-width: 80px;
+}
+
+.estado-ticket-div323:hover {
+  opacity: 0.9;
 }
