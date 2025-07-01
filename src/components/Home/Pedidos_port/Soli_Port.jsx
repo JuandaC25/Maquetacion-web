@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom';
-import Pagination from 'react-bootstrap/Pagination';
+import { useState } from 'react';
 import './Soli_port.css';
 import Footer from '../../Footer/Footer.jsx';
 import Header_port from './Header/Header.jsx';
-const ConsultaItem = () => {
+import { Modal, Button, Pagination, Container, Form } from 'react-bootstrap';
 
+// COMPONENTE ITEM
+const ConsultaItem = ({ onVerClick }) => {
   return (
     <div className="ticket-item2">
       <div className="izquierda2">
@@ -14,45 +15,104 @@ const ConsultaItem = () => {
         </div>
       </div>
       <div className="derecha1">
-      <Link to="/Formulario" className="btn btn-primary Buton_Fomr">Ver</Link>
+        <Button onClick={onVerClick} className="btn btn-primary Buton_Fomr">
+          Ver
+        </Button>
       </div>
     </div>
   );
 };
 
+// LISTA DE CONSULTAS
 const ListaConsultas = () => {
-  const elementos = new Array(8).fill(null); 
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShow = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
+
+  const elementos = new Array(8).fill(null);
+
   return (
     <div name="lista-inventario1">
       {elementos.map((_, i) => (
-        <ConsultaItem key={i} />
+        <ConsultaItem key={i} onVerClick={handleShow} />
       ))}
 
-    <div id="piepor">
-    <Pagination>
-      <Pagination.Prev/>
-      <Pagination.Item  id="font">{1}</Pagination.Item>
-      <Pagination.Item id="font">{2}</Pagination.Item>
-      <Pagination.Item id="font">{3}</Pagination.Item>
-      <Pagination.Ellipsis />
-      <Pagination.Item  id="font">{10}</Pagination.Item>
-      <Pagination.Next />
-    </Pagination >
+      <div id="piepor">
+        <Pagination>
+          <Pagination.Prev />
+          <Pagination.Item id="font">{1}</Pagination.Item>
+          <Pagination.Item id="font">{2}</Pagination.Item>
+          <Pagination.Item id="font">{3}</Pagination.Item>
+          <Pagination.Ellipsis />
+          <Pagination.Item id="font">{10}</Pagination.Item>
+          <Pagination.Next />
+        </Pagination>
+      </div>
+
+      {/* MODAL CON FORMULARIO EMBEBIDO */}
+      <Modal show={showModal} onHide={handleClose} size="lg">
+        <Modal.Header closeButton className='Titmodal'>
+          <Modal.Title ><h1>  Información del equipo  </h1></Modal.Title>
+        </Modal.Header>
+  <Modal.Body>
+    <Form className="form-vertical">
+      <Form.Group className="mb-3">
+      <Form.Label>Id del elemento</Form.Label>
+      <Form.Control className='tx1' placeholder="XXXXXXXX" disabled />
+    </Form.Group>
+
+    <Form.Group >
+      <Form.Label>Nombre del elemento</Form.Label>
+      <Form.Control className='tx1' placeholder="XXXXXXXX" disabled />
+    </Form.Group>
+
+    <Form.Group >
+      <Form.Label>Categoría</Form.Label>
+      <Form.Control className='tx1' placeholder="Portátiles, escritorio..." disabled />
+    </Form.Group>
+
+    <Form.Group >
+      <Form.Label>Accesorios</Form.Label>
+      <Form.Control className='tx1' placeholder="Mouse, Cargador, Funda..." disabled />
+    </Form.Group>
+
+    <Form.Group >
+      <Form.Label>Número de serie</Form.Label>
+      <Form.Control className='tx1' placeholder="XXXXXXXX" disabled />
+    </Form.Group>
+    
+    <Form.Group >
+      <Form.Label>Observaciones</Form.Label>
+      <Form.Control className='tx1' as="textarea" rows={3} disabled />
+    </Form.Group>
+
+    <div>
+      <Button className='Btn_Conf' type="submit">Aceptar</Button>
     </div>
+  </Form>
+</Modal.Body>
+
+        <Modal.Footer>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
 
+// COMPONENTE PRINCIPAL
 function Soli_Port() {
   return (
     <div className="Usu-container1">
       <div className='general2'>
-        <Header_port/>
+        <Header_port />
       </div>
       <ListaConsultas />
-      <Footer/>
+      <Footer />
     </div>
   );
 }
 
 export default Soli_Port;
+
+
