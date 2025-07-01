@@ -3,7 +3,7 @@ import { Button, Alert, Dropdown, Modal, Form } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import "./admin.css";
 import Footer from '../../Footer/Footer.jsx';
-import HeaderAd from '../header_admin/header_ad.jsx'; // Se mantiene HeaderAd como se solicitó
+import HeaderAd from '../header_admin/header_ad.jsx'; 
 
 const Ticketxd = ({ estado, ticket, onVerClick }) => {
   return (
@@ -43,20 +43,24 @@ const Listaxd = ({ onVerClick }) => {
 
   return (
     <div className="lista-tickets201">
-      <Alert variant="success" className="alert201">
-        <strong>TICKET</strong>
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Elemento
-          </Dropdown.Toggle>
+<Alert variant="success" className="alert201">
+  <div className="d-flex justify-content-between align-items-center">
+    <div className="d-flex align-items-center gap-3">
+      <strong className="mb-0">TICKET</strong>
+      <Dropdown>
+        <Dropdown.Toggle variant="success" id="dropdown-basic">
+          Elemento
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item href="#/action-1">Portátiles</Dropdown.Item>
+          <Dropdown.Item href="#/action-2">Equipos de escritorio</Dropdown.Item>
+          <Dropdown.Item href="#/action-3">Televisores</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </div>
+  </div>
+</Alert>
 
-          <Dropdown.Menu>
-            <Dropdown.Item href="#/action-1">Portátiles</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Equipos de escritorio</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">Televisores</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </Alert>
 
       {tickets.map((t, i) => (
         <Ticketxd key={i} estado={t.estado} ticket={t.ticket} onVerClick={() => onVerClick(t.detalles)} />
@@ -81,7 +85,7 @@ const Admin = () => {
 
   return (
     <div>
-      <HeaderAd /> {/* Aquí se usa HeaderAd */}
+      <HeaderAd /> 
       <Listaxd onVerClick={handleVerClick} />
       <Modal show={showModal} onHide={handleCloseModal} className="custom-modal215" centered>
         <Modal.Header closeButton className="modal-header-verde216">

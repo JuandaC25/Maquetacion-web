@@ -141,11 +141,14 @@ button.ver-boton109 {
   font-weight: bold;
 }
 
-.añadir-boton122 {
+.añadir-boton122,.añadir-boton122 {
+  justify-content:start;
   background-color: rgb(9, 180, 26);
   color: white;
   border: none;
   padding: 6px 16px;
   border-radius: 6px;
   font-weight: bold;
+  text-align: center;
 }
+/*grid container*/
