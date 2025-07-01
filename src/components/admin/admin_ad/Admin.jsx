@@ -3,7 +3,7 @@ import { Button, Alert, Dropdown, Modal, Form } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import "./admin.css";
 import Footer from '../../Footer/Footer.jsx';
-import HeaderAd from '../header_admin/header_ad.jsx';
+import HeaderAd from '../header_admin/header_ad.jsx'; // Se mantiene HeaderAd como se solicitó
 
 const Ticketxd = ({ estado, ticket, onVerClick }) => {
   return (
@@ -81,7 +81,7 @@ const Admin = () => {
 
   return (
     <div>
-      <HeaderAd />
+      <HeaderAd /> {/* Aquí se usa HeaderAd */}
       <Listaxd onVerClick={handleVerClick} />
       <Modal show={showModal} onHide={handleCloseModal} className="custom-modal215" centered>
         <Modal.Header closeButton className="modal-header-verde216">

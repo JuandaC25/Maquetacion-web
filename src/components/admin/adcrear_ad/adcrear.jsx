@@ -3,7 +3,7 @@ import { Button, Alert, Modal, Form } from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
 import "./adcrear_ad.css";
 import Footer from '../../Footer/Footer.jsx';
-import HeaderAd from '../header_admin/header_ad.jsx';
+import HeaderCrear from '../header_crear/header_crear.jsx'; // Cambiado de HeaderAd a HeaderCrear
 
 const DetallesUsuarioModal = ({ show, onHide, detalles, onEliminar }) => {
   if (!detalles) return null;
@@ -152,7 +152,7 @@ const Listaxd = () => {
 
   return (
     <div className="lista-tickets101">
-      <HeaderAd />
+      <HeaderCrear /> {/* Cambiado de HeaderAd a HeaderCrear */}
       <Alert variant="success" className="alert101 d-flex justify-content-between align-items-center">
         <strong>CONSULTAS DE USUARIOS</strong>
         <Button className="añadir-boton122" onClick={handleShow}>Añadir Usuario</Button>
