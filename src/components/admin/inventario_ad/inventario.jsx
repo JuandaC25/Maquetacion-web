@@ -212,22 +212,28 @@ const Admin = () => {
   return (
     <div>
       <HeaderInv />
-      <Alert variant="success" className="alert301 d-flex justify-content-between align-items-center">
-        <strong>INVENTARIO</strong>
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Categoría
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item>Portátiles</Dropdown.Item>
-            <Dropdown.Item>Equipos de escritorio</Dropdown.Item>
-            <Dropdown.Item>Televisores</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-        <Button className="añadir-boton322" onClick={openNuevo}>
-          Añadir Equipo
-        </Button>
-      </Alert>
+<Alert variant="success" className="alert301">
+  <div className="d-flex justify-content-between align-items-center">
+    <div className="d-flex align-items-center gap-3">
+      <strong className="mb-0">INVENTARIO</strong>
+      <Dropdown>
+        <Dropdown.Toggle variant="success" id="dropdown-basic">
+          Categoría
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item>Portátiles</Dropdown.Item>
+          <Dropdown.Item>Equipos de escritorio</Dropdown.Item>
+          <Dropdown.Item>Televisores</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </div>
+    <Button className="añadir-boton322" onClick={openNuevo}>
+      Añadir Equipo
+    </Button>
+  </div>
+</Alert>
+
+
       <ListaEquipos elementos={elementosInventario} onVerClick={openDetalles} />
       <DetallesEquipoModal
         show={showDetalles}

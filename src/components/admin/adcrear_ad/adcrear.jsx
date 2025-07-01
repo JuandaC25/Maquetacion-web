@@ -149,17 +149,16 @@ const Listaxd = () => {
   const consultas = usuarios.map((usuario) => (
     <ConsultaItem key={usuario.id} usuario={usuario} onVerClick={handleVerDetalles} />
   ));
-
+/*grid container*/
   return (
     <div className="lista-tickets101">
-      <HeaderCrear /> {/* Cambiado de HeaderAd a HeaderCrear */}
-      <Alert variant="success" className="alert101 d-flex justify-content-between align-items-center">
-        <strong>CONSULTAS DE USUARIOS</strong>
-        <Button className="añadir-boton122" onClick={handleShow}>Añadir Usuario</Button>
+      <HeaderCrear />
+      <Alert variant="success" className="grid-container">
+        <><strong className='añadir-boton123'>CONSULTAS DE USUARIOS</strong></>
+        <><Button className="añadir-boton122" onClick={handleShow}>Añadir Usuario</Button></>
       </Alert>
-
       {consultas}
-
+      
       <Modal show={showModal} onHide={handleClose} className="custom-modal115" centered>
         <Modal.Header closeButton className="modal-header-verde116">
           <Modal.Title>Añadir Usuario</Modal.Title>
