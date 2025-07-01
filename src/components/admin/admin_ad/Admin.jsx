@@ -18,7 +18,7 @@ const Ticketxd = ({ estado, ticket, onVerClick }) => {
       </div>
       <div className="derecha204">
         <div className="ticket205">
-          <span>{ticket}</span>
+          <span className="estado208 ticket-nombre-derecha">{ticket}</span> 
         </div>
         <div className="folder206">
           <span role="img" aria-label="folder">📁</span>
@@ -124,8 +124,8 @@ const Admin = () => {
           </div>
 
           <div className="d-flex gap-2 mb-3">
-            <div className="estado-ticket-div223">Ticket</div>
-            <div className="estado-ticket-div223">Pendiente</div>
+            <span className="estado208">Ticket</span> 
+            <span className="estado208">Pendiente</span> 
           </div>
 
           <div className="form-group-row210 mt-3">

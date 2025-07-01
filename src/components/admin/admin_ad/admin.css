@@ -27,12 +27,13 @@
 .icono207,
 .folder206 { font-size: 35px; }
 
-.estado208 span {
+.estado208 { 
   background-color: #ccc;
   padding: 6px 16px;
   border-radius: 16px;
   font-weight: 600;
   color: black;
+  display: inline-block; 
 }
 
 .ver-boton209 {
