@@ -172,7 +172,82 @@ const Listaxd = () => {
           <Modal.Title>Añadir Usuario</Modal.Title>
         </Modal.Header>
         <Modal.Body className="modal-body117">
-          {/* ...Formulario aquí... */}
+          <div className="form-group-row110">
+            <label className="form-label111" htmlFor="rol">Rol</label>
+            <div className="form-control-wrapper112">
+              <Form.Control as="select" id="rol" name="rol" value={formData.rol} onChange={handleChange}>
+                <option value="">Seleccionar rol</option>
+                <option value="instructor">Instructor</option>
+                <option value="técnico">Técnico</option>
+                <option value="administrador">Administrador</option>
+              </Form.Control>
+            </div>
+          </div>
+
+          <div className="form-group-row110 mt-2">
+            <label className="form-label111" htmlFor="tipoDocumento">Tipo de Documento</label>
+            <div className="form-control-wrapper112">
+              <Form.Control as="select" id="tipoDocumento" name="tipoDocumento" value={formData.tipoDocumento} onChange={handleChange}>
+                <option value="">Seleccionar tipo</option>
+                <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
+                <option value="Tarjeta de Extranjería">Tarjeta de Extranjería</option>
+                <option value="Pasaporte">Pasaporte</option>
+              </Form.Control>
+            </div>
+          </div>
+
+          <div className="form-group-row110 mt-2">
+            <label className="form-label111" htmlFor="id">Número de Documento</label>
+            <div className="form-control-wrapper112">
+              <Form.Control
+                type="text"
+                id="id"
+                placeholder="Ingrese el número de documento"
+                name="id"
+                value={formData.id}
+                onChange={handleChange}
+                inputMode="numeric"
+                pattern="\d*"
+                onKeyPress={(e) => {
+                  if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="form-group-row110 mt-2">
+            <label className="form-label111" htmlFor="nombre">Nombre</label>
+            <div className="form-control-wrapper112">
+              <Form.Control type="text" id="nombre" placeholder="Ingrese el nombre" name="nombre" value={formData.nombre} onChange={handleChange} />
+            </div>
+          </div>
+
+          <div className="form-group-row110 mt-2">
+            <label className="form-label111" htmlFor="apellido">Apellido</label>
+            <div className="form-control-wrapper112">
+              <Form.Control type="text" id="apellido" placeholder="Ingrese el apellido" name="apellido" value={formData.apellido} onChange={handleChange} />
+            </div>
+          </div>
+
+          <div className="form-group-row110 mt-2">
+            <label className="form-label111" htmlFor="correo">Correo electrónico</label>
+            <div className="form-control-wrapper112">
+              <Form.Control
+                type="email"
+                id="correo"
+                placeholder="ejemplo@dominio.com"
+                name="correo"
+                value={formData.correo}
+                onChange={handleChange}
+                isInvalid={!!emailError}
+              />
+              <Form.Control.Feedback type="invalid">
+                {emailError}
+              </Form.Control.Feedback>
+            </div>
+          </div>
         </Modal.Body>
         <Modal.Footer className="modal-footer118">
           <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
