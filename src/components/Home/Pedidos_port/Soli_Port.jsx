@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './Soli_port.css';
 import Footer from '../../Footer/Footer.jsx';
-import Header_port from './Header/Header.jsx';
+import Header_port from './Header soli/Header.jsx';
 import { Modal, Button, Pagination, Form } from 'react-bootstrap';
 
 const ConsultaItem = ({ onVerClick }) => {

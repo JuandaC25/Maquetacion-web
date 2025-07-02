@@ -9,66 +9,84 @@
 .fila-superior {
   display: flex;
   justify-content: center;
-  gap: 2rem;
+  gap: 6rem;
   width: 100%;
-  max-width: 800px;
+  margin-top: -2rem;
 }
 
 .fila-inferior {
   margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 6rem;
   width: 100%;
-  max-width: 400px;
 }
 
 .cuadro1 {
   text-align: center;
-  background-color: #ffffff;
+  box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.1);
+  background-color: color-mix(in srgb, rgb(255, 255, 255) 50%, rgb(233, 233, 233) 50%);
   border-color: black;
   border-radius: 8px;
   padding: 15px;
-  width: calc(50% - 1rem);
+  width: calc(30% - 2rem);
+  
 }
 
 .cuadro2 {
   text-align: center;
-  background-color: #ffffff;
+  box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.1);
+  background-color: color-mix(in srgb, rgb(255, 255, 255) 50%, rgb(233, 233, 233) 50%);
   border-color: black;
   border-radius: 8px;
   padding: 15px;
-  width: calc(50% - 1rem);
+  width: calc(30% - 1rem);
 }
 
 .cuadro3 {
   text-align: center;
-  background-color: #ffffff;
+  box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.1);
+   background-color: color-mix(in srgb, rgb(255, 255, 255) 50%, rgb(233, 233, 233) 50%);
   border-color: black;
   border-radius: 8px;
   padding: 15px;
-  width: 100%;
   margin-top: 2rem;
+  width: calc(30% - 1rem);
+}
+.cuadro4{
+  text-align: center;
+  box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.1);
+  background-color: color-mix(in srgb, rgb(255, 255, 255) 50%, rgb(233, 233, 233) 50%);
+  border-color: black;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 2rem;
+  width: calc(30% - 1rem);
 }
 
 .portatiles {
-  background-color: #ffffff;
+ background-color: color-mix(in srgb, rgb(255, 255, 255) 50%, rgb(233, 233, 233) 50%);
 }
 
 .escritorio {
-  background-color: #ffffff;
+   background-color: color-mix(in srgb, rgb(255, 255, 255) 50%, rgb(233, 233, 233) 50%);
 }
 
 .televisores {
-  background-color: #ffffff;
+   background-color: color-mix(in srgb, rgb(255, 255, 255) 50%, rgb(233, 233, 233) 50%);
 }
 
 .boton1 {
-  margin-top: 15px;
+  margin-top: 16px;
   padding: 10px 20px;
   background-color: rgb(133, 132, 132);
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  width: auto;
+  width: 40%;
+  height: 40%;
+  
 }
 
 .boton_esc {
@@ -79,7 +97,8 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  width: auto;
+  width: 40%;
+  height: 40%;
 }
 
 .boton_TV {
@@ -90,5 +109,18 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  width: auto;
+  width: 40%;
+  height: 40%;
+}
+
+.boton_elements{
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: rgb(133, 132, 132);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 40%;
+  height: 40%;
 }
