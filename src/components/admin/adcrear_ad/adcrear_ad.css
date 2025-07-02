@@ -143,7 +143,7 @@ button.ver-boton109 {
 
 .añadir-boton122,.añadir-boton122 {
   justify-content:start;
-  background-color: rgb(9, 180, 26);
+  background-color: rgba(9, 180, 26, 0);
   color: white;
   border: none;
   padding: 6px 16px;
