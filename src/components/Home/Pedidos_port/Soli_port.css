@@ -175,37 +175,24 @@ margin-left: 200px;
     flex-direction: column;
 }
 
-.Cont_gene {
-    display: flex;
-    flex-direction: row;
-    border-color: black;
-    margin-left: 1rem;
-    text-align: center;
-}
-.cuerpo-mo{
-  flex-direction: row;
-}
-.Btn_Conf{
-    justify-content: center;
-    background-color:  rgb(9, 180, 26);
-    margin-top: 3rem;
-    border-color: azure;
+
+
+/*  Division Modal  */
+.Btn_Conf {
+    background-color: rgb(9, 180, 26);
+    border: none;
+    width: 30%;
+    height: 90%;
+    color: white;
+    padding: 0.6rem 2rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    margin-left: 11rem;
 }
 .Btn_Conf:hover {
-    background-color: rgb(9, 180, 26); /* Mismo color de fondo al hacer hover */
-    border-color: azure; 
+    background-color: rgb(0, 150, 0); /* tono más oscuro al pasar el mouse */
 }
-.Btn_Conf:focus {
-    background-color: rgb(9, 180, 26);
-    border-color: azure;
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Ejemplo de indicador de foco */
-}
-.Btn_Conf:active {
-    background-color: rgb(0, 0, 0); 
-    border-color: azure; 
-    outline: none; 
-}
+
 .Cua_der{
     border-color: aliceblue;
     margin-top: 5rem;
@@ -218,25 +205,23 @@ margin-left: 200px;
  color: #ffffff;
 }
 .form-vertical {
- margin-left: 1rem;
- display: grid;
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem;
+  gap: 1rem; 
+  margin-top:-3rem;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  width: 95%;
+   
 }
+
 .tx1 {
     border-color: black;
     border-radius: 10px;
     box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
 }
-
-.Btn_Conf {
-    background-color: rgb(0, 180, 0);
-    color: white;
-    padding: 0.6rem 3rem;
-    border-radius: 25px;
-    border: none;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-.Btn_Conf:hover {
-    background-color: rgb(0, 150, 0);
+.cuer-mo{
+  height: 700px;
 }

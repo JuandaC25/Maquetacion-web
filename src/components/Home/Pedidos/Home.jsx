@@ -6,10 +6,12 @@ import "./Estilos.css";
 function Home() {
  return (
      <>
+  <div className='cuerpo'>
      <Header/>
       <Cuadro_Pedidos />
   <div className='ajustarfoter'>
     <Footer/>
+  </div>
   </div>
   </>
  );

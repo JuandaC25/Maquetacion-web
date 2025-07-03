@@ -26,6 +26,12 @@ function Cuadro_Pedidos() {
             <Button href='/Solicitartelevisores' className='boton_TV'>Seleccionar</Button>
           </Card.Body>
         </Card>
+              <Card className='cuadro4'>
+          <Card.Body>
+            <Card.Title><h1 className='Elementos'>Elementos</h1></Card.Title>
+            <Button href='/Pedidos_ele' className='boton_elements'>Seleccionar</Button>
+          </Card.Body>
+        </Card>
       </div>
     </div>
   );

@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import './Soli_port.css';
 import Footer from '../../Footer/Footer.jsx';
-import Header_port from './Header/Header.jsx';
-import { Modal, Button, Pagination, Container, Form } from 'react-bootstrap';
+import Header_port from './Header soli/Header.jsx';
+import { Modal, Button, Pagination, Form } from 'react-bootstrap';
 
-// COMPONENTE ITEM
 const ConsultaItem = ({ onVerClick }) => {
   return (
     <div className="ticket-item2">
@@ -50,14 +49,15 @@ const ListaConsultas = () => {
         </Pagination>
       </div>
 
-      {/* MODAL CON FORMULARIO EMBEBIDO */}
+
       <Modal show={showModal} onHide={handleClose} size="lg">
         <Modal.Header closeButton className='Titmodal'>
           <Modal.Title ><h1>  Información del equipo  </h1></Modal.Title>
         </Modal.Header>
-  <Modal.Body>
+  <Modal.Body >
+    <div className='cuer-mo'>
     <Form className="form-vertical">
-      <Form.Group className="mb-3">
+      <Form.Group >
       <Form.Label>Id del elemento</Form.Label>
       <Form.Control className='tx1' placeholder="XXXXXXXX" disabled />
     </Form.Group>
@@ -91,10 +91,8 @@ const ListaConsultas = () => {
       <Button className='Btn_Conf' type="submit">Aceptar</Button>
     </div>
   </Form>
+  </div>
 </Modal.Body>
-
-        <Modal.Footer>
-        </Modal.Footer>
       </Modal>
     </div>
   );

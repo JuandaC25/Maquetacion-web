@@ -1,13 +1,13 @@
 import { Navbar, Container, Nav} from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import './Header.css';
+import './Header_elemen.css';
 import Desplegable from '../../../desplegable/desplegable';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { Link } from 'react-router-dom';
 
-function Headerespacios() {
+function HeaderElemen() {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -40,7 +40,7 @@ function Headerespacios() {
   
         <Navbar>
           <Container>
-            <h1 className='header1007'>Solicitar espacios</h1>
+            <h1 className='header1007'>Solicitar Elementos</h1>
             <Container className='Iconos'>
             <Nav.Link href="http://localhost:5173/Login" >Home</Nav.Link>
             <Nav.Link className= "Blogc" href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
@@ -52,9 +52,4 @@ function Headerespacios() {
     );
   }
   
-  export default Headerespacios;
-
-
-
-
-  
+  export default HeaderElemen;
