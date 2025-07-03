@@ -1,60 +1,54 @@
-import React from 'react';
-import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Navbar, Container, Nav, Button, Offcanvas } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './header_crear.css';
 import Desplegable from '../../desplegable/desplegable';
+import { Link } from 'react-router-dom';
 
+function Header_crear() {
+  const [show, setShow] = useState(false);
 
-function header_crear() {
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
-    <div className='header90001'> 
-
-      <Navbar expand="xxxl" className='header90002'>
+    <div className='header1001'> 
+      <Navbar expand="xxxl" >
         <Container>
-          <Navbar.Toggle className='header90003' />
-          <Navbar.Collapse className='header90004'>
-            <Nav>
-
-            <div>
-              
-              <div className='header90005'>
-              <NavDropdown.Item href="#action/3.1">Menu</NavDropdown.Item>
-              </div>
-              <div  className='header90006'>
-              <NavDropdown.Item href='/Admin' >
-                Estado del ticket
-              </NavDropdown.Item >
-              </div>
-              <div  className='header90006'>
-              <NavDropdown.Item href='/Adcrear' >
-                Gestionar usuarios
-              </NavDropdown.Item >
-              </div>
-              <div className='header90006'>
-              <NavDropdown.Item href="/Inventario">
-                Consultar inventario
-              </NavDropdown.Item>
-              </div>
-              <NavDropdown.Divider />
-              </div>
-            </Nav>
-          </Navbar.Collapse>
+          <Button variant="primary" className='Icon_menu' onClick={handleShow}>
+            <i className="bi bi-list"></i>
+          </Button>
+          <Offcanvas show={show} onHide={handleClose}>
+            <Offcanvas.Header className='header_menuuu'>
+              <Offcanvas.Title className='header_menu'><h1>Menú</h1></Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+              <Link to="/Admin" className='cuadrito1'>
+                <h3><i className="bi bi-ticket-detailed"></i> Estado del ticket</h3>
+              </Link>
+              <Link to="/Adcrear" className='cuadrito1'>
+                <h3><i className="bi bi-person-plus"></i> Gestionar usuarios</h3>
+              </Link>
+              <Link to="/Inventario" className='cuadrito1'>
+                <h3><i className="bi bi-box-seam"></i> Consultar inventario</h3>
+              </Link>
+            </Offcanvas.Body>
+          </Offcanvas>
         </Container>
       </Navbar>
 
-
       <Navbar>
         <Container>
-          <h1 className='header90007'>Gestionar usuarios</h1>
-          
-            <Nav.Link href="http://localhost:5173/Login" className='header90008'>Home</Nav.Link>
-            <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/" className='header90009'>Blog CEET</Nav.Link>
-        <Desplegable></Desplegable>
-        
+          <h1 className='header1007'>Gestionar usuarios</h1>
+          <Container className='Iconos'>
+            <Nav.Link href="http://localhost:5173/Login" >Home</Nav.Link>
+            <Nav.Link className="Blogc" href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
+            <Desplegable />
+          </Container>
         </Container>
       </Navbar>
     </div>
   );
 }
 
-export default header_crear;
+export default Header_crear;
