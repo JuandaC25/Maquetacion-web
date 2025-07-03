@@ -74,6 +74,7 @@
 
 .form-control-wrapper312 {
   flex: 1 1 auto;
+   border: 1px solid black;
 }
 
 textarea.form-control313 {
