@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navbar, Container, Nav, Button, Offcanvas } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import './header_inv.css'; 
+import './header_inv.css'; // This CSS file will now contain the new class styles
 import Desplegable from '../../desplegable/desplegable';
 import { Link } from 'react-router-dom';
 
@@ -12,10 +12,10 @@ function Header_inv() {
   const handleShow = () => setShow(true);
 
   return (
-    <div className='header1001'>
-      <Navbar expand="xxxl"> 
+    <div className='header1001'> {/* Changed to header1001 */}
+      <Navbar expand="xxxl"> {/* Removed header100002 as it's not in the new structure */}
         <Container>
-          <Button variant="primary" className='Icon_menu' onClick={handleShow}> 
+          <Button variant="primary" className='Icon_menu' onClick={handleShow}> {/* Changed to Icon_menu */}
             <i className="bi bi-list"></i>
           </Button>
           <Offcanvas show={show} onHide={handleClose}>
@@ -40,10 +40,11 @@ function Header_inv() {
 
       <Navbar>
         <Container>
+          {/* Changed to header1007 but keeping "Inventario" text */}
           <h1 className='header1007'>Inventario</h1>
           <Container className='Iconos'>
-            <Nav.Link href="http://localhost:5173/Login">Home</Nav.Link> 
-            <Nav.Link className="Blogc" href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
+            <Nav.Link href="http://localhost:5173/Login">Home</Nav.Link> {/* Removed header100008 */}
+            <Nav.Link className="Blogc" href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link> {/* Changed to Blogc */}
             <Desplegable />
           </Container>
         </Container>

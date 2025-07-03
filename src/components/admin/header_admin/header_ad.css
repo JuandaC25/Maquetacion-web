@@ -55,6 +55,11 @@
   color: white;
   text-align: center !important;
 }
+
+.Iconos {
+    /* Add styles for the container around Home and Blog CEET links if desired */
+}
+
 .Blogc {
   color: white;
   text-decoration: underline white;

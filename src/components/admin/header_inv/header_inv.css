@@ -55,6 +55,11 @@
   color: white;
   text-align: center !important;
 }
+
+.Iconos {
+  /* This container was added in your Header_crear.jsx for the navigation links */
+}
+
 .Blogc {
   color: white;
   text-decoration: underline white;

@@ -56,7 +56,25 @@
   text-align: center !important;
 }
 
+/* These styles were from your original Header_crear.css and seem unused now,
+   but I'm keeping them commented out in case you need them for other elements
+   or decide to re-introduce them later.
+.header90008 {
+  width: 5%;
+  color: white;
+  text-decoration: underline white;
+  margin-bottom: 50px;
+}
 
+.header90009 {
+  width: 8%;
+  color: white;
+  text-decoration: underline white;
+  margin-bottom: 50px;
+}
+*/
+
+/* New class based on your other component's CSS for the blog link */
 .Blogc {
   color: white;
   text-decoration: underline white;
