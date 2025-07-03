@@ -5,6 +5,7 @@ import Footer from "../../Footer/Footer.jsx";
 import HeaderInv from "../header_inv/header_inv.jsx";
 
 const EquipoItem = ({ elemento, onVerClick }) => (
+  <div className="margin300">
   <div className="ticket-item302">
     <div className="izquierda303">
       <div className="icono307">
@@ -23,6 +24,7 @@ const EquipoItem = ({ elemento, onVerClick }) => (
       </button>
     </div>
   </div>
+</div>
 );
 
 const ListaEquipos = ({ elementos, onVerClick }) => (

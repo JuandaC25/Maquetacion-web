@@ -75,7 +75,7 @@
 
 .form-control-wrapper212 {
   flex: 1 1 auto;
-     border: 1px solid black;
+  border: 1px solid black;
 }
 
 textarea.form-control213 {
@@ -155,4 +155,7 @@ button.ver-boton209 {
 .izquierda203 .estado208 {
     font-size: 0.9em; 
 }
-
+.margen200{
+  margin-left: 30px;
+  margin-right: 30px;
+}

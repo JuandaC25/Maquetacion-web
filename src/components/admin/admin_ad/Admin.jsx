@@ -7,6 +7,7 @@ import HeaderAd from '../header_admin/header_ad.jsx';
 
 const Ticketxd = ({ estado, ticket, onVerClick }) => {
   return (
+    <div className="margen200">
     <div className="ticket-item202">
       <div className="izquierda203">
         <div className="icono207">
@@ -26,6 +27,7 @@ const Ticketxd = ({ estado, ticket, onVerClick }) => {
         <button className="ver-boton209" onClick={onVerClick}>Ver</button>
       </div>
     </div>
+  </div>
   );
 };
 
