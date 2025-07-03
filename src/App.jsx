@@ -11,6 +11,7 @@ import Quinta from './components/Tecnico/Quinta.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
 import Soli_port from './components/Home/Pedidos_port/Soli_Port.jsx';
 import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
+import Pedidos_ele from './components/Home/Pedidos_ele/Pedidos_ele.jsx';
 import Sexta from './components/Tecnico/Sexta.jsx';
 import Septima from './components/Tecnico/Septima.jsx'; 
 import './components/App.css';
@@ -33,12 +34,14 @@ function App() {
         <Route path='/espacios' element={<Soliespacios />} />
         <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
         <Route path='/Solicitartelevisores' element={<Solitelevisores />} />
+        <Route path='/Pedidos_ele' element={<Pedidos_ele />} />
         <Route path='/' element={<Login/>}/> 
         <Route path='/Inicio' element={<Home />} />
         <Route path='/Admin' element={<Admin />} />
         <Route path='/Sexta' element={<Sexta />} />
         <Route path='/Septima' element={<Septima />} />
-        <Route path="/Pedidoescritorio" element={<Pedidos_escritorio />} />
+        <Route path="/PedidoElementos" element={<Pedidos_ele />} />
+        <Route path='/Pedidoescritorio' element={<Pedidos_escritorio />} />
         <Route path='/Desplegable' element={<Desplegable />} />
         <Route path='/Informacion_equiposs' element={<Información_equipos />} />
       </Routes>

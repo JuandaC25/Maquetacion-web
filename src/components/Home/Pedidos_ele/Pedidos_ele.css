@@ -1,0 +1,52 @@
+.Cont_ele{
+    display:flex;
+    gap: 42px;
+    margin-left: 6rem;
+    margin-top: 22px;
+}
+.Btn_ele{
+    width: 15rem;
+    background-color:azure;
+    color: black;
+    border-color: black;
+} 
+.Btn_cable{
+    width: 15rem;
+}
+.Cont_inv{
+    margin-top: 8px;
+}
+.p-2{
+    display: flex;
+    gap: 40rem;
+}
+.Btn_add{
+    width: 10rem;
+    border-color: azure;
+    border-radius: 15px;
+}
+.Lista_ele{
+    margin-right: 1rem;
+}
+.Btn_conf{
+    height: 3rem;
+    width: 15rem;
+    margin-top: 1rem;
+    margin-left: 40rem;
+    background-color: #00AF00;
+    border-radius: 10px;
+    border-color: #00AF00;
+}
+.Msj_ele{
+    margin-top: 30rem;
+    margin-left: 42rem;
+    width: 263px;
+    position: absolute;
+    background-color: #00AF00;
+    border-radius: 15px;
+    color: white;
+}
+.Pag_ele{
+    margin-top: 1rem;
+    margin-right: 1rem;
+}

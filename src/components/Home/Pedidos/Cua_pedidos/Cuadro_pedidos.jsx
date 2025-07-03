@@ -29,7 +29,7 @@ function Cuadro_Pedidos() {
               <Card className='cuadro4'>
           <Card.Body>
             <Card.Title><h1 className='Elementos'>Elementos</h1></Card.Title>
-            <Button href='/' className='boton_elements'>Seleccionar</Button>
+            <Button href='/Pedidos_ele' className='boton_elements'>Seleccionar</Button>
           </Card.Body>
         </Card>
       </div>
