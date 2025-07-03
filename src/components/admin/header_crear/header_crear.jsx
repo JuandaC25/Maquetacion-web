@@ -12,10 +12,10 @@ function Header_crear() {
   const handleShow = () => setShow(true);
 
   return (
-    <div className='header1001'> 
-      <Navbar expand="xxxl" >
+    <div className='header90001'> 
+      <Navbar expand="xxxl" className='header90002'>
         <Container>
-          <Button variant="primary" className='Icon_menu' onClick={handleShow}>
+          <Button variant="primary" className='header90003' onClick={handleShow}>
             <i className="bi bi-list"></i>
           </Button>
           <Offcanvas show={show} onHide={handleClose}>
@@ -23,13 +23,13 @@ function Header_crear() {
               <Offcanvas.Title className='header_menu'><h1>Menú</h1></Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              <Link to="/Admin" className='cuadrito1'>
+              <Link to="/Admin" className='header90006'>
                 <h3><i className="bi bi-ticket-detailed"></i> Estado del ticket</h3>
               </Link>
-              <Link to="/Adcrear" className='cuadrito1'>
+              <Link to="/Adcrear" className='header90006'>
                 <h3><i className="bi bi-person-plus"></i> Gestionar usuarios</h3>
               </Link>
-              <Link to="/Inventario" className='cuadrito1'>
+              <Link to="/Inventario" className='header90006'>
                 <h3><i className="bi bi-box-seam"></i> Consultar inventario</h3>
               </Link>
             </Offcanvas.Body>
@@ -39,12 +39,10 @@ function Header_crear() {
 
       <Navbar>
         <Container>
-          <h1 className='header1007'>Gestionar usuarios</h1>
-          <Container className='Iconos'>
-            <Nav.Link href="http://localhost:5173/Login" >Home</Nav.Link>
-            <Nav.Link className="Blogc" href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
-            <Desplegable />
-          </Container>
+          <h1 className='header90007'>Gestionar usuarios</h1>
+          <Nav.Link href="http://localhost:5173/Login" className='header90008'>Home</Nav.Link>
+          <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/" className='header90009'>Blog CEET</Nav.Link>
+          <Desplegable></Desplegable>
         </Container>
       </Navbar>
     </div>
