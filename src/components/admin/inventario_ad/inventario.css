@@ -74,6 +74,7 @@
 
 .form-control-wrapper312 {
   flex: 1 1 auto;
+  border: 1px solid black;
 }
 
 textarea.form-control313 {
@@ -157,5 +158,9 @@ button.ver-boton309 {
 }
 .ticket-nombre-derecha {
     font-size: 1em;
+}
+.margin300{
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
