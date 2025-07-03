@@ -23,7 +23,6 @@ function Header_inv() {
               <Offcanvas.Title className='header_menu'><h1>Menú</h1></Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              {/* Changed to cuadrito1 */}
               <Link to="/Admin" className='cuadrito1'>
                 <h3><i className="bi bi-ticket-detailed"></i> Estado del ticket</h3>
               </Link>
