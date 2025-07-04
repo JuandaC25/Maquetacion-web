@@ -50,5 +50,4 @@ function Header_inv() {
     </div>
   );
 }
-
 export default Header_inv;
