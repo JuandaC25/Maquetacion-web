@@ -3,13 +3,13 @@ import React from "react";
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Nav} from "react-bootstrap";
 import Footer from '../Footer/Footer';
-import Header_tickets from '../header_tecnico/header_ticket';
+import HeaderTec from './HeaderTec';
 function Cuarta() {
     
     return(
         <>
     
-   <Header_tickets></Header_tickets>
+   <HeaderTec></HeaderTec>
         <div id="container_blanco">
   
         <ListGroup >
