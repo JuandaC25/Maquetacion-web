@@ -29,7 +29,7 @@ const ListaConsultas = () => {
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
  
-  const elementos = new Array(4).fill(null);
+  const elementos = new Array(6).fill(null);
 
   return (
     <div name="lista-inventario1">
