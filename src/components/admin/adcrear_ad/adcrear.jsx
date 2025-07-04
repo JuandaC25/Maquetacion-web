@@ -71,23 +71,6 @@ const ConsultaItem = ({ usuario, onVerClick }) => (
     <div className="derecha104">
       <button className="ver-boton109" onClick={() => onVerClick(usuario)}>Ver</button>
     </div>
-      <Pagination className='pag101'>
-      <Pagination.First />
-      <Pagination.Prev />
-      <Pagination.Item>{1}</Pagination.Item>
-      <Pagination.Ellipsis />
-
-      <Pagination.Item>{10}</Pagination.Item>
-      <Pagination.Item>{11}</Pagination.Item>
-      <Pagination.Item active>{12}</Pagination.Item>
-      <Pagination.Item>{13}</Pagination.Item>
-      <Pagination.Item disabled>{14}</Pagination.Item>
-
-      <Pagination.Ellipsis />
-      <Pagination.Item>{20}</Pagination.Item>
-      <Pagination.Next />
-      <Pagination.Last />
-    </Pagination>
   </div>
 </div>
 
@@ -186,7 +169,23 @@ const Listaxd = () => {
       {usuarios.map(usuario => (
         <ConsultaItem key={usuario.id} usuario={usuario} onVerClick={handleVerDetalles} />
       ))}
+<Pagination className='pag101'>
+        <Pagination.First />
+        <Pagination.Prev />
+        <Pagination.Item>{1}</Pagination.Item>
+        <Pagination.Ellipsis />
 
+        <Pagination.Item>{10}</Pagination.Item>
+        <Pagination.Item>{11}</Pagination.Item>
+        <Pagination.Item active>{12}</Pagination.Item>
+        <Pagination.Item>{13}</Pagination.Item>
+        <Pagination.Item disabled>{14}</Pagination.Item>
+
+        <Pagination.Ellipsis />
+        <Pagination.Item>{20}</Pagination.Item>
+        <Pagination.Next />
+        <Pagination.Last />
+      </Pagination>
       <Modal show={showModal} onHide={handleClose} className="custom-modal115" centered>
         <Modal.Header closeButton className="modal-header-verde116">
           <Modal.Title>Añadir Usuario</Modal.Title>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Alert, Dropdown, Modal, Form } from 'react-bootstrap';
+import { Button, Alert, Dropdown, Modal, Form , Pagination} from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import "./admin.css";
 import Footer from '../../Footer/Footer.jsx';
@@ -89,6 +89,23 @@ const Admin = () => {
     <div>
       <HeaderAd /> 
       <Listaxd onVerClick={handleVerClick} />
+      <Pagination className='pag201'>
+              <Pagination.First />
+              <Pagination.Prev />
+              <Pagination.Item>{1}</Pagination.Item>
+              <Pagination.Ellipsis />
+      
+              <Pagination.Item>{10}</Pagination.Item>
+              <Pagination.Item>{11}</Pagination.Item>
+              <Pagination.Item active>{12}</Pagination.Item>
+              <Pagination.Item>{13}</Pagination.Item>
+              <Pagination.Item disabled>{14}</Pagination.Item>
+      
+              <Pagination.Ellipsis />
+              <Pagination.Item>{20}</Pagination.Item>
+              <Pagination.Next />
+              <Pagination.Last />
+            </Pagination>
       <Modal show={showModal} onHide={handleCloseModal} className="custom-modal215" centered>
         <Modal.Header closeButton className="modal-header-verde216">
           <Modal.Title>Detalles del Ticket</Modal.Title>

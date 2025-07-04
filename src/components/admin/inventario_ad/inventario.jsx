@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Alert, Dropdown, Modal, Form } from "react-bootstrap";
+import { Button, Alert, Dropdown, Modal, Form,Pagination} from "react-bootstrap";
 import "./inventario.css";
 import Footer from "../../Footer/Footer.jsx";
 import HeaderInv from "../header_inv/header_inv.jsx";
@@ -250,6 +250,25 @@ const Admin = () => {
         onChange={handleNuevoChange}
         onSubmit={submitNuevo}
       />
+            <div className="pag302">
+        <Pagination className='pag301'>
+          <Pagination.First />
+          <Pagination.Prev />
+          <Pagination.Item>{1}</Pagination.Item>
+          <Pagination.Ellipsis />
+
+          <Pagination.Item>{10}</Pagination.Item>
+          <Pagination.Item>{11}</Pagination.Item>
+          <Pagination.Item active>{12}</Pagination.Item>
+          <Pagination.Item>{13}</Pagination.Item>
+          <Pagination.Item disabled>{14}</Pagination.Item>
+
+          <Pagination.Ellipsis />
+          <Pagination.Item>{20}</Pagination.Item>
+          <Pagination.Next />
+          <Pagination.Last />
+        </Pagination>
+      </div>
       <Footer />
     </div>
   );
