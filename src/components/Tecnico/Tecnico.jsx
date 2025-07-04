@@ -1,83 +1,61 @@
-import Pagination from 'react-bootstrap/Pagination';
+import React, { useState } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
-import './stile_tec.css'
-import React from "react";
-import {Nav} from "react-bootstrap";
+import './stile_tec.css';
 import Footer from '../Footer/Footer';
 import HeaderTec from './HeaderTec';
+import Button from 'react-bootstrap/Button';
 
+import ModalFormulario from './ModalFormulario';
+import ConfirmacionModal from './ConfirmacionModal';
 
 function Tecnico() {
-return(
-  <>
-  <HeaderTec></HeaderTec>
-    <div id="container_blanco">
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
-      <ListGroup >
-      <ListGroup.Item id="Conte">
-        <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-        <Nav.Link href="/pie">ver</Nav.Link>
+  const abrirFormulario = () => setMostrarFormulario(true);
+  const cerrarFormulario = () => setMostrarFormulario(false);
 
-      </ListGroup.Item>
-      <ListGroup.Item id="Conte">
-      <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="/pie">ver</Nav.Link>
+  const abrirConfirmacion = () => setMostrarConfirmacion(true);
+  const cerrarConfirmacion = () => setMostrarConfirmacion(false);
 
-      </ListGroup.Item>
-      <ListGroup.Item id="Conte">
-      <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="/pie">ver</Nav.Link>
-      </ListGroup.Item>
-      <ListGroup.Item id="Conte">
-      <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="/pie">ver</Nav.Link>
-      </ListGroup.Item>
-      <ListGroup.Item id="Conte">
-      <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="/pie">ver</Nav.Link>
-      
+  const aceptarConfirmacion = () => {
+    setMostrarConfirmacion(false);
+    setMostrarFormulario(false);
+    alert("Ticket cerrado correctamente");
+  };
 
-      </ListGroup.Item>
-      <ListGroup.Item id="Conte">
-      <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="/pie">ver</Nav.Link>
+  return (
+    <>
+      <HeaderTec />
 
-      </ListGroup.Item>
-      <ListGroup.Item id="Conte">
-      <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="/pie">ver</Nav.Link>
-      </ListGroup.Item>
-      <ListGroup.Item id="Conte">
-      <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="/pie">ver</Nav.Link>
+      <div id="container_blanco">
+        <ListGroup>
+          {[...Array(10)].map((_, index) => (
+            <ListGroup.Item id="Conte" key={index}>
+              <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
+              <Button variant="link" onClick={abrirFormulario}>ver</Button>
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+      </div>
 
-      </ListGroup.Item>
-      <ListGroup.Item id="Conte">
-      <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="/pie">ver</Nav.Link>
+      {}
+      <ModalFormulario
+        show={mostrarFormulario}
+        onHide={cerrarFormulario}
+        onFinalizar={abrirConfirmacion}
+      />
 
-      </ListGroup.Item>
-      <ListGroup.Item id="Conte">
-      <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-      <Nav.Link href="/pie">ver</Nav.Link>
+      {/* Modal de confirmación */}
+      <ConfirmacionModal
+        show={mostrarConfirmacion}
+        onHide={cerrarConfirmacion}
+        onConfirm={aceptarConfirmacion}
+      />
 
-      </ListGroup.Item>
-    </ListGroup>
-    </div>
-      <div class="pie">
-      <Pagination id="font" >
-      <Pagination.Prev href='/tecnico'/>
-      <Pagination.Item  id="font" href='/tecnico'>{1}</Pagination.Item>
-
-      <Pagination.Item id="font" href='/tecnico'>{2}</Pagination.Item>
-      <Pagination.Item id="font" href='/tecnico'>{3}</Pagination.Item>
-      <Pagination.Ellipsis href='/tecnico'/>
-      <Pagination.Item  id="font" href='/tecnico'>{10}</Pagination.Item>
-      <Pagination.Next  href='/tecnico'/>
-    </Pagination >
-    </div> 
-    <Footer></Footer>
-  </>
+      <Footer />
+    </>
   );
-  }
+}
+
 export default Tecnico;
