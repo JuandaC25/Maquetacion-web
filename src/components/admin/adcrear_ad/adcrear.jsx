@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Alert, Modal, Form, Dropdown } from 'react-bootstrap';
+import { Button, Alert, Modal, Form, Dropdown,Pagination} from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
 import "./adcrear_ad.css";
 import Footer from '../../Footer/Footer.jsx';
@@ -61,6 +61,7 @@ const DetallesUsuarioModal = ({ show, onHide, detalles, onEliminar }) => {
 };
 
 const ConsultaItem = ({ usuario, onVerClick }) => (
+  <div className='margin100'>
   <div className="ticket-item102">
     <div className="izquierda103">
       <div className="estado108">
@@ -70,7 +71,26 @@ const ConsultaItem = ({ usuario, onVerClick }) => (
     <div className="derecha104">
       <button className="ver-boton109" onClick={() => onVerClick(usuario)}>Ver</button>
     </div>
+      <Pagination className='pag101'>
+      <Pagination.First />
+      <Pagination.Prev />
+      <Pagination.Item>{1}</Pagination.Item>
+      <Pagination.Ellipsis />
+
+      <Pagination.Item>{10}</Pagination.Item>
+      <Pagination.Item>{11}</Pagination.Item>
+      <Pagination.Item active>{12}</Pagination.Item>
+      <Pagination.Item>{13}</Pagination.Item>
+      <Pagination.Item disabled>{14}</Pagination.Item>
+
+      <Pagination.Ellipsis />
+      <Pagination.Item>{20}</Pagination.Item>
+      <Pagination.Next />
+      <Pagination.Last />
+    </Pagination>
   </div>
+</div>
+
 );
 
 const Listaxd = () => {

@@ -1,62 +1,75 @@
-.header6001{
+.header601 {
     background-color: #00AF00;
     width: 100%;
-    display: grid;grid-template-columns: 13% 82% 5%;
+    display: grid;
+    grid-template-columns: 13% 82% 5%;
     grid-template-rows: 100px;
 }
-.header6002{
-    margin: 1rem;     
+
+.header90002 { 
+    margin: 1rem;
 }
-.header6003{
-    background-color: white;
+
+.header602 { 
+    background-color: rgb(9, 180, 26);
     margin-bottom: 35px;
- 
 }
-.header6004{
-    margin-top: 8px;
-    background-color: white;
-    border: 2px solid black;
-    height: 680px;
-}
-.header6005{
-    background-color:#00AF00 ;
+
+
+.header_menuuu {
+    background-color: rgb(9, 180, 26);
+    color: white;
     text-align: center;
-    border: 2px solid black;
-    font-size: 200%;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 8000;
+    width: 100%;
+    border-radius: 1px;
 }
-.header6006{
-    height: 40px;
-    border: 2px solid black;
-    border-radius: 10px;
-    margin-top: 10px;
+
+.header_menu {
+    background-color: rgb(9, 180, 26);
+    color: white;
+    text-align: center;
+    width: 100%;
+    height: 45px;
+}
+
+.header605 { 
+    color: rgb(0, 0, 0);
+    border-radius: 20px;
+    height: 50px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: 30rem;
+    text-align: center;
+    border-color: black;
+    border-style: solid;
+    margin-top: 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 120%;
     font-family: 'Roboto', sans-serif;
     font-weight: 1000;
 }
-.header6007{
+
+.header606 { 
     width: 100%;
     font-size: 300%;
     font-family: 'Roboto', sans-serif;
     font-weight: 900;
-    color: white ;
+    color: white;
     text-align: center !important;
 }
-.header6008{
+
+.header607 { 
     width: 5%;
     color: white;
     text-decoration:underline white;
     margin-bottom: 50px;
 }
-.header6009{
+
+.header608 { 
     width: 8%;
-    color: white;
-    text-decoration:underline white;
-    margin-bottom: 50px;
-}
-.header6010{
-    width: auto;
     color: white;
     text-decoration:underline white;
     margin-bottom: 50px;

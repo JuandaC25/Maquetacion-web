@@ -2,7 +2,12 @@
   background-color: #ffffff00;
   text-align: start;
 }
-
+.lista-tickets101 {
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+ 
+}
 .ticket-item102 {
   display: flex;
   justify-content: space-between;
@@ -13,6 +18,9 @@
   padding: 10px 15px;
   margin-bottom: 12px;
   color: black;
+  padding: 10px; 
+  margin-bottom: 15px;
+   border: 1px solid black;
 }
 
 .izquierda103,
@@ -34,6 +42,7 @@
   border-radius: 16px;
   font-weight: 600;
   color: black;
+  font-size: 0.9em;
 }
 
 .ver-boton109 {
@@ -68,6 +77,7 @@
 
 .form-control-wrapper112 {
   flex: 1 1 auto;
+  border: 1px solid black;
 }
 
 textarea.form-control113 {
@@ -152,3 +162,11 @@ button.ver-boton109 {
   text-align: center;
 }
 /*grid container*/
+
+.ticket-nombre-derecha {
+    font-size: 1em;
+}
+.margin100{
+  margin-left: 30px;
+  margin-right: 30px;
+}
