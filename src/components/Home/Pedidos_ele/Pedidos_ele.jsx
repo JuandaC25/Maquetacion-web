@@ -21,7 +21,7 @@ function Pedidos_ele() {
         <Container className='Cont_ele'>
       <h2 className='Txt_inv'>Inventario</h2>
     <Dropdown>
-      <Dropdown.Toggle className='Btn_ele' id="dropdown-basic"> Teclados</Dropdown.Toggle>
+      <Dropdown.Toggle className='Btn_ele' id="dropdown-basic">Teclados</Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Item className='Btn_mouse' href="#/action-1">Mouses</Dropdown.Item>
         <Dropdown.Item className='Btn_cable' href="#/action-2">Cables de internet</Dropdown.Item>
