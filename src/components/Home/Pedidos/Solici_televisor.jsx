@@ -2,7 +2,6 @@ import "./Soli_televisor.css";
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
-import { FaUserCircle } from 'react-icons/fa';
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react';
 import Footer from "../../Footer/Footer";

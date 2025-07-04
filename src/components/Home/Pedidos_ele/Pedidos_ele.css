@@ -1,3 +1,7 @@
+.pedidos-ele{
+    height: 100%;
+    width: 100%;
+}
 .Cont_ele{
     display:flex;
     gap: 42px;
@@ -49,4 +53,7 @@
 .Pag_ele{
     margin-top: 1rem;
     margin-right: 1rem;
+}
+.fotajus{
+    margin-top: 12.3rem;
 }

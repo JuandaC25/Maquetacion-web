@@ -22,13 +22,13 @@ const ConsultaItem = ({ onVerClick }) => {
   );
 };
 
-// LISTA DE CONSULTAS
+
 const ListaConsultas = () => {
   const [showModal, setShowModal] = useState(false);
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
- //Este array es para que muestre la cantidad de veces que uno decida en el cuadro de solicitar portatiles
+ 
   const elementos = new Array(4).fill(null);
 
   return (
@@ -104,7 +104,9 @@ function Soli_Port() {
     <div className="Usu-container1">
       <Header_port />
       <ListaConsultas />
+      <div className='fotaj'>
       <Footer />
+      </div>
     </div>
   );
 }
