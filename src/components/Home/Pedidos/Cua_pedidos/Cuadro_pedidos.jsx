@@ -5,7 +5,7 @@ import './Cuadro_Pedidos.css';
 function Cuadro_Pedidos() {
   return (
     <div className='Cuadros'> 
-      <div className='fila-superior'>
+      <div className='fila-superiorr'>
         <Card className='cuadro1'>
           <Card.Body>
             <Card.Title><h1 className='portatiles'>Portátiles</h1></Card.Title>
@@ -19,7 +19,7 @@ function Cuadro_Pedidos() {
           </Card.Body>
         </Card>
       </div>
-      <div className='fila-inferior'>
+      <div className='fila-inferiorr'>
         <Card className='cuadro3'>
           <Card.Body>
             <Card.Title><h1 className='televisores'>Televisores</h1></Card.Title>
