@@ -28,8 +28,8 @@ const ListaConsultas = () => {
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
-
-  const elementos = new Array(8).fill(null);
+ //Este array es para que muestre la cantidad de veces que uno decida en el cuadro de solicitar portatiles
+  const elementos = new Array(4).fill(null);
 
   return (
     <div name="lista-inventario1">
@@ -102,9 +102,7 @@ const ListaConsultas = () => {
 function Soli_Port() {
   return (
     <div className="Usu-container1">
-      <div className='general2'>
-        <Header_port />
-      </div>
+      <Header_port />
       <ListaConsultas />
       <Footer />
     </div>
