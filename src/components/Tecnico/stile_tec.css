@@ -117,7 +117,7 @@
 #part1{
     width: 85%;
     border: 2px solid black;
-    margin-right: 50px;
+display: flex;
 
 }
 #grilas{
@@ -398,3 +398,68 @@
 #container_blanco{
     margin-bottom: 20px;
 }
+#Conte {
+  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#part {
+  display: flex;
+  flex-direction: column;
+}
+
+button.btn-link {
+  color: rgb(9, 180, 26);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  border: none;
+  background: none;
+}
+#container_blanco {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  margin: 20px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+}
+
+#Conte {
+  margin-bottom: 10px;
+  background-color: #f8f9fa;
+
+}
+
+#part {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+button.btn-link {
+  color:black;
+  text-decoration: underline;
+}
+#vert{
+ border: 2px solid black;
+    width: 20%;
+    text-align: center;
+    height: 35px;
+    margin: auto;background-color: white;
+    color: black;
+
+}
+.aja{
+    margin-right: 260px;
+    width: 80%;
+}
+.ultimob{
+   margin-right: 80px;
+   
+}
+ 

@@ -20,6 +20,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Información_equipos from './components/Home/Informacion_equipos/Informacion_equipos.jsx';
 import Desplegable from './components/desplegable/desplegable.jsx';
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -46,6 +47,7 @@ function App() {
         <Route path='/Pedidoescritorio' element={<Pedidos_escritorio />} />
         <Route path='/Desplegable' element={<Desplegable />} />
         <Route path='/Informacion_equiposs' element={<Información_equipos />} />
+
       </Routes>
     </BrowserRouter>
 
