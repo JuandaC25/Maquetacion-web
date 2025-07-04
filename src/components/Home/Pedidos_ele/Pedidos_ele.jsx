@@ -19,7 +19,7 @@ function Pedidos_ele() {
     <div className="pedidos-ele">
       <HeaderElemen />
         <Container className='Cont_ele'>
-      <h2 className='Txt_inv'>Inventario</h2>
+      <h2 className='Txt_inv'>Elementos</h2>
     <Dropdown>
       <Dropdown.Toggle className='Btn_ele' id="dropdown-basic">Teclados</Dropdown.Toggle>
       <Dropdown.Menu>
@@ -50,7 +50,7 @@ function Pedidos_ele() {
         </div>
       </Modal>
 
-      <Pagination className='Pag_ele'>
+      <Pagination className='Pagination_ele'>
       <Pagination.Prev />
       <Pagination.Item active>{1}</Pagination.Item>
       <Pagination.Item>{2}</Pagination.Item>
