@@ -4,13 +4,13 @@ import './stile_tec.css'
 import React from "react";
 import {Nav} from "react-bootstrap";
 import Footer from '../Footer/Footer';
-import Header_tec from '../header_tecnico/header_tec';
+import HeaderTec from './HeaderTec';
 
 
 function Tecnico() {
 return(
   <>
-  <Header_tec></Header_tec>
+  <HeaderTec></HeaderTec>
     <div id="container_blanco">
 
       <ListGroup >

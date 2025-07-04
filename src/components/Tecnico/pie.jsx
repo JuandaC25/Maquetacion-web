@@ -2,13 +2,13 @@ import './stile_tec.css'
 import React from "react";
 import Stack from 'react-bootstrap/Stack';
 import Button from 'react-bootstrap/Button';    
-import Header_tec from '../header_tecnico/header_tec';
+import HeaderTec from './HeaderTec';
 import Footer from '../Footer/Footer';
 
 function Pie() {
   return (
     <>
-     <Header_tec></Header_tec>
+     <HeaderTec></HeaderTec>
     
     <Stack gap={3} id="centro">
         

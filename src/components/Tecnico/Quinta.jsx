@@ -2,13 +2,13 @@ import './stile_tec.css'
 import React from "react";
 import Stack from 'react-bootstrap/Stack';
 import Button from 'react-bootstrap/Button'; 
-import Header_tickets from '../header_tecnico/header_ticket';
+import HeaderTec from './HeaderTec';
 import Footer from '../Footer/Footer';
 function Quinta() {
     
     return(
         <>
-       <Header_tickets></Header_tickets>
+       <HeaderTec></HeaderTec>
         <Stack gap={3} id="centro">
             <div id="supremof">
         
