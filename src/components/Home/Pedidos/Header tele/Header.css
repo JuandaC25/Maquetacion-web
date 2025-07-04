@@ -1,71 +1,82 @@
-.header1001 {
-    background-color: rgb(9, 180, 26);
-    grid-template-rows: 10px;   
+.headeR {
+  width: 100%;
+  background-color: rgb(9, 180, 26);
+  padding: 0.1rem 1rem
+}
+
+.main-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 70px;
+  gap: 1rem;
 }
 
 .Icon_menu {
-    background-color: rgb(9, 180, 26);
+  background-color: rgb(9, 180, 26);
+  border: none;
 }
 
 .Icon_menu .bi-list {
-    font-size: 30px; 
-}
-
-.header_menuuu {
-    background-color: rgb(9, 180, 26);
-    color: white;
-    text-align: center;
-    width: 100%;
-    border-radius: 1px;
-}
-
-.header_menu {
-    background-color: rgb(9, 180, 26);
-    color: white;
-    text-align: center;
-    width: 100%;
-    height: 45px;
-}
-
-.cuadrito1 {
-    color: rgb(0, 0, 0);
-    border-radius: 20px;
-    height: 50px;
-    width: 100%;
-    margin-left: auto;
-    margin-right: 30rem;
-    text-align: center;
-    border-color: black;
-    border-style: solid;
-    margin-top: 1rem;
-    text-decoration: none;
-    display: block;
-}
-
-.cuadrito1:hover {
-    background-color: rgb(207, 209, 207);
-    transform: translateY(-3px);
+  font-size: 30px;
+  color: white;
 }
 
 .header1007 {
-    width: 100%;
-    font-size: 300%;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 900;
-    color: white;
-    text-align: center !important;
+  font-size: 1.8rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 900;
+  color: white;
+  margin-left: auto;
+  margin-right: auto;
+  flex-grow: 1;
+  text-align: center;
 }
 
-.header1008 {
-    width: 5%;
-    color: white;
-    text-decoration: underline white;
-    margin-bottom: 50px;
+.Iconos {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  color: white;
+  margin-bottom: 5.5rem;
 }
 
-.header1009 {
-    width: 8%;
-    color: white;
-    text-decoration: underline white;
-    margin-bottom: 50px;
+.header_menuuu {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  text-align: center;
+  width: 100%;
+  border-radius: 1px;
+}
+
+.header_menu {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  text-align: center;
+  width: 100%;
+  height: 45px;
+}
+
+.cuadrito1 {
+  color: black;
+  border-radius: 20px;
+  height: 50px;
+  width: 100%;
+  text-align: center;
+  border: 1px solid black;
+  margin: 1rem 0;
+  text-decoration: none;
+  display: block;
+}
+
+.cuadrito1:hover {
+  background-color: rgb(207, 209, 207);
+  transform: translateY(-3px);
+}
+
+.configts {
+  display: flex;
+  width: 100%;
 }
