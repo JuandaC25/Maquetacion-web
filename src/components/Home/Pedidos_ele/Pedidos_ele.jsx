@@ -45,7 +45,7 @@ function Pedidos_ele() {
       <Modal show={show} onHide={handleClose}>
         <div className='Msj_ele'>
         <Modal.Body>
-          <h4>Contenido del modal</h4>
+          <h4>Solicitud exitosa</h4>
         </Modal.Body>
         </div>
       </Modal>
