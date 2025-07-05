@@ -46,12 +46,12 @@ function Headerpedidosescritorio() {
           </Offcanvas>
 
           
-          <h1 className='header1007'>Solicitar equipos</h1>
+          <h1 className='heads'>Solicitar equipos</h1>
 
           
-          <div className='Iconos'>
+          <div className='Iconosst'>
             <Nav.Link href="http://localhost:5173/">Home</Nav.Link>
-            <Nav.Link className="Blogc" href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
+            <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
             <div className='desp.con'>
             <Desplegable />
             </div>

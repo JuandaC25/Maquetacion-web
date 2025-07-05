@@ -23,24 +23,24 @@
   color: white;
 }
 
-.header1007 {
-  font-size: 1.8rem;
+.heads {
+  font-size: 2.8rem;
   font-family: 'Roboto', sans-serif;
   font-weight: 900;
   color: white;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 8rem;
   flex-grow: 1;
   text-align: center;
 }
 
-.Iconos {
+.Iconosst {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  text-decoration: underline;
   gap: 1rem;
   color: white;
-  margin-bottom: 5.5rem;
+  margin: auto;
 }
 
 .header_menuuu {
