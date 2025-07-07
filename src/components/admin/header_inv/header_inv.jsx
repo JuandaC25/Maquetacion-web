@@ -12,14 +12,16 @@ function Header_inv() {
   const handleShow = () => setShow(true);
 
   return (
-    <div className='header1001'>
-      <Navbar expand="xxxl"> 
-        <Container>
+    <div className='header_inv_main'>
+      <Navbar expand="xxxl" className="w-100"> 
+        <div className='main-header-content'>
+
           <Button variant="primary" className='Icon_menu' onClick={handleShow}> 
             <i className="bi bi-list"></i>
           </Button>
+          
           <Offcanvas show={show} onHide={handleClose}>
-            <Offcanvas.Header className='header_menuuu'>
+            <Offcanvas.Header className='header_menuuu' closeButton>
               <Offcanvas.Title className='header_menu'><h1>Menú</h1></Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
@@ -34,20 +36,20 @@ function Header_inv() {
               </Link>
             </Offcanvas.Body>
           </Offcanvas>
-        </Container>
-      </Navbar>
 
-      <Navbar>
-        <Container>
-          <h1 className='header1007'>Inventario</h1>
-          <Container className='Iconos'>
+          <h1 className='header_inv_title'>Inventario</h1> 
+
+          <div className='Iconosst'>
             <Nav.Link href="http://localhost:5173/Login">Home</Nav.Link> 
-            <Nav.Link className="Blogc" href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
-            <Desplegable />
-          </Container>
-        </Container>
+            <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
+            <div className='desp .con'> 
+              <Desplegable />
+            </div>
+          </div>
+        </div>
       </Navbar>
     </div>
   );
 }
+
 export default Header_inv;
