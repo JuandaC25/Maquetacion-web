@@ -55,8 +55,9 @@
 .Btn_confir{
     height: 3rem;
     width: 15rem;
-    margin-top: 0.6rem;
-    margin-left: 55rem;
+    margin-top: 0.2rem;
+    margin-left: auto;
+    margin-right: auto;
     background-color: #00AF00;
     border-radius: 10px;
     border-color: #00AF00;
