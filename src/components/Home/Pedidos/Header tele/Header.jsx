@@ -12,45 +12,54 @@ function Headerpedidosescritorio() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-    return (
-      <div className='header1001'>
-        <Navbar expand="xxxl" >
-          <Container>
+
+  return (
+    <div className='headeR'>
+      <Navbar expand="xxxl" className="w-100">
+        <div className='main-header-content'>
+
+          
           <Button variant="primary" className='Icon_menu' onClick={handleShow}>
-          <i  class="bi bi-list"></i>
-      </Button>
-      <Offcanvas show={show} onHide={handleClose}>
-      <Offcanvas.Header className='header_menuuu'>
-          <Offcanvas.Title className='header_menu'><h1>Menú</h1></Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-          <Link to="/Inicio" className='cuadrito1'>
-          <h3><i className="bi bi-plus-circle"></i> Solicitar equipos</h3>
-          </Link>
-          <Link to="/Informacion_equiposs" className='cuadrito1'>
-            <h3> <i className="bi bi-gear"></i> Informacion de equipos</h3>
-          </Link>
-          <Link to="/espacios" className='cuadrito1'>
-            <h3> <i className="bi bi-person-plus"></i> Solicitar espacios</h3>
-          </Link>
-        </Offcanvas.Body>
-      </Offcanvas>
-          </Container>
-        </Navbar>
-  
-        <Navbar>
-          <Container>
-            <h1 className='header1007'>Solicitar televisores</h1>
-            <Container className='Iconos'>
-            <Nav.Link href="http://localhost:5173/" >Home</Nav.Link>
-            <Nav.Link className= "Blogc" href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
-            <Desplegable /> 
-            </Container>
-          </Container>
-        </Navbar>
-      </div>
-    );
-  }
+            <i className="bi bi-list"></i>
+          </Button>
+
+          
+          <Offcanvas show={show} onHide={handleClose}>
+            <Offcanvas.Header className='header_menuuu' closeButton>
+              <Offcanvas.Title className='header_menu'>
+                <h1>Menú</h1>
+              </Offcanvas.Title>
+            </Offcanvas.Header>
+            <Offcanvas.Body>
+              <Link to="/Inicio" className='cuadrito1'>
+                <h3><i className="bi bi-plus-circle"></i> Solicitar equipos</h3>
+              </Link>
+              <Link to="/Informacion_equiposs" className='cuadrito1'>
+                <h3><i className="bi bi-gear"></i> Información de equipos</h3>
+              </Link>
+              <Link to="/espacios" className='cuadrito1'>
+                <h3><i className="bi bi-person-plus"></i> Solicitar espacios</h3>
+              </Link>
+            </Offcanvas.Body>
+          </Offcanvas>
+
+          
+          <h1 className='heads'>Solicitar televisores</h1>
+
+          
+          <div className='Iconosst'>
+            <Nav.Link href="http://localhost:5173/">Home</Nav.Link>
+            <Nav.Link href="https://electricidadelectronicaytelecomu.blogspot.com/">Blog CEET</Nav.Link>
+            <div className='desp.con'>
+            <Desplegable />
+            </div>
+            
+          </div>
+        </div>
+      </Navbar>
+    </div>
+  );
+}
   
   export default Headerpedidosescritorio;
 

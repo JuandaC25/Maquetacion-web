@@ -16,16 +16,18 @@ function Datos_pedido() {
           <option value="2">Cancha</option>
         </Form.Select>
       </div>
+      <h3 className='titulo1'>Tiempo de uso</h3>
       <div className='conteinercenter'>
-        <Form.Label htmlFor="inputPassword5"><h3>Tiempo de uso</h3></Form.Label>
+        <Form.Label htmlFor="inputPassword5"></Form.Label>
         <Form.Control className='Usotimp'
           type="textarea"
           id="inputPassword5"
           aria-describedby="passwordHelpBlock"
         />
       </div>
+      <h3 className='titulo1'>Fecha de uso</h3>
       <div className='conteinercenter2'>
-        <Form.Label htmlFor="inputPassword5"><h3>Fecha de uso</h3></Form.Label>
+        <Form.Label htmlFor="inputPassword5"></Form.Label>
         <Form.Control className='Usotimp'
           type="date"
           id="inputPassword5"

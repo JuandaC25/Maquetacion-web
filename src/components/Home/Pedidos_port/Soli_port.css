@@ -1,209 +1,93 @@
-.admin-container1 {
-    display: flex;
-    flex-direction: column; 
-    background-color: #f8f9fa; 
-    min-height: 100vh; 
-  }
-  
-  .general2 {
+[name="lista-inventario1"] {
+  padding: 20px;
+}
+
+.ticket-item2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  background-color: white;
+  border-radius: 5px;
+}
+
+.ticket-item2 .izquierda2 {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.ticket-item2 .icono {
+  font-size: 2em;
+  color: #555;
+}
+
+.ticket-item2 .estado1 span {
+  font-weight: bold;
+  color: #333;
+}
+
+.ticket-item2 .derecha1 .ver-boton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.ticket-item2 .derecha1 .ver-boton:hover {
+  background-color: #0056b3;
+}
+
+#piepor {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px 0;
+}
+
+.pagination {
+  justify-content: center;
+}
+
+.pagination .page-item .page-link {
+  color: #007bff;
+  border-color: #ddd;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.Titmodal {
   background-color: rgb(9, 180, 26); 
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .icon-container3 {
-    font-size: 24px;
-  }
-
-  .icon-container3 svg {
-    color: white;
-  }
-  #h1raro {
-    margin: 0 auto; 
-    font-size: 24px;
-  }
-
-  .icon-container3 svg { 
-    color: white;
-  }
-  
-
-  #h1raro {
-    margin: 0 auto;
-    font-size: 24px;
-  }
-
-  .custom-buttons-container1 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .custom-buttons-container1 .btn {
-    background-color: transparent;
-    color: white;
-    border: 1px solid white;
-    padding: 5px 10px;
-    text-decoration: none;
-    font-size: 14px;
-    border-radius: 5px;
-  }
-  .custom-buttons-container1 .btn:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-  .custom-buttons-container1 .custom-3-container3 {
-    font-size: 24px;
-  }
-  .custom-buttons-container1 .custom-3-container3 svg {
-    color: white;
-  }
-  .custom-buttons-container1 .custom-3-container3 svg { 
-    color: white;
-  }
-  [name="lista-inventario1"] {
-    padding: 20px;
-  }
-  .ticket-item2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    background-color: white;
-    border-radius: 5px;
-  }
-  .ticket-item2 .izquierda2 {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-  .ticket-item2 .icono {
-    font-size: 2em;
-    color: #555;
-  }
-  
-  .ticket-item2 .estado1 span {
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .ticket-item2 .derecha1 .ver-boton {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 14px;
-  }
-  
-  .ticket-item2 .derecha1 .ver-boton:hover {
-    background-color: #0056b3;
+  color: #ffffff;
 }
 
-  #piepor {
-    display: flex;
-    justify-content: center;
-    padding: 20px 0;
-  }
-  
-  .pagination {
-    justify-content: center;
-  }
-  
-  .pagination .page-item .page-link {
-    color: #007bff;
-    border-color: #ddd;
-  }
-  
-  .pagination .page-item.active .page-link {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: white;
-  }
-  .confirmar-solicitud-container {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-  }
-  
-  .confirmar-solicitud-boton {
-    background-color: #28a745; 
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .confirmar-solicitud-boton:hover {
-    background-color: #1e7e34;
-  }
-
-#pagdif{
-   justify-content: center;
-}
-#solicitud1{
-    justify-content: center;
-    color: aliceblue;
-    height: 60px;
-    font-size: 200%;
-}
-#num_port{
-    margin-left: 18rem;
-    margin-right: auto;
-}
-#Button_ver{
-    background-color: black;
-}
-#Lista_eq{
-    justify-content: space-between;
-}
-#Pag_form{
-margin-left: 200px;
-}
-#piepor{ 
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-}
-
-
-
-/*  Division Modal  */
 .Btn_Conf {
-    background-color: rgb(9, 180, 26);
-    border: none;
-    width: 30%;
-    height: 90%;
-    color: white;
-    padding: 0.6rem 2rem;
-    border-radius: 10px;
-    margin-top: 1rem;
-    margin-left: 11rem;
-}
-.Btn_Conf:hover {
-    background-color: rgb(0, 150, 0); /* tono más oscuro al pasar el mouse */
+  background-color: rgb(9, 180, 26);
+  border: none;
+  width: 30%;
+  height: 90%;
+  color: white;
+  padding: 0.6rem 2rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+  margin-left: 11rem;
 }
 
-.Cua_der{
-    border-color: aliceblue;
-    margin-top: 5rem;
-    width: 90%;
-    margin-right: 2rem;
-    text-align: center;
+.Btn_Conf:hover {
+  background-color: rgb(0, 150, 0);
 }
-.Titmodal{
- background-color: rgb(9, 180, 26); 
- color: #ffffff;
-}
+
 .form-vertical {
   display: flex;
   flex-direction: column;
@@ -214,14 +98,23 @@ margin-left: 200px;
   border: none;
   box-shadow: none;
   width: 95%;
-   
 }
 
 .tx1 {
-    border-color: black;
-    border-radius: 10px;
-    box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+  border-color: black;
+  border-radius: 10px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
 }
-.cuer-mo{
+
+.cuer-mo {
   height: 700px;
 }
+
+.Usu-container1{
+  height: 100%;
+  width: 100%;
+}
+.fotaj{
+  margin-bottom: auto;
+}
+

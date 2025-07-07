@@ -1,63 +1,71 @@
-.admin-container {
+.Cuadros {
+  max-width: 900px;
+  margin: 3rem auto;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #00b300;
-  padding: 0.8rem 1.5rem;
-  color: white;
-  position: relative;
-  height: 80px;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 0 1rem;
 }
 
-.icon-container {
-  font-size: 1.5rem;
-  color: white;
-  margin-right: 1rem;
-}
-
-.admin-container h1 {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  font-size: 2rem;
-  font-weight: bold;
-  color: white;
-}
-
-.custom-buttons-container {
+.fila-superior{
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  margin-top: 1rem;
+  gap: 3rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.custom-buttons-container button {
-  color: white;
-  transition: 0.3s ease;
+.fila-inferior {
+  display: flex;
+  margin-top: 2rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
+.cuadro {
+  background-color: color-mix(in srgb, rgb(255, 255, 255) 50%, rgb(233, 233, 233) 50%);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 12px;
+  flex: 1 1 250px;
+  padding: 1.5rem;
+  min-width: 280px;
+  transition: transform 0.2s ease;
+}
 
-.Conteiner1{
-    background-color: #00AF00;
-    height: 130px;
-  }
-  .Text1{
-    color: rgb(255, 255, 255);
-    margin-left: 50rem;
-  }
-  .Text2{
-    margin-top: 1rem;
-    margin-left: 35rem;
-    color: rgb(255, 255, 255);
-  }
-  .boton{
-    background-color: rgb(255, 255, 255);
-    border-color: rgb(255, 255, 255);
-  }
-  .cuadro{
-    background-color: rgb(216, 216, 216);
-    margin-top: 1rem;
-  }
-  .Ajustt{
-    margin-top: 9.7rem;
-  }
+.cuadro:hover {
+  transform: scale(1.02);
+}
+
+.etiqueta-input h3 {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.inputCantidad
+{
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.inputAmbiente{
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.inputFecha {
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.Ajustt{
+  margin-top: 8.8rem;
+}

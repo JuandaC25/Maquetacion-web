@@ -1,12 +1,12 @@
 import './stile_tec.css'
 import React from 'react';
 import Button from 'react-bootstrap/Button';
-import Header_tec from '../header_tecnico/header_tec';
+import HeaderTec from './HeaderTec';
 import Footer from '../Footer/Footer';
 function Tercera() {
   return (
     <>
-      <Header_tec></Header_tec>
+      <HeaderTec></HeaderTec>
                <div id="salida">
                <div id="pregunta">
                 <h2>¿Estas seguro de que quieres confirmar cierre de solicitud?</h2>

@@ -36,6 +36,8 @@ function Pedidos_ele() {
       <div className="p-2">🖥️ Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
       <div className="p-2">🖥️ Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
       <div className="p-2">🖥️ Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
+      <div className="p-2">🖥️ Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
+      
     </Stack>
        </Container>
     </div>
@@ -59,7 +61,10 @@ function Pedidos_ele() {
       <Pagination.Item>{10}</Pagination.Item>
       <Pagination.Next />
     </Pagination>
+
+    <div className='fotajus'>
     <Footer />
+    </div>
     </div>
   );
 }

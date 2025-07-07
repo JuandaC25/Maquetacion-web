@@ -1,73 +1,41 @@
-import './stile_tec.css'
-import React from "react";
+import './stile_tec.css';
+import React, { useState } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
-import { Nav} from "react-bootstrap";
+import Button from 'react-bootstrap/Button';
 import Footer from '../Footer/Footer';
-import Header_tickets from '../header_tecnico/header_ticket';
+import HeaderTec from './HeaderTec';
+import ModalPeticion from './Modal2';
+
 function Cuarta() {
-    
-    return(
-        <>
-    
-   <Header_tickets></Header_tickets>
-        <div id="container_blanco">
-  
-        <ListGroup >
-        <ListGroup.Item id="Conte1">
-          <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
-          <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
-  
-        </ListGroup.Item>
-        <ListGroup.Item id="Conte1">
-        <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
-        <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
-        </ListGroup.Item>
-        <ListGroup.Item id="Conte1">
-        <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
-        <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
-  
-        </ListGroup.Item>
-        <ListGroup.Item id="Conte1">
-        <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
-        <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
-  
-  
-        </ListGroup.Item>
-        <ListGroup.Item id="Conte1">
-        <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
-        <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
-  
-        </ListGroup.Item>
-        <ListGroup.Item id="Conte1">
-        <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
-        <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
-  
-        </ListGroup.Item>
-        <ListGroup.Item id="Conte1">
-        <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
-        <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
-        </ListGroup.Item>
-        <ListGroup.Item id="Conte1">
-        <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
-        <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
-  
-        </ListGroup.Item>
-        <ListGroup.Item id="Conte1">
-        <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
-        <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
-  
-        </ListGroup.Item>
-        <ListGroup.Item id="Conte1">
-        <div id="part1"><h4>Detalle del equipo(Accesorios,numero de serie)</h4></div>
-        <Nav.Link href="/Quinta" id="ver">Tomar peticion</Nav.Link>
-  
-        </ListGroup.Item>
-      </ListGroup>
+  const [mostrarModal, setMostrarModal] = useState(false);
+
+  const abrirModal = () => setMostrarModal(true);
+  const cerrarModal = () => setMostrarModal(false);
+
+  return (
+    <>
+      <HeaderTec />
+      <div id="container_blanco">
+        <ListGroup>
+          {[...Array(10)].map((_, index) => (
+            <ListGroup.Item id="Conte1" key={index}>
+              <div id="part1">
+                <h4 className='aja'>Detalle del equipo (Accesorios, número de serie)</h4>
+                <Button id="vert" variant="primary" onClick={abrirModal}>
+                  Tomar petición
+                </Button>
+              </div>
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
       </div>
-      <Footer></Footer>
-      </>
-    )
-  }
-  
-  export default Cuarta;
-  
+
+      {}
+      <ModalPeticion show={mostrarModal} onHide={cerrarModal} />
+
+      <Footer />
+    </>
+  );
+}
+
+export default Cuarta;
