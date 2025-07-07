@@ -54,8 +54,8 @@ const Listaxd = ({ onVerClick }) => {
           Elemento
         </Dropdown.Toggle>
         <Dropdown.Menu>
-          <Dropdown.Item href="#/action-1">Portátiles</Dropdown.Item>
-          <Dropdown.Item href="#/action-2">Equipos de escritorio</Dropdown.Item>
+          <Dropdown.Item href="#/action-4">Portátiles</Dropdown.Item>
+          <Dropdown.Item href="#/action-">Equipos de escritorio</Dropdown.Item>
           <Dropdown.Item href="#/action-3">Televisores</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>

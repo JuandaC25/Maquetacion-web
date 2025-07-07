@@ -1,18 +1,16 @@
-/* Estilos generales */
+
 .alert201 {
   background-color: #ffffff00;
   text-align: start;
 }
 
-/* Lista de tickets - Reducir margen inferior */
 .lista-tickets201 {
   display: flex; 
   flex-direction: column; 
   gap: 15px;
-  margin-bottom: 5px; /* Ajustado: antes era 15px (reducido para subir paginado) */
+  margin-bottom: 5px;
 }
 
-/* Items de ticket (sin cambios) */
 .ticket-item202 {
   display: flex;
   justify-content: space-between;
@@ -26,7 +24,6 @@
   border: 1px solid black;
 }
 
-/* Contenedores izquierdo/derecho (sin cambios) */
 .izquierda203,
 .derecha204 {
   display: flex;
@@ -35,11 +32,9 @@
 .izquierda203 { gap: 10px; }
 .derecha204   { gap: 10px; }
 
-/* Iconos (sin cambios) */
 .icono207,
 .folder206 { font-size: 35px; }
 
-/* Estado del ticket (sin cambios) */
 .estado208 {
   background-color: #ccc;
   padding: 6px 16px;
@@ -50,7 +45,6 @@
   font-size: 0.9em;
 }
 
-/* Botón "Ver" (sin cambios) */
 .ver-boton209 {
   background-color: white;
   border: 1px solid #000;
@@ -59,7 +53,6 @@
 }
 .ver-boton209:hover { background-color: #f0f0f0; }
 
-/* Estilos del modal (sin cambios) */
 .form-group-row210 {
   display: flex;
   align-items: center;

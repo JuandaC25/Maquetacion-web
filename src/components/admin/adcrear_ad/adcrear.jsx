@@ -156,9 +156,9 @@ const Listaxd = () => {
                 Rol
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item>Administrador</Dropdown.Item>
-                <Dropdown.Item>Instructor</Dropdown.Item>
-                <Dropdown.Item>Técnico</Dropdown.Item>
+                <Dropdown.Item href="#/action-1">Administrador</Dropdown.Item>
+                <Dropdown.Item href="#/action-2">Instructor</Dropdown.Item>
+                <Dropdown.Item href="#/action-3">Técnico</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </div>
