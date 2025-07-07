@@ -19,9 +19,9 @@ function Pedidos_ele() {
     <div className="pedidos-ele">
       <HeaderElemen />
         <Container className='Cont_ele'>
-      <h2 className='Txt_inv'>Inventario</h2>
+      <h2 className='Txt_inv'>Elementos</h2>
     <Dropdown>
-      <Dropdown.Toggle className='Btn_ele' id="dropdown-basic"> Teclados</Dropdown.Toggle>
+      <Dropdown.Toggle className='Btn_ele' id="dropdown-basic">Teclados</Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Item className='Btn_mouse' href="#/action-1">Mouses</Dropdown.Item>
         <Dropdown.Item className='Btn_cable' href="#/action-2">Cables de internet</Dropdown.Item>
@@ -47,12 +47,12 @@ function Pedidos_ele() {
       <Modal show={show} onHide={handleClose}>
         <div className='Msj_ele'>
         <Modal.Body>
-          <h4>Contenido del modal</h4>
+          <h4>Solicitud exitosa</h4>
         </Modal.Body>
         </div>
       </Modal>
 
-      <Pagination className='Pag_ele'>
+      <Pagination className='Pagination_ele'>
       <Pagination.Prev />
       <Pagination.Item active>{1}</Pagination.Item>
       <Pagination.Item>{2}</Pagination.Item>
