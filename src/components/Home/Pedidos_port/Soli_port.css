@@ -52,8 +52,31 @@
   padding: 20px 0;
 }
 
+.Btn_confir{
+    height: 3rem;
+    width: 15rem;
+    margin-top: 0.6rem;
+    margin-left: 55rem;
+    background-color: #00AF00;
+    border-radius: 10px;
+    border-color: #00AF00;
+    color: white;
+}
+.Msj_modal{
+    font-size: 25px;
+    margin-top: 42rem;
+    margin-left: 52rem;
+    width: 13.2rem;
+    position: absolute;
+    background-color: #00AF00;
+    border-radius: 15px;
+    color: white;
+}
+
 .pagination {
+  margin-top: 1rem;
   justify-content: center;
+  margin-bottom: -0.5rem;
 }
 
 .pagination .page-item .page-link {

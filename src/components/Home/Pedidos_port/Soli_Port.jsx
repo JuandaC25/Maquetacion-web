@@ -3,6 +3,7 @@ import './Soli_port.css';
 import Footer from '../../Footer/Footer.jsx';
 import Header_port from './Header soli/Header.jsx';
 import { Modal, Button, Pagination, Form } from 'react-bootstrap';
+import Modalconf from './Modal_conf.jsx';
 
 const ConsultaItem = ({ onVerClick }) => {
   return (
@@ -38,6 +39,7 @@ const ListaConsultas = () => {
       ))}
 
       <div id="piepor">
+        <Modalconf />
         <Pagination>
           <Pagination.Prev />
           <Pagination.Item id="font">{1}</Pagination.Item>
@@ -48,8 +50,7 @@ const ListaConsultas = () => {
           <Pagination.Next />
         </Pagination>
       </div>
-
-
+      
       <Modal show={showModal} onHide={handleClose} size="lg">
         <Modal.Header closeButton className='Titmodal'>
           <Modal.Title ><h1>  Información del equipo  </h1></Modal.Title>
