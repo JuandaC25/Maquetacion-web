@@ -10,7 +10,7 @@ import Cuarta from './components/Tecnico/Cuarta.jsx';
 import Quinta from './components/Tecnico/Quinta.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
 import Soli_port from './components/Home/Pedidos_port/Soli_Port.jsx';
-import Solitelevisores from './components/Home/Pedidos/Solici_televisor.jsx';
+import Solitelevisores from './components/Home/Pedidos_Tele/Solici_televisor.jsx';
 import Pedidos_ele from './components/Home/Pedidos_ele/Pedidos_ele.jsx';
 import Sexta from './components/Tecnico/Sexta.jsx';
 import Septima from './components/Tecnico/Septima.jsx'; 

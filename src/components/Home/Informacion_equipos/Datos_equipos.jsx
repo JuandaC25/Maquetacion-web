@@ -1,6 +1,4 @@
 import React from 'react';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import './informacion_equipos.css';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
@@ -96,7 +94,10 @@ function MyVerticallyCenteredModal(props) {
             placeholder="Observaciones(Opcional)"
           />
         </InputGroup>
-        <Button className="botoon"><h6>Confirmar reporte</h6></Button>
+        <Button className="botoon" onClick={props.onHide}>
+  <h6>Confirmar reporte</h6>
+</Button>
+
 </Modal.Body>
     </Modal>
   );
