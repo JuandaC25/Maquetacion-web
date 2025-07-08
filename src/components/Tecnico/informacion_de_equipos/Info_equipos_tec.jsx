@@ -16,6 +16,7 @@ function Cuarta() {
 
   return (
     <>
+    <Header_informacion/>
       
       <div className='container_blanco'>
         <ListGroup>
