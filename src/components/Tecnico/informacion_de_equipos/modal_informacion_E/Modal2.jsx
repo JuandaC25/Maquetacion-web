@@ -43,7 +43,7 @@ function Modal2({ show, onHide }) {
         </Modal.Footer>
       </Modal>
 
-      {/* Segundo modal */}
+      {}
       <Otromodal
         show={mostrarOtromodal}
         onHide={cerrarOtromodal}
