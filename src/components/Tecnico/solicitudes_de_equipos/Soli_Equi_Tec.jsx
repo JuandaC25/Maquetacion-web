@@ -5,6 +5,7 @@ import Footer from '../../Footer/Footer';
 import Button from 'react-bootstrap/Button';
 import ModalFormulario from './modal_soli_E/FormularioModal/ModalFormulario';
 import ConfirmacionModal from './modal_soli_E/ConfrirmacionModal/ConfirmacionModal';
+import Header_solicitud_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
 
 function Tecnico() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -24,7 +25,7 @@ function Tecnico() {
 
 return (
     <>
-      
+      <Header_solicitud_tec/>
       <div className='container_blanco'>
         <ListGroup>
           {[...Array(8)].map((_, index) => (

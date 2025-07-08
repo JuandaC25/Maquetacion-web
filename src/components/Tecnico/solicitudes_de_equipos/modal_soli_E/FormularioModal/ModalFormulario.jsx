@@ -4,30 +4,30 @@ import './ModalTec1.css'
 
 function ModalFormulario({ show, onHide, onFinalizar }) {
   return (
-    <Modal show={show} onHide={onHide} centered>
-      <Modal.Header closeButton>
+    <Modal show={show} onHide={onHide} centered className='principe'>
+      <Modal.Header className='cabeza' closeButton>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className='cuerpito'>
         <div className='cont_mod_tec1'>
           <div className='Cont_label_tec'>
           <label className='origin'>Nombre de usuario:</label>
-          <input type="text" className="form-control " />
+          <input type="text" className="tecito " />
           </div>
           <div className='Cont_label_tec'>
           <label className='origin'>Ambiente:</label>
-          <input type="text" className="form-control " />
+          <input type="text" className="tecito " />
           </div>
           <div className='Cont_label_tec'>
           <label className='origin'>Cantidad de equipos:</label>
-          <input type="number" className="form-control " />
+          <input type="number" className="tecito " />
           </div>
           <div className='Cont_label_tec'>
           <label className='origin'>Clase de equipos:</label>
-          <input type="text" className="form-control " />
+          <input type="text" className="tecito " />
           </div>
         </div>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className='piecito'>
         <Button id='buttonModalTec' variant="success" onClick={onFinalizar}>Finalizado</Button>
       </Modal.Footer>
     </Modal>

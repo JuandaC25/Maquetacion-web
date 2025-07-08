@@ -1,6 +1,5 @@
 
-.modal-content {
-  background-color: #ffffff;
+.principe {
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -8,25 +7,18 @@
   width: 100%;
 }
 
-.modal-header {
+.cabeza {
   border-bottom: none;
   justify-content: center;
   padding-bottom: 0;
 }
-
-.modal-title {
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.modal-body {
+.cuerpito {
   padding-top: 10px;
   padding-bottom: 10px;
   
 }
 
-.modal-body label {
+.origin {
   display: block;
   font-weight: 800;
   margin-top: 10px;
@@ -37,7 +29,7 @@
   
 }
 
-.modal-body input {
+.tecito {
   width: 50%;
   padding: 10px;
   border-radius: 10px;
@@ -48,7 +40,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.modal-footer {
+.piecito {
   justify-content: center;
   border-top: none;
   padding-top: 0;

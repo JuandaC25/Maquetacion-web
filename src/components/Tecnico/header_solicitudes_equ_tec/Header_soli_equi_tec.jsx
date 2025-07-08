@@ -1,13 +1,13 @@
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import './Header_informacion.css'
+import './Header_soli_equi_tec.css'
 import Desplegable from '../../desplegable/desplegable';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { Link } from 'react-router-dom';
 
-function Header_informacion() {
+function Header_solicitud_tec() {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -59,6 +59,5 @@ function Header_informacion() {
   );
 }
 
-export default Header_informacion;
-
+export default Header_solicitud_tec;
 

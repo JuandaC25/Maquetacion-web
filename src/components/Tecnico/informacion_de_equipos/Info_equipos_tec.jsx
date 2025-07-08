@@ -5,6 +5,7 @@ import Footer from '../../Footer/Footer';
 import ModalPeticion from './modal_informacion_E/Modal2';
 import './Info_equipos_tec.css';
 import Otromodal from './OTRO.MODAL/Otro_modal';
+import Header_informacion from '../header_informacion_E/Header_informacion_E.jsx';
 
 
 
