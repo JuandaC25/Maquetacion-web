@@ -2,7 +2,7 @@
     height: 100%;
     width: 100%;
 }
-.Cont_ele{
+.Cont_elemen{
     display:flex;
     gap: 42px;
     margin-left: 6rem;
@@ -41,10 +41,16 @@
     height: 3rem;
     width: 15rem;
     margin-top: 3rem;
-    margin-left: 45rem;
+    margin-left: 52.4rem;
     background-color: #00AF00;
     border-radius: 10px;
     border-color: #00AF00;
+}
+.Cont_ele{
+    gap: 3rem;
+      display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 .Msj_ele{
     margin-top: 30rem;
@@ -55,15 +61,11 @@
     border-radius: 15px;
     color: white;
 }
-.Pagination_ele{
-    margin-top: 1rem;
+.Pagi_ele{
+    margin-top: 3rem;
     margin-right: 1rem;
 }
-.Pag_ele{
-    margin-top: 2rem;
-    margin-left: auto;
-    margin-right: auto;
-}
 .fotajus{
+    margin-top: 5.5rem;
     margin-top: 8.4rem;
 }
