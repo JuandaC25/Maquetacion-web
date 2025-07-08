@@ -31,12 +31,12 @@ function Pedidos_ele() {
     <div>
        <Container className='Cont_inv'>
         <Stack className='Lista_ele' gap={4}>
-      <div className="p-2">🖥️ Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
-      <div className="p-2">🖥️ Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
-      <div className="p-2">🖥️ Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
-      <div className="p-2">🖥️ Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
-      <div className="p-2">🖥️ Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
-      <div className="p-2">🖥️ Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
+      <div className="p-2">🖥️    Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
+      <div className="p-2">🖥️    Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
+      <div className="p-2">🖥️    Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
+      <div className="p-2">🖥️    Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
+      <div className="p-2">🖥️    Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
+      <div className="p-2">🖥️    Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
       
     </Stack>
        </Container>
