@@ -19,10 +19,15 @@
 }
 .Cont_inv{
     margin-top: 8px;
+    
 }
 .p-2{
     display: flex;
     gap: 40rem;
+    border-color: black;
+    border-style:inset;
+    border-radius: 15px;
+    border-width: 2px;
 }
 .Btn_add{
     width: 10rem;
@@ -60,5 +65,5 @@
     margin-right: auto;
 }
 .fotajus{
-    margin-top: 4.8rem;
+    margin-top: 8.4rem;
 }
