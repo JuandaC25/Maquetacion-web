@@ -9,7 +9,6 @@
 #Conte1 {
   margin-bottom: 10px;
   background-color: #f1f1f1;
-  border-left: 5px solid #198754;
 }
 
 #part1 {
@@ -21,4 +20,16 @@
 #ver {
   font-weight: bold;
   text-decoration: underline;
+}
+.contmod{
+  display: flex !important;
+  flex-direction: row !important;
+  margin-bottom: 10px;
+}
+.index{
+  width: 35% !important;
+  margin: auto;
+}
+.ultimob{
+  background-color:  rgb(9, 180, 26);
 }

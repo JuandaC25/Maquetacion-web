@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
-import './stile_tec.css';
-import Footer from '../Footer/Footer';
-import HeaderTec from './HeaderTec';
+import './Soli_Equi_Tec.css';
+import Footer from '../../Footer/Footer';
 import Button from 'react-bootstrap/Button';
-
-import ModalFormulario from './ModalFormulario';
-import ConfirmacionModal from './ConfirmacionModal';
+import ModalFormulario from './modal_soli_E/FormularioModal/ModalFormulario';
+import ConfirmacionModal from './modal_soli_E/ConfrirmacionModal/ConfirmacionModal';
 
 function Tecnico() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -22,37 +20,36 @@ function Tecnico() {
     setMostrarConfirmacion(false);
     setMostrarFormulario(false);
     alert("Ticket cerrado correctamente");
-  };
+};
 
-  return (
+return (
     <>
-      <HeaderTec />
-
-      <div id="container_blanco">
+      
+      <div className='container_blanco'>
         <ListGroup>
-          {[...Array(10)].map((_, index) => (
-            <ListGroup.Item id="Conte" key={index}>
-              <div id="part"><h4>Cantidad/Equipo/Ambiente</h4></div>
-              <Button variant="link" onClick={abrirFormulario}>ver</Button>
+          {[...Array(8)].map((_, index) => (
+            <ListGroup.Item id='Conte' key={index}>
+              <div className='part'>
+                <h4>Cantidad/Equipo/Ambiente</h4>
+              </div>
+              <div>
+                <Button className='buttonSoli' variant="link" onClick={abrirFormulario}>ver</Button>
+              </div>
             </ListGroup.Item>
           ))}
         </ListGroup>
       </div>
-
       {}
       <ModalFormulario
         show={mostrarFormulario}
         onHide={cerrarFormulario}
         onFinalizar={abrirConfirmacion}
       />
-
-      {/* Modal de confirmación */}
       <ConfirmacionModal
         show={mostrarConfirmacion}
         onHide={cerrarConfirmacion}
         onConfirm={aceptarConfirmacion}
       />
-
       <Footer />
     </>
   );

@@ -1,10 +1,12 @@
-import './stile_tec.css';
 import React, { useState } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
-import Footer from '../Footer/Footer';
-import HeaderTec from './HeaderTec';
-import ModalPeticion from './Modal2';
+import Footer from '../../Footer/Footer';
+import ModalPeticion from './modal_informacion_E/Modal2';
+import './Info_equipos_tec.css';
+import Otromodal from './OTRO.MODAL/Otro_modal';
+
+
 
 function Cuarta() {
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -14,14 +16,14 @@ function Cuarta() {
 
   return (
     <>
-      <HeaderTec />
-      <div id="container_blanco">
+      
+      <div className='container_blanco'>
         <ListGroup>
           {[...Array(10)].map((_, index) => (
-            <ListGroup.Item id="Conte1" key={index}>
-              <div id="part1">
+            <ListGroup.Item className='Conte1' key={index}>
+              <div className='part1'>
                 <h4 className='aja'>Detalle del equipo (Accesorios, número de serie)</h4>
-                <Button id="vert" variant="primary" onClick={abrirModal}>
+                <Button className='vert' variant="primary" onClick={abrirModal}>
                   Tomar petición
                 </Button>
               </div>

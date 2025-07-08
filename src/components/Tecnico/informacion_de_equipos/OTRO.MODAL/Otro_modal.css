@@ -1,0 +1,15 @@
+.contmad{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.textico{
+    height: 150px !important;
+    width: 100% !important;
+    background-color:#D9D9D9;
+    border-radius: 10px ;
+    border: 1px solid black;
+}
+.indexI{
+    justify-content: flex-start;
+}

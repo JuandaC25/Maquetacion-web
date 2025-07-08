@@ -1,0 +1,38 @@
+.container_blanco {
+  padding: 20px;
+  background-color: #fef7ff !important;
+  border-radius: 10px;
+  margin: 20px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+#Conte{
+    border: 2px solid black;
+    width: 90%;
+    height: 60px;
+    margin: auto;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: row;
+    
+}
+.part{
+    width: 90%;
+    margin-left: 50px;
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+}
+.buttonSoli {
+  color: black;
+  cursor: pointer !important;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+}

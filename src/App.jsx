@@ -4,16 +4,12 @@ import Home from './components/Home/Pedidos/Home.jsx';
 import Admin from './components/admin/admin_ad/Admin.jsx';
 import Inventario from './components/admin/inventario_ad/inventario.jsx';
 import AdCrear from './components/admin/adcrear_ad/adcrear.jsx'; 
-import Tecnico from './components/Tecnico/Tecnico.jsx';
-import Tercera from './components/Tecnico/tercera.jsx';
-import Cuarta from './components/Tecnico/Cuarta.jsx'; 
-import Quinta from './components/Tecnico/Quinta.jsx';
+import Tecnico from './components/Tecnico/solicitudes_de_equipos/Soli_Equi_Tec.jsx';
+import Cuarta from './components/Tecnico/informacion_de_equipos/Info_equipos_tec.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
 import Soli_port from './components/Home/Pedidos_port/Soli_Port.jsx';
 import Solitelevisores from './components/Home/Pedidos_Tele/Solici_televisor.jsx';
-import Pedidos_ele from './components/Home/Pedidos_ele/Pedidos_ele.jsx';
-import Sexta from './components/Tecnico/Sexta.jsx';
-import Septima from './components/Tecnico/Septima.jsx'; 
+import Pedidos_ele from './components/Home/Pedidos_ele/Pedidos_ele.jsx';  
 import './components/App.css';
 import Pedidos_escritorio from './components/Home/Pedidos_escritorio/Pedidos_escritorio.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -26,11 +22,7 @@ function App() {
     <BrowserRouter>
       <Routes>
          <Route path='/Login' element={<Login/>}/> 
-                <Route path='/Login' element={<Login/>}/> 
-        <Route path='/' element={<Login/>}/> 
-        <Route path='/Tercera' element={<Tercera />} />
         <Route path='/Cuarta' element={<Cuarta />} />
-        <Route path='/Quinta' element={<Quinta />} />
         <Route path='/inventario' element={<Inventario />} />
         <Route path='/adcrear' element={<AdCrear />} />
         <Route path='/Tecnico' element={<Tecnico />} />
@@ -41,8 +33,6 @@ function App() {
         <Route path='/' element={<Login/>}/> 
         <Route path='/Inicio' element={<Home />} />
         <Route path='/Admin' element={<Admin />} />
-        <Route path='/Sexta' element={<Sexta />} />
-        <Route path='/Septima' element={<Septima />} />
         <Route path="/PedidoElementos" element={<Pedidos_ele />} />
         <Route path='/Pedidoescritorio' element={<Pedidos_escritorio />} />
         <Route path='/Desplegable' element={<Desplegable />} />
