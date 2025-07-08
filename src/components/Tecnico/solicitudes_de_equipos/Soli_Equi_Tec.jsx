@@ -20,7 +20,7 @@ function Tecnico() {
   const aceptarConfirmacion = () => {
     setMostrarConfirmacion(false);
     setMostrarFormulario(false);
-    alert("Ticket cerrado correctamente");
+    alert("Solicitud cerrada correctamente");
 };
 
 return (

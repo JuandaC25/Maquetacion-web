@@ -4,17 +4,18 @@ import './ConfirmacionModal.css'
 
 function ConfirmacionModal({ show, onHide, onConfirm }) {
   return (
-    <Modal show={show} onHide={onHide} centered>
-      <Modal.Header closeButton>
-      
-      </Modal.Header>
-      <Modal.Body>
-        <p>¿Estás seguro de que quieres cerrar esta solicitud?</p>
+    <Modal  show={show} onHide={onHide} centered >
+      <div className='reycito'>
+      <Modal.Header closeButton className='cabezitas'>
+      </Modal.Header >
+      <Modal.Body className='blancox'>
+        <h4 className='setcito'>¿Estás seguro de que quieres cerrar esta solicitud?</h4>
       </Modal.Body>
-      <Modal.Footer>
-        <Button className='prim' variant="primary" onClick={onHide}>Cancelar</Button>
-        <Button className='prim2' variant="primary " onClick={onConfirm}>Aceptar</Button>
+      <Modal.Footer className='unita'>
+        <Button id='prim' variant="primary" onClick={onHide}>Cancelar</Button>
+        <Button id='prim2' variant="primary " onClick={onConfirm}>Aceptar</Button>
       </Modal.Footer>
+      </div>
     </Modal>
   );
 }

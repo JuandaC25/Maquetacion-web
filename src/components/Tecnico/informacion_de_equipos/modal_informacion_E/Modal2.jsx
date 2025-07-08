@@ -18,22 +18,22 @@ function Modal2({ show, onHide }) {
         <Modal.Body>
           <div className='contmod'>
             <label className='index'>Fecha de reporte</label>
-            <input type="text" className="form-control mb-2" />
+            <input type="text" className="sombrita" />
           </div>
           <div className='contmod'>
             <label className='index'>Modelo de pc</label>
-            <input type="text" className="form-control mb-2" />
+            <input type="text" className="sombrita" />
           </div>
           <div className='contmod'>
             <label className='index'>Número de serie</label>
-            <input type="number" className="form-control mb-2" />
+            <input type="number" className="sombrita" />
           </div>
           <div className='contmod'>
             <label className='index'>Ambiente</label>
-            <input type="text" className="form-control mb-2" />
+            <input type="text" className="sombrita" />
           </div>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className='dedito'>
           <Button className='ultimob' variant="success" onClick={abrirOtromodal}>
             Reportar
           </Button>

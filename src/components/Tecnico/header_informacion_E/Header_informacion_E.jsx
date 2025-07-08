@@ -42,7 +42,7 @@ function Header_informacion() {
           </Offcanvas>
 
           
-          <h1 className='heads'>Solicitudes de equipos</h1>
+          <h1 className='heads'>Informacion de equipos</h1>
 
           
           <div className='Iconosst'>
