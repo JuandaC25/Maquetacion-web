@@ -13,3 +13,12 @@
 .indexI{
     justify-content: flex-start;
 }
+.arriba{
+    background-color: rgb(9, 180, 26);
+}
+.test{
+    color: white;
+}
+.modalcontein{
+    border: 2px solid black;
+}

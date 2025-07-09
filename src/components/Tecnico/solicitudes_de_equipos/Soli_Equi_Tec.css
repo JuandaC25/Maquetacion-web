@@ -4,6 +4,8 @@
   background-color: #fef7ff !important;
   margin: 20px;
   margin-bottom: 20px;
+  height: 100% !important;
+
 }
 #Conte{
     border: 2px solid black;
@@ -34,4 +36,9 @@
   padding: 0 !important;
   border: none !important;
   background: none !important;
+  margin-right: 20px;
+}
+.centrico{
+  text-align: left;
+  width: 100%;
 }

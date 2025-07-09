@@ -32,17 +32,20 @@ function Header_solicitud_tec() {
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Link to="/Tecnico" className='cuadrito1'>
-                <h3><i className="bi bi-plus-circle"></i> Solicitudes de equipos</h3>
+                <h3><i className="bi bi-gear"></i> Solicitudes de prestamos</h3>
               </Link>
               <Link to="/Cuarta" className='cuadrito1'>
                 <h3><i className="bi bi-gear"></i> Información de equipos</h3>
+              </Link>
+               <Link to="/HistorialTec" className='cuadrito1'>
+                <h3><i className="bi bi-gear"></i> Historial</h3>
               </Link>
               
             </Offcanvas.Body>
           </Offcanvas>
 
           
-          <h1 className='heads'>Solicitudes de equipos</h1>
+          <h1 className='heads'>PRESTAMOS DE EQUIPOS</h1>
 
           
           <div className='Iconosst'>

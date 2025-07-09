@@ -1,13 +1,13 @@
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import './Header_informacion.css'
+import './Header_HistorialTec.css'
 import Desplegable from '../../desplegable/desplegable';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { Link } from 'react-router-dom';
 
-function Header_informacion() {
+function Header_HistorialTec() {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -44,7 +44,7 @@ function Header_informacion() {
           </Offcanvas>
 
           
-          <h1 className='heads'>Informacion de equipos</h1>
+          <h1 className='heads'>HISTORIAL TECNICO</h1>
 
           
           <div className='Iconosst'>
@@ -58,9 +58,8 @@ function Header_informacion() {
         </div>
       </Navbar>
     </div>
+    
   );
 }
 
-export default Header_informacion;
-
-
+export default Header_HistorialTec;
