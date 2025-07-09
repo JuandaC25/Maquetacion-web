@@ -37,6 +37,9 @@ function Header_crear() {
              <Link to="/Solielemento" className='cuadrito1'>
                 <h3><i className="bi bi-box-seam"></i>solicitudes de elementos</h3>
               </Link>
+             <Link to="/Soliespacio" className='cuadrito1'>
+                <h3><i className="bi bi-box-seam"></i>Solicitudes espacios</h3>
+              </Link>
             </Offcanvas.Body>
           </Offcanvas>
 

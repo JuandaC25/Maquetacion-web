@@ -33,14 +33,14 @@ const Ticketxd = ({ estado, ticket, onVerClick }) => {
 
 const Listaxd = ({ onVerClick }) => {
   const tickets = [
-    { estado: 'En proceso', ticket: 'Primer ticket', detalles: { fecha: '2025-04-23', modelo: 'HP ProBook', serie: 'ABC123', tecnico: 'Juan Pérez', ambiente: 'Oficina 101', descripcion: 'El equipo presenta lentitud al iniciar.' } },
-    { estado: 'En proceso', ticket: 'Segundo ticket', detalles: { fecha: '2025-04-22', modelo: 'Dell Latitude', serie: 'DEF456', tecnico: 'María Gómez', ambiente: 'Laboratorio A', descripcion: 'La pantalla parpadea intermitentemente.' } },
-    { estado: 'Pendiente', ticket: 'Tercer ticket', detalles: { fecha: '2025-04-21', modelo: 'Lenovo ThinkPad', serie: 'GHI789', tecnico: 'Carlos López', ambiente: 'Recepción', descripcion: 'No se puede conectar a la red Wi-Fi.' } },
-    { estado: 'Pendiente', ticket: 'Primer ticket', detalles: { fecha: '2025-04-20', modelo: 'HP ProDesk', serie: 'JKL012', tecnico: 'Ana Rodríguez', ambiente: 'Sala de juntas', descripcion: 'El teclado no responde.' } },
-    { estado: 'En proceso', ticket: 'Primer ticket', detalles: { fecha: '2025-04-19', modelo: 'Dell OptiPlex', serie: 'MNO345', tecnico: 'Pedro Martínez', ambiente: 'Almacén', descripcion: 'Fallo en el disco duro.' } },
-    { estado: 'Pendiente', ticket: 'Segundo ticket', detalles: { fecha: '2025-04-18', modelo: 'Lenovo IdeaCentre', serie: 'PQR678', tecnico: 'Laura Sánchez', ambiente: 'Biblioteca', descripcion: 'El mouse no funciona correctamente.' } },
-    { estado: 'Pendiente', ticket: 'Primer ticket', detalles: { fecha: '2025-04-17', modelo: 'HP All-in-One', serie: 'STU901', tecnico: 'Sofía Ramírez', ambiente: 'Cafetería', descripcion: 'Problemas con el audio.' } },
-    { estado: 'En proceso', ticket: 'Segundo ticket', detalles: { fecha: '2025-04-16', modelo: 'Dell Inspiron', serie: 'VWX234', tecnico: 'Miguel Torres', ambiente: 'Aula Magna', descripcion: 'La impresora no imprime.' } },
+    { estado: 'En proceso', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-23',fecha2: '2025-04-23', modelo: 'HP ProBook', serie: 'ABC123', tecnico: 'Juan Pérez', ambiente: 'Oficina 101',ticket:'primer ticket',descripcion: 'El equipo presenta lentitud al iniciar.' } },
+    { estado: 'En proceso', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-22',fecha2: '2025-04-23', modelo: 'Dell Latitude', serie: 'DEF456', tecnico: 'María Gómez', ambiente: 'Laboratorio A',ticket:'segundo ticket ', descripcion: 'La pantalla parpadea intermitentemente.' } },
+    { estado: 'Pendiente', ticket: 'Tercer ticket', detalles: { fecha1: '2025-04-21',fecha2: '2025-04-23', modelo: 'Lenovo ThinkPad', serie: 'GHI789', tecnico: 'Carlos López', ambiente: 'Recepción',ticket:'tercer ticket', descripcion: 'No se puede conectar a la red Wi-Fi.' } },
+    { estado: 'Pendiente', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-20',fecha2: '2025-04-23', modelo: 'HP ProDesk', serie: 'JKL012', tecnico: 'Ana Rodríguez', ambiente: 'Sala de juntas',ticket:'primer ticket ', descripcion: 'El teclado no responde.' } },
+    { estado: 'En proceso', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-19',fecha2: '2025-04-23', modelo: 'Dell OptiPlex', serie: 'MNO345', tecnico: 'Pedro Martínez', ambiente: 'Almacén',ticket:'primer ticket ', descripcion: 'Fallo en el disco duro.' } },
+    { estado: 'Pendiente', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-18',fecha2: '2025-04-23', modelo: 'Lenovo IdeaCentre', serie: 'PQR678', tecnico: 'Laura Sánchez', ambiente: 'Biblioteca',ticket:'segundo ticket ', descripcion: 'El mouse no funciona correctamente.' } },
+    { estado: 'Pendiente', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-17',fecha2: '2025-04-23', modelo: 'HP All-in-One', serie: 'STU901', tecnico: 'Sofía Ramírez', ambiente: 'Cafetería',ticket:'primer ticket', descripcion: 'Problemas con el audio.' } },
+    { estado: 'En proceso', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-16',fecha2: '2025-04-23', modelo: 'Dell Inspiron', serie: 'VWX234', tecnico: 'Miguel Torres', ambiente: 'Aula Magna',ticket:'segundo ticket', descripcion: 'La impresora no imprime.' } },
   ];
 
   return (
@@ -112,12 +112,17 @@ const Admin = () => {
         </Modal.Header>
         <Modal.Body className="modal-body217">
           <div className="form-group-row210">
-            <label className="form-label211">Fecha de informe:</label>
+            <label className="form-label211">Fecha de inicio:</label>
             <div className="form-control-wrapper212">
-              <Form.Control type="text" value={modalDetalles?.fecha || ''} readOnly />
+              <Form.Control type="text" value={modalDetalles?.fecha1 || ''} readOnly />
             </div>
           </div>
-
+          <div className="form-group-row210">
+            <label className="form-label211">Fecha de fin:</label>
+            <div className="form-control-wrapper212">
+              <Form.Control type="text" value={modalDetalles?.fecha2 || ''} readOnly />
+            </div>
+          </div>
           <div className="form-group-row210">
             <label className="form-label211">Modelo de PC:</label>
             <div className="form-control-wrapper212">
@@ -145,12 +150,12 @@ const Admin = () => {
               <Form.Control type="text" value={modalDetalles?.ambiente || ''} readOnly />
             </div>
           </div>
-
-          <div className="d-flex gap-2 mb-3">
-            <span className="estado208">Ticket</span> 
-            <span className="estado208">Pendiente</span> 
+          <div className="form-group-row210">
+            <label className="form-label211">ticket:</label>
+            <div className="form-control-wrapper212">
+              <Form.Control type="text" value={modalDetalles?.ticket || ''} readOnly />
+            </div>
           </div>
-
           <div className="form-group-row210 mt-3">
             <label className="form-label211">Descripción:</label>
             <div className="form-control-wrapper212">

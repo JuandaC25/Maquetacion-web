@@ -1,83 +1,166 @@
-.header_ad_main { 
-  width: 100%;
-  background-color: rgb(9, 180, 26);
-  padding: 0.1rem 1rem;
+.alert301 {
+  background-color: #ffffff00;
+  text-align: start;
 }
 
-.main-header-content {
+.lista-tickets301 {
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+ 
+}
+.ticket-item302 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  padding: 10px 15px;
+  margin-bottom: 12px;
+  color: black;
+  padding: 10px; 
+  margin-bottom: 15px;
+   border: 1px solid black;
+}
+.izquierda303,
+.derecha304 {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  height: 70px;
-  gap: 1rem;
 }
 
-.Icon_menu {
-  background-color: rgb(9, 180, 26);
+.izquierda303 { gap: 10px; }
+.derecha304   { gap: 10px; }
+
+.icono307,
+.folder306 { font-size: 35px; }
+
+.estado308 span {
+  background-color: #ccc;
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-weight: 600;
+  color: black;
+  font-size: 0.9em;
+}
+
+.ver-boton309 {
+  background-color: white;
+  border: 1px solid #000;
+  padding: 5px 12px;
+  border-radius: 6px;
+}
+
+.ver-boton309:hover { background-color: #f0f0f0; }
+
+.form-group-row310 {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 15px;
+}
+
+.custom-modal315 .modal-body317 .form-group-row310:last-of-type {
+  margin-bottom: 0;
+}
+
+.form-label311 {
+  flex: 0 0 200px;
+  text-align: left;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 0;
+}
+
+.form-control-wrapper312 {
+  flex: 1 1 auto;
+  border-radius: solid black;
+}
+
+textarea.form-control313 {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.custom-modal315 .modal-dialog {
+  max-width: 700px;
+  margin: 2rem auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.custom-modal315 .modal-content {
+  border-radius: 10px;
   border: none;
 }
 
-.Icon_menu .bi-list {
-  font-size: 30px;
+.modal-header-verde316 {
+  background-color: rgb(9, 180, 26);
   color: white;
-}
-
-.header_ad_title { 
-  font-size: 2.8rem;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 900;
-  color: white;
-  margin-left: 8rem;
-  flex-grow: 1;
-  text-align: center;
-}
-
-.Iconosst {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 15px 20px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: flex-end;
-  text-decoration: underline;
-  gap: 1rem;
-  color: white;
-  margin: auto;
+  position: relative;
 }
-.header_menuuu {
+
+.modal-header-verde316 h5.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.modal-body317 {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-bottom-right-radius: 10px;
+}
+
+button.ver-boton309 {
   background-color: rgb(9, 180, 26);
   color: white;
-  text-align: center;
-  width: 100%;
-  border-radius: 1px;
+  border: 1px solid azure;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-weight: bold;
 }
 
-.header_menu {
+.modal-footer318 .btn-success {
   background-color: rgb(9, 180, 26);
   color: white;
-  text-align: center;
-  width: 100%;
-  height: 45px;
+  border: none;
+  font-weight: bold;
 }
 
-.cuadrito1 {
-  color: black;
-  border-radius: 20px;
-  height: 50px;
-  width: 100%;
-  text-align: center;
-  border: 1px solid black;
-  margin: 1rem 0;
-  text-decoration: none;
-  display: block;
+.modal-footer318 .btn-danger {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  font-weight: bold;
 }
 
-.cuadrito1:hover {
-  background-color: rgb(207, 209, 207);
-  transform: translateY(-3px);
+.modal-footer318 .btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  font-weight: bold;
 }
 
-.configts {
-  display: flex;
-  width: 100%;
+.añadir-boton322 {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-weight: bold;
 }
-
+.ticket-nombre-derecha {
+    font-size: 1em;
+}
+.margin300{
+  margin-left: 20px;
+  margin-right: 20px;
+}
 
