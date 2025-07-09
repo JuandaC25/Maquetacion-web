@@ -14,10 +14,18 @@ function Modal2({ show, onHide }) {
   return (
     <>
       <Modal show={show} onHide={onHide} centered>
-        <Modal.Header closeButton />
+        <Modal.Header className='verdecito' closeButton><h2 className='titulito'>Tickets equipos</h2></Modal.Header>
         <Modal.Body>
           <div className='contmod'>
             <label className='index'>Fecha de reporte</label>
+            <input type="date" className="sombrita" />
+          </div>
+          <div className='contmod'>
+            <label className='index'>Nombre de usuario</label>
+            <input type="text" className="sombrita" />
+          </div>
+          <div className='contmod'>
+            <label className='index'>Ambiente</label>
             <input type="text" className="sombrita" />
           </div>
           <div className='contmod'>
@@ -29,9 +37,10 @@ function Modal2({ show, onHide }) {
             <input type="number" className="sombrita" />
           </div>
           <div className='contmod'>
-            <label className='index'>Ambiente</label>
+            <label className='index'>Observaciones</label>
             <input type="text" className="sombrita" />
           </div>
+          
         </Modal.Body>
         <Modal.Footer className='dedito'>
           <Button className='ultimob' variant="success" onClick={abrirOtromodal}>

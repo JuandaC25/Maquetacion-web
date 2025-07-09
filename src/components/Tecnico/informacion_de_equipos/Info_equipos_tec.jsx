@@ -21,7 +21,7 @@ function Cuarta() {
       
       <div className='container_blanco'>
         <ListGroup>
-          {[...Array(10)].map((_, index) => (
+          {[...Array(7)].map((_, index) => (
             <ListGroup.Item className='Conte1' key={index}>
               <div className='part1'>
                 <h4 className='aja'>Detalle del equipo (Accesorios, número de serie)</h4>
