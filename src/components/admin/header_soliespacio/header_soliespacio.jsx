@@ -44,7 +44,7 @@ function Header_soliespacio() {
             </Offcanvas.Body>
           </Offcanvas>
 
-          <h1 className='header_ad_title'>Solicitudes de elementos</h1>
+          <h1 className='header_ad_title'>Solicitudes de Espacio</h1>
 
           <div className='Iconosst'>
             <Nav.Link href="http://localhost:5173/Login">Home</Nav.Link>
