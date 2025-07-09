@@ -36,10 +36,10 @@ function Header_soliespacio() {
                 <h3><i className="bi bi-box-seam"></i> Consultar inventario</h3>
               </Link>
              <Link to="/Solielemento" className='cuadrito1'>
-                <h3><i className="bi bi-box-seam"></i>Solicitudes elementos</h3>
+                <h3><i className="bi bi-search"></i>Solicitudes elementos</h3>
               </Link>
              <Link to="/Soliespacio" className='cuadrito1'>
-                <h3><i className="bi bi-box-seam"></i>Solicitudes espacios</h3>
+                <h3><i className="bi bi-search"></i>Solicitudes espacios</h3>
               </Link>
             </Offcanvas.Body>
           </Offcanvas>
