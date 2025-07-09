@@ -52,7 +52,7 @@ function Solitelevisores() {
           marginTop: '100px' 
         }}
       >
-        <Button 
+        <Button className="Btn_tele"
           onClick={() => setSmShow(true)} 
           style={{ 
             backgroundColor: '#00AF00', 

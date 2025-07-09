@@ -1,0 +1,39 @@
+.Drop_histo{
+    margin-top: 1.5rem;
+    margin-left: 5rem;
+    background-color: white;
+    border-color: black;
+}
+.Pag_histo{
+    margin-top: 1rem;
+}
+.Btn_ver{
+    justify-content: end;
+    margin-left: auto;
+}
+.p-3{
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    border-color: black;
+    border-style:inset;
+    border-radius: 15px;
+    border-width: 2px;
+    margin-left: 5rem;
+    margin-right: 5rem;
+}
+.Btn_list{
+    width: 8rem;
+    margin-left: auto;
+    background-color: #00000047;
+}
+.let_histo{
+    border-radius: 7px;
+    box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.1);
+    background-color: #00000047;
+    border-color: white;
+    color: black;
+}
+.Footer_historial{
+margin-top: 1rem;
+}
