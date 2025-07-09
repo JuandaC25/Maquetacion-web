@@ -3,7 +3,8 @@ import Login from './components/Login';
 import Home from './components/Home/Pedidos/Home.jsx';
 import Admin from './components/admin/admin_ad/Admin.jsx';
 import Inventario from './components/admin/inventario_ad/inventario.jsx';
-import AdCrear from './components/admin/adcrear_ad/adcrear.jsx'; 
+import AdCrear from './components/admin/adcrear_ad/adcrear.jsx';
+import Solielemento from './components/admin/solielemento_ad/solielemento_ad.jsx';
 import Tecnico from './components/Tecnico/solicitudes_de_equipos/Soli_Equi_Tec.jsx';
 import Cuarta from './components/Tecnico/informacion_de_equipos/Info_equipos_tec.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
@@ -25,6 +26,7 @@ function App() {
         <Route path='/Cuarta' element={<Cuarta />} />
         <Route path='/inventario' element={<Inventario />} />
         <Route path='/adcrear' element={<AdCrear />} />
+        <Route path='/solielemento' element={<Solielemento/>} />
         <Route path='/Tecnico' element={<Tecnico />} />
         <Route path='/espacios' element={<Soliespacios />} />
         <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
@@ -37,6 +39,7 @@ function App() {
         <Route path='/Pedidoescritorio' element={<Pedidos_escritorio />} />
         <Route path='/Desplegable' element={<Desplegable />} />
         <Route path='/Informacion_equiposs' element={<Información_equipos />} />
+
 
       </Routes>
     </BrowserRouter>
