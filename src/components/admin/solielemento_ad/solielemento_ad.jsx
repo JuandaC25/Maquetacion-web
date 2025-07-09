@@ -30,13 +30,13 @@ const Ticketxd = ({ estado, onVerClick }) => {
 
 const Listaxd = ({ onVerClick }) => {
   const tickets = [
-{ estado: 'pendiente',detalles:{fecha1: '2023-05-15 08:30',fecha2:'2023-05-15 10:45',elemento:'Portátil HP EliteBook', elementoserie: 'SNHPELB83472', accesorios: 'Mouse inalámbrico', accesoriosserie: 'SNMSWL89234', usuario: 'María Rodríguez', tecnico: 'Carlos Méndez', ambiente: '203',estado: 'pendiente', descripcion: 'urgente para clases' }},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-10 09:15',fecha2: '2023-11-10 11:30',elemento: 'Portátil Dell Latitude',elementoserie: 'SNDLLT542189',accesorios: 'Cargador y mousepad',accesoriosserie: 'SNCHGDL887/SNMPDL442',usuario: 'Andrés Gutiérrez',tecnico: 'Luisa Fernández',ambiente: '205',estado: 'pendiente',descripcion: 'llevar al ambiente 205'}},
-{ estado: 'en proceso',detalles: {fecha1: '2023-11-12 14:00',fecha2: '2023-11-12 16:20',elemento: 'Computador todo en uno Lenovo',elementoserie: 'SNLNVAI789032',accesorios: 'Teclado inalámbrico',accesoriosserie: 'SNTKLN55621',usuario: 'Carolina Méndez',tecnico: 'Roberto Jiménez',ambiente: '102',estado: 'en proceso',descripcion: 'urgente para videoconferencia'}},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-15 08:45',fecha2: '2023-11-15 10:15',elemento: 'Portátil MacBook Pro',elementoserie: 'SNMBP2023567',accesorios: 'Adaptador USB-C a HDMI',accesoriosserie: 'SNUSBHD789',usuario: 'Sofía Ramírez',tecnico: 'Diego Castro',ambiente: '302',estado: 'pendiente',descripcion: 'ta ocupado'}},
-{ estado: 'en proceso',detalles: {fecha1: '2023-11-18 10:30',fecha2: '2023-11-18 12:45',elemento: 'Computador todo en uno HP',elementoserie: 'SNHPAIO334567',accesorios: 'Mouse óptico y cable de red',accesoriosserie: 'SNMSHP445/SNETHP778',usuario: 'Jorge Navarro',tecnico: 'María López',ambiente: '201',estado: 'en proceso',descripcion: 'para la formacion'}},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-20 13:20',fecha2: '2023-11-20 15:40',elemento: 'Portátil Asus VivoBook',elementoserie: 'SNASVB159753',accesorios: 'Cargador original',accesoriosserie: 'SNCHAS88234',usuario: 'Fernanda Soto',tecnico: 'Ricardo Mora',ambiente: '103',estado: 'pendiente',descripcion: 'URGENTE'}},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-23 11:00',fecha2: '2023-11-23 13:15',elemento: 'Computador todo en uno Acer',elementoserie: 'SNACAI789654',accesorios: 'Teclado mecánico',accesoriosserie: 'SNTKMEC1234',usuario: 'Raúl Villanueva',tecnico: 'Patricia Salazar',ambiente: '107',estado: 'pendiente',descripcion: 'URGENTE'}}
+{ estado: 'pendiente',detalles:{fecha1: '2023-05-15 08:30',fecha2:'2023-05-15 10:45',elemento:'Portátil HP EliteBook', elementoserie: 'SNHPELB83472', accesorios: 'Mouse inalámbrico', accesoriosserie: 'SNMSWL89234', usuario: 'María Rodríguez', tecnico: 'Carlos Méndez', ambiente: '203',estado: 'pendiente' }},
+{ estado: 'pendiente',detalles: {fecha1: '2023-11-10 09:15',fecha2: '2023-11-10 11:30',elemento: 'Portátil Dell Latitude',elementoserie: 'SNDLLT542189',accesorios: 'Cargador y mousepad',accesoriosserie: 'SNCHGDL887/SNMPDL442',usuario: 'Andrés Gutiérrez',tecnico: 'Luisa Fernández',ambiente: '205',estado: 'pendiente'}},
+{ estado: 'en proceso',detalles: {fecha1: '2023-11-12 14:00',fecha2: '2023-11-12 16:20',elemento: 'Computador todo en uno Lenovo',elementoserie: 'SNLNVAI789032',accesorios: 'Teclado inalámbrico',accesoriosserie: 'SNTKLN55621',usuario: 'Carolina Méndez',tecnico: 'Roberto Jiménez',ambiente: '102',estado: 'en proceso'}},
+{ estado: 'pendiente',detalles: {fecha1: '2023-11-15 08:45',fecha2: '2023-11-15 10:15',elemento: 'Portátil MacBook Pro',elementoserie: 'SNMBP2023567',accesorios: 'Adaptador USB-C a HDMI',accesoriosserie: 'SNUSBHD789',usuario: 'Sofía Ramírez',tecnico: 'Diego Castro',ambiente: '302',estado: 'pendiente'}},
+{ estado: 'en proceso',detalles: {fecha1: '2023-11-18 10:30',fecha2: '2023-11-18 12:45',elemento: 'Computador todo en uno HP',elementoserie: 'SNHPAIO334567',accesorios: 'Mouse óptico y cable de red',accesoriosserie: 'SNMSHP445/SNETHP778',usuario: 'Jorge Navarro',tecnico: 'María López',ambiente: '201',estado: 'en proceso'}},
+{ estado: 'pendiente',detalles: {fecha1: '2023-11-20 13:20',fecha2: '2023-11-20 15:40',elemento: 'Portátil Asus VivoBook',elementoserie: 'SNASVB159753',accesorios: 'Cargador original',accesoriosserie: 'SNCHAS88234',usuario: 'Fernanda Soto',tecnico: 'Ricardo Mora',ambiente: '103',estado: 'pendiente'}},
+{ estado: 'pendiente',detalles: {fecha1: '2023-11-23 11:00',fecha2: '2023-11-23 13:15',elemento: 'Computador todo en uno Acer',elementoserie: 'SNACAI789654',accesorios: 'Teclado mecánico',accesoriosserie: 'SNTKMEC1234',usuario: 'Raúl Villanueva',tecnico: 'Patricia Salazar',ambiente: '107',estado: 'pendiente'}}
 ];
   return (
     <div className="lista-tickets201">
@@ -165,12 +165,6 @@ const Solielemento = () => {
             <label className="form-label211">Estado:</label>
             <div className="form-control-wrapper212">
               <Form.Control type="text" value={modalDetalles?.estado || ''} readOnly />
-            </div>
-          </div>
-          <div className="form-group-row210 mt-3">
-            <label className="form-label211">Descripción:</label>
-            <div className="form-control-wrapper212">
-              <Form.Control as="textarea" rows={3} value={modalDetalles?.descripcion || ''} readOnly />
             </div>
           </div>
         </Modal.Body>

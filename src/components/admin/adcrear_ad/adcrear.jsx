@@ -14,7 +14,7 @@ const DetallesUsuarioModal = ({ show, onHide, detalles, onEliminar }) => {
         <Modal.Title>
           <div className="izquierda103">
             <FaUserCircle className="icono107" size={24} style={{ marginRight: '10px' }} />
-            <div className="estado108">
+            <div className="estado166">
               <span>Información del Usuario</span>
             </div>
           </div>

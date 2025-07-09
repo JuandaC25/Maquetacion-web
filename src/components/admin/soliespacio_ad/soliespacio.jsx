@@ -30,15 +30,15 @@ const Ticketxd = ({ estado, onVerClick }) => {
 
 const Listaxd = ({ onVerClick }) => {
   const tickets = [
-{ estado: 'pendiente',detalles:{fecha1: '2023-05-15 08:30',fecha2:'2023-05-15 10:45',espacio:'', usuario: 'María Rodríguez',estado: 'en uso ', descripcion: 'urgente para clases' }},
-{ estado: 'en uso',detalles: {fecha1: '2023-11-28 08:00',fecha2: '2023-11-28 12:00',espacio: 'auditorio',usuario: 'Carlos Mendoza',estado: 'en uso',descripcion: 'Evento de inauguración - URGENTE'}},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-28 09:30',fecha2: '2023-11-28 11:30',espacio: 'canchas',usuario: 'Laura Vélez',estado: 'pendiente',descripcion: 'Reunión de aprendices nuevos'}},
-{ estado: 'en uso',detalles: {fecha1: '2023-11-28 14:00',fecha2: '2023-11-28 18:00',espacio: 'canchas',usuario: 'Javier Ríos',estado: 'en uso',descripcion: 'Torneo  de voleibol'}},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-29 10:00',fecha2: '2023-11-29 12:00',espacio: 'laboratorio de ciencias',usuario: 'Dra. Sofía Castro',estado: 'pendiente',descripcion: 'Prácticas de química orgánica'}},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-29 15:00',fecha2: '2023-11-29 17:00',espacio: 'biblioteca',usuario: 'Ana Karen Ramírez',estado: 'pendiente',descripcion: 'Club de lectura juvenil'}},
-{ estado: 'en uso',detalles: {fecha1: '2023-11-30 07:00',fecha2: '2023-11-30 09:30',espacio: 'auditorio',usuario: 'Diego Morales',estado: 'en uso',descripcion: 'Conferencia'}},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-30 11:00',fecha2: '2023-11-30 13:00',espacio: 'canchas',usuario: 'Marta Gómez',estado: 'pendiente',descripcion: 'Seminario de emprendimiento'}},
-{ estado: 'en uso',detalles: {fecha1: '2023-11-30 16:00',fecha2: '2023-11-30 20:00',espacio: 'canchas',usuario: ' Ricardo Torres',estado: 'en uso',descripcion: 'educación física'}}
+{ estado: 'pendiente',detalles:{fecha1: '2023-05-15 08:30',fecha2:'2023-05-15 10:45',espacio:'auditorio', usuario: 'María Rodríguez',estado: 'en uso ' }},
+{ estado: 'en uso',detalles: {fecha1: '2023-11-28 08:00',fecha2: '2023-11-28 12:00',espacio: 'auditorio',usuario: 'Carlos Mendoza',estado: 'en uso'}},
+{ estado: 'pendiente',detalles: {fecha1: '2023-11-28 09:30',fecha2: '2023-11-28 11:30',espacio: 'canchas',usuario: 'Laura Vélez',estado: 'pendiente'}},
+{ estado: 'en uso',detalles: {fecha1: '2023-11-28 14:00',fecha2: '2023-11-28 18:00',espacio: 'canchas',usuario: 'Javier Ríos',estado: 'en uso'}},
+{ estado: 'pendiente',detalles: {fecha1: '2023-11-29 10:00',fecha2: '2023-11-29 12:00',espacio: 'laboratorio de ciencias',usuario: 'Dra. Sofía Castro',estado: 'pendiente'}},
+{ estado: 'pendiente',detalles: {fecha1: '2023-11-29 15:00',fecha2: '2023-11-29 17:00',espacio: 'biblioteca',usuario: 'Ana Karen Ramírez',estado: 'pendiente'}},
+{ estado: 'en uso',detalles: {fecha1: '2023-11-30 07:00',fecha2: '2023-11-30 09:30',espacio: 'auditorio',usuario: 'Diego Morales',estado: 'en uso'}},
+{ estado: 'pendiente',detalles: {fecha1: '2023-11-30 11:00',fecha2: '2023-11-30 13:00',espacio: 'canchas',usuario: 'Marta Gómez',estado: 'pendiente'}},
+{ estado: 'en uso',detalles: {fecha1: '2023-11-30 16:00',fecha2: '2023-11-30 20:00',espacio: 'canchas',usuario: ' Ricardo Torres',estado: 'en uso'}}
 ];
   return (
     <div className="lista-tickets201">
@@ -135,12 +135,6 @@ const Soliespacio = () => {
             <label className="form-label211">Estado:</label>
             <div className="form-control-wrapper212">
               <Form.Control type="text" value={modalDetalles?.estado || ''} readOnly />
-            </div>
-          </div>
-          <div className="form-group-row210 mt-3">
-            <label className="form-label211">Descripción:</label>
-            <div className="form-control-wrapper212">
-              <Form.Control as="textarea" rows={3} value={modalDetalles?.descripcion || ''} readOnly />
             </div>
           </div>
         </Modal.Body>
