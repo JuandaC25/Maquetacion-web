@@ -43,7 +43,6 @@ const Listaxd = ({ onVerClick }) => {
 <Alert variant="success" className="alert201">
   <div className="d-flex justify-content-between align-items-center">
     <div className="d-flex align-items-center gap-3">
-      <strong className="mb-0">TICKET</strong>
       <Dropdown>
         <Dropdown.Toggle variant="success" id="dropdown-basic">
           Elemento
