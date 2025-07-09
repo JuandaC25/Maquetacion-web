@@ -5,6 +5,7 @@ import Admin from './components/admin/admin_ad/Admin.jsx';
 import Inventario from './components/admin/inventario_ad/inventario.jsx';
 import AdCrear from './components/admin/adcrear_ad/adcrear.jsx';
 import Solielemento from './components/admin/solielemento_ad/solielemento_ad.jsx';
+import Soliespacio from './components/admin/soliespacio_ad/soliespacio.jsx';
 import Tecnico from './components/Tecnico/solicitudes_de_equipos/Soli_Equi_Tec.jsx';
 import Cuarta from './components/Tecnico/informacion_de_equipos/Info_equipos_tec.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
@@ -27,6 +28,7 @@ function App() {
         <Route path='/inventario' element={<Inventario />} />
         <Route path='/adcrear' element={<AdCrear />} />
         <Route path='/solielemento' element={<Solielemento/>} />
+        <Route path='/soliespacio' element={<Soliespacio/>} />
         <Route path='/Tecnico' element={<Tecnico />} />
         <Route path='/espacios' element={<Soliespacios />} />
         <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
