@@ -9,6 +9,7 @@ import Soliespacio from './components/admin/soliespacio_ad/soliespacio.jsx';
 import Tecnico from './components/Tecnico/solicitudes_de_equipos/Soli_Equi_Tec.jsx';
 import Cuarta from './components/Tecnico/informacion_de_equipos/Info_equipos_tec.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
+import Historial_ped from './components/Home/Histo_pedi/Histo_pedi.jsx';
 import Soli_port from './components/Home/Pedidos_port/Soli_Port.jsx';
 import Solitelevisores from './components/Home/Pedidos_Tele/Solici_televisor.jsx';
 import Pedidos_ele from './components/Home/Pedidos_ele/Pedidos_ele.jsx';  
@@ -32,6 +33,7 @@ function App() {
         <Route path='/Tecnico' element={<Tecnico />} />
         <Route path='/espacios' element={<Soliespacios />} />
         <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
+        <Route path='/Historial_pedidos' element={<Historial_ped />} />
         <Route path='/Solicitartelevisores' element={<Solitelevisores />} />
         <Route path='/Pedidos_ele' element={<Pedidos_ele />} />
         <Route path='/' element={<Login/>}/> 

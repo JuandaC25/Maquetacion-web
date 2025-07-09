@@ -40,14 +40,14 @@
 .Btn_conf{
     height: 3rem;
     width: 15rem;
-    margin-top: 3rem;
-    margin-left: 52.4rem;
+    margin-top: 1rem;
+    margin-left: 40.4rem;
     background-color: #00AF00;
     border-radius: 10px;
     border-color: #00AF00;
 }
 .Cont_ele{
-    gap: 3rem;
+    gap: 2rem;
       display: flex;
   justify-content: center;
   flex-direction: column;
@@ -66,6 +66,5 @@
     margin-right: 1rem;
 }
 .fotajus{
-    margin-top: 5.5rem;
-    margin-top: 8.4rem;
+    margin-top: 2.7rem;
 }

@@ -33,7 +33,7 @@
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 8px 15px;
+  padding: 15px;
   border-radius: 5px;
   cursor: pointer;
   text-decoration: none;
@@ -66,8 +66,8 @@
 }
 .Msj_modal{
     font-size: 25px;
-    margin-top: 42rem;
-    margin-left: 52rem;
+    margin-top: 32rem;
+    margin-left: 48rem;
     width: 13.2rem;
     position: absolute;
     background-color: #00AF00;

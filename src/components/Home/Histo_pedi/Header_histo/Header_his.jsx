@@ -1,13 +1,13 @@
 import { Navbar, Container, Nav} from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import './Header_elemen.css';
+import './Header_his.css';
 import Desplegable from '../../../desplegable/desplegable';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { Link } from 'react-router-dom';
 
-function HeaderElemen() {
+function Header_his() {
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -47,7 +47,7 @@ function HeaderElemen() {
           </Offcanvas>
 
           
-          <h1 className='heads'>Solicitar elementos</h1>
+          <h1 className='heads'>Historial Pedidos</h1>
 
           
           <div className='Iconosst'>
@@ -64,4 +64,4 @@ function HeaderElemen() {
   );
 }
   
-  export default HeaderElemen;
+  export default Header_his;

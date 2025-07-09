@@ -1,0 +1,42 @@
+.modal_ver{
+  width: 100%;
+  margin-top: 12rem;
+}
+.Arriba_ver {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.Mdl_ver{
+    margin-right: auto;
+    width: 5rem;
+}
+.Cua_1 {
+  width: 200px;
+  height: 50px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+}
+.Abajo_ver {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.Cua_2{
+  width: 200px;
+  height: 50px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+}
