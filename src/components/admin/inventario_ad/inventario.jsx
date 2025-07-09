@@ -29,8 +29,8 @@ const EquipoItem = ({ elemento, onVerClick }) => (
 
 const ListaEquipos = ({ elementos, onVerClick }) => (
   <div className="lista-tickets301">
-    {elementos.map((el) => (
-      <EquipoItem key={el.id} elemento={el} onVerClick={onVerClick} />
+    {elementos.map((el, index) => (
+      <EquipoItem key={index} elemento={el} onVerClick={onVerClick} />
     ))}
   </div>
 );
@@ -44,12 +44,6 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
         <Modal.Title>Detalles del Equipo</Modal.Title>
       </Modal.Header>
       <Modal.Body className="modal-body317">
-        <div className="form-group-row310">
-          <label className="form-label311">ID:</label>
-          <div className="form-control-wrapper312">
-            <Form.Control type="text" value={detalles.id} readOnly />
-          </div>
-        </div>
         <div className="form-group-row310">
           <label className="form-label311">Nombre:</label>
           <div className="form-control-wrapper312">
@@ -82,7 +76,7 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
         </div>
       </Modal.Body>
       <Modal.Footer className="modal-footer318">
-        <Button variant="danger" size="sm" onClick={() => onEliminar(detalles.id)}>
+        <Button variant="danger" size="sm" onClick={() => onEliminar(detalles.nombre)}>
           Eliminar
         </Button>
         <Button variant="secondary" size="sm" onClick={onHide}>
@@ -99,12 +93,6 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
       <Modal.Title>Añadir Equipo</Modal.Title>
     </Modal.Header>
     <Modal.Body className="modal-body317">
-      <div className="form-group-row310">
-        <label className="form-label311" htmlFor="id">Id del elemento</label>
-        <div className="form-control-wrapper312">
-          <Form.Control type="number" id="id" value={nuevoEquipo.id} onChange={onChange} />
-        </div>
-      </div>
       <div className="form-group-row310 mt-2">
         <label className="form-label311" htmlFor="nombre">Nombre del elemento</label>
         <div className="form-control-wrapper312">
@@ -154,20 +142,19 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
 
 const Admin = () => {
   const [elementosInventario, setElementosInventario] = useState([
-    { id: "1", nombre: "Laptop Dell XPS 13", categoria: "Portátil", accesorios: "Cargador, Mouse inalámbrico", serie: "DELLXPS13-ABC", observaciones: "Excelente rendimiento para trabajo y estudio." },
-    { id: "2", nombre: "PC de Escritorio HP Pavilion", categoria: "Equipos de escritorio", accesorios: "Teclado, Mouse, Monitor 24''", serie: "HPPV-XYZ-456", observaciones: "Ideal para oficina y tareas diarias." },
-    { id: "3", nombre: "Smart TV Samsung QLED 55''", categoria: "Televisores", accesorios: "Control remoto, Cable HDMI", serie: "SAMQLED55-QWE-789", observaciones: "Imagen 4K impresionante, perfecto para entretenimiento." },
-    { id: "4", nombre: "Impresora Multifuncional Epson", categoria: "Impresoras", accesorios: "Cable USB, Cartuchos de tinta", serie: "EPSONMF-123-ABC", observaciones: "Funcionalidad de impresión, copia y escaneo." },
-    { id: "5", nombre: "Proyector Optoma HD", categoria: "Proyectores", accesorios: "Cable de alimentación, Control remoto", serie: "OPTHD-456-DEF", observaciones: "Ideal para presentaciones y cine en casa, buena luminosidad." },
-    { id: "6", nombre: "Laptop Lenovo ThinkPad T14", categoria: "Portátil", accesorios: "Cargador USB-C", serie: "LENOVO-T14-789-GHI", observaciones: "Diseño robusto y batería de larga duración, enfocado en productividad." },
-    { id: "7", nombre: "Monitor LG UltraGear 27'' Gaming", categoria: "Monitores", accesorios: "Cable DisplayPort", serie: "LGUG27-GHI-JKL", observaciones: "Alta tasa de refresco para gaming, colores vibrantes." },
+    { nombre: "Laptop Dell XPS 13", categoria: "Portátil", accesorios: "Cargador, Mouse inalámbrico", serie: "DELLXPS13-ABC", observaciones: "Excelente rendimiento para trabajo y estudio." },
+    { nombre: "PC de Escritorio HP Pavilion", categoria: "Equipos de escritorio", accesorios: "Teclado, Mouse, Monitor 24''", serie: "HPPV-XYZ-456", observaciones: "Ideal para oficina y tareas diarias." },
+    { nombre: "Smart TV Samsung QLED 55''", categoria: "Televisores", accesorios: "Control remoto, Cable HDMI", serie: "SAMQLED55-QWE-789", observaciones: "Imagen 4K impresionante, perfecto para entretenimiento." },
+    { nombre: "Impresora Multifuncional Epson", categoria: "Impresoras", accesorios: "Cable USB, Cartuchos de tinta", serie: "EPSONMF-123-ABC", observaciones: "Funcionalidad de impresión, copia y escaneo." },
+    { nombre: "Proyector Optoma HD", categoria: "Proyectores", accesorios: "Cable de alimentación, Control remoto", serie: "OPTHD-456-DEF", observaciones: "Ideal para presentaciones y cine en casa, buena luminosidad." },
+    { nombre: "Laptop Lenovo ThinkPad T14", categoria: "Portátil", accesorios: "Cargador USB-C", serie: "LENOVO-T14-789-GHI", observaciones: "Diseño robusto y batería de larga duración, enfocado en productividad." },
+    { nombre: "Monitor LG UltraGear 27'' Gaming", categoria: "Monitores", accesorios: "Cable DisplayPort", serie: "LGUG27-GHI-JKL", observaciones: "Alta tasa de refresco para gaming, colores vibrantes." },
   ]);
 
   const [showDetalles, setShowDetalles] = useState(false);
   const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
   const [showNuevo, setShowNuevo] = useState(false);
   const [nuevoEquipo, setNuevoEquipo] = useState({
-    id: "",
     nombre: "",
     categoria: "",
     accesorios: "",
@@ -185,8 +172,8 @@ const Admin = () => {
     setEquipoSeleccionado(null);
   };
 
-  const eliminarEquipo = (id) => {
-    setElementosInventario((prev) => prev.filter((e) => e.id !== id));
+  const eliminarEquipo = (nombre) => {
+    setElementosInventario((prev) => prev.filter((e) => e.nombre !== nombre));
     closeDetalles();
   };
 
@@ -194,7 +181,7 @@ const Admin = () => {
 
   const closeNuevo = () => {
     setShowNuevo(false);
-    setNuevoEquipo({ id: "", nombre: "", categoria: "", accesorios: "", serie: "", observaciones: "" });
+    setNuevoEquipo({ nombre: "", categoria: "", accesorios: "", serie: "", observaciones: "" });
   };
 
   const handleNuevoChange = (e) => {
@@ -203,8 +190,8 @@ const Admin = () => {
   };
 
   const submitNuevo = () => {
-    if (!nuevoEquipo.id || !nuevoEquipo.nombre) {
-      alert("ID y nombre son obligatorios");
+    if (!nuevoEquipo.nombre) {
+      alert("El nombre es obligatorio");
       return;
     }
     setElementosInventario((prev) => [...prev, nuevoEquipo]);
