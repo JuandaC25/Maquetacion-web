@@ -40,6 +40,9 @@ function Headerespacios() {
               <Link to="/espacios" className='cuadrito1'>
                 <h3><i className="bi bi-person-plus"></i> Solicitar espacios</h3>
               </Link>
+              <Link to="/Historial_pedidos" className='cuadrito1'>
+                <h3><i className="bi bi-clock"></i> Historial pedidos</h3>
+              </Link>
             </Offcanvas.Body>
           </Offcanvas>
 

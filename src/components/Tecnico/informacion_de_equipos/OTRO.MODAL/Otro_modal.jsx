@@ -5,8 +5,8 @@ import './Otro_modal.css';
  
 function Otromodal({ show, onHide}) {
   return (
-    <Modal show={show} onHide={onHide} centered>
-      <Modal.Header closeButton>
+    <Modal show={show} onHide={onHide} centered className='modalcontein'>
+      <Modal.Header closeButton className='arriba'><h2 className='test'>Reportes de tickets</h2>
              
             </Modal.Header>
             <Modal.Body>

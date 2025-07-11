@@ -27,9 +27,36 @@
   margin-bottom: 10px;
 }
 .index{
-  width: 35% !important;
-  margin: auto;
+  display: block;
+  font-weight: 800;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  color: #333;
+  width: 40%;
+  
 }
 .ultimob{
   background-color:  rgb(9, 180, 26);
+  margin: auto;
+}
+.sombrita{
+    width: 50%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 15px;
+    border: 1px solid black !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.dedito{
+  padding-left: 40px;
+  padding-right: 40px;
+}
+.verdecito{
+  background-color:rgb(9, 180, 26) ;
+}
+.titulito{
+  color: white;
+  
 }

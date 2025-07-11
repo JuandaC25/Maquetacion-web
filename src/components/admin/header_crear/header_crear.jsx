@@ -34,6 +34,12 @@ function Header_crear() {
               <Link to="/Inventario" className='cuadrito1'>
                 <h3><i className="bi bi-box-seam"></i> Consultar inventario</h3>
               </Link>
+             <Link to="/Solielemento" className='cuadrito1'>
+                <h3><i className="bi bi-search"></i>solicitudes de elementos</h3>
+              </Link>
+             <Link to="/Soliespacio" className='cuadrito1'>
+                <h3><i className="bi bi-search"></i>Solicitudes espacios</h3>
+              </Link>
             </Offcanvas.Body>
           </Offcanvas>
 

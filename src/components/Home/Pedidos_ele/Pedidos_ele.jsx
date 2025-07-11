@@ -18,7 +18,7 @@ function Pedidos_ele() {
   return (
     <div className="pedidos-ele">
       <HeaderElemen />
-        <Container className='Cont_ele'>
+        <Container className='Cont_elemen'>
       <h2 className='Txt_inv'>Elementos</h2>
     <Dropdown>
       <Dropdown.Toggle className='Btn_ele' id="dropdown-basic">Teclados</Dropdown.Toggle>
@@ -29,8 +29,9 @@ function Pedidos_ele() {
     </Dropdown>
     </Container>
     <div>
+      
        <Container className='Cont_inv'>
-        <Stack className='Lista_ele' gap={4}>
+        <Stack className='Lista_ele' gap={3}>
       <div className="p-2">🖥️    Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
       <div className="p-2">🖥️    Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
       <div className="p-2">🖥️    Detalles del Elemento (Especificaciones, número de serie) <button className='Btn_add'>Añadir</button> </div>
@@ -41,6 +42,7 @@ function Pedidos_ele() {
     </Stack>
        </Container>
     </div>
+    <div className='Cont_ele'>
       <Button className='Btn_conf' variant="primary" onClick={handleShow}>
         Confirmar solicitud
       </Button>
@@ -52,7 +54,7 @@ function Pedidos_ele() {
         </div>
       </Modal>
 
-      <Pagination className='Pagination_ele'>
+      <Pagination className='Pagi_ele'>
       <Pagination.Prev />
       <Pagination.Item active>{1}</Pagination.Item>
       <Pagination.Item>{2}</Pagination.Item>
@@ -61,7 +63,7 @@ function Pedidos_ele() {
       <Pagination.Item>{10}</Pagination.Item>
       <Pagination.Next />
     </Pagination>
-
+    </div>
     <div className='fotajus'>
     <Footer />
     </div>

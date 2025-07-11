@@ -14,26 +14,35 @@ function Modal2({ show, onHide }) {
   return (
     <>
       <Modal show={show} onHide={onHide} centered>
-        <Modal.Header closeButton />
+        <Modal.Header className='verdecito' closeButton><h2 className='titulito'>Tickets equipos</h2></Modal.Header>
         <Modal.Body>
           <div className='contmod'>
             <label className='index'>Fecha de reporte</label>
-            <input type="text" className="form-control mb-2" />
+            <input type="date" className="sombrita" />
           </div>
           <div className='contmod'>
-            <label className='index'>Modelo de pc</label>
-            <input type="text" className="form-control mb-2" />
-          </div>
-          <div className='contmod'>
-            <label className='index'>Número de serie</label>
-            <input type="number" className="form-control mb-2" />
+            <label className='index'>Nombre de usuario</label>
+            <input type="text" className="sombrita" />
           </div>
           <div className='contmod'>
             <label className='index'>Ambiente</label>
-            <input type="text" className="form-control mb-2" />
+            <input type="text" className="sombrita" />
           </div>
+          <div className='contmod'>
+            <label className='index'>Modelo de pc</label>
+            <input type="text" className="sombrita" />
+          </div>
+          <div className='contmod'>
+            <label className='index'>Número de serie</label>
+            <input type="number" className="sombrita" />
+          </div>
+          <div className='contmod'>
+            <label className='index'>Observaciones</label>
+            <input type="text" className="sombrita" />
+          </div>
+          
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className='dedito'>
           <Button className='ultimob' variant="success" onClick={abrirOtromodal}>
             Reportar
           </Button>
