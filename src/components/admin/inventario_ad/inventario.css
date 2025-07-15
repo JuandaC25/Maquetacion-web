@@ -1,166 +1,295 @@
-.alert301 {
-  background-color: #ffffff00;
-  text-align: start;
+:root {
+  --green: #28a745;
+  --green-dark: #218838;
+  --blue: #007bff;
+  --blue-dark: #0056b3;
+  --bg: #f5f7fa;
+  --white: #fff;
+  --text: #333;
+  --text-light: #6c757d;
+  --border: #e0e6ed;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --radius: 12px;
 }
 
-.lista-tickets301 {
-    display: flex; 
-    flex-direction: column; 
-    gap: 15px; 
- 
+.inventory-app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg);
 }
-.ticket-item302 {
+
+.inventory-header-bar {
+  background: var(--white);
+  padding: 20px 40px;
+  box-shadow: 0 4px 15px var(--shadow);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 1000;
+}
+
+.header-bar-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  padding: 10px 15px;
-  margin-bottom: 12px;
-  color: black;
-  padding: 10px; 
-  margin-bottom: 15px;
-   border: 1px solid black;
+  width: 100%;
 }
-.izquierda303,
-.derecha304 {
+
+.header-left-section {
   display: flex;
   align-items: center;
+  gap: 20px;
 }
 
-.izquierda303 { gap: 10px; }
-.derecha304   { gap: 10px; }
+.inventory-main-title {
+  font-size: 2rem; font-weight: bold; margin: 0; color: var(--text);
+}
 
-.icono307,
-.folder306 { font-size: 35px; }
+.add-new-equipment-button,
+.view-details-button,
+.modal-action-button {
+  border: none; cursor: pointer; white-space: nowrap;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
 
-.estado308 span {
-  background-color: #ccc;
-  padding: 6px 16px;
-  border-radius: 16px;
+.add-new-equipment-button {
+  background: var(--green); color: var(--white);
+  padding: 10px 22px; border-radius: 8px;
+  display: flex; align-items: center; gap: 8px;
   font-weight: 600;
-  color: black;
-  font-size: 0.9em;
 }
 
-.ver-boton309 {
-  background-color: white;
-  border: 1px solid #000;
-  padding: 5px 12px;
-  border-radius: 6px;
+.add-new-equipment-button:hover {
+  background: var(--green-dark); transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-.ver-boton309:hover { background-color: #f0f0f0; }
-
-.form-group-row310 {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 15px;
+.view-details-button {
+  background: var(--green); color: var(--white);
+  padding: 10px 18px; border-radius: 30px;
+  font-weight: 500;
 }
 
-.custom-modal315 .modal-body317 .form-group-row310:last-of-type {
-  margin-bottom: 0;
+.view-details-button:hover {
+  background: var(--green-dark); transform: scale(1.05);
 }
 
-.form-label311 {
-  flex: 0 0 200px;
-  text-align: left;
-  font-weight: bold;
-  color: black;
-  margin-bottom: 0;
+.category-filter-dropdown .dropdown-toggle {
+  background-color: var(--white); color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 18px; font-weight: 500;
+  display: flex; align-items: center; gap: 8px;
+  transition: all 0.3s ease-in-out;
 }
 
-.form-control-wrapper312 {
-  flex: 1 1 auto;
-  border-radius: solid black;
+.category-filter-dropdown .dropdown-toggle:hover,
+.category-filter-dropdown .dropdown-toggle:focus {
+  background-color: var(--bg); border-color: var(--blue);
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
 }
 
-textarea.form-control313 {
-  min-height: 80px;
-  resize: vertical;
+.category-filter-dropdown .dropdown-arrow {
+  font-size: 0.8em; transition: transform 0.3s ease-in-out;
 }
 
-.custom-modal315 .modal-dialog {
-  max-width: 700px;
-  margin: 2rem auto;
-  border-radius: 10px;
-  overflow: hidden;
+.category-filter-dropdown.show .dropdown-arrow { transform: rotate(180deg); }
+
+.category-dropdown-menu {
+  border-radius: 8px; box-shadow: 0 5px 15px var(--shadow); border: 1px solid var(--border);
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+  pointer-events: none;
 }
 
-.custom-modal315 .modal-content {
-  border-radius: 10px;
-  border: none;
+.category-filter-dropdown.show .category-dropdown-menu {
+  opacity: 1; transform: translateY(0); pointer-events: all;
 }
 
-.modal-header-verde316 {
-  background-color: rgb(9, 180, 26);
-  color: white;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
+.category-dropdown-menu .dropdown-item {
+  color: var(--text); padding: 10px 20px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.modal-header-verde316 h5.modal-title {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: bold;
+.category-dropdown-menu .dropdown-item:hover {
+  background-color: var(--blue); color: var(--white);
 }
 
-.modal-body317 {
-  background-color: #ffffff;
-  padding: 40px 30px;
-  border-bottom-right-radius: 10px;
+.equipment-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px; padding: 30px 40px; flex-grow: 1;
 }
 
-button.ver-boton309 {
-  background-color: rgb(9, 180, 26);
-  color: white;
-  border: 1px solid azure;
-  border-radius: 6px;
-  padding: 6px 16px;
-  font-weight: bold;
+.empty-list-message {
+  grid-column: 1 / -1; text-align: center;
+  color: var(--text-light); font-size: 1.2rem; padding: 50px 0;
 }
 
-.modal-footer318 .btn-success {
-  background-color: rgb(9, 180, 26);
-  color: white;
-  border: none;
-  font-weight: bold;
+.modern-equipment-card {
+  display: flex; justify-content: space-between; align-items: center; gap: 20px;
+  background: var(--white); padding: 20px; border-radius: var(--radius);
+  box-shadow: 0 5px 15px var(--shadow); border: 1px solid var(--border);
+  cursor: pointer; opacity: 0; transform: translateY(20px);
+  animation: cardAppear 0.5s forwards ease-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.modal-footer318 .btn-danger {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  font-weight: bold;
+.modern-equipment-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-.modal-footer318 .btn-secondary {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  font-weight: bold;
+@keyframes cardAppear { to { opacity: 1; transform: translateY(0); } 
 }
 
-.añadir-boton322 {
-  background-color: rgb(9, 180, 26);
-  color: white;
-  border: none;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-weight: bold;
+.icon-display { 
+  font-size: 2.8rem; color: var(--green); flex-shrink: 0; 
 }
-.ticket-nombre-derecha {
-    font-size: 1em;
+.equipment-info { 
+  display: flex; flex-direction: column; flex-grow: 1; 
 }
-.margin300{
-  margin-left: 20px;
-  margin-right: 20px;
+.equipment-title { 
+  font-weight: 700; font-size: 1.3rem; color: var(--text); word-break: break-word; 
 }
+.equipment-category { 
+  font-size: 1rem; color: var(--text-light); margin-top: 4px; 
+}
+
+.modern-modal-dialog .modal-content {
+  border-radius: var(--radius); overflow: hidden;
+  box-shadow: 0 10px 30px var(--shadow);
+  animation: modalScaleIn 0.3s ease-out forwards;
+}
+
+@keyframes modalScaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modern-modal-header {
+  background: var(--green); color: var(--white);
+  padding: 20px 30px; border-bottom: none;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.modern-modal-title { 
+  font-size: 1.6rem; font-weight: bold; }
+
+.modern-modal-body { 
+  padding: 30px; background: #fcfcfc; }
+
+.detail-item { 
+  margin-bottom: 20px; }
+.detail-label {
+  font-weight: 600; margin-bottom: 8px; display: block;
+  color: var(--text); font-size: 1.05rem;
+}
+
+.modern-form-control {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 15px; width: 100%;
+  background-color: var(--white); color: var(--text); font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.modern-form-control:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+.modern-form-control::placeholder { color: var(--text-light); font-style: italic; }
+
+.modern-modal-footer {
+  padding: 20px 30px; background: var(--bg); border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 10px;
+}
+
+.modal-action-button {
+   padding: 10px 24px; border-radius: 8px; font-weight: 600; 
+  } 
+
+.modal-action-button.delete-action { 
+  background-color: #dc3545; color: var(--white);
+ }
+.modal-action-button.delete-action:hover { 
+  background-color: #c82333; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); 
+}
+
+.modal-action-button.add-action { 
+  background-color: var(--green); color: var(--white); 
+}
+.modal-action-button.add-action:hover { 
+  background-color: var(--green-dark); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); 
+}
+
+.modal-action-button.cancel-action,
+.modal-action-button.close-action { 
+  background-color: var(--text-light); color: var(--white); 
+}
+.modal-action-button.cancel-action:hover,
+.modal-action-button.close-action:hover { 
+  background-color: #5a6268; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); 
+}
+
+.pagination-controls-container {
+  display: flex; justify-content: center;
+  margin: 40px 0; padding: 0 20px;
+}
+
+.pag101 .page-item .page-link {
+  color: var(--blue); padding: 10px 15px; border: none !important;
+  border-radius: 8px; margin: 0 4px; background-color: var(--white);
+  transition: all 0.3s ease;
+}
+
+.pag101 .page-item.active .page-link {
+  background-color: var(--blue); color: var(--white); font-weight: bold;
+  transform: scale(1.1); box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.pag101 .page-item .page-link:hover:not(.active) {
+  background-color: var(--blue-dark); color: var(--white);
+  transform: translateY(-2px); box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.pag101 .page-item.disabled .page-link {
+  color: var(--text-light); cursor: not-allowed; opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .inventory-header-bar { 
+    padding: 15px 20px; }
+  .header-bar-content { 
+    flex-direction: column; align-items: flex-start; gap: 15px; }
+  .header-left-section { 
+    flex-direction: column; align-items: flex-start; gap: 10px; }
+  .inventory-main-title { 
+    font-size: 1.8rem; }
+  .equipment-list-grid { 
+    grid-template-columns: 1fr; padding: 20px; }
+  .modern-equipment-card { 
+    flex-direction: column; text-align: center; }
+  .icon-display { 
+    margin: 0 0 10px 0; }
+  .equipment-info { 
+    align-items: center; margin-bottom: 15px; }
+  .view-details-button { 
+    width: 100%; }
+  .modern-modal-body { 
+    padding: 20px; }
+  .modern-modal-footer { 
+    flex-direction: column; gap: 10px; }
+  .modal-action-button { 
+    width: 100%; }
+}
+@media (max-width: 480px) {
+  .inventory-main-title { font-size: 1.5rem; }
+  .add-new-equipment-button { width: 100%; justify-content: center; }
+}
+
+
+
+
+
+
 
