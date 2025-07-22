@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { Navbar, Button, Offcanvas, Nav } from 'react-bootstrap';
+import { Navbar, Button, Offcanvas, Nav, Modal } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './header_ad.css';
-import Desplegable from '../../desplegable/desplegable';
 import { Link } from 'react-router-dom';
 
 function Header_ad() {
-  const [show, setShow] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleCloseMenu = () => setShowMenu(false);
+  const handleShowMenu = () => setShowMenu(true);
+  
+  const handleCloseProfile = () => setShowProfile(false);
+  const handleShowProfile = () => setShowProfile(true);
+
   const navigateToHome = () => {
     window.location.href = "http://localhost:5173/Login";
   };
@@ -17,60 +21,61 @@ function Header_ad() {
   const navigateToBlog = () => {
     window.location.href = "https://electricidadelectronicaytelecomu.blogspot.com/";
   };
-  return (
-    <div className='container-1301'> 
-      <Navbar expand="xxxl" className="w-100">
-        <div className='content-1302'>
 
-          <button className="button-1303" onClick={handleShow}>
-            <span className="icon-1304">
+  return (
+    <div className='container-1401'> 
+      <Navbar expand="xxxl" className="w-100">
+        <div className='content-1402'>
+
+          <button className="button-1403" onClick={handleShowMenu}>
+            <span className="icon-1404">
                 <svg viewBox="0 0 175 80" width="40" height="40">
                     <rect width="80" height="15" fill="#f0f0f0" rx="10"></rect>
                     <rect y="30" width="80" height="15" fill="#f0f0f0" rx="10"></rect>
                     <rect y="60" width="80" height="15" fill="#f0f0f0" rx="10"></rect>
                 </svg>
             </span>
-            <span className="text-1305">MENU</span>
+            <span className="text-1405">MENU</span>
           </button>
 
-          <Offcanvas show={show} onHide={handleClose}>
-            <Offcanvas.Header className='header-1306' closeButton>
-              <Offcanvas.Title className='title-1307'>
+          <Offcanvas show={showMenu} onHide={handleCloseMenu}>
+            <Offcanvas.Header className='header-1406' closeButton>
+              <Offcanvas.Title className='title-1407'>
                 <h1>Menú</h1>
               </Offcanvas.Title>
             </Offcanvas.Header>
-            <Offcanvas.Body className="cards-1308">
-              <Link to="/Admin" className="card-1309">
-                <p className="text-primary-1310"><i className="bi bi-ticket-detailed"></i> Estado del ticket</p>
-                <p className="text-secondary-1311">Ver estado de tickets</p>
+            <Offcanvas.Body className="cards-1408">
+              <Link to="/Admin" className="card-1409">
+                <p className="text-primary-1410"><i className="bi bi-ticket-detailed"></i> Estado del ticket</p>
+                <p className="text-secondary-1411">Ver estado de tickets</p>
               </Link>
-              <Link to="/Adcrear" className="card-1309">
-                <p className="text-primary-1310"><i className="bi bi-person-plus"></i> Gestionar usuarios</p>
-                <p className="text-secondary-1311">Administrar usuarios</p>
+              <Link to="/Adcrear" className="card-1409">
+                <p className="text-primary-1410"><i className="bi bi-person-plus"></i> Gestionar usuarios</p>
+                <p className="text-secondary-1411">Administrar usuarios</p>
               </Link>
-              <Link to="/Inventario" className="card-1309">
-                <p className="text-primary-1310"><i className="bi bi-box-seam"></i> Consultar inventario</p>
-                <p className="text-secondary-1311">Ver elementos disponibles</p>
+              <Link to="/Inventario" className="card-1409">
+                <p className="text-primary-1410"><i className="bi bi-box-seam"></i> Consultar inventario</p>
+                <p className="text-secondary-1411">Ver elementos disponibles</p>
               </Link>
-              <Link to="/Solielemento" className="card-1309">
-                <p className="text-primary-1310"><i className="bi bi-search"></i> Solicitudes de elementos</p>
-                <p className="text-secondary-1311">Revisar solicitudes</p>
+              <Link to="/Solielemento" className="card-1409">
+                <p className="text-primary-1410"><i className="bi bi-search"></i> Solicitudes de elementos</p>
+                <p className="text-secondary-1411">Revisar solicitudes</p>
               </Link>
-              <Link to="/Soliespacio" className="card-1309">
-                <p className="text-primary-1310"><i className="bi bi-search"></i> Solicitudes espacios</p>
-                <p className="text-secondary-1311">Revisar reservas</p>
+              <Link to="/Soliespacio" className="card-1409">
+                <p className="text-primary-1410"><i className="bi bi-search"></i> Solicitudes espacios</p>
+                <p className="text-secondary-1411">Revisar reservas</p>
               </Link>
             </Offcanvas.Body>
           </Offcanvas>
 
-          <h1 className='title-main-1312'>Estado De Ticket</h1>
+          <h1 className='title-main-1412'>Estado De Ticket</h1>
 
-          <div className='icons-container-1313'>
-            <div className="buttons-wrapper-1314">
-              <div className="button-group-1315">
-                <button className="icon-button-1316" onClick={navigateToHome}>
+          <div className='icons-container-1413'>
+            <div className="buttons-wrapper-1414">
+              <div className="button-group-1415">
+                <button className="icon-button-1416" onClick={navigateToHome}>
                   <svg
-                    className="icon-svg-1317"
+                    className="icon-svg-1417"
                     stroke="currentColor"
                     fill="currentColor"
                     strokeWidth="0"
@@ -82,13 +87,13 @@ function Header_ad() {
                     ></path>
                   </svg>
                 </button>
-                <span className="button-text-1318">Home</span>
+                <span className="button-text-1418">Home</span>
               </div>
               
-              <div className="button-group-1315">
-                <button className="icon-button-1316" onClick={navigateToBlog}>
+              <div className="button-group-1415">
+                <button className="icon-button-1416" onClick={navigateToBlog}>
                   <svg
-                    className="icon-svg-1317"
+                    className="icon-svg-1417"
                     stroke="currentColor"
                     fill="none"
                     strokeWidth="2"
@@ -103,13 +108,13 @@ function Header_ad() {
                     ></path>
                   </svg>
                 </button>
-                <span className="button-text-1318">Blog CEET</span>
+                <span className="button-text-1418">Blog CEET</span>
               </div>
               
-              <div className="button-group-1315">
-                <button className="icon-button-1316">
+              <div className="button-group-1415">
+                <button className="icon-button-1416" onClick={handleShowProfile}>
                   <svg
-                    className="icon-svg-1317"
+                    className="icon-svg-1417"
                     stroke="currentColor"
                     fill="currentColor"
                     strokeWidth="0"
@@ -121,12 +126,104 @@ function Header_ad() {
                     ></path>
                   </svg>
                 </button> 
-                <span className="button-text-1318">Perfil</span>
+                <span className="button-text-1418">Perfil</span>
               </div>
             </div>
           </div>
         </div>
       </Navbar>
+      {showProfile && (
+        <div className="phone-container-1419">
+          <div className="phone-frame-1420">
+            <span className="top-border-1421"></span>
+            <p className="time-1422">12:00</p>
+            <p className="date-1423">Fri, 20 December</p>
+            <button className="phone-close-button-1424" onClick={handleCloseProfile}>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <svg
+              className="fingerprint-1425"
+              width="26px"
+              height="26px"
+              viewBox="0 0 0.488 0.488"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.409 0.114a0.196 0.196 0 0 1 0.027 0.122v0.024c0 0.026 0.007 0.051 0.019 0.073M0.146 0.212c0 -0.026 0.01 -0.051 0.028 -0.069a0.096 0.096 0 0 1 0.068 -0.029c0.026 0 0.05 0.01 0.068 0.029s0.028 0.043 0.028 0.069v0.024c0 0.053 0.017 0.104 0.048 0.146m-0.145 -0.17v0.049A0.343 0.343 0 0 0 0.303 0.455M0.146 0.309A0.442 0.442 0 0 0 0.189 0.455m-0.118 -0.049c-0.016 -0.055 -0.024 -0.113 -0.022 -0.17V0.212a0.195 0.195 0 0 1 0.026 -0.098 0.194 0.194 0 0 1 0.071 -0.072 0.192 0.192 0 0 1 0.194 0"
+                stroke="#000000"
+                strokeLinecap="square"
+                strokeLinejoin="round"
+                strokeWidth="0.0325"
+              ></path>
+            </svg>
+            <svg
+              className="camera-1426"
+              width="24"
+              height="24"
+              viewBox="0 0 0.72 0.72"
+              version="1.2"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M.57.18H.522L.492.15A.1.1 0 0 0 .42.12H.3a.1.1 0 0 0-.072.03l-.03.03H.15a.09.09 0 0 0-.09.09v.24C.06.56.1.6.15.6h.42C.62.6.66.56.66.51V.27A.09.09 0 0 0 .57.18m-.21.3a.105.105 0 1 1 0-.21.105.105 0 0 1 0 .21M.54.339a.039.039 0 1 1 0-.078.039.039 0 0 1 0 .078"
+              ></path>
+            </svg>
+            <svg
+              className="phone-1427"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              xmlSpace="preserve"
+              width="24"
+              height="24"
+            >
+              <path
+                fill="none"
+                stroke="#000"
+                strokeWidth="1.5"
+                strokeMiterlimit="10"
+                d="m10.2 6.375-3.075-3.15c-.375-.3-.9-.3-1.275 0l-2.325 2.4c-.525.45-.675 1.2-.45 1.8.6 1.725 2.175 5.175 5.25 8.25s6.525 4.575 8.25 5.25c.675.225 1.35.075 1.875-.375l2.325-2.325c.375-.375.375-.9 0-1.275L17.7 13.875c-.375-.375-.9-.375-1.275 0L14.55 15.75s-2.1-.9-3.75-2.475-2.475-3.75-2.475-3.75L10.2 7.65c.375-.375.375-.975 0-1.275z"
+              ></path>
+            </svg>
+            <span className="right-border-top-1428"></span>
+            <div className="phone-profile-modal-1429">
+              <div className="phone-modal-header-1430">
+                <i className="bi bi-person-circle phone-profile-icon-1431"></i>
+                <h3 className="phone-profile-title-1432">¡Hola, usuario!</h3>
+              </div>
+              
+              <div className="phone-modal-footer-1433"> 
+                <div className="phone-footer-content-1434">
+                  <h6>Example@gmail.com</h6>
+                  <Button className="phone-profile-button-1435" onClick={handleCloseProfile}>
+                    Editar información 
+                  </Button>
+                </div>
+                <div className="phone-footer-content-1434">
+                  <Button 
+                    className="phone-profile-button-1435" 
+                    href="http://localhost:5173/Login" 
+                    onClick={handleCloseProfile}>
+                    Cerrar sesión
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

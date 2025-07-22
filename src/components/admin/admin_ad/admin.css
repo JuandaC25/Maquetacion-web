@@ -83,7 +83,7 @@
 .transition-1212 {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
   transition-duration: 500ms;
-  background-color: rgba(9, 180, 26, 0.6);
+  background-color: rgba(9, 180, 26);
   border-radius: 9999px;
   width: 0;
   height: 0;
