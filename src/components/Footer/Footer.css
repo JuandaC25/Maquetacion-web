@@ -1,8 +1,91 @@
-.bg-mi-color-especifico {
-    background-color: #F5EDED !important;
+.footer-container-1501 {
+    background-color: #3fbb34 !important;
     width: 100%;
-  }
-  footer {
+}
+
+footer {
     bottom: 0;
     width: 100%;
+}
+
+.sena-btn-1507 {
+    display: grid;
+    place-items: center;
+    background: transparent;
+    padding: 0.8em;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sena-btn-1507:hover {
+    background: rgba(255,255,255,0.2);
+    box-shadow: 0 0 15px rgba(255,255,255,0.6);
+}
+
+.sena-logo-1508 {
+    transition: all 0.3s ease;
+    filter: brightness(100%);
+}
+
+.sena-btn-1507:hover .sena-logo-1508 {
+    filter: brightness(120%) drop-shadow(0 0 5px rgba(255,255,255,0.8));
+}
+
+.text-loader-1502 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 28px;
+  color: white;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  height: 50px;
+}
+
+.fixed-text-1503 {
+  color: white;
+}
+
+.rotating-words-1504 {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.word-1505 {
+  display: block;
+  height: 100%;
+  color: white;
+  animation: rotateWords-1509 6s infinite;
+  line-height: 50px;
+}
+
+@keyframes rotateWords-1509 {
+  0%, 25% {
+    transform: translateY(0);
   }
+  30%, 55% {
+    transform: translateY(-100%);
+  }
+  60%, 100% {
+    transform: translateY(0);
+  }
+}
+
+.schedule-text-1506 {
+  color: white;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.schedule-text-1506 div:first-child {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
