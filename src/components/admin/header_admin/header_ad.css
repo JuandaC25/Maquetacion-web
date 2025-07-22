@@ -1,10 +1,62 @@
-.header_ad_main { 
+.button-1303 {
+  width: 150px;
+  height: 50px;
+  border-radius: 5px;
+  border: none;
+  transition: all 0.5s ease-in-out;
+  font-size: 20px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  background: rgb(9, 180, 26);
+  color: #f5f5f5;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.button-1303:hover {
+  box-shadow: 0 0 20px 0px rgb(9, 180, 26);
+}
+
+.button-1303 .icon-1304 {
+  position: absolute;
+  height: 40px;
+  width: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s;
+}
+
+.button-1303 .text-1305 {
+  transform: translateX(55px);
+}
+
+.button-1303:hover .icon-1304 {
+  width: 175px;
+}
+
+.button-1303:hover .text-1305 {
+  transition: all 0.5s;
+  opacity: 0;
+}
+
+.button-1303:focus {
+  outline: none;
+}
+
+.button-1303:active .icon-1304 {
+  transform: scale(0.85);
+}
+
+.container-1301 { 
   width: 100%;
   background-color: rgb(9, 180, 26);
   padding: 0.1rem 1rem;
 }
 
-.main-header-content {
+.content-1302 {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -13,17 +65,7 @@
   gap: 1rem;
 }
 
-.Icon_menu {
-  background-color: rgb(9, 180, 26);
-  border: none;
-}
-
-.Icon_menu .bi-list {
-  font-size: 30px;
-  color: white;
-}
-
-.header_ad_title { 
+.title-main-1312 { 
   font-size: 2.8rem;
   font-family: 'Roboto', sans-serif;
   font-weight: 900;
@@ -33,7 +75,7 @@
   text-align: center;
 }
 
-.Iconosst {
+.icons-container-1313 {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -42,7 +84,8 @@
   color: white;
   margin: auto;
 }
-.header_menuuu {
+
+.header-1306 {
   background-color: rgb(9, 180, 26);
   color: white;
   text-align: center;
@@ -50,7 +93,7 @@
   border-radius: 1px;
 }
 
-.header_menu {
+.title-1307 {
   background-color: rgb(9, 180, 26);
   color: white;
   text-align: center;
@@ -58,26 +101,124 @@
   height: 45px;
 }
 
-.cuadrito1 {
-  color: black;
-  border-radius: 20px;
-  height: 50px;
-  width: 100%;
-  text-align: center;
-  border: 1px solid black;
-  margin: 1rem 0;
-  text-decoration: none;
-  display: block;
+.cards-1308 {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 15px;
 }
 
-.cuadrito1:hover {
-  background-color: rgb(207, 209, 207);
+.cards-1308 .card-1309 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  height: 100px;
+  width: 100%;
+  border-radius: 10px;
+  color: black;
+  cursor: pointer;
+  transition: 400ms;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  text-decoration: none;
+}
+
+.cards-1308 .card-1309 .text-primary-1310 {
+  font-size: 1em;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.cards-1308 .card-1309 .text-secondary-1311 {
+  font-size: .7em;
+  color: #555;
+}
+
+.cards-1308 .card-1309:hover {
+  transform: scale(1.02, 1.02);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.cards-1308:hover > .card-1309:not(:hover) {
+  filter: blur(2px);
+  transform: scale(0.98, 0.98);
+  opacity: 0.8;
+}
+
+.cards-1308 .card-1309 .bi {
+  margin-right: 8px;
+}
+
+.buttons-wrapper-1314 {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 250px;
+  height: 40px;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  transition: all 0.5s;
+  margin-right: 1rem;
+}
+
+.button-group-1315 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 5px;
+}
+
+.button-text-1318 {
+  color: white;
+  font-size: 0.7rem;
+  margin-top: 3px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.buttons-wrapper-1314 {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 220px;
+  height: 50px;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  transition: all 0.5s;
+  margin-right: 1rem;
+  padding: 5px;
+}
+
+.buttons-wrapper-1314:hover {
+  width: 270px;
+  transition: all 0.5s;
+}
+
+.icon-button-1316 {
+  outline: 0 !important;
+  border: 0 !important;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: all ease-in-out 0.3s;
+  cursor: pointer;
+  padding: 0;
+}
+
+.icon-button-1316:hover {
   transform: translateY(-3px);
 }
 
-.configts {
-  display: flex;
-  width: 100%;
+.icon-svg-1317 {
+  font-size: 20px;
 }
-
-
