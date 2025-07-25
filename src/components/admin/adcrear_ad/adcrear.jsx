@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Alert, Modal, Form, Dropdown, Pagination } from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
-import "./adcrear_ad.css"; // This CSS file will be updated below
+import "./adcrear_ad.css"; 
 import Footer from '../../Footer/Footer.jsx';
-import HeaderCrear from '../header_crear/header_crear.jsx'; // Assuming this component exists
-
-// --- DetallesUsuarioModal Component ---
+import HeaderCrear from '../header_crear/header_crear.jsx'; 
 const UserDetailsModal = ({ show, onHide, userDetails, onEliminar }) => {
     if (!userDetails) return null;
 
@@ -59,7 +57,6 @@ const UserDetailsModal = ({ show, onHide, userDetails, onEliminar }) => {
     );
 };
 
-// --- UserCard Component ---
 const UserCard = ({ user, onVerClick }) => (
     <div className="user-card" onClick={() => onVerClick(user)}>
         <div className="user-card-content">
@@ -77,7 +74,6 @@ const UserCard = ({ user, onVerClick }) => (
     </div>
 );
 
-// --- UserManagementList Component (previously Listaxd) ---
 const UserManagementList = () => {
     const usersData = [
         { id: '12345', correo: 'juan.perez@example.com', nombre: 'Juan', apellido: 'Pérez', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía' },
@@ -147,7 +143,7 @@ const UserManagementList = () => {
 
     return (
         <div className="user-management-container">
-            <HeaderCrear /> {/* This component is assumed */}
+            <HeaderCrear /> 
 
             <div className="management-header-bar">
                 <div className="header-bar-content">
@@ -197,8 +193,6 @@ const UserManagementList = () => {
                 <Pagination.Next />
                 <Pagination.Last />
             </Pagination>
-
-            {/* Add New User Modal */}
             <Modal show={showAddUserModal} onHide={handleCloseAddUserModal} centered dialogClassName="modern-modal-dialog">
                 <Modal.Header closeButton className="modern-modal-header">
                     <Modal.Title className="modern-modal-title">Añadir Usuario</Modal.Title>
@@ -288,8 +282,6 @@ const UserManagementList = () => {
                     <Button variant="success" onClick={handleAddUserSubmit} className="modal-action-button add-action">Añadir Usuario</Button>
                 </Modal.Footer>
             </Modal>
-
-            {/* User Details Modal */}
             <UserDetailsModal
                 show={showUserDetailsModal}
                 onHide={handleCloseUserDetailsModal}
