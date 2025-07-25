@@ -1,179 +1,58 @@
-#new_cont{
-    width: 100%;
-    display: grid;grid-template-columns: 13% 82% 5%;
-    grid-template-rows: 100px;
-  }
-  
-  .new_colo{
-    margin: 1rem;
-  }
-  #basic-navbar-nav {
-    border: none ;
-    height: auto ;
-    width: 500%;
-  }
-  
-  
-  #desplegable1{
-    background-color:rgb(9, 180, 26) ;
-    text-align: center;
-    border: 2px solid black;
-    font-size: 200%;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 8000;
-  
-  }
-  #desplegable2{
-    background-color: transparent;
-    border: none;
-    height: auto;
-    font-size: 1rem;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 600;
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-  }
-  #desplegable3{
-    height: 40px;
-    border: 2px solid black;
-    border-radius: 10px;
-    margin-top: 14px;
-    font-size: 120%;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 1000;
-  }
-  #desplegable4{
-    height: 40px;
-    border: 2px solid black;
-    border-radius: 10px;
-    margin-top: 14px;
-    font-size: 120%;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 1000;
-  }
-  
-  
-  #menu {
-    background-color: transparent;
-    border: none;
-    margin: 0;
-    padding: 0;
-  }
-  
-  #basic-navbar-nav {
-    background-color: transparent;
-    height: auto; 
-    border: none;
-  }
-  
-  #solicitud{
-    width: 70%;
-    text-align: center;
-    font-size: 300%;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 900;
-    
-  }
-  #Nav1{
-    width: 30%;
-    margin-bottom: 20px;
-    padding-left: 300px;
-    font-size: 111%;
-    color: white;
-    padding-bottom: 40px;
-  }
-  .Datosequipo{
-    margin-top: 2rem;
-    margin-left: 1rem;
-  }
-  .inventario-header {
-    display: flex; 
-    align-items: center; 
-    margin-top: 2rem;
-  }
-  
-  .Nom_inventario {
-    margin-top: 0; 
-    margin-left: 1rem; 
-  }
-  
-  .Cuerpo_nav {
-    margin-top: 3rem;
-    background-color: rgb(255, 255, 255);
-    border: 1px solid black;
-    border-radius: 20px; 
-    display: inline-block; 
-    padding: 0.5rem 2rem;
-    
-    width: calc(100% - 10rem);
-  }
-  
-  .brand-container {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    position: relative;
-    margin-left: 1rem;
-  }
-  
-  .brand-text {
-    text-align: center;
-    flex: 0%;
-  }
-  .right-elements {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Espacio entre ícono y botón */
-  }
-  
-  .herramientas-icono {
-    font-size: 1.2rem;
-    color: #000000; /* o el color que uses */
-  }
-  
-
-  .Reportar {
-    background-color: #8B9490;
-    border-radius: 20px;
-    color: white;
-    border: none;        
-    outline: none;       
-  }
-  
-  .Reportar:hover {
-    background-color: #ff0a22;
-  }
-  .Titul1{
-    text-align: center;
-  }
-.Header1{
-  background-color: rgb(9, 180, 26) ; 
+.Acomodamient001 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 0.3fr));   
+  justify-content: center;
+  align-items: start; 
+}
+.inventario-header{
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  margin-left: 1rem;
+}
+.selector-inventario{
+  margin-top: 0.5rem;
+}
+.Header1 {
+  background-color: rgb(9, 180, 26);
   color: white;
 }
-.Cuerpovent{
+
+.Titul1 {
+  text-align: center;
+}
+
+.Cuerpovent {
   height: 450px;
   width: 100%;
 }
-.Cuadrito1{
+
+.Cuadrito1 {
   display: flex;
   align-items: center;
-  background-color: rgb(9, 180, 26); ;
+  background-color: rgb(9, 180, 26);
   color: white;
   border-radius: 20px;
   width: 30%;
   height: 50px;
 }
-.Text1{
+
+.Text1 {
   margin-left: 1rem;
   margin-top: 0.5rem;
   text-align: center;
 }
-.mb-3{
+
+.mb-3 {
   margin-top: 1.2rem;
   margin-left: auto;
-  margin-right: 1rem; 
+  margin-right: 1rem;
 }
-.Conteiner01{
+
+/* Contenedores de problemas */
+.Conteiner01,
+.Conteiner02,
+.Conteiner03 {
   display: flex;
   background-color: white;
   width: 100%;
@@ -181,34 +60,26 @@
   grid-template-columns: repeat(3, 200px);
   grid-template-rows: repeat(2, 100px);
 }
-.Conteiner02{
-  display: flex;
-  background-color: white;
-  width: 100%;
-  gap: 3rem;
-  grid-template-columns: repeat(3, 200px);
-  grid-template-rows: repeat(2, 100px);
+
+.Conteiner02,
+.Conteiner03 {
   margin-top: 1rem;
 }
-.Conteiner03{
-  margin-top: 1rem;
-  display: flex;
-  background-color: white;
-  width: 100%;
-  gap: 3rem;
-  grid-template-columns: repeat(3, 200px);
-  grid-template-rows: repeat(2, 100px);
-}
-.Text2{
+
+/* Campo de observaciones */
+.Text2 {
   margin-top: 2rem;
   margin-left: auto;
   margin-right: auto;
   height: 7rem;
 }
-.Text3{
+
+.Text3 {
   text-align: start;
 }
-.botoon{
+
+/* Botón de confirmar reporte */
+.botoon {
   margin-top: 2rem;
   margin-left: 17rem;
   margin-right: auto;
@@ -218,18 +89,92 @@
   outline: none;
   border: none;
 }
-.botoon:hover{
-  background-color:rgb(9, 180, 26);
+
+.botoon:hover {
+  background-color: rgb(9, 180, 26);
   outline: none;
 }
-.Ajustpagina{
-margin-top: 1.6rem;
+
+/* Tarjeta de detalles del equipo */
+.card-detalles {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: 300px;
+  margin: 2rem auto;
+  text-align: left;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
 }
-.Ajustfooter{
-margin-top: 4rem;
+
+.card-detalles:hover {
+  transform: translateY(-15px);
+  box-shadow: 0 0 15px rgb(125, 148, 128);
+  transition: all 0.4s ease;
 }
-.Blanco{
-padding-left: 10rem;
+
+/* Botones dentro de la tarjeta */
+.boton-detalles1,
+.boton-detalles2 {
+  display: block;
+  width: 100%;
+  margin-top: 1.2rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
 }
+
+.boton-detalles1:hover,
+.boton-detalles2:hover {
+  background-color: #0056b3;
+}
+
+.stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 13%;
+  width: 80%;
+  transform: translate(-50%, -50%) rotate(-15deg);
+  background-color: rgba(255, 0, 0, 0.8);
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  border: 3px solid white;
+  border-radius: 5px;
+  box-shadow: 9px 10px 5px rgba(0, 0, 0, 0.3);
+  
+  z-index: 10;
+}
+
+.card-detalles {
+  position: relative;  /* Necesario para posicionar el .stamp */
+}
+
+.imagen-animada-portt {
+  width: 200px;
+  margin-left: 1.6rem;
+  padding: 1rem;
+}
+
+
+.fuera-servicio {
+  opacity: 0.7;
+  background-color: #ffe5e5;
+  border: 2px solid #ff0000;
+}
+
+.mensaje-error {
+  color: #d00;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
 
   
