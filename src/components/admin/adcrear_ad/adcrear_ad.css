@@ -1,22 +1,22 @@
-/* Variables for consistent styling */
+
 :root {
     --green: #28a745;
     --green-dark: #218838;
-    --blue: #007bff; /* Primary action blue */
+    --blue: #007bff;
     --blue-dark: #0056b3;
-    --bg: #f5f7fa; /* Light background for the overall app */
+    --bg: #f5f7fa;
     --white: #fff;
-    --text: #333; /* Dark text for readability */
-    --text-light: #6c757d; /* Lighter text for secondary info */
-    --border: #e0e6ed; /* Light border for elements */
-    --shadow: rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    --radius: 12px; /* Border radius for cards and modals */
+    --text: #333;
+    --text-light: #6c757d;
+    --border: #e0e6ed;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --radius: 12px;
     --spacing-md: 15px;
     --spacing-lg: 25px;
     --spacing-xl: 40px;
 }
 
-/* Overall Container */
+
 .user-management-container {
     min-height: 100vh;
     display: flex;
@@ -24,7 +24,6 @@
     background-color: var(--bg);
 }
 
-/* Header Bar for User Management */
 .management-header-bar {
     background: var(--white);
     padding: var(--spacing-md) var(--spacing-xl);
@@ -36,7 +35,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: var(--spacing-md); /* Gap for content inside */
+    gap: var(--spacing-md);
 }
 
 .header-bar-content {
@@ -44,7 +43,7 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap;
     gap: var(--spacing-md);
 }
 
@@ -61,7 +60,7 @@
     color: var(--text);
 }
 
-/* Add User Button */
+
 .add-user-button {
     background: var(--green);
     color: var(--white);
@@ -83,7 +82,6 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Filter Dropdown (Rol) */
 .role-filter-dropdown .filter-dropdown-toggle {
     background-color: var(--white);
     color: var(--text);
@@ -140,7 +138,6 @@
     color: var(--white);
 }
 
-/* User List Grid */
 .user-list-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -149,7 +146,6 @@
     flex-grow: 1;
 }
 
-/* Empty List Message */
 .empty-list-message {
     grid-column: 1 / -1;
     text-align: center;
@@ -158,7 +154,6 @@
     padding: 50px 0;
 }
 
-/* User Card */
 .user-card {
     display: flex;
     justify-content: space-between;
@@ -170,8 +165,8 @@
     box-shadow: 0 5px 15px var(--shadow);
     border: 1px solid var(--border);
     cursor: pointer;
-    opacity: 0; /* For animation */
-    transform: translateY(20px); /* For animation */
+    opacity: 0;
+    transform: translateY(20px);
     animation: cardAppear 0.5s forwards ease-out;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -220,7 +215,6 @@
     margin-top: 4px;
 }
 
-/* View Details Button within card */
 .view-details-button {
     background: var(--green);
     color: var(--white);
@@ -238,7 +232,6 @@
     transform: scale(1.05);
 }
 
-/* Modern Modal Styling (reused from reference) */
 .modern-modal-dialog .modal-content {
     border-radius: var(--radius);
     overflow: hidden;
@@ -270,7 +263,7 @@
 .modern-modal-title {
     font-size: 1.6rem;
     font-weight: bold;
-    display: flex; /* For icon alignment */
+    display: flex;
     align-items: center;
     gap: 10px;
 }
@@ -280,7 +273,6 @@
     background: #fcfcfc;
 }
 
-/* Detail Item for Modals (forms and display) */
 .detail-item {
     margin-bottom: 20px;
 }
@@ -324,7 +316,6 @@
     gap: 10px;
 }
 
-/* Modal Action Buttons (reused from reference) */
 .modal-action-button {
     padding: 10px 24px;
     border-radius: 8px;
@@ -369,7 +360,6 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Pagination Styling (reused from reference) */
 .pagination-controls-container {
     display: flex;
     justify-content: center;
@@ -408,14 +398,11 @@
     opacity: 0.6;
 }
 
-/* Specific User Management Modal Title Icon */
 .modern-modal-title .user-icon-title {
     font-size: 1.8rem;
     margin-right: 5px;
 }
 
-
-/* Responsive Adjustments */
 @media (max-width: 768px) {
     .management-header-bar {
         padding: var(--spacing-md) var(--spacing-md);
@@ -471,4 +458,85 @@
         width: 100%;
         justify-content: center;
     }
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.pagination-inner input {
+  display: none;
+}
+
+.pagination-inner {
+  --container_width: 180px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  background-color: #f8f9fa;
+  color: #212121;
+  width: var(--container_width);
+  overflow: hidden;
+  border: 2px solid #e9ecef;
+}
+
+.pagination-inner label {
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  font-weight: 600;
+  letter-spacing: -1px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.selection {
+  display: none;
+  position: absolute;
+  height: 100%;
+  width: calc(var(--container_width) / 3);
+  z-index: 0;
+  left: 0;
+  top: 0;
+  transition: 0.15s ease;
+  background-color: rgb(9, 180, 26);
+}
+.pagination-inner label:has(input:checked) {
+  color: #fff;
+}
+
+.pagination-inner label:has(input:checked) ~ .selection {
+  display: inline-block;
+}
+
+.pagination-inner label:nth-child(1):has(input:checked) ~ .selection {
+  transform: translateX(calc(var(--container_width) * 0 / 3));
+}
+
+.pagination-inner label:nth-child(2):has(input:checked) ~ .selection {
+  transform: translateX(calc(var(--container_width) * 1 / 3));
+}
+
+.pagination-inner label:nth-child(3):has(input:checked) ~ .selection {
+  transform: translateX(calc(var(--container_width) * 2 / 3));
+}
+
+.pagination-inner label:hover {
+  background-color: rgba(9, 180, 26, 0.1);
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
