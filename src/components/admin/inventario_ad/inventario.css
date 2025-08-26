@@ -286,6 +286,11 @@
   .inventory-main-title { font-size: 1.5rem; }
   .add-new-equipment-button { width: 100%; justify-content: center; }
 }
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
 
 
 
