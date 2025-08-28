@@ -4,24 +4,29 @@ import { FaUserCircle, FaBars } from 'react-icons/fa';
 import "./admin.css";
 import Footer from '../../Footer/Footer.jsx';
 import HeaderAd from '../header_admin/header_ad.jsx'; 
+import { Ticket } from 'react-bootstrap-icons';
 
 const Listaxd = ({ onVerClick }) => {
+  const [elementoSeleccionado,setElementoSeleccionado]=useState('Todos');
   const tickets = [
-    { estado: 'En proceso', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-23',fecha2: '2025-04-23', modelo: 'HP ProBook', serie: 'ABC123', tecnico: 'Juan Pérez', ambiente: 'Oficina 101',ticket:'primer ticket',descripcion: 'El equipo presenta lentitud al iniciar.' } },
-    { estado: 'En proceso', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-22',fecha2: '2025-04-23', modelo: 'Dell Latitude', serie: 'DEF456', tecnico: 'María Gómez', ambiente: 'Laboratorio A',ticket:'segundo ticket ', descripcion: 'La pantalla parpadea intermitentemente.' } },
-    { estado: 'Pendiente', ticket: 'Tercer ticket', detalles: { fecha1: '2025-04-21',fecha2: '2025-04-23', modelo: 'Lenovo ThinkPad', serie: 'GHI789', tecnico: 'Carlos López', ambiente: 'Recepción',ticket:'tercer ticket', descripcion: 'No se puede conectar a la red Wi-Fi.' } },
-    { estado: 'Pendiente', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-20',fecha2: '2025-04-23', modelo: 'HP ProDesk', serie: 'JKL012', tecnico: 'Ana Rodríguez', ambiente: 'Sala de juntas',ticket:'primer ticket ', descripcion: 'El teclado no responde.' } },
-    { estado: 'En proceso', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-19',fecha2: '2025-04-23', modelo: 'Dell OptiPlex', serie: 'MNO345', tecnico: 'Pedro Martínez', ambiente: 'Almacén',ticket:'primer ticket ', descripcion: 'Fallo en el disco duro.' } },
-    { estado: 'Pendiente', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-18',fecha2: '2025-04-23', modelo: 'Lenovo IdeaCentre', serie: 'PQR678', tecnico: 'Laura Sánchez', ambiente: 'Biblioteca',ticket:'segundo ticket ', descripcion: 'El mouse no funciona correctamente.' } },
-    { estado: 'Pendiente', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-17',fecha2: '2025-04-23', modelo: 'HP All-in-One', serie: 'STU901', tecnico: 'Sofía Ramírez', ambiente: 'Cafetería',ticket:'primer ticket', descripcion: 'Problemas con el audio.' } },
-    { estado: 'En proceso', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-16',fecha2: '2025-04-23', modelo: 'Dell Inspiron', serie: 'VWX234', tecnico: 'Miguel Torres', ambiente: 'Aula Magna',ticket:'segundo ticket', descripcion: 'La impresora no imprime.' } },
+    { estado: 'En proceso', elemento:'Televisor', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-23',fecha2: '2025-04-23', modelo: 'HP ProBook', serie: 'ABC123', tecnico: 'Juan Pérez', ambiente: 'Oficina 101',ticket:'primer ticket',descripcion: 'El equipo presenta lentitud al iniciar.' } },
+    { estado: 'En proceso', elemento:'Portatil', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-22',fecha2: '2025-04-23', modelo: 'Dell Latitude', serie: 'DEF456', tecnico: 'María Gómez', ambiente: 'Laboratorio A',ticket:'segundo ticket ', descripcion: 'La pantalla parpadea intermitentemente.' } },
+    { estado: 'Pendiente', elemento:'Televisor', ticket: 'Tercer ticket', detalles: { fecha1: '2025-04-21',fecha2: '2025-04-23', modelo: 'Lenovo ThinkPad', serie: 'GHI789', tecnico: 'Carlos López', ambiente: 'Recepción',ticket:'tercer ticket', descripcion: 'No se puede conectar a la red Wi-Fi.' } },
+    { estado: 'Pendiente', elemento:'Equipo de escritorio', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-20',fecha2: '2025-04-23', modelo: 'HP ProDesk', serie: 'JKL012', tecnico: 'Ana Rodríguez', ambiente: 'Sala de juntas',ticket:'primer ticket ', descripcion: 'El teclado no responde.' } },
+    { estado: 'En proceso', elemento:'Televisor', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-19',fecha2: '2025-04-23', modelo: 'Dell OptiPlex', serie: 'MNO345', tecnico: 'Pedro Martínez', ambiente: 'Almacén',ticket:'primer ticket ', descripcion: 'Fallo en el disco duro.' } },
+    { estado: 'Pendiente', elemento:'Portatil', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-18',fecha2: '2025-04-23', modelo: 'Lenovo IdeaCentre', serie: 'PQR678', tecnico: 'Laura Sánchez', ambiente: 'Biblioteca',ticket:'segundo ticket ', descripcion: 'El mouse no funciona correctamente.' } },
+    { estado: 'Pendiente', elemento:'Televisor', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-17',fecha2: '2025-04-23', modelo: 'HP All-in-One', serie: 'STU901', tecnico: 'Sofía Ramírez', ambiente: 'Cafetería',ticket:'primer ticket', descripcion: 'Problemas con el audio.' } },
+    { estado: 'En proceso', elemento:'Equipo de escritorio', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-16',fecha2: '2025-04-23', modelo: 'Dell Inspiron', serie: 'VWX234', tecnico: 'Miguel Torres', ambiente: 'Aula Magna',ticket:'segundo ticket', descripcion: 'La impresora no imprime.' } },
   ];
-  
+  const ticketsFiltrados = elementoSeleccionado === 'Todos' ? tickets : tickets.filter(ticket => ticket.elemento.toLowerCase() === elementoSeleccionado.toLowerCase());
   const getTicketClass = (ticketName) => {
     if (ticketName.includes('Primer')) return 'ticket-1201';
     if (ticketName.includes('Segundo')) return 'ticket-1202';
     if (ticketName.includes('Tercer')) return 'ticket-1203';
     return '';
+  };
+  const handleselectElemento=(elemento)=>{
+    setElementoSeleccionado(elemento);
   };
 
   return (
@@ -31,25 +36,33 @@ const Listaxd = ({ onVerClick }) => {
           <div className="flex-inner-1204">
             <strong className="strong-1205">TICKET</strong>
             <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
-                Elemento
+              <Dropdown.Toggle variant="success" id="dropdown-basic-1010">
+                {elementoSeleccionado}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item href="#/action-4">Portátiles</Dropdown.Item>
-                <Dropdown.Item href="#/action-">Equipos de escritorio</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Televisores</Dropdown.Item>
+                <Dropdown.Item onClick={()=>handleselectElemento('Todos')}>Todos</Dropdown.Item>
+                <Dropdown.Item onClick={()=>handleselectElemento('portatil')}>Portátiles</Dropdown.Item>
+                <Dropdown.Item onClick={()=> handleselectElemento('Equipo de escritorio')}>Equipos de escritorio</Dropdown.Item>
+                <Dropdown.Item onClick={()=>handleselectElemento('Televisor')}>Televisores</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
+          </div>
+          <div className='contador-ticket'>
+            monstrando {ticketsFiltrados.length} tickets
+            de {tickets.length} tickets
           </div>
         </div>
       </Alert>
       <div className="grid-1206">
-        {tickets.map((t, i) => (
+        {ticketsFiltrados.map((t, i) => (
           <div className={`item-1207 ${getTicketClass(t.ticket)}`} key={i}>
             <div className="header-1208">
               <h5>{t.ticket}</h5>
             </div>
             <div className="content-1209">
+              <div className="elemento-box">
+                {t.elemento}
+              </div>
               <span className="status-1210">{t.estado}</span>
               <button className="button-1211" onClick={() => onVerClick(t.detalles)}>
                 <span className="transition-1212"></span>

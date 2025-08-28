@@ -83,23 +83,23 @@ const Solielemento = () => {
     <div>
       <HeaderAd /> 
       <Listaxd onVerClick={handleVerClick} />
-      <Pagination className='pag201'>
-              <Pagination.First />
-              <Pagination.Prev />
-              <Pagination.Item>{1}</Pagination.Item>
-              <Pagination.Ellipsis />
-      
-              <Pagination.Item>{10}</Pagination.Item>
-              <Pagination.Item>{11}</Pagination.Item>
-              <Pagination.Item active>{12}</Pagination.Item>
-              <Pagination.Item>{13}</Pagination.Item>
-              <Pagination.Item disabled>{14}</Pagination.Item>
-      
-              <Pagination.Ellipsis />
-              <Pagination.Item>{20}</Pagination.Item>
-              <Pagination.Next />
-              <Pagination.Last />
-            </Pagination>
+      <div className="pagination-215">
+        <div className="pagination-inner-216">
+          <label>
+            <input value="1" name="value-radio" id="value-1" type="radio" defaultChecked />
+            <span>1</span>
+          </label>
+          <label>
+            <input value="2" name="value-radio" id="value-2" type="radio" />
+            <span>2</span>
+          </label>
+          <label>
+            <input value="3" name="value-radio" id="value-3" type="radio" />
+            <span>3</span>
+          </label>
+          <span className="selection-217"></span>
+        </div>
+      </div>
       <Modal show={showModal} onHide={handleCloseModal} className="custom-modal215" centered>
         <Modal.Header closeButton className="modal-header-verde216">
           <Modal.Title>Detalles de la solicitud </Modal.Title>
