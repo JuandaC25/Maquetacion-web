@@ -169,7 +169,7 @@ const UserManagementList = () => {
 
     return (
         <div className="user-management-container">
-            <HeaderCrear /> 
+            <HeaderCrear />
 
             <div className="management-header-bar">
                 <div className="header-bar-content">
@@ -277,8 +277,8 @@ const UserManagementList = () => {
                             <Form.Control as="select" id="tipoDocumento" name="tipoDocumento" value={newUserData.tipoDocumento} onChange={handleNewUserChange} className="modern-form-control">
                                 <option value="">Seleccionar tipo</option>
                                 <option value="Cédula de Ciudadanía">Cédula de Ciudadanía</option>
-                                <option value="Tarjeta de Extranjería">Tarjeta de Extranjería</option>
-                                <option value="Pasaporte">Pasaporte</option>
+                                <option value="Tarjeta de Extranjería">Cedula de Extranjería</option>
+                                <option value="Tarjeta de Extranjería">Pasaporte</option>
                             </Form.Control>
                         </div>
                     </div>
