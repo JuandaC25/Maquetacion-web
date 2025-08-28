@@ -19,27 +19,53 @@ function Cuarta() {
     <>
     <Header_informacion/>
       
-      <div className='container_blanco'>
-        <ListGroup>
-          {[...Array(7)].map((_, index) => (
-            <ListGroup.Item className='Conte1' key={index}>
-              <div className='part1'>
-                <h4 className='aja'>Detalle del equipo (Accesorios, número de serie)</h4>
-                <Button className='vert' variant="primary" onClick={abrirModal}>
-                  Tomar petición
-                </Button>
-              </div>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-      </div>
+    <div className='container_blanco100'>
+          <div className='reportes'>
+          <h3>DETALLES DEL EQUIPO</h3>
+          <div className='pcesito'>
 
-      {}
+          </div>
+          <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+          <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+          </div>
+      
+      
+          <div className='reportes'>
+            <h3>DETALLES DEL EQUIPO</h3>
+            <div className='pcesito'>
+
+            </div>
+            <h5 className='izquierdita'>Modelo equipo:</h5><h6>Asus Rog</h6>
+            <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+          </div>
+           <div className='reportes'>
+            <h3>DETALLES DEL EQUIPO</h3>
+            <div className='pcesito'>
+
+            </div>
+            <h5 className='izquierdita'>Modelo equipo:</h5><h6>Asus Rog</h6>
+            <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+          </div>
+          <div className='reportes'>
+            <h3>DETALLES DEL EQUIPO</h3>
+            <div className='pcesito'>
+
+            </div>
+            <h5 className='izquierdita'>Modelo equipo:</h5><h6>Lenovo IdeaPad</h6>
+            <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+            
+
+          </div>
+          
+
+    </div>
       <ModalPeticion show={mostrarModal} onHide={cerrarModal} />
 
       <Footer />
     </>
   );
+  
 }
+
 
 export default Cuarta;
