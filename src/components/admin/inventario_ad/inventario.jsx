@@ -6,17 +6,17 @@ import Footer from "../../Footer/Footer.jsx";
 import HeaderInv from "../header_inv/header_inv.jsx";
 
 const EquipoItem = ({ elemento, onVerClick }) => (
-  <div className="modern-equipment-card">
-    <div className="card-content">
-      <div className="icon-display">
+  <div className="modern-equipment-card-xd01">
+    <div className="card-content-xd02">
+      <div className="icon-display-xd03">
         <span role="img" aria-label="computadora">💻</span>
       </div>
-      <div className="equipment-info">
-        <span className="equipment-title">{elemento.nombre}</span>
-        <span className="equipment-category">{elemento.categoria}</span>
-        <span className="equipment-serie">{elemento.serie}</span>
+      <div className="equipment-info-xd04">
+        <span className="equipment-title-xd05">{elemento.nombre}</span>
+        <span className="equipment-category-xd06">{elemento.categoria}</span>
+        <span className="equipment-serie-xd07">{elemento.serie}</span>
       </div>
-      <button className="view-details-button" onClick={() => onVerClick(elemento)}>
+      <button className="view-details-button-xd08" onClick={() => onVerClick(elemento)}>
         Ver Detalles
       </button>
     </div>
@@ -24,13 +24,13 @@ const EquipoItem = ({ elemento, onVerClick }) => (
 );
 
 const ListaEquipos = ({ elementos, onVerClick }) => (
-  <div className="equipment-list-grid">
+  <div className="equipment-list-grid-xd09">
     {elementos.length > 0 ? (
       elementos.map((el, index) => (
         <EquipoItem key={index} elemento={el} onVerClick={onVerClick} />
       ))
     ) : (
-      <p className="empty-list-message">No se encontraron equipos con ese número de serie.</p>
+      <p className="empty-list-message-xd10">No se encontraron equipos con ese número de serie.</p>
     )}
   </div>
 );
@@ -39,47 +39,47 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
   if (!detalles) return null;
 
   return (
-    <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog">
-      <Modal.Header closeButton className="modern-modal-header">
-        <Modal.Title className="modern-modal-title">Detalles del Equipo</Modal.Title>
+    <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog-xd11">
+      <Modal.Header closeButton className="modern-modal-header-xd12">
+        <Modal.Title className="modern-modal-title-xd13">Detalles del Equipo</Modal.Title>
       </Modal.Header>
-      <Modal.Body className="modern-modal-body">
-        <div className="detail-item">
-          <label className="detail-label">Nombre:</label>
-          <div className="detail-value-display">
-            <Form.Control type="text" value={detalles.nombre} readOnly className="modern-form-control" />
+      <Modal.Body className="modern-modal-body-xd14">
+        <div className="detail-item-xd15">
+          <label className="detail-label-xd16">Nombre:</label>
+          <div className="detail-value-display-xd17">
+            <Form.Control type="text" value={detalles.nombre} readOnly className="modern-form-control-xd18" />
           </div>
         </div>
-        <div className="detail-item">
-          <label className="detail-label">Categoría:</label>
-          <div className="detail-value-display">
-            <Form.Control type="text" value={detalles.categoria} readOnly className="modern-form-control" />
+        <div className="detail-item-xd15">
+          <label className="detail-label-xd16">Categoría:</label>
+          <div className="detail-value-display-xd17">
+            <Form.Control type="text" value={detalles.categoria} readOnly className="modern-form-control-xd18" />
           </div>
         </div>
-        <div className="detail-item">
-          <label className="detail-label">Accesorios:</label>
-          <div className="detail-value-display">
-            <Form.Control type="text" value={detalles.accesorios} readOnly className="modern-form-control" />
+        <div className="detail-item-xd15">
+          <label className="detail-label-xd16">Accesorios:</label>
+          <div className="detail-value-display-xd17">
+            <Form.Control type="text" value={detalles.accesorios} readOnly className="modern-form-control-xd18" />
           </div>
         </div>
-        <div className="detail-item">
-          <label className="detail-label">Número de serie:</label>
-          <div className="detail-value-display">
-            <Form.Control type="text" value={detalles.serie} readOnly className="modern-form-control" />
+        <div className="detail-item-xd15">
+          <label className="detail-label-xd16">Número de serie:</label>
+          <div className="detail-value-display-xd17">
+            <Form.Control type="text" value={detalles.serie} readOnly className="modern-form-control-xd18" />
           </div>
         </div>
-        <div className="detail-item">
-          <label className="detail-label">Observaciones:</label>
-          <div className="detail-value-display">
-            <Form.Control as="textarea" rows={3} value={detalles.observaciones} readOnly className="modern-form-control" />
+        <div className="detail-item-xd15">
+          <label className="detail-label-xd16">Observaciones:</label>
+          <div className="detail-value-display-xd17">
+            <Form.Control as="textarea" rows={3} value={detalles.observaciones} readOnly className="modern-form-control-xd18" />
           </div>
         </div>
       </Modal.Body>
-      <Modal.Footer className="modern-modal-footer">
-        <Button variant="danger" onClick={() => onEliminar(detalles.nombre)} className="modal-action-button delete-action">
+      <Modal.Footer className="modern-modal-footer-xd19">
+        <Button variant="danger" onClick={() => onEliminar(detalles.nombre)} className="modal-action-button-xd20 delete-action-xd21">
           Eliminar
         </Button>
-        <Button variant="secondary" onClick={onHide} className="modal-action-button close-action">
+        <Button variant="secondary" onClick={onHide} className="modal-action-button-xd20 close-action-xd22">
           Cerrar
         </Button>
       </Modal.Footer>
@@ -88,32 +88,32 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
 };
 
 const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => (
-  <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog">
-    <Modal.Header closeButton className="modern-modal-header">
-      <Modal.Title className="modern-modal-title">Añadir Nuevo Equipo</Modal.Title>
+  <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog-xd11">
+    <Modal.Header closeButton className="modern-modal-header-xd12">
+      <Modal.Title className="modern-modal-title-xd13">Añadir Nuevo Equipo</Modal.Title>
     </Modal.Header>
-    <Modal.Body className="modern-modal-body">
-      <div className="detail-item">
-        <label className="detail-label">Nombre del elemento:</label>
-        <div className="detail-value-display">
+    <Modal.Body className="modern-modal-body-xd14">
+      <div className="detail-item-xd15">
+        <label className="detail-label-xd16">Nombre del elemento:</label>
+        <div className="detail-value-display-xd17">
           <Form.Control
             type="text"
             id="nombre"
             value={nuevoEquipo.nombre}
             onChange={onChange}
             placeholder="Ej. Laptop Dell XPS 15"
-            className="modern-form-control"
+            className="modern-form-control-xd18"
           />
         </div>
       </div>
-      <div className="detail-item">
-        <label className="detail-label">Categoría:</label>
-        <div className="detail-value-display">
+      <div className="detail-item-xd15">
+        <label className="detail-label-xd16">Categoría:</label>
+        <div className="detail-value-display-xd17">
           <Form.Select
             id="categoria"
             value={nuevoEquipo.categoria}
             onChange={onChange}
-            className="modern-form-control"
+            className="modern-form-control-xd18"
           >
             <option value="">Seleccionar...</option>
             <option>Portátil</option>
@@ -122,35 +122,35 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
           </Form.Select>
         </div>
       </div>
-      <div className="detail-item">
-        <label className="detail-label">Accesorios:</label>
-        <div className="detail-value-display">
+      <div className="detail-item-xd15">
+        <label className="detail-label-xd16">Accesorios:</label>
+        <div className="detail-value-display-xd17">
           <Form.Control
             type="text"
             id="accesorios"
             value={nuevoEquipo.accesorios}
             onChange={onChange}
             placeholder="Ej. Cargador, Mouse inalámbrico"
-            className="modern-form-control"
+            className="modern-form-control-xd18"
           />
         </div>
       </div>
-      <div className="detail-item">
-        <label className="detail-label">Número de serie:</label>
-        <div className="detail-value-display">
+      <div className="detail-item-xd15">
+        <label className="detail-label-xd16">Número de serie:</label>
+        <div className="detail-value-display-xd17">
           <Form.Control
             type="text"
             id="serie"
             value={nuevoEquipo.serie}
             onChange={onChange}
             placeholder="Ej. ABC123XYZ789"
-            className="modern-form-control"
+            className="modern-form-control-xd18"
           />
         </div>
       </div>
-      <div className="detail-item">
-        <label className="detail-label">Observaciones:</label>
-        <div className="detail-value-display">
+      <div className="detail-item-xd15">
+        <label className="detail-label-xd16">Observaciones:</label>
+        <div className="detail-value-display-xd17">
           <Form.Control
             as="textarea"
             rows={3}
@@ -158,16 +158,16 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
             value={nuevoEquipo.observaciones}
             onChange={onChange}
             placeholder="Cualquier nota adicional sobre el equipo..."
-            className="modern-form-control"
+            className="modern-form-control-xd18"
           />
         </div>
       </div>
     </Modal.Body>
-    <Modal.Footer className="modern-modal-footer">
-      <Button variant="secondary" onClick={onHide} className="modal-action-button cancel-action">
+    <Modal.Footer className="modern-modal-footer-xd19">
+      <Button variant="secondary" onClick={onHide} className="modal-action-button-xd20 cancel-action-xd23">
         Cancelar
       </Button>
-      <Button variant="success" onClick={onSubmit} className="modal-action-button add-action">
+      <Button variant="success" onClick={onSubmit} className="modal-action-button-xd20 add-action-xd24">
         Añadir Equipo
       </Button>
     </Modal.Footer>
@@ -297,7 +297,7 @@ const Admin = () => {
 
   const handleCategoryFilter = (category) => {
     setSelectedCategoryFilter(category);
-    setSearchTerm(""); // Limpiar búsqueda al cambiar categoría
+    setSearchTerm(""); 
     
     let filteredElements = allElementosInventario;
     
@@ -313,19 +313,17 @@ const Admin = () => {
     setSearchTerm(term);
     
     if (term === "") {
-      // Si no hay término de búsqueda, mostrar todos los elementos según la categoría seleccionada
+
       handleCategoryFilter(selectedCategoryFilter);
       return;
     }
     
     let filteredElements = allElementosInventario;
-    
-    // Aplicar filtro de categoría primero
+
     if (selectedCategoryFilter !== "Todas las Categorías") {
       filteredElements = filteredElements.filter(item => item.categoria === selectedCategoryFilter);
     }
-    
-    // Aplicar filtro de búsqueda por número de serie
+
     filteredElements = filteredElements.filter(item => 
       item.serie.toLowerCase().includes(term.toLowerCase())
     );
@@ -338,18 +336,18 @@ const Admin = () => {
   }, [elementosInventario]);
 
   return (
-    <div className="inventory-app-container">
+    <div className="inventory-app-container-xd25">
       <HeaderInv />
-      <Alert variant="info" className="inventory-header-bar">
-        <div className="header-bar-content">
-          <div className="header-left-section">
-            <h1 className="inventory-main-title">Inventario de Equipos</h1>
-            <div className="filters-row">
-              <Dropdown className="category-filter-dropdown">
+      <Alert variant="info" className="inventory-header-bar-xd26">
+        <div className="header-bar-content-xd27">
+          <div className="header-left-section-xd28">
+            <h1 className="inventory-main-title-xd29">Inventario de Equipos</h1>
+            <div className="filters-row-xd30">
+              <Dropdown className="category-filter-dropdown-xd31">
                 <Dropdown.Toggle variant="light" id="dropdown-category">
-                  {selectedCategoryFilter} <span className="dropdown-arrow">▼</span>
+                  {selectedCategoryFilter} <span className="dropdown-arrow-xd32">▼</span>
                 </Dropdown.Toggle>
-                <Dropdown.Menu className="category-dropdown-menu">
+                <Dropdown.Menu className="category-dropdown-menu-xd33">
                   <Dropdown.Item onClick={() => handleCategoryFilter("Todas las Categorías")}>Todas las Categorías</Dropdown.Item>
                   {allowedCategories.map((category) => (
                     <Dropdown.Item key={category} onClick={() => handleCategoryFilter(category)}>
@@ -359,7 +357,7 @@ const Admin = () => {
                 </Dropdown.Menu>
               </Dropdown>
               
-              <InputGroup className="search-bar">
+              <InputGroup className="search-bar-xd34">
                 <InputGroup.Text>
                   <FaSearch />
                 </InputGroup.Text>
@@ -372,15 +370,15 @@ const Admin = () => {
               </InputGroup>
             </div>
           </div>
-          <Button className="add-new-equipment-button" onClick={openNuevo}>
+          <Button className="add-new-equipment-button-xd35" onClick={openNuevo}>
             <span role="img" aria-label="añadir">➕</span> Añadir Equipo
           </Button>
         </div>
       </Alert>
       <ListaEquipos elementos={elementosInventario} onVerClick={openDetalles} />
       <div ref={bottomRef} />
-      <div className="pagination-1215">
-        <div className="pagination-inner-1216">
+      <div className="pagination-1215-xd36">
+        <div className="pagination-inner-1216-xd37">
           <label>
             <input value="1" name="value-radio" id="value-1" type="radio" defaultChecked />
             <span>1</span>
@@ -393,7 +391,7 @@ const Admin = () => {
             <input value="3" name="value-radio" id="value-3" type="radio" />
             <span>3</span>
           </label>
-          <span className="selection-1217"></span>
+          <span className="selection-1217-xd38"></span>
         </div>
       </div>
 
