@@ -36,9 +36,13 @@ function Modal2({ show, onHide }) {
             <label className='index'>Número de serie</label>
             <input type="number" className="sombrita" />
           </div>
-          <div className='contmod'>
-            <label className='index'>Observaciones</label>
-            <input type="text" className="sombrita" />
+          
+          <div className='fotito'>
+
+          </div>
+          <div className='contmod1'>
+            <label className='index1'>Observaciones</label>
+            <input type="text" className="sombrita1" />
           </div>
           
         </Modal.Body>

@@ -7,13 +7,13 @@ function Otromodal({ show, onHide}) {
   return (
     <Modal show={show} onHide={onHide} centered className='modalcontein'>
       <Modal.Header closeButton className='arriba'><h2 className='test'>Reportes de tickets</h2>
-             
+
             </Modal.Header>
             <Modal.Body>
               <div className='contmad'>
                 <h1 className='indexI'>TECNICO</h1>
                 <h4 >10/12/2024</h4>
-               <div type="text" className='textico'><h9>Datos de la revision</h9></div> 
+              <div type="text" className='textico'><h9>Datos de la revision</h9></div>
               </div>
             </Modal.Body>
             <Modal.Footer>
