@@ -1,6 +1,7 @@
 .alert-1202 {
-  background-color: #ffffff00;
+  background-color: #ffffff;
   text-align: start;
+  border-color: white;
 }
 
 .container-1201 {
@@ -188,7 +189,6 @@ textarea.form-control {
   width: 100%;
   height: 180px;
   border-radius: 30px;
-  background: lightgrey;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 50px -12px inset,
               rgba(0, 0, 0, 0.3) 0px 18px 26px -18px inset;
   padding: 20px;
@@ -199,6 +199,7 @@ textarea.form-control {
   position: relative;
   overflow: hidden;
   border: none;
+
 }
 
 .item-1207:hover {
@@ -274,7 +275,7 @@ textarea.form-control {
   color: #fff;
 }
 
-.pagination-inner-1216 label:has(input:checked) ~ .selection-1217 {
+.pagination-inner-1216 label:has(input:checked) ~ .selection-217 {
   display: inline-block;
 }
 
@@ -292,4 +293,13 @@ textarea.form-control {
 
 .pagination-inner-1216 label:hover {
   background-color: rgba(9, 180, 26, 0.1);
+}
+
+.elemento-box {
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-weight: 500;
+  color: black;
+  display: inline-block;
+  font-size: 0.9em;
 }
