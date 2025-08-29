@@ -163,4 +163,72 @@ button.ver-boton309 {
   margin-left: 20px;
   margin-right: 20px;
 }
+.pagination-225{
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+.pagination-inner-226 input{
+  display: none;
+}
+.pagination-inner-226{
+  --container_width: 180px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  background-color: #f8f9fa;
+  width: var(--container_width);
+  overflow: hidden;
+  border: 2px solid #e9ecef;
+}
+.pagination-inner-226 label {
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  font-weight: 600;
+  letter-spacing: -1px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
 
+.selection-227 {
+  display: none;
+  position: absolute;
+  height: 100%;
+  width: calc(var(--container_width) / 3);
+  z-index: 0;
+  left: 0;
+  top: 0;
+  transition: 0.15s ease;
+  background-color: rgb(9, 180, 26);
+}
+
+.pagination-inner-226 label:has(input:checked) {
+  color: #fff;
+}
+
+.pagination-inner-226 label:has(input:checked) ~ .selection-227 {
+  display: inline-block;
+}
+
+.pagination-inner-226 label:nth-child(1):has(input:checked) ~ .selection-227 {
+  transform: translateX(calc(var(--container_width) * 0 / 3));
+}
+
+.pagination-inner-226 label:nth-child(2):has(input:checked) ~ .selection-227 {
+  transform: translateX(calc(var(--container_width) * 1 / 3));
+}
+
+.pagination-inner-226 label:nth-child(3):has(input:checked) ~ .selection-227 {
+  transform: translateX(calc(var(--container_width) * 2 / 3));
+}
+
+.pagination-inner-226 label:hover {
+  background-color: rgba(9, 180, 26, 0.1);
+}

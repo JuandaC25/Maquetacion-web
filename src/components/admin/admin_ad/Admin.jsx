@@ -57,7 +57,7 @@ const Listaxd = ({ onVerClick }) => {
         {ticketsFiltrados.map((t, i) => (
           <div className={`item-1207 ${getTicketClass(t.ticket)}`} key={i}>
             <div className="header-1208">
-              <h5>{t.ticket}</h5>
+              <div>{t.ticket}</div>
             </div>
             <div className="content-1209">
               <div className="elemento-box">
@@ -111,7 +111,7 @@ const Admin = () => {
 
   return (
     <div>
-      <HeaderAd /> 
+      <HeaderAd />
       <Listaxd onVerClick={handleVerClick} />
       <Modal show={showModal} onHide={handleCloseModal} className="modal-1218" centered>
         <Modal.Header closeButton className="modal-header-1219">
@@ -168,7 +168,7 @@ const Admin = () => {
             <div className="form-control-wrap-1223">
               <Form.Control as="textarea" rows={3} value={modalDetalles?.descripcion || ''} readOnly />
             </div>
-          </div>    
+          </div>
         </Modal.Body>
         <Modal.Footer className="modal-footer-1224">
           <Button variant="secondary" onClick={handleCloseModal}>
