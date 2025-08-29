@@ -6,6 +6,7 @@ import Footer from '../../Footer/Footer.jsx';
 import HeaderAd from '../header_soliespacio/header_soliespacio.jsx'; 
 
 const Ticketxd = ({ estado, onVerClick }) => {
+  
   return (
     <div className="margen200">
     <div className="ticket-item202">
@@ -29,7 +30,8 @@ const Ticketxd = ({ estado, onVerClick }) => {
 };
 
 const Listaxd = ({ onVerClick }) => {
-  const tickets = [
+const [espacioSeleccionado, setEspacioSeleccionado] = useState('Todos');
+  const espacio = [
 { estado: 'pendiente',detalles:{fecha1: '2023-05-15 08:30',fecha2:'2023-05-15 10:45',espacio:'auditorio', usuario: 'María Rodríguez',estado: 'en uso ' }},
 { estado: 'en uso',detalles: {fecha1: '2023-11-28 08:00',fecha2: '2023-11-28 12:00',espacio: 'auditorio',usuario: 'Carlos Mendoza',estado: 'en uso'}},
 { estado: 'pendiente',detalles: {fecha1: '2023-11-28 09:30',fecha2: '2023-11-28 11:30',espacio: 'canchas',usuario: 'Laura Vélez',estado: 'pendiente'}},
@@ -40,6 +42,15 @@ const Listaxd = ({ onVerClick }) => {
 { estado: 'pendiente',detalles: {fecha1: '2023-11-30 11:00',fecha2: '2023-11-30 13:00',espacio: 'canchas',usuario: 'Marta Gómez',estado: 'pendiente'}},
 { estado: 'en uso',detalles: {fecha1: '2023-11-30 16:00',fecha2: '2023-11-30 20:00',espacio: 'canchas',usuario: ' Ricardo Torres',estado: 'en uso'}}
 ];
+const espacioFiltrado = espacioSeleccionado === 'Todos' ? espacio : espacio.filter(t => t.detalles.espacio.toLowerCase() === espacioSeleccionado.toLowerCase());
+const getEspacioClass = (estado) => {
+  if(estado.includes('cancha')) return 'ticket-221';
+  if(estado.includes('auditorio')) return 'ticket-222';
+  return '';
+};
+const handleSelectEspacio = (espacio) => {
+  setEspacioSeleccionado(espacio);
+};
   return (
     <div className="lista-tickets201">
 <Alert variant="success" className="alert201">
@@ -50,8 +61,9 @@ const Listaxd = ({ onVerClick }) => {
           espacio
         </Dropdown.Toggle>
         <Dropdown.Menu>
-          <Dropdown.Item href="#/action-4">canchas</Dropdown.Item>
-          <Dropdown.Item href="#/action-">auditorio</Dropdown.Item>
+          <Dropdown.Item onClick={()=>handleSelectEspacio('Todos')}>Todos</Dropdown.Item>
+          <Dropdown.Item onClick={()=>handleSelectEspacio('canchas')}>canchas</Dropdown.Item>
+          <Dropdown.Item onClick={()=>handleSelectEspacio('auditorio')}>auditorio</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </div>
@@ -59,7 +71,7 @@ const Listaxd = ({ onVerClick }) => {
 </Alert>
 
 
-      {tickets.map((t, i) => (
+      {espacioFiltrado.map((t, i) => (
         <Ticketxd key={i} estado={t.estado} ticket={t.ticket} onVerClick={() => onVerClick(t.detalles)} />
       ))}
     </div>
@@ -82,25 +94,25 @@ const Soliespacio = () => {
 
   return (
     <div>
-      <HeaderAd /> 
+      <HeaderAd />
       <Listaxd onVerClick={handleVerClick} />
-      <Pagination className='pag201'>
-              <Pagination.First />
-              <Pagination.Prev />
-              <Pagination.Item>{1}</Pagination.Item>
-              <Pagination.Ellipsis />
-      
-              <Pagination.Item>{10}</Pagination.Item>
-              <Pagination.Item>{11}</Pagination.Item>
-              <Pagination.Item active>{12}</Pagination.Item>
-              <Pagination.Item>{13}</Pagination.Item>
-              <Pagination.Item disabled>{14}</Pagination.Item>
-      
-              <Pagination.Ellipsis />
-              <Pagination.Item>{20}</Pagination.Item>
-              <Pagination.Next />
-              <Pagination.Last />
-            </Pagination>
+        <div className='pagination-225'>
+          <div className='pagination-inner-226'>
+            <label>
+              <input value="1" name="value-radio" id="value-1" type="radio" defaultChecked />
+                <span>1</span>
+            </label>
+            <label>
+              <input value="2" name="value-radio" id="value-2" type="radio" />
+                <span>2</span>
+              </label>
+            <label>
+              <input value="3" name="value-radio" id="value-3" type="radio"/>
+                <span>3</span>
+              </label>
+              <span className="selection-227"></span>
+          </div>
+        </div>
       <Modal show={showModal} onHide={handleCloseModal} className="custom-modal215" centered>
         <Modal.Header closeButton className="modal-header-verde216">
           <Modal.Title>Detalles de la solicitud </Modal.Title>
