@@ -33,7 +33,7 @@ function ModalFormulario({ show, onHide, onFinalizar }) {
            <div className='Cont_label_tec'>
           <label className='origin'>Observaciones:</label>
           <input type="text" className="tecito " />
-          </div>         
+          </div>
         </div>
       </Modal.Body>
       <Modal.Footer className='piecito'>

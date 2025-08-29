@@ -1,11 +1,6 @@
-.container_blanco {
-  width: 100% !important;
-  padding: 20px;
-  background-color: #fef7ff !important;
-  margin: 20px;
-  margin-bottom: 20px;
-  height: 100% !important;
-
+.linea{
+  display: flex;
+  padding-top: 20px;
 }
 #Conte{
     border: 2px solid black;
@@ -41,4 +36,41 @@
 .centrico{
   text-align: left;
   width: 100%;
+}
+.peticiones{
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    margin: auto;
+   
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.icono{
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+   height: 200px !important;
+   width: 90%;
+   margin: auto;
+}
+.clicksito{
+  width: 50%;
+  margin: auto;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 10px;
+  margin-top: 10px;
+  background-color: rgb(9, 180, 26);
+  border-radius: 5px;
+  color: white;
+}
+.clicksito:hover{
+  cursor: pointer;
+  background-color:  rgb(27, 144, 27);
+}
+.jaaa{
+  background-color: rgb(9, 180, 26) ;
+  color: white;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
 }
