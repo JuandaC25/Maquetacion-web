@@ -1,47 +1,94 @@
 [name="lista-inventario1"] {
   padding: 20px;
-}
-
-.ticket-item2 {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  background-color: white;
-  border-radius: 5px;
+  flex-wrap: wrap;
+  margin: auto;
+  width: 95%;
 }
 
-.ticket-item2 .izquierda2 {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
+/*Estilos de os cuadros de portatiles*/
 
-.ticket-item2 .icono {
-  font-size: 2em;
-  color: #555;
-}
-
-.ticket-item2 .estado1 span {
-  font-weight: bold;
-  color: #333;
-}
-
-.ticket-item2 .derecha1 .ver-boton {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 15px;
-  border-radius: 5px;
+.card_port {
+  position: relative;
+  width: 15rem;
+  height: 16.7rem;
+  box-shadow: 0px 1px 13px rgba(0,0,0,0.1);
   cursor: pointer;
-  text-decoration: none;
-  font-size: 14px;
+  transition:none 120ms;
+  display: grid;
+  align-items: start;
+  justify-content: center;
+  background: #fff;
+  padding: 0.5em;
+  margin-top: 5rem;
+  transform: translateY(-10px) scale(1.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+} 
+
+.card_port:hover{
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
-.ticket-item2 .derecha1 .ver-boton:hover {
-  background-color: #0056b3;
+.img_port img{
+  width: 9rem;
+  height: 10rem;
+  object-fit: contain;
+  margin-left: 2.5rem;
+}
+
+.btn_detalles{
+  background-color: #00AF00;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.card_port .title {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.9em;
+  font-weight: 400;
+  color: #000;
+  margin-left: auto;
+  align-content: center;
+  margin-left: 1.5rem;
+}
+
+.card_port .price {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 0.9em;
+  position: absolute;
+  left: 0.625em;
+  bottom: 0.625em;
+  color: #000;
+}
+
+.card_port:hover::after {
+  bottom: 0;
+  opacity: 1;
+}
+
+.card_port:active {
+  transform: scale(0.98);
+}
+
+.text {
+  max-width: 55px;
+}
+
+.image {
+  background: rgb(241, 241, 241);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
 }
 
 #piepor {
@@ -76,9 +123,8 @@
 }
 
 .pagination {
-  margin-top: 1rem;
   justify-content: center;
-  margin-bottom: -0.5rem;
+  margin-bottom: -5rem;
 }
 
 .pagination .page-item .page-link {
@@ -97,16 +143,89 @@
   color: #ffffff;
 }
 
-.Btn_Conf {
+.btn_conf_port {
+  all: unset;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: #00AF00;
+  border: #00AF00 solid 0.15em;
+  border-radius: 0.25em;
+  color: rgb(255, 255, 255);
+  font-size: 1rem;
+  width: 98%;
+  text-align: center;
+  height: 2rem;
+  cursor: pointer;
+  padding: 0.6rem 2rem;
+  overflow: hidden;
+  transition: border 300ms, color 300ms;
+  user-select: none;
+}
+
+.btn_conf_port p {
+  z-index: 1;
+}
+
+.btn_conf_port:hover {
+  color: #212121;
+}
+
+.btn_conf_port:active {
+  border-color: teal;
+}
+
+.btn_conf_port::after, .btn_conf_port::before {
+  content: "";
+  position: absolute;
+  width: 9em;
+  aspect-ratio: 1;
+  background: #00af00c1;
+  opacity: 50%;
+  border-radius: 50%;
+  transition: transform 500ms, background 300ms;
+}
+
+.btn_conf_port:before {
+  left: 0;
+  transform: translateX(-8em);
+}
+
+.btn_conf_port::after {
+  right: 0;
+  transform: translateX(8em);
+}
+
+.btn_conf_port:hover:before {
+  transform: translateX(-1em);
+}
+
+.btn_conf_port:hover:after {
+  transform: translateX(1em);
+}
+
+.btn_conf_port:active:before,
+.btn_conf_port:active:after {
+  background: teal;
+}
+
+.Botones_port{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 1rem;
+  margin-top: 1rem;
+  width: 30rem;
+  gap: 3rem;
+}
+
+.Btn1_Conf {
   background-color: rgb(9, 180, 26);
   border: none;
-  width: 30%;
-  height: 90%;
+  width: 15rem;
   color: white;
   padding: 0.6rem 2rem;
   border-radius: 10px;
-  margin-top: 1rem;
-  margin-left: 11rem;
 }
 
 .Btn_Conf:hover {
@@ -139,7 +258,14 @@
   height: 100%;
   width: 100%;
 }
-.fotaj{
-  margin-top: rem;
+
+
+.fotaj {
+  display: flex;
+  flex-direction: column;
+  min-height: 22.6vh; /* Se asegura de que el contenedor principal siempre ocupe al menos la altura de la ventana. */
 }
 
+.contenido_fotaj {
+  flex-grow: 1; /* Esta es la clave. Le dice al contenido que crezca para ocupar el espacio disponible. */
+}
