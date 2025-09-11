@@ -39,7 +39,8 @@ function App() {
         <Route path='/Solicitartelevisores' element={<Solitelevisores />} />
         <Route path='/Pedidos_ele' element={<Pedidos_ele />} />
         <Route path='/' element={<Login/>}/> 
-        <Route path='/Inicio' element={<Home />} />
+        <Route path='/Inicio' element={<Home />}/>
+        
         <Route path='/Admin' element={<Admin />} />
         <Route path="/PedidoElementos" element={<Pedidos_ele />} />
         <Route path='/Pedidoescritorio' element={<Pedidos_escritorio />} />

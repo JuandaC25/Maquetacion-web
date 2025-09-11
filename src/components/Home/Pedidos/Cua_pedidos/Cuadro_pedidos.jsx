@@ -4,7 +4,7 @@ import './Cuadro_Pedidos.css';
 
 function Cuadro_Pedidos() {
   return (
-    <div className='Cuadros'> 
+    <div className='Cuadrost'> 
       <div className='fila-superiorr'>
 
         
