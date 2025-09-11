@@ -85,6 +85,16 @@ return (
             <h7>Instrutor:</h7>
             <h7>Ambiente:</h7>
             <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+
+
+
+
+
+
+
+
+
+            
           </div>
           <div className='peticiones'>
             <h3 className='jaaa'>Prestamo#002</h3>
