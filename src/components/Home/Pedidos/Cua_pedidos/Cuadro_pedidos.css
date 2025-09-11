@@ -10,7 +10,14 @@
   margin-left: auto;
   margin-right: auto;
 }
-
+.Cuadrost {
+  max-width: 900px;
+  margin: 3rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 0 1rem;
+}
 .bot00n1{
   background-color: rgb(9, 180, 26);
   border-color: rgb(9, 180, 26);
