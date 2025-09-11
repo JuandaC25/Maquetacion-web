@@ -5,7 +5,7 @@
 #Conte{
     border: 2px solid black;
     width: 90%;
-    height: 60px;
+
     margin: auto;
     border-radius: 4px;
     margin-bottom: 5px;
@@ -41,16 +41,19 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     border-radius: 5px;
     margin: auto;
-   
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
+   
+
 }
 .icono{
-   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-   height: 200px !important;
+   box-shadow: 0 2px 4px rgb(209, 207, 207);
+   height: 180px !important;
    width: 90%;
    margin: auto;
+   margin-bottom: 10px;
+  
 }
 .clicksito{
   width: 50%;
@@ -65,12 +68,22 @@
 }
 .clicksito:hover{
   cursor: pointer;
-  background-color:  rgb(27, 144, 27);
+  background-color:  rgb(65, 134, 65);
 }
 .jaaa{
-  background-color: rgb(9, 180, 26) ;
+  background-color: rgb(203, 197, 197);
   color: white;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
+ 
+}
+.imagenzita{
+  position: relative;
+  width: 100% !important;
+  height: 160px;
+}
+.letras{
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  margin-left:  5px;
 }
