@@ -25,22 +25,115 @@ function Tecnico() {
 
 return (
     <>
+    
       <Header_solicitud_tec/>
-      <div className='container_blanco'>
-        <ListGroup>
-          {[...Array(7)].map((_, index) => (
-            <ListGroup.Item id='Conte' key={index}>
-             <FaDesktop size={30} style={{ marginRight: '10px',marginLeft: '10px' }} />
+      <div>
+        <div className='linea'>
+          <div className='peticiones'>
+            <h3 className='jaaa'>Prestamo#001</h3>
+            <div className='icono'>
 
-              <div className='part'>
-                <h4 className='centrico'>Cantidad   /  Equipo  /  Ambiente</h4>
-              </div>
-              <div>
-                <Button className='buttonSoli' variant="link" onClick={abrirFormulario}>Abrir</Button>
-              </div>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
+            </div>
+            <h7>Instrutor:</h7>
+            <h7>Ambiente:</h7>
+            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+            
+          </div>
+          <div className='peticiones'>
+            <h3 className='jaaa'>Prestamo#002</h3>
+            <div className='icono'>
+
+            </div>
+            <h7>Instrutor:</h7>
+            <h7>Ambiente:</h7>
+            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+          </div>
+          <div className='peticiones'>
+            <h3 className='jaaa'>Prestamo#003</h3>
+            <div className='icono'>
+
+            </div>
+            <h7>Instrutor:</h7>
+            <h7>Ambiente:</h7>
+            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+          </div>
+          <div className='peticiones'>
+            <h3 className='jaaa'>Prestamo#004</h3>
+            <div className='icono'>
+
+            </div>
+            <h7>Instrutor:</h7>
+            <h7>Ambiente:</h7>
+            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+          </div>
+          <div className='peticiones'>
+            <h3 className='jaaa'>Prestamo#005</h3>
+            <div className='icono'>
+
+            </div>
+            <h7>Instrutor:</h7>
+            <h7>Ambiente:</h7>
+            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+          </div>
+        </div>
+        <div className='linea'>
+          <div className='peticiones'>
+            <h3 className='jaaa'>Prestamo#001</h3>
+            <div className='icono'>
+
+            </div>
+            <h7>Instrutor:</h7>
+            <h7>Ambiente:</h7>
+            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+
+
+
+
+
+
+
+
+
+            
+          </div>
+          <div className='peticiones'>
+            <h3 className='jaaa'>Prestamo#002</h3>
+            <div className='icono'>
+
+
+            </div>
+            <h7>Instrutor:</h7>
+            <h7>Ambiente:</h7>
+            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+          </div>
+          <div className='peticiones'>
+            <h3 className='jaaa'>Prestamo#003</h3>
+            <div className='icono'>
+
+            </div>
+            <h7>Instrutor:</h7>
+            <h7>Ambiente:</h7>
+            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+          </div>
+          <div className='peticiones'>
+            <h3 className='jaaa'>Prestamo#004</h3>
+            <div className='icono'>
+
+            </div>
+            <h7>Instrutor:</h7>
+            <h7>Ambiente:</h7>
+            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+          </div>
+          <div className='peticiones'>
+            <h3 className='jaaa'>Prestamo#005</h3>
+            <div className='icono'>
+
+            </div>
+            <h7>Instrutor:</h7>
+            <h7>Ambiente:</h7>
+            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+          </div>
+        </div>
       </div>
       {}
       <ModalFormulario

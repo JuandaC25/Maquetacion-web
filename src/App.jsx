@@ -26,7 +26,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-         <Route path='/Login' element={<Login/>}/> 
+        <Route path='/Login' element={<Login/>}/> 
         <Route path='/Cuarta' element={<Cuarta />} />
         <Route path='/inventario' element={<Inventario />} />
         <Route path='/adcrear' element={<AdCrear />} />
@@ -46,8 +46,9 @@ function App() {
         <Route path='/Desplegable' element={<Desplegable />} />
         <Route path='/Informacion_equiposs' element={<Información_equipos />} />
         <Route path='/HistorialTec' element={<HistorialTec/>}/>
-        <Route path='/Historial_TicketsTec' element={<Historial_ptec/>}/>
-        <Route path='/Historial_TicketsTec2' element={<Historial_ptec2/>}/>
+          <Route path='/Historial_TicketsTec' element={<Historial_ptec/>}/>
+          <Route path='/Historial_TicketsTec2' element={<Historial_ptec2/>}/>
+        <Route />
 
 
       </Routes>
