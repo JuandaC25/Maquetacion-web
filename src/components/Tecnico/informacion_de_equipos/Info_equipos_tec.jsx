@@ -9,7 +9,6 @@ import Header_informacion from '../header_informacion_E/Header_informacion_E.jsx
 import Carousel from 'react-bootstrap/Carousel';
 
 
-
 function Cuarta() {
   const [mostrarModal, setMostrarModal] = useState(false);
 
@@ -24,9 +23,21 @@ function Cuarta() {
       <Carousel data-bs-theme="dark">
           <Carousel.Item>
             <div className='carrusel_1'>
+              
               <div className='reportes'>
+             
+              <h3>DETALLES DEL EQUIPO</h3>
+              
+              <div className='pcesito'>
+               <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+               <div className='reportes'>
               <h3>DETALLES DEL EQUIPO</h3>
               <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
 
               </div>
               <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
@@ -36,6 +47,7 @@ function Cuarta() {
               <div className='reportes'>
               <h3>DETALLES DEL EQUIPO</h3>
               <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
 
               </div>
               <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
@@ -44,12 +56,13 @@ function Cuarta() {
               <div className='reportes'>
               <h3>DETALLES DEL EQUIPO</h3>
               <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
 
               </div>
               <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
               <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
               </div>
-            </div>   
+            </div>
              
             </Carousel.Item>
             <Carousel.Item>
@@ -57,6 +70,16 @@ function Cuarta() {
               <div className='reportes'>
               <h3>DETALLES DEL EQUIPO</h3>
               <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+               <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
 
               </div>
               <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
@@ -65,6 +88,7 @@ function Cuarta() {
               <div className='reportes'>
               <h3>DETALLES DEL EQUIPO</h3>
               <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
 
               </div>
               <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
@@ -73,6 +97,7 @@ function Cuarta() {
               <div className='reportes'>
               <h3>DETALLES DEL EQUIPO</h3>
               <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
 
               </div>
               <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
@@ -86,6 +111,16 @@ function Cuarta() {
               <div className='reportes'>
               <h3>DETALLES DEL EQUIPO</h3>
               <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+               <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
 
               </div>
               <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
@@ -94,6 +129,7 @@ function Cuarta() {
               <div className='reportes'>
               <h3>DETALLES DEL EQUIPO</h3>
               <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
 
               </div>
               <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
@@ -102,6 +138,7 @@ function Cuarta() {
               <div className='reportes'>
               <h3>DETALLES DEL EQUIPO</h3>
               <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
 
               </div>
               <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
