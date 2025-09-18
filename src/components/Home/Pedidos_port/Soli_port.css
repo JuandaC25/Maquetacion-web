@@ -1,5 +1,5 @@
 [name="lista-inventario1"] {
-  padding: 20px;
+  padding: 1px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -7,12 +7,63 @@
   width: 95%;
 }
 
+/* From Uiverse.io by joe-watson-sbf */ 
+
+.Cuadro_busc_port {
+  font-family: inherit;
+  font-size: inherit;
+  background-color: #f4f2f2;
+  border-color: #00AF00;
+  color: #000000;
+  padding: 0.7rem 1rem;
+  border-radius: 30px;
+  width: 15em;
+  height: 40px;
+  margin-top: 1.5rem;
+  margin-left: 3.5rem;
+  transition: all ease-in-out .5s;
+  margin-right: -2rem;
+}
+
+.Cuadro_busc_port:hover, .Cuadro_busc_port:focus {
+  box-shadow: 0 0 1em #00AF00;
+}
+
+.Cuadro_busc_port:focus {
+  outline: none;
+  background-color: #f4f2f2;
+}
+
+.Cuadro_busc_port::-webkit-input-placeholder {
+  font-weight: 100;
+  color: #000000;
+}
+
+.Cuadro_busc_port:focus + .btn_buscar {
+  background-color: #f0eeee;
+}
+
+.btn_buscar:hover {
+  cursor: pointer;
+}
+
+.btn_buscar {
+  color: #000000;
+  height: 1.3em;
+  width: 1.3em;
+  
+  border-radius: 50%;
+}
+
+
+
+
 /*Estilos de os cuadros de portatiles*/
 
 .card_port {
   position: relative;
   width: 15rem;
-  height: 16.7rem;
+  height: 20rem;
   box-shadow: 0px 1px 13px rgba(0,0,0,0.1);
   cursor: pointer;
   transition:none 120ms;
@@ -21,7 +72,8 @@
   justify-content: center;
   background: #fff;
   padding: 0.5em;
-  margin-top: 5rem;
+  margin-top: 3.5rem;
+  border-radius: 15px;
   transform: translateY(-10px) scale(1.05);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 } 
@@ -44,11 +96,28 @@
   color: white;
   font-size: 1rem;
   font-weight: 600;
-  text-transform: uppercase;
   cursor: pointer;
   border-radius: 5px;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-top: 1rem;
+  padding: 0.4rem;
+}
+
+.Btn_espe_port{
+  margin-top: 1rem;
+  background-color: #00AF00;
+  border: none;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600; 
+}
+
+.Text_comp_port{
+  background-color: #00AF00;
+}
+.Hea_com_port{
+  background-color: #00AF00;
+  color: #ffffff;
 }
 
 .card_port .title {
@@ -111,6 +180,7 @@
     border-color: #00AF00;
     color: white;
 }
+
 .Msj_modal{
     font-size: 25px;
     margin-top: 32rem;
@@ -144,69 +214,33 @@
 }
 
 .btn_conf_port {
-  all: unset;
-  display: flex;
-  align-items: center;
-  position: relative;
-  background-color: #00AF00;
-  border: #00AF00 solid 0.15em;
-  border-radius: 0.25em;
-  color: rgb(255, 255, 255);
-  font-size: 1rem;
-  width: 98%;
-  text-align: center;
-  height: 2rem;
+  /* From Uiverse.io by cssbuttons-io */ 
+  padding: 1.3em 3em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  margin-left: 14.5rem;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
   cursor: pointer;
-  padding: 0.6rem 2rem;
-  overflow: hidden;
-  transition: border 300ms, color 300ms;
-  user-select: none;
+  outline: none;
+  background-color: #00AF00;
+  box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+  color: #fff;
+  transform: translateY(-7px);
 }
 
-.btn_conf_port p {
-  z-index: 1;
+.btn_conf_port:active {
+  transform: translateY(-1px);
 }
 
 .btn_conf_port:hover {
   color: #212121;
-}
-
-.btn_conf_port:active {
-  border-color: teal;
-}
-
-.btn_conf_port::after, .btn_conf_port::before {
-  content: "";
-  position: absolute;
-  width: 9em;
-  aspect-ratio: 1;
-  background: #00af00c1;
-  opacity: 50%;
-  border-radius: 50%;
-  transition: transform 500ms, background 300ms;
-}
-
-.btn_conf_port:before {
-  left: 0;
-  transform: translateX(-8em);
-}
-
-.btn_conf_port::after {
-  right: 0;
-  transform: translateX(8em);
-}
-
-.btn_conf_port:hover:before {
-  transform: translateX(-1em);
-}
-
-.btn_conf_port:hover:after {
-  transform: translateX(1em);
-}
-
-.btn_conf_port:active:before,
-.btn_conf_port:active:after {
-  background: teal;
 }
 
 .Botones_port{
