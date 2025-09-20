@@ -52,21 +52,27 @@
 }
 
 .add-new-equipment-button-xd35 {
-  background: var(--green); color: var(--white);
-  padding: 10px 22px; border-radius: 8px;
-  display: flex; align-items: center; gap: 8px;
+  background: var(--green);
+  border: 2px solid var(--green-dark);
+  color: var(--white);
+  padding: 10px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   font-weight: 600;
+  box-shadow: 5px 5px 0px var(--green-dark);
+  display: flex; align-items: center; gap: 8px;
 }
 
 .add-new-equipment-button-xd35:hover {
-  background: var(--green-dark); transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  background: var(--green-dark);
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0px var(--green-dark);
 }
 
 .view-details-button-xd08 {
-  background: var(--green); color: var(--white);
-  padding: 10px 18px; border-radius: 30px;
-  font-weight: 500;
+  /* Estilos actualizados más abajo */
 }
 
 .view-details-button-xd08:hover {
@@ -125,29 +131,63 @@
 }
 
 .modern-equipment-card-xd01 {
-  display: flex; justify-content: space-between; align-items: center; gap: 20px;
-  background: var(--white); padding: 20px; border-radius: var(--radius);
-  box-shadow: 0 5px 15px var(--shadow); border: 1px solid var(--border);
-  cursor: pointer; opacity: 0; transform: translateY(20px);
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 6px var(--shadow);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   animation: cardAppear 0.5s forwards ease-out;
+  opacity: 0;
+  transform: translateY(20px);
+  position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .modern-equipment-card-xd01:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.modern-equipment-card-xd01:hover .view-details-button-xd08 {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
 @keyframes cardAppear { to { opacity: 1; transform: translateY(0); } }
 
-.icon-display-xd03 { font-size: 2.8rem; color: var(--green); flex-shrink: 0; }
-.equipment-info-xd04 { display: flex; flex-direction: column; flex-grow: 1; }
-.equipment-title-xd05 { font-weight: 700; font-size: 1.3rem; color: var(--text); word-break: break-word; }
-.equipment-category-xd06 { font-size: 1rem; color: var(--text-light); margin-top: 4px; }
+.card-top-section-xd02 {
+  background: var(--green);
+  padding: 15px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  position: relative;
+}
+
+.icon-display-xd03 { font-size: 3.5rem; color: rgba(255, 255, 255, 0.8); }
+.equipment-category-xd06 {
+  position: absolute;
+  top: 15px;
+  left: -1px;
+  background: var(--green-dark);
+  color: var(--white);
+  padding: 4px 12px;
+  border-radius: 0 5px 5px 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.card-bottom-section-xd04 { padding: 20px; text-align: center; flex-grow: 1; }
+.equipment-title-xd05 { font-weight: 700; font-size: 1.2rem; color: var(--text); margin-bottom: 5px; }
+.equipment-serie-xd07 { font-size: 0.9rem; color: var(--text-light); }
 
 .modern-modal-dialog-xd11 .modal-content {
   border-radius: var(--radius); overflow: hidden;
-  box-shadow: 0 10px 30px var(--shadow);
+  box-shadow: 8px 8px 0px var(--green);
   animation: modalScaleIn 0.3s ease-out forwards;
 }
 
@@ -192,29 +232,51 @@
   display: flex; justify-content: flex-end; gap: 10px;
 }
 
-.modal-action-button-xd20 { padding: 10px 24px; border-radius: 8px; font-weight: 600; }
+.modal-action-button-xd20 {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
 .modal-action-button-xd20.delete-action-xd21 {
-  background-color: #dc3545; color: var(--white);
+  background-color: #dc3545;
+  border-color: #b02a37;
+  box-shadow: 4px 4px 0px #b02a37;
+  color: var(--white);
 }
 .modal-action-button-xd20.delete-action-xd21:hover {
-  background-color: #c82333; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background-color: #c82333;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #b02a37;
 }
 
 .modal-action-button-xd20.add-action-xd24 {
-  background-color: var(--green); color: var(--white);
+  background-color: var(--green);
+  border-color: var(--green-dark);
+  box-shadow: 4px 4px 0px var(--green-dark);
+  color: var(--white);
 }
 .modal-action-button-xd20.add-action-xd24:hover {
-  background-color: var(--green-dark); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background-color: var(--green-dark);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--green-dark);
 }
 
 .modal-action-button-xd20.cancel-action-xd23,
 .modal-action-button-xd20.close-action-xd22 {
-  background-color: var(--text-light); color: var(--white);
+  background-color: #f8f9fa;
+  border-color: #ced4da;
+  box-shadow: 4px 4px 0px #ced4da;
+  color: var(--text);
 }
 .modal-action-button-xd20.cancel-action-xd23:hover,
 .modal-action-button-xd20.close-action-xd22:hover {
-  background-color: #5a6268; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background-color: #e9ecef;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #ced4da;
 }
 
 .selection-1217-xd38 { transition: all 0.3s ease; }
@@ -225,10 +287,6 @@
   .header-left-section-xd28 { flex-direction: column; align-items: flex-start; gap: 10px; }
   .inventory-main-title-xd29 { font-size: 1.8rem; }
   .equipment-list-grid-xd09 { grid-template-columns: 1fr; padding: 20px; }
-  .modern-equipment-card-xd01 { flex-direction: column; text-align: center; }
-  .icon-display-xd03 { margin: 0 0 10px 0; }
-  .equipment-info-xd04 { align-items: center; margin-bottom: 15px; }
-  .view-details-button-xd08 { width: 100%; }
   .modern-modal-body-xd14 { padding: 20px; }
   .modern-modal-footer-xd19 { flex-direction: column; gap: 10px; }
   .modal-action-button-xd20 { width: 100%; }
@@ -317,9 +375,20 @@
   background-color: rgba(40, 167, 69, 0.1);
 }
 
-
-
-
-
-
-
+.view-details-button-xd08 {
+  position: absolute;
+  top: 100px; /* Ajusta para que quede sobre la división */
+  left: 50%;
+  transform: translate(-50%, 10px);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  background-color: var(--green);
+  color: var(--white);
+  border: none;
+  padding: 8px 24px;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 3;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
