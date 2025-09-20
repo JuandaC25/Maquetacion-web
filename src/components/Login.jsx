@@ -5,22 +5,31 @@ import './App.css';
 function Login() {
   return (
     <div className="Fondo"> 
-      <Form>
-        <h1 className='iniciarsesion'><h1 className='Inicios'>Iniciar sesión</h1></h1>
-        <Form.Group className="grupoinicio" controlId="formBasicEmail">
+      <Form className='Cuadro-iniciarsesion'>
+        <h1 className='iniciarsesion'>
+          <span className='Inicios'>Iniciar sesión</span>
+        </h1>
+
+        <div className="inputGroup">
           <Form.Control  
-            placeholder="Ingrese su correo electrónico" 
+            type="Text"
+            placeholder=" "  
             required 
           />
-        </Form.Group>
-
-        <Form.Group className="grupocontraseña" controlId="formBasicPassword"> 
+          <label>Correo electrónico</label>
+        </div>
+        <div className="inputGroup">
           <Form.Control 
             type="password" 
-            placeholder="Ingrese su contraseña" 
+            placeholder=" " 
             required 
           />
-        </Form.Group>
+          <label>Contraseña</label>
+        </div>
+
+        <div className="forgot-password">
+          <a href="/recuperar">¿Olvidaste tu contraseña?</a>
+        </div>
 
         <Button className="botton" href='/Inicio' variant="primary">
           Iniciar sesión
@@ -31,4 +40,5 @@ function Login() {
 }
 
 export default Login;
+
 

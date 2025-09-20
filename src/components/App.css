@@ -1,47 +1,122 @@
-form {
-  background-color: #f8f9fa;
+.Cuadro-iniciarsesion {
+  background: rgba(255, 255, 255, 0.15); 
+  backdrop-filter: blur(10px);          
+  -webkit-backdrop-filter: blur(10px);  
+  
   padding: 65px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25); 
+  
   width: 30%;
-  margin-left: 14rem;
-  margin-right: auto;
-  margin-top: 18rem;
-  border-style:solid;
-  border-color: black;
-  height: 380px;
+  margin-left: 19rem;
+  margin-top: 15rem;
+  
+  border: 3px solid rgba(0, 0, 0, 0.007); 
+  height: 410px;
+   transition: all 0.80s ease
+}
+.iniciarsesion {
+  color: rgb(0, 0, 0); 
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  margin-left: 1rem;
 }
 
-.iniciarsesion
-{
-  background-color: #f8f9fa;
-  color: rgb(0, 0, 1);
-  text-align: center;
+.Cuadro-iniciarsesion:hover{
+  transform: translateY(-12px);  
+  box-shadow: -20px 20px 20px rgba(0, 0, 0, 0.6); 
 }
-.grupoinicio{
-  background-color: rgb(255, 255, 255);
+
+.inputGroup {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 1.5em 0;
+  max-width: 100%;
+  position: relative;
+}
+
+.inputGroup input {
+  font-size: 1rem;
+  padding: 0.8em;
+  outline: none;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.15); 
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  width: 100%;
+  color: white;
+}
+
+.inputGroup {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 1em 0;
+  max-width: 250px;
+  position: relative;
+}
+
+.inputGroup {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 1.5em 0;
+  width: 100%;         
+  max-width: 350px;    
+  position: relative;
+}
+
+.inputGroup input {
+  font-size: 1rem;
+  padding: 0.9em 1em;  
+  outline: none;
+  border: 2px solid rgb(0, 0, 0); 
+  border-radius: 12px;
+  width: 100%;        
+  background: rgba(255, 255, 255, 0.15); 
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: black;
-  margin-top: 3rem;
-  border-style:solid;
-  border-color: black;
-  border-radius: 8px;
 }
-.grupocontraseña{
-  color: black;
-  margin-top: 1rem;
-  border-style:solid;
-  border-color: black;
-  border-radius: 8px;
+
+.inputGroup label {
+  font-size: 1rem;
+  position: absolute;
+  top: 50%;           
+  left: 1em;        
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  color: rgb(100, 100, 100);
+  background: transparent;
+  padding: 0 0.3em;
 }
+
+.inputGroup input:focus,
+.inputGroup input:valid {
+  border-color: rgb(9, 180, 26);
+  box-shadow: 0 0 6px rgba(9, 180, 26, 0.4);
+}
+
+.inputGroup input:focus ~ label,
+.inputGroup input:valid ~ label {
+  top: 0;            
+  left: 0.8em;
+  font-size: 0.85rem;
+  background: white;
+  border-radius: 6px;
+  color: rgb(9, 180, 26);
+}
+
+
+.inputGroup input:focus {
+  border-color: rgb(9, 180, 26); 
+  box-shadow: 0 0 6px rgba(9, 180, 26, 0.4);
+}
+
 .botton{
-  margin-top: 2rem;
+  margin-top: 1rem;
   background-color: rgb(9, 180, 26); 
   cursor: pointer;
   margin-left:60px;
   width: 50%;
-  height: 20%;
+  height: 15%;
   margin-left: 5rem;
-
 }
 .Fondo {
   background-image: url('../assets/Fondo.png');
@@ -52,6 +127,13 @@ form {
   width: 100vw; 
   display: flex; 
 }
+.forgot-password {
+  margin-top: 0.5rem;
+  text-align: left; 
+  color: rgb(9, 180, 26); 
+}
+
+
 
 
 
