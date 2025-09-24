@@ -59,19 +59,22 @@ const UserDetailsModal = ({ show, onHide, userDetails, onEliminar }) => {
 };
 
 const UserCard = ({ user, onVerClick }) => (
-    <div className="modern-equipment-card-xd101" onClick={() => onVerClick(user)}>
-        <div className="card-content-xd102">
-            <div className="icon-display-xd103">
-                <FaUserCircle />
-            </div>
-            <div className="equipment-info-xd104">
-                <span className="equipment-title-xd105">{`${user.nombre} ${user.apellido}`}</span>
-                <span className="equipment-serie-xd107">{user.id}</span>
-                <span className="equipment-category-xd106">{user.rol}</span>
-            </div>
+    <div className="modern-equipment-card-xd101">
+        <div className="card-img-section-xd102">
+            <FaUserCircle />
         </div>
-        <button className="view-details-button-xd108" onClick={(e) => { e.stopPropagation(); onVerClick(user); }}>
-            Ver
+        <div className="card-desc-xd103">
+            <div className="card-header-xd104">
+                <div className="card-title-xd105">{user.rol}</div>
+                <div className="card-menu-xd106">
+                    <div className="dot-xd107"></div><div className="dot-xd107"></div><div className="dot-xd107"></div>
+                </div>
+            </div>
+            <p className="card-user-name-xd108">{`${user.nombre} ${user.apellido}`}</p>
+            <p className="card-user-id-xd109">ID: {user.id}</p>
+        </div>
+        <button className="card-view-button-xd110" onClick={() => onVerClick(user)}>
+            Ver Detalles
         </button>
     </div>
 );

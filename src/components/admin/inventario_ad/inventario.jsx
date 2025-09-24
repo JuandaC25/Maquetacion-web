@@ -7,19 +7,19 @@ import HeaderInv from "../header_inv/header_inv.jsx";
 
 const EquipoItem = ({ elemento, onVerClick }) => (
   <div className="modern-equipment-card-xd01">
-    <div className="card-content-xd02">
+    <div className="card-top-section-xd02">
+      <span className="equipment-category-xd06">{elemento.categoria}</span>
       <div className="icon-display-xd03">
         <span role="img" aria-label="computadora">💻</span>
       </div>
-      <div className="equipment-info-xd04">
-        <span className="equipment-title-xd05">{elemento.nombre}</span>
-        <span className="equipment-category-xd06">{elemento.categoria}</span>
-        <span className="equipment-serie-xd07">{elemento.serie}</span>
-      </div>
-      <button className="view-details-button-xd08" onClick={() => onVerClick(elemento)}>
-        Ver Detalles
-      </button>
     </div>
+    <div className="card-bottom-section-xd04">
+      <h5 className="equipment-title-xd05">{elemento.nombre}</h5>
+      <p className="equipment-serie-xd07">Serie: {elemento.serie}</p>
+    </div>
+    <button className="view-details-button-xd08" onClick={() => onVerClick(elemento)}>
+      Ver Detalles
+    </button>
   </div>
 );
 

@@ -6,7 +6,7 @@ import ModalPeticion from './modal_informacion_E/Modal2';
 import './Info_equipos_tec.css';
 import Otromodal from './OTRO.MODAL/Otro_modal';
 import Header_informacion from '../header_informacion_E/Header_informacion_E.jsx';
-
+import Carousel from 'react-bootstrap/Carousel';
 
 
 function Cuarta() {
@@ -17,49 +17,140 @@ function Cuarta() {
 
   return (
     <>
-    <Header_informacion/>
-      
-    <div className='container_blanco100'>
-          <div className='reportes'>
-          <h3>DETALLES DEL EQUIPO</h3>
-          <div className='pcesito'>
+     <Header_informacion/>
+     <div className='carrusel'>
 
-          </div>
-          <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
-          <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
-          </div>
-      
-      
-          <div className='reportes'>
-            <h3>DETALLES DEL EQUIPO</h3>
-            <div className='pcesito'>
+      <Carousel data-bs-theme="dark">
+          <Carousel.Item>
+            <div className='carrusel_1'>
+              
+              <div className='reportes'>
+             
+              <h3>DETALLES DEL EQUIPO</h3>
+              
+              <div className='pcesito'>
+               <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+               <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
 
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+              
+              <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+              <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
             </div>
-            <h5 className='izquierdita'>Modelo equipo:</h5><h6>Asus Rog</h6>
-            <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
-          </div>
-           <div className='reportes'>
-            <h3>DETALLES DEL EQUIPO</h3>
-            <div className='pcesito'>
+             
+            </Carousel.Item>
+            <Carousel.Item>
+            <div className='carrusel_1'>
+              <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
 
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+               <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+              <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+              <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+            </div>    
+              
+            </Carousel.Item>
+            <Carousel.Item>
+              <div className='carrusel_1'>
+              <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+               <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+              <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
+              <div className='reportes'>
+              <h3>DETALLES DEL EQUIPO</h3>
+              <div className='pcesito'>
+                 <img src="/imagenes/computadorcito.png" alt="computador" className='comp' />
+
+              </div>
+              <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
+              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              </div>
             </div>
-            <h5 className='izquierdita'>Modelo equipo:</h5><h6>Asus Rog</h6>
-            <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
-          </div>
-          <div className='reportes'>
-            <h3>DETALLES DEL EQUIPO</h3>
-            <div className='pcesito'>
+            <ModalPeticion show={mostrarModal} onHide={cerrarModal} />
 
-            </div>
-            <h5 className='izquierdita'>Modelo equipo:</h5><h6>Lenovo IdeaPad</h6>
-            <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
-            
-
-          </div>
-          
-
+              
+          </Carousel.Item>
+      </Carousel>
     </div>
-      <ModalPeticion show={mostrarModal} onHide={cerrarModal} />
 
       <Footer />
     </>

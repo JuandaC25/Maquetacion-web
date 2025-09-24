@@ -1,100 +1,152 @@
-/* eslint-disable no-irregular-whitespace */
-import './Pedidos_escritorio.css';
-import { useState } from 'react';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import React, { useState } from "react";
+import { Card, ListGroup, Button, Modal, Form } from "react-bootstrap";
+import "./Pedidos_escritorio.css";
 
 function Datos_escritorio() {
-  const [smShow, setSmShow] = useState(false);
+  const equipos = [
+    {
+      id: 1,
+      nombre: "HP ProDesk 400 G7",
+      modelo: "ProDesk 400",
+      descripcion: "Equipo ideal para oficina con buen rendimiento.",
+      especificaciones: [
+        "Procesador: Intel i5 10th Gen",
+        "RAM: 8 GB DDR4",
+        "Disco: 512 GB SSD",
+        "Pantalla: 24” Full HD",
+      ],
+      imagen: "/imagenes/EscritorioMesa.png",
+    },
+    {
+      id: 2,
+      nombre: "Dell OptiPlex 7080",
+      modelo: "OptiPlex",
+      descripcion: "Diseñado para tareas pesadas y multitarea.",
+      especificaciones: [
+        "Procesador: Intel i7 11th Gen",
+        "RAM: 16 GB DDR4",
+        "Disco: 1 TB SSD",
+        "Gráfica: NVIDIA GTX 1650",
+      ],
+      imagen: "/imagenes/EscritorioMesa.png",
+    },
+    {
+      id: 3,
+      nombre: "Lenovo ThinkCentre M720",
+      modelo: "ThinkCentre",
+      descripcion: "Compacto y eficiente para oficinas pequeñas.",
+      especificaciones: [
+        "Procesador: Intel i3 9th Gen",
+        "RAM: 4 GB DDR4",
+        "Disco: 256 GB SSD",
+        "Pantalla: 21” Full HD",
+      ],
+      imagen: "/imagenes/EscritorioMesa.png",
+    },
+  ];
 
-  return (
-    <div className="form-grid">
-      <div className="form-row">
-        <div className="form-col">
-          <Form.Label htmlFor="inputCantidad">Ingrese la cantidad</Form.Label>
-          <Form.Control type="number" id="inputCantidad" className="form-input" />
-        </div>
+  const [seleccionados, setSeleccionados] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
-        <div className="form-col">
-          <Form.Label htmlFor="inputMouse"># de mouse necesarios</Form.Label>
-          <Form.Control type="number" id="inputMouse" className="form-input" />
-        </div>
-      </div>
+  const toggleSelect = (id) => {
+    setSeleccionados((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
 
-      <div className="form-row">
-        <div className="form-col">
-          <Form.Label htmlFor="inputAmbiente">Ambiente</Form.Label>
-          <Form.Control type="text" id="inputAmbiente" className="form-input" />
-        </div>
+  const confirmarSolicitud = (e) => {
+    e.preventDefault();
+    alert(`Solicitud confirmada ✅ 
+Equipos seleccionados: ${seleccionados.join(", ")}`);
+    setShowModal(false);
+  };
 
-        <div className="form-col">
-          <Form.Label htmlFor="inputTeclados"># de teclados necesarios</Form.Label>
-          <Form.Control type="number" id="inputTeclados" className="form-input" />
-        </div>
-      </div>
+  return (
+    <div className="equipos-container">
+      {equipos.map((equipo) => (
+        <Card
+          key={equipo.id}
+          className={`ficha-horizontal ${
+            seleccionados.includes(equipo.id) ? "seleccionado" : ""
+          }`}
+        >
+          <div className="ficha-img">
+            <Card.Img src={equipo.imagen} alt={equipo.nombre} />
+          </div>
 
-      <div className="form-row">
-        <div className="form-col">
-          <Form.Label htmlFor="inputFecha">Fecha de uso</Form.Label>
-          <Form.Control type="date" id="inputFecha" className="form-input" />
-        </div>
-      </div>
+          <div className="ficha-info">
+            <Card.Body>
+              <Card.Title>{equipo.nombre}</Card.Title>
+              <Card.Subtitle className="mb-2 text-muted">
+                Modelo: {equipo.modelo}
+              </Card.Subtitle>
+              <Card.Text>{equipo.descripcion}</Card.Text>
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginTop: '60px'
-        }}
-      >
-        <Button className='Btn_esc'
-          onClick={() => setSmShow(true)}
-          style={{
-            backgroundColor: '#00AF00',
-            borderColor: '#00AF00',
-            fontSize: '18px',
-            padding: '10px 20px',
-            color: 'white',
-            marginTop: '-1.5rem'
-          }}
-        >
-          Confirmar solicitud
-        </Button>
-      </div>
+              <Card className="mb-3">
+                <Card.Header>Especificaciones</Card.Header>
+                <ListGroup variant="flush">
+                  {equipo.especificaciones.map((esp, i) => (
+                    <ListGroup.Item key={i}>{esp}</ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Card>
 
-      <Modal
-        size="sm"
-        show={smShow}
-        onHide={() => setSmShow(false)}
-        aria-labelledby="example-modal-sizes-title-sm"
-        centered
-      >
-        <Modal.Header
-          closeButton
-          style={{
-            backgroundColor: '#00AF00',
-            color: 'white',
-            borderBottom: 'none',
-            padding: '1rem 1rem',
-            position: 'relative'
-          }}
-        >
-          <Modal.Title
-            id="example-modal-sizes-title-sm"
-            style={{ margin: '0 auto', fontWeight: '500' }}
-          >
-            Solicitud confirmada
-          </Modal.Title>
-        </Modal.Header>
-        <style>{`
-          .modal-header .btn-close {
-            filter: invert(1);
-            opacity: 1;
-          }
-        `}</style>
-      </Modal>
-    </div>
-  );
+              <Button
+                variant={
+                  seleccionados.includes(equipo.id) ? "danger" : "primary"
+                }
+                onClick={() => toggleSelect(equipo.id)}
+              >
+                {seleccionados.includes(equipo.id)
+                  ? "Quitar"
+                  : "Seleccionar"}
+              </Button>
+            </Card.Body>
+          </div>
+        </Card>
+      ))}
+
+      {seleccionados.length > 0 && (
+        <div className="confirmar-container">
+          <Button variant="success" onClick={() => setShowModal(true)}>
+            Confirmar solicitud
+          </Button>
+        </div>
+      )}
+
+      {/* Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar solicitud</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={confirmarSolicitud}>
+            <Form.Group className="mb-3">
+              <Form.Label>Ambiente</Form.Label>
+              <Form.Control type="text" placeholder="Ej: Sala de informática" />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Fecha de uso</Form.Label>
+              <Form.Control type="date" />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Cantidad</Form.Label>
+              <Form.Control type="number" min="1" />
+            </Form.Group>
+
+            <Button variant="primary" type="submit">
+              Enviar
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    </div>
+  );
 }
+
 export default Datos_escritorio;
+
+
+
