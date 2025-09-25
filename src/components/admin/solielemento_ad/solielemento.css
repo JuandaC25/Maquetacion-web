@@ -1,180 +1,149 @@
-.alert301 {
+.margen-1601 {
+  margin: 10px 0;
+}
+
+.cards-container-1616 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.card-1602 {
+  max-width: 100%;
+  border-radius: 1rem;
+  background-color: rgba(31, 41, 55, 1);
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-1602:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.infos-1603 {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.image-1604 {
+  height: 7rem;
+  width: 7rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(to bottom right, rgb(9, 180, 26), rgb(144, 238, 144));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+}
+
+.image-1604::before {
+  content: "🖥️";
+}
+
+.info-1605 {
+  height: 7rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.name-1606 {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 1);
+  margin: 0;
+}
+
+.function-1607 {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgba(156, 163, 175, 1);
+  margin: 0;
+}
+
+.stats-1608 {
+  width: 100%;
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 1);
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: rgba(0, 0, 0, 1);
+}
+
+.flex-1609 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 4px;
+  text-align: center;
+}
+
+.flex-col-1610 {
+  flex-direction: column;
+}
+
+.state-value-1611 {
+  font-weight: 700;
+  color: rgb(9, 180, 26);
+  margin-top: 2px;
+}
+
+.request-1612 {
+  margin-top: 1.5rem;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  transition: all .3s ease;
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.request-1612:hover {
+  background-color: rgb(7, 160, 22);
+  transform: translateY(-1px);
+}
+
+.alert-1614 {
   background-color: #ffffff00;
   text-align: start;
 }
 
-.lista-tickets301 {
-    display: flex; 
-    flex-direction: column; 
-    gap: 15px; 
-    margin-bottom: 5px;
- 
-}
-.ticket-item302 {
+.lista-tickets-1613 {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  padding: 10px 15px;
-  margin-bottom: 12px;
-  color: black;
-  padding: 10px; 
-  margin-bottom: 15px;
-   border: 1px solid black;
-}
-.izquierda303,
-.derecha304 {
-  display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 5px;
 }
 
-.izquierda303 { gap: 10px; }
-.derecha304   { gap: 10px; }
-
-.icono307,
-.folder306 { font-size: 35px; }
-
-.estado308 span {
-  background-color: #ccc;
-  padding: 6px 16px;
-  border-radius: 16px;
-  font-weight: 600;
-  color: black;
-  font-size: 0.9em;
-}
-
-.ver-boton309 {
-  background-color: white;
-  border: 1px solid #000;
-  padding: 5px 12px;
-  border-radius: 6px;
-}
-
-.ver-boton309:hover { background-color: #f0f0f0; }
-
-.form-group-row310 {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 15px;
-}
-
-.custom-modal315 .modal-body317 .form-group-row310:last-of-type {
-  margin-bottom: 0;
-}
-
-.form-label311 {
-  flex: 0 0 200px;
-  text-align: left;
-  font-weight: bold;
-  color: black;
-  margin-bottom: 0;
-}
-
-.form-control-wrapper312 {
-  flex: 1 1 auto;
-  border-radius: solid black;
-}
-
-textarea.form-control313 {
-  min-height: 80px;
-  resize: vertical;
-}
-
-.custom-modal315 .modal-dialog {
-  max-width: 700px;
-  margin: 2rem auto;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.custom-modal315 .modal-content {
-  border-radius: 10px;
-  border: none;
-}
-
-.modal-header-verde316 {
-  background-color: rgb(9, 180, 26);
-  color: white;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-}
-
-.modal-header-verde316 h5.modal-title {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: bold;
-}
-
-.modal-body317 {
-  background-color: #ffffff;
-  padding: 40px 30px;
-  border-bottom-right-radius: 10px;
-}
-
-button.ver-boton309 {
-  background-color: rgb(9, 180, 26);
-  color: white;
-  border: 1px solid azure;
-  border-radius: 6px;
-  padding: 6px 16px;
-  font-weight: bold;
-}
-
-.modal-footer318 .btn-success {
-  background-color: rgb(9, 180, 26);
-  color: white;
-  border: none;
-  font-weight: bold;
-}
-
-.modal-footer318 .btn-danger {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  font-weight: bold;
-}
-
-.modal-footer318 .btn-secondary {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  font-weight: bold;
-}
-
-.añadir-boton322 {
-  background-color: rgb(9, 180, 26);
-  color: white;
-  border: none;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-weight: bold;
-}
-.ticket-nombre-derecha {
-    font-size: 1em;
-}
-.margin300{
-  margin-left: 20px;
-  margin-right: 20px;
-}
-.pagination-215 {
+.pagination-1617 {
   display: flex;
   justify-content: center;
   margin: 20px 0;
 }
 
-.pagination-inner-216 input {
+.pagination-inner-1618 input {
   display: none;
 }
 
-.pagination-inner-216 {
+.pagination-inner-1618 {
   --container_width: 180px;
   position: relative;
   display: flex;
@@ -187,7 +156,7 @@ button.ver-boton309 {
   border: 2px solid #e9ecef;
 }
 
-.pagination-inner-216 label {
+.pagination-inner-1618 label {
   width: 100%;
   padding: 10px;
   cursor: pointer;
@@ -201,7 +170,7 @@ button.ver-boton309 {
   transition: all 0.3s ease;
 }
 
-.selection-217 {
+.selection-1619 {
   display: none;
   position: absolute;
   height: 100%;
@@ -213,27 +182,97 @@ button.ver-boton309 {
   background-color: rgb(9, 180, 26);
 }
 
-.pagination-inner-216 label:has(input:checked) {
+.pagination-inner-1618 label:has(input:checked) {
   color: #fff;
 }
 
-.pagination-inner-216 label:has(input:checked) ~ .selection-217 {
+.pagination-inner-1618 label:has(input:checked) ~ .selection-1619 {
   display: inline-block;
 }
 
-.pagination-inner-216 label:nth-child(1):has(input:checked) ~ .selection-217 {
+.pagination-inner-1618 label:nth-child(1):has(input:checked) ~ .selection-1619 {
   transform: translateX(calc(var(--container_width) * 0 / 3));
 }
 
-.pagination-inner-216 label:nth-child(2):has(input:checked) ~ .selection-217 {
+.pagination-inner-1618 label:nth-child(2):has(input:checked) ~ .selection-1619 {
   transform: translateX(calc(var(--container_width) * 1 / 3));
 }
 
-.pagination-inner-216 label:nth-child(3):has(input:checked) ~ .selection-217 {
+.pagination-inner-1618 label:nth-child(3):has(input:checked) ~ .selection-1619 {
   transform: translateX(calc(var(--container_width) * 2 / 3));
 }
 
-.pagination-inner-216 label:hover {
+.pagination-inner-1618 label:hover {
   background-color: rgba(9, 180, 26, 0.1);
 }
 
+.custom-modal-1620 .modal-dialog {
+  max-width: 700px;
+  margin: 2rem auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.custom-modal-1620 .modal-content {
+  border-radius: 10px;
+  border: none;
+}
+
+.modal-header-verde-1621 {
+  background-color: rgb(9, 180, 26);
+  color: white;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.modal-header-verde-1621 h5.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.modal-body-1622 {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-bottom-right-radius: 10px;
+}
+
+.form-group-row-1623 {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 15px;
+}
+
+.form-label-1624 {
+  flex: 0 0 250px;
+  text-align: left;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 0;
+}
+
+.form-control-wrapper-1625 {
+  flex: 1 1 auto;
+}
+
+textarea.form-control {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.modal-footer-1626 .btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+
+.modal-footer-1626 .btn-secondary:hover {
+  background-color: #5a6268;
+}
