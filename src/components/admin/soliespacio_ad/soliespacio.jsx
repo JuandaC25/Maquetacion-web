@@ -1,79 +1,73 @@
 import React, { useState } from 'react';
-import { Button, Alert, Dropdown, Modal, Form , Pagination} from 'react-bootstrap';
+import { Button, Alert, Dropdown, Modal, Form, Pagination } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import "./soliespacio.css";
 import Footer from '../../Footer/Footer.jsx';
 import HeaderAd from '../header_soliespacio/header_soliespacio.jsx'; 
 
-const Ticketxd = ({ estado, onVerClick }) => {
+const Ticketxd = ({ estado, onVerClick, detalles }) => {
   
   return (
-    <div className="margen200">
-    <div className="ticket-item202">
-      <div className="izquierda203">
-        <div className="icono207">
-          <span role="img" aria-label="espacio">📋</span>
+    <div className="solicitud-card-container">
+      <div className="solicitud-card">
+        <div className="solicitud-card-border-top">
         </div>
-        <div className="estado208">
-          <span>{estado}</span>
+        <div className="solicitud-card-content">
+          <span className="solicitud-user-name">{detalles?.usuario || 'Usuario'}</span>
+          <p className="solicitud-space-type">{detalles?.espacio || 'Espacio'}</p>
+          <p className="solicitud-date-info">
+            {detalles?.fecha1 ? new Date(detalles.fecha1).toLocaleDateString() : 'Fecha'}
+          </p>
+          <p className="solicitud-status-info">{detalles?.estado || 'Estado'}</p>
+          <button className="solicitud-view-button" onClick={onVerClick}>Ver</button>
         </div>
-      </div>
-      <div className="derecha204">
-        <div className="folder206">
-          <span role="img" aria-label="folder">📁</span>
-        </div>
-        <button className="ver-boton209" onClick={onVerClick}>Ver</button>
       </div>
     </div>
-  </div>
   );
 };
 
 const Listaxd = ({ onVerClick }) => {
-const [espacioSeleccionado, setEspacioSeleccionado] = useState('Todos');
+  const [espacioSeleccionado, setEspacioSeleccionado] = useState('Todos');
   const espacio = [
-{ estado: 'pendiente',detalles:{fecha1: '2023-05-15 08:30',fecha2:'2023-05-15 10:45',espacio:'auditorio', usuario: 'María Rodríguez',estado: 'en uso ' }},
-{ estado: 'en uso',detalles: {fecha1: '2023-11-28 08:00',fecha2: '2023-11-28 12:00',espacio: 'auditorio',usuario: 'Carlos Mendoza',estado: 'en uso'}},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-28 09:30',fecha2: '2023-11-28 11:30',espacio: 'canchas',usuario: 'Laura Vélez',estado: 'pendiente'}},
-{ estado: 'en uso',detalles: {fecha1: '2023-11-28 14:00',fecha2: '2023-11-28 18:00',espacio: 'canchas',usuario: 'Javier Ríos',estado: 'en uso'}},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-29 10:00',fecha2: '2023-11-29 12:00',espacio: 'laboratorio de ciencias',usuario: 'Dra. Sofía Castro',estado: 'pendiente'}},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-29 15:00',fecha2: '2023-11-29 17:00',espacio: 'biblioteca',usuario: 'Ana Karen Ramírez',estado: 'pendiente'}},
-{ estado: 'en uso',detalles: {fecha1: '2023-11-30 07:00',fecha2: '2023-11-30 09:30',espacio: 'auditorio',usuario: 'Diego Morales',estado: 'en uso'}},
-{ estado: 'pendiente',detalles: {fecha1: '2023-11-30 11:00',fecha2: '2023-11-30 13:00',espacio: 'canchas',usuario: 'Marta Gómez',estado: 'pendiente'}},
-{ estado: 'en uso',detalles: {fecha1: '2023-11-30 16:00',fecha2: '2023-11-30 20:00',espacio: 'canchas',usuario: ' Ricardo Torres',estado: 'en uso'}}
-];
-const espacioFiltrado = espacioSeleccionado === 'Todos' ? espacio : espacio.filter(t => t.detalles.espacio.toLowerCase() === espacioSeleccionado.toLowerCase());
-const getEspacioClass = (estado) => {
-  if(estado.includes('cancha')) return 'ticket-221';
-  if(estado.includes('auditorio')) return 'ticket-222';
-  return '';
-};
-const handleSelectEspacio = (espacio) => {
-  setEspacioSeleccionado(espacio);
-};
+    { estado: 'pendiente', detalles: {fecha1: '2023-05-15 08:30', fecha2: '2023-05-15 10:45', espacio: 'auditorio', usuario: 'María Rodríguez', estado: 'pendiente' }},
+    { estado: 'en uso', detalles: {fecha1: '2023-11-28 08:00', fecha2: '2023-11-28 12:00', espacio: 'auditorio', usuario: 'Carlos Mendoza', estado: 'en uso'}},
+    { estado: 'pendiente', detalles: {fecha1: '2023-11-28 09:30', fecha2: '2023-11-28 11:30', espacio: 'canchas', usuario: 'Laura Vélez', estado: 'pendiente'}},
+    { estado: 'en uso', detalles: {fecha1: '2023-11-28 14:00', fecha2: '2023-11-28 18:00', espacio: 'canchas', usuario: 'Javier Ríos', estado: 'en uso'}},
+    { estado: 'en uso', detalles: {fecha1: '2023-11-30 07:00', fecha2: '2023-11-30 09:30', espacio: 'auditorio', usuario: 'Diego Morales', estado: 'en uso'}},
+    { estado: 'pendiente', detalles: {fecha1: '2023-11-30 11:00', fecha2: '2023-11-30 13:00', espacio: 'canchas', usuario: 'Marta Gómez', estado: 'pendiente'}},
+    { estado: 'en uso', detalles: {fecha1: '2023-11-30 16:00', fecha2: '2023-11-30 20:00', espacio: 'canchas', usuario: 'Ricardo Torres', estado: 'en uso'}}
+  ];
+  
+  const espacioFiltrado = espacioSeleccionado === 'Todos' ? espacio : espacio.filter(t => t.detalles.espacio.toLowerCase() === espacioSeleccionado.toLowerCase());
+  
+  const handleSelectEspacio = (espacio) => {
+    setEspacioSeleccionado(espacio);
+  };
+  
   return (
-    <div className="lista-tickets201">
-<Alert variant="success" className="alert201">
-  <div className="d-flex justify-content-between align-items-center">
-    <div className="d-flex align-items-center gap-3">
-      <Dropdown>
-        <Dropdown.Toggle variant="success" id="dropdown-basic">
-          espacio
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          <Dropdown.Item onClick={()=>handleSelectEspacio('Todos')}>Todos</Dropdown.Item>
-          <Dropdown.Item onClick={()=>handleSelectEspacio('canchas')}>canchas</Dropdown.Item>
-          <Dropdown.Item onClick={()=>handleSelectEspacio('auditorio')}>auditorio</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    </div>
-  </div>
-</Alert>
+    <div className="solicitud-lista-tickets">
+      <Alert variant="success" className="solicitud-alert">
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center gap-3">
+            <Dropdown>
+              <Dropdown.Toggle variant="success" id="dropdown-basic">
+                Espacio
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={() => handleSelectEspacio('Todos')}>Todos</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSelectEspacio('canchas')}>Canchas</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSelectEspacio('auditorio')}>Auditorio</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+        </div>
+      </Alert>
 
-
-      {espacioFiltrado.map((t, i) => (
-        <Ticketxd key={i} estado={t.estado} ticket={t.ticket} onVerClick={() => onVerClick(t.detalles)} />
-      ))}
+      <div className="solicitud-tickets-grid">
+        {espacioFiltrado.map((t, i) => (
+          <Ticketxd key={i} estado={t.estado} detalles={t.detalles} onVerClick={() => onVerClick(t.detalles)} />
+        ))}
+      </div>
     </div>
   );
 };
@@ -96,61 +90,60 @@ const Soliespacio = () => {
     <div>
       <HeaderAd />
       <Listaxd onVerClick={handleVerClick} />
-        <div className='pagination-225'>
-          <div className='pagination-inner-226'>
-            <label>
-              <input value="1" name="value-radio" id="value-1" type="radio" defaultChecked />
-                <span>1</span>
-            </label>
-            <label>
-              <input value="2" name="value-radio" id="value-2" type="radio" />
-                <span>2</span>
-              </label>
-            <label>
-              <input value="3" name="value-radio" id="value-3" type="radio"/>
-                <span>3</span>
-              </label>
-              <span className="selection-227"></span>
-          </div>
+      <div className='solicitud-pagination'>
+        <div className='solicitud-pagination-inner'>
+          <label>
+            <input value="1" name="value-radio" id="value-1" type="radio" defaultChecked />
+            <span>1</span>
+          </label>
+          <label>
+            <input value="2" name="value-radio" id="value-2" type="radio" />
+            <span>2</span>
+          </label>
+          <label>
+            <input value="3" name="value-radio" id="value-3" type="radio"/>
+            <span>3</span>
+          </label>
+          <span className="solicitud-selection"></span>
         </div>
-      <Modal show={showModal} onHide={handleCloseModal} className="custom-modal215" centered>
-        <Modal.Header closeButton className="modal-header-verde216">
-          <Modal.Title>Detalles de la solicitud </Modal.Title>
+      </div>
+      <Modal show={showModal} onHide={handleCloseModal} className="solicitud-modal" centered>
+        <Modal.Header closeButton className="solicitud-modal-header-verde">
+          <Modal.Title>Detalles de la solicitud</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="modal-body217">
-          <div className="form-group-row210">
-            <label className="form-label211">Fecha y hora de inicio:</label>
-            <div className="form-control-wrapper212">
+        <Modal.Body className="solicitud-modal-body">
+          <div className="solicitud-form-group-row">
+            <label className="solicitud-form-label">Fecha y hora de inicio:</label>
+            <div className="solicitud-form-control-wrapper">
               <Form.Control type="text" value={modalDetalles?.fecha1 || ''} readOnly />
             </div>
           </div>
-
-          <div className="form-group-row210">
-            <label className="form-label211">fecha y hora de fin:</label>
-            <div className="form-control-wrapper212">
+          <div className="solicitud-form-group-row">
+            <label className="solicitud-form-label">Fecha y hora de fin:</label>
+            <div className="solicitud-form-control-wrapper">
               <Form.Control type="text" value={modalDetalles?.fecha2 || ''} readOnly />
             </div>
           </div>
-          <div className="form-group-row210">
-            <label className="form-label211">espacio:</label>
-            <div className="form-control-wrapper212">
+          <div className="solicitud-form-group-row">
+            <label className="solicitud-form-label">Espacio:</label>
+            <div className="solicitud-form-control-wrapper">
               <Form.Control type="text" value={modalDetalles?.espacio || ''} readOnly />
             </div>
           </div>
-          <div className="form-group-row210">
-            <label className="form-label211">Nombre del Usuario:</label>
-            <div className="form-control-wrapper212">
+          <div className="solicitud-form-group-row">
+            <label className="solicitud-form-label">Nombre del Usuario:</label>
+            <div className="solicitud-form-control-wrapper">
               <Form.Control type="text" value={modalDetalles?.usuario || ''} readOnly />
             </div>
           </div>
-          <div className="form-group-row210">
-            <label className="form-label211">Estado:</label>
-            <div className="form-control-wrapper212">
+          <div className="solicitud-form-group-row">
+            <label className="solicitud-form-label">Estado:</label>
+            <div className="solicitud-form-control-wrapper">
               <Form.Control type="text" value={modalDetalles?.estado || ''} readOnly />
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer className="modal-footer218">
+        <Modal.Footer className="solicitud-modal-footer">
           <Button variant="secondary" onClick={handleCloseModal}>
             Cerrar
           </Button>
@@ -161,4 +154,4 @@ const Soliespacio = () => {
   );
 };
 
-export default Soliespacio ;
+export default Soliespacio;
