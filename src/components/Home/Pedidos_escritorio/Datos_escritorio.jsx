@@ -82,16 +82,16 @@ Equipos seleccionados: ${seleccionados.join(", ")}`);
               </Card.Subtitle>
               <Card.Text>{equipo.descripcion}</Card.Text>
 
-              <Card className="mb-3">
+              <Card className="Cuadro_especificacioness">
                 <Card.Header>Especificaciones</Card.Header>
-                <ListGroup variant="flush">
+                <ListGroup  className cuaaaa variant="flush">
                   {equipo.especificaciones.map((esp, i) => (
                     <ListGroup.Item key={i}>{esp}</ListGroup.Item>
                   ))}
                 </ListGroup>
               </Card>
 
-              <Button
+              <Button className="boton_equiposescritorio"
                 variant={
                   seleccionados.includes(equipo.id) ? "danger" : "primary"
                 }
@@ -123,7 +123,7 @@ Equipos seleccionados: ${seleccionados.join(", ")}`);
           <Form onSubmit={confirmarSolicitud}>
             <Form.Group className="mb-3">
               <Form.Label>Ambiente</Form.Label>
-              <Form.Control type="text" placeholder="Ej: Sala de informática" />
+              <Form.Control type="text" placeholder="Ej: Ambiente 301" />
             </Form.Group>
 
             <Form.Group className="mb-3">
