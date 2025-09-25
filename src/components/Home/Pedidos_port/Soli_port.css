@@ -147,6 +147,10 @@
   line-height: 1;
 }
 
+.Eliminar_equipos_add{
+  margin-right: 1rem;
+}
+
 /*Estilos de os cuadros de portatiles*/
 
 .card_port {
