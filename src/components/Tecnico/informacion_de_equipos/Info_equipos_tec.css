@@ -53,7 +53,12 @@
     padding-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
-    box-shadow:  3px 3px 3px rgba(0, 0, 0, 0.4) ;
+    
+    
+}
+.reportes:hover{
+    box-shadow:  4px 4px 4px 4px rgb(224, 248, 221) ;
+    
 }
 
 .izquierdita{
@@ -75,7 +80,7 @@ color: white;
 cursor: pointer !important;
 padding: 0 !important;
 border: none;
-background: rgb(9, 180, 26);
+background-color: rgb(9, 180, 26) !important;
 width: 40%;
 margin-bottom: 10px;
 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
@@ -85,7 +90,7 @@ margin: auto;
 margin-bottom: 10px;
 }
 .buttoninfo:hover{
-    background-color: rgb(27, 144, 27);
+    background-color: rgb(27, 144, 27) !important;
     color: white;
 }
 

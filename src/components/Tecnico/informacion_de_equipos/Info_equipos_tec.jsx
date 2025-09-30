@@ -58,7 +58,7 @@ function Cuarta() {
               </div>
               <h5>Equipo de escritorio</h5>
               <h5 className='izquierdita'>Modelo equipo:</h5><h6>Hp Victus</h6>
-              <Button className='buttoninfo'  onClick={abrirModal}>Abrir</Button>
+              <Button className='buttoninfo'   onClick={abrirModal}>Abrir</Button>
               </div>
               
               <div className='reportes'>
