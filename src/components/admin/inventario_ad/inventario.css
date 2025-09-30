@@ -158,7 +158,7 @@
 @keyframes cardAppear { to { opacity: 1; transform: translateY(0); } }
 
 .card-top-section-xd02 {
-  background: var(--green);
+  background: var(--white);
   padding: 15px 20px;
   display: flex;
   flex-direction: column;
@@ -181,9 +181,16 @@
   font-weight: 600;
 }
 
-.card-bottom-section-xd04 { padding: 20px; text-align: center; flex-grow: 1; }
-.equipment-title-xd05 { font-weight: 700; font-size: 1.2rem; color: var(--text); margin-bottom: 5px; }
-.equipment-serie-xd07 { font-size: 0.9rem; color: var(--text-light); }
+.card-bottom-section-xd04 {
+  padding: 20px;
+  text-align: center;
+  flex-grow: 1;
+  background: var(--green);
+  border-radius: 0 0 var(--radius) var(--radius);
+  color: var(--white);
+}
+.equipment-title-xd05 { font-weight: 700; font-size: 1.2rem; color: var(--white); margin-bottom: 5px; }
+.equipment-serie-xd07 { font-size: 0.9rem; color: #e0e6ed; }
 
 .modern-modal-dialog-xd11 .modal-content {
   border-radius: var(--radius); overflow: hidden;

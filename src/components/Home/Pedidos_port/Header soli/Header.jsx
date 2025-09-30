@@ -10,7 +10,7 @@ function Header_ad() {
 
   const handleCloseMenu = () => setShowMenu(false);
   const handleShowMenu = () => setShowMenu(true);
-  
+
   const handleCloseProfile = () => setShowProfile(false);
   const handleShowProfile = () => setShowProfile(true);
 
@@ -23,51 +23,70 @@ function Header_ad() {
   };
 
   return (
-    <div className='container-1401'> 
+    <div className='header-portatiles__container'> {/* Cambio aquí */}
       <Navbar expand="xxxl" className="w-100">
-        <div className='content-1402'>
+        <div className='header-portatiles__content'> {/* Cambio aquí */}
 
-          <button className="button-1403" onClick={handleShowMenu}>
-            <span className="icon-1404">
-                <svg viewBox="0 0 175 80" width="40" height="40">
-                    <rect width="80" height="15" fill="#f0f0f0" rx="10"></rect>
-                    <rect y="30" width="80" height="15" fill="#f0f0f0" rx="10"></rect>
-                    <rect y="60" width="80" height="15" fill="#f0f0f0" rx="10"></rect>
-                </svg>
+          <button className="menu-button" onClick={handleShowMenu}>
+            <span className="menu-button__icon">
+              <svg viewBox="0 0 175 80" width="40" height="40">
+                <rect width="80" height="15" fill="#f0f0f0" rx="10"></rect>
+                <rect y="30" width="80" height="15" fill="#f0f0f0" rx="10"></rect>
+                <rect y="60" width="80" height="15" fill="#f0f0f0" rx="10"></rect>
+              </svg>
             </span>
-            <span className="text-1405">MENU</span>
+            <span className="menu-button__text">MENU</span>
           </button>
 
+          {/* Menú lateral */}
           <Offcanvas show={showMenu} onHide={handleCloseMenu}>
-            <Offcanvas.Header className='header-1406' closeButton>
-              <Offcanvas.Title className='title-1407'>
+            <Offcanvas.Header className="offcanvas-header" closeButton>
+              <Offcanvas.Title className="offcanvas-title">
                 <h1>Menú</h1>
               </Offcanvas.Title>
             </Offcanvas.Header>
-           <Offcanvas.Body>
-              <Link to="/Inicio" className='cuadrito1'>
-                <h3><i className="bi bi-plus-circle"></i> Solicitar equipos</h3>
+            <Offcanvas.Body className="menu-cards">
+              <Link to="/inicio" className="menu-card">
+                <p className="card-title">
+                  <i className="bi bi-ticket-detailed"></i> Solicitar equipos
+                </p>
+                <p className="card-subtitle">
+                  Solicita los equipos que necesites
+                </p>
               </Link>
-              <Link to="/Informacion_equiposs" className='cuadrito1'>
-                <h3><i className="bi bi-gear"></i> Información de equipos</h3>
+              <Link to="/Informacion_equiposs" className="menu-card">
+                <p className="card-title">
+                  <i className="bi bi-person-plus"></i> Información de equipos
+                </p>
+                <p className="card-subtitle">
+                  Revisa el inventario y reporta los equipos defectuosos
+                </p>
               </Link>
-              <Link to="/espacios" className='cuadrito1'>
-                <h3><i className="bi bi-person-plus"></i> Solicitar espacios</h3>
+              <Link to="/espacios" className="menu-card">
+                <p className="card-title">
+                  <i className="bi bi-box-seam"></i> Solicitar espacios
+                </p>
+                <p className="card-subtitle">
+                  Solicita los espacios públicos que necesites
+                </p>
               </Link>
-              <Link to="/Historial_pedidos" className='cuadrito1'>
-                <h3><i className="bi bi-clock"></i> Historial pedidos</h3>
+              <Link to="/Historial_pedidos" className="menu-card">
+                <p className="card-title">
+                  <i className="bi bi-search"></i> Historial de pedidos
+                </p>
+                <p className="card-subtitle">Revisar tus pedidos realizados</p>
               </Link>
             </Offcanvas.Body>
           </Offcanvas>
 
-          <h1 className='title-main-1412'>Solicitar Portatiles</h1>
+          <h1 className='header-portatiles__title-main'>Solicitud portátiles</h1> {/* Cambio aquí */}
 
-          <div className='icons-container-1413'>
-            <div className="buttons-wrapper-1414">
-              <div className="button-group-1415">
-                <button className="icon-button-1416" onClick={navigateToHome}>
+          <div className='header-portatiles__icons-container'> {/* Cambio aquí */}
+            <div className="header-portatiles__buttons-wrapper"> {/* Cambio aquí */}
+              <div className="icon-button-group">
+                <button className="icon-button" onClick={navigateToHome}>
                   <svg
-                    className="icon-svg-1417"
+                    className="icon-button__svg"
                     stroke="currentColor"
                     fill="currentColor"
                     strokeWidth="0"
@@ -79,13 +98,13 @@ function Header_ad() {
                     ></path>
                   </svg>
                 </button>
-                <span className="button-text-1418">Home</span>
+                <span className="icon-button-group__text">Home</span>
               </div>
-              
-              <div className="button-group-1415">
-                <button className="icon-button-1416" onClick={navigateToBlog}>
+
+              <div className="icon-button-group">
+                <button className="icon-button" onClick={navigateToBlog}>
                   <svg
-                    className="icon-svg-1417"
+                    className="icon-button__svg"
                     stroke="currentColor"
                     fill="none"
                     strokeWidth="2"
@@ -100,13 +119,13 @@ function Header_ad() {
                     ></path>
                   </svg>
                 </button>
-                <span className="button-text-1418">Blog CEET</span>
+                <span className="icon-button-group__text">Blog CEET</span>
               </div>
-              
-              <div className="button-group-1415">
-                <button className="icon-button-1416" onClick={handleShowProfile}>
+
+              <div className="icon-button-group">
+                <button className="icon-button" onClick={handleShowProfile}>
                   <svg
-                    className="icon-svg-1417"
+                    className="icon-button__svg"
                     stroke="currentColor"
                     fill="currentColor"
                     strokeWidth="0"
@@ -117,20 +136,20 @@ function Header_ad() {
                       d="M12 2.5a5.5 5.5 0 0 1 3.096 10.047 9.005 9.005 0 0 1 5.9 8.181.75.75 0 1 1-1.499.044 7.5 7.5 0 0 0-14.993 0 .75.75 0 0 1-1.5-.045 9.005 9.005 0 0 1 5.9-8.18A5.5 5.5 0 0 1 12 2.5ZM8 8a4 4 0 1 0 8 0 4 4 0 0 0-8 0Z"
                     ></path>
                   </svg>
-                </button> 
-                <span className="button-text-1418">Perfil</span>
+                </button>
+                <span className="icon-button-group__text">Perfil</span>
               </div>
             </div>
           </div>
         </div>
       </Navbar>
       {showProfile && (
-        <div className="phone-container-1419">
-          <div className="phone-frame-1420">
-            <span className="top-border-1421"></span>
-            <p className="time-1422">12:00</p>
-            <p className="date-1423">Fri, 20 December</p>
-            <button className="phone-close-button-1424" onClick={handleCloseProfile}>
+        <div className="profile-modal-container">
+          <div className="profile-modal__frame">
+            <span className="profile-modal__top-notch"></span>
+            <p className="profile-modal__time">12:00</p>
+            <p className="profile-modal__date">Fri, 20 December</p>
+            <button className="profile-modal__close-button" onClick={handleCloseProfile}>
               <svg
                 width="16"
                 height="16"
@@ -146,7 +165,7 @@ function Header_ad() {
               </svg>
             </button>
             <svg
-              className="fingerprint-1425"
+              className="profile-modal__fingerprint"
               width="26px"
               height="26px"
               viewBox="0 0 0.488 0.488"
@@ -162,7 +181,7 @@ function Header_ad() {
               ></path>
             </svg>
             <svg
-              className="camera-1426"
+              className="profile-modal__camera"
               width="24"
               height="24"
               viewBox="0 0 0.72 0.72"
@@ -174,7 +193,7 @@ function Header_ad() {
               ></path>
             </svg>
             <svg
-              className="phone-1427"
+              className="profile-modal__phone-icon"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               xmlSpace="preserve"
@@ -189,24 +208,24 @@ function Header_ad() {
                 d="m10.2 6.375-3.075-3.15c-.375-.3-.9-.3-1.275 0l-2.325 2.4c-.525.45-.675 1.2-.45 1.8.6 1.725 2.175 5.175 5.25 8.25s6.525 4.575 8.25 5.25c.675.225 1.35.075 1.875-.375l2.325-2.325c.375-.375.375-.9 0-1.275L17.7 13.875c-.375-.375-.9-.375-1.275 0L14.55 15.75s-2.1-.9-3.75-2.475-2.475-3.75-2.475-3.75L10.2 7.65c.375-.375.375-.975 0-1.275z"
               ></path>
             </svg>
-            <span className="right-border-top-1428"></span>
-            <div className="phone-profile-modal-1429">
-              <div className="phone-modal-header-1430">
-                <i className="bi bi-person-circle phone-profile-icon-1431"></i>
-                <h3 className="phone-profile-title-1432">¡Hola, usuario!</h3>
+            <span className="profile-modal__right-button-sim"></span>
+            <div className="profile-modal__content">
+              <div className="profile-modal__content-header">
+                <i className="bi bi-person-circle profile-modal__icon"></i>
+                <h3 className="profile-modal__title">¡Hola, usuario!</h3>
               </div>
-              
-              <div className="phone-modal-footer-1433"> 
-                <div className="phone-footer-content-1434">
+
+              <div className="profile-modal__content-footer">
+                <div className="profile-modal__footer-item">
                   <h6>Example@gmail.com</h6>
-                  <Button className="phone-profile-button-1435" onClick={handleCloseProfile}>
-                    Editar información 
+                  <Button className="profile-modal__button" onClick={handleCloseProfile}>
+                    Editar información
                   </Button>
                 </div>
-                <div className="phone-footer-content-1434">
-                  <Button 
-                    className="phone-profile-button-1435" 
-                    href="http://localhost:5173/Login" 
+                <div className="profile-modal__footer-item">
+                  <Button
+                    className="profile-modal__button"
+                    href="http://localhost:5173/Login"
                     onClick={handleCloseProfile}>
                     Cerrar sesión
                   </Button>

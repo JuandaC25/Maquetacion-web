@@ -10,7 +10,30 @@ const EquipoItem = ({ elemento, onVerClick }) => (
     <div className="card-top-section-xd02">
       <span className="equipment-category-xd06">{elemento.categoria}</span>
       <div className="icon-display-xd03">
-        <span role="img" aria-label="computadora">💻</span>
+        {elemento.categoria === "Portátil" ? (
+          <img
+            src={"/imagenes/portatil.png"}
+            alt="Portátil"
+            className="equipment-image-xd-img"
+            style={{ width: "120px", height: "120px", objectFit: "contain" }}
+          />
+        ) : elemento.categoria === "Equipo de Escritorio" ? (
+          <img
+            src={"/imagenes/EscritorioMesa.png"}
+            alt="Escritorio"
+            className="equipment-image-xd-img"
+            style={{ width: "120px", height: "120px", objectFit: "contain" }}
+          />
+        ) : elemento.categoria === "Televisor" ? (
+          <img
+            src={"/imagenes/Televisorr-solicitud.png"}
+            alt="Televisor"
+            className="equipment-image-xd-img"
+            style={{ width: "120px", height: "120px", objectFit: "contain" }}
+          />
+        ) : (
+          <span role="img" aria-label="equipo">💻</span>
+        )}
       </div>
     </div>
     <div className="card-bottom-section-xd04">
