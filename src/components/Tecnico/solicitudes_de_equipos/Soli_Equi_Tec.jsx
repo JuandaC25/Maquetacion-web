@@ -8,6 +8,7 @@ import ConfirmacionModal from './modal_soli_E/ConfrirmacionModal/ConfirmacionMod
 import Header_solicitud_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
 import { FaDesktop } from 'react-icons/fa';
 import Carousel from 'react-bootstrap/Carousel';
+import Dropdown from 'react-bootstrap/Dropdown';
 function Tecnico() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
@@ -28,6 +29,20 @@ return (
     <>
     
       <Header_solicitud_tec/>
+      <div className='dibsi'>
+         <input class="Cuadro_busc_port" placeholder="Buscar..." type="text"></input>
+         <Dropdown className='Drop_histo'>
+            <Dropdown.Toggle variant='outline-dark' id="dropdown-basic">
+            Categoria
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+            <Dropdown.Item href="#/action-1">Equipos escritorio</Dropdown.Item>
+            <Dropdown.Item href="#/action-2">Televisores</Dropdown.Item>
+            <Dropdown.Item href="#/action-3">Elementos</Dropdown.Item>
+            </Dropdown.Menu>
+         </Dropdown>
+      </div>
       <div className='conten'>
         <Carousel data-bs-theme="dark">
         <Carousel.Item>
