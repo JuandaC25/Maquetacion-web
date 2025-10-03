@@ -1,89 +1,258 @@
-.acomodeichion2 {
-  display: flex;
-  margin-top: 2rem;
+/* Contenedor principal para las fichas de televisores */
+.televisores-container {
+    max-width: 1270px;
+    margin-top: 0.5rem;
+    margin: auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(565px, 1fr));
+    gap: 30px;
+    justify-content: center;
 }
 
-.form-grid-01{
-  width: 800px;
-  margin-top: 4rem;
-  border-radius: 12px;    
-  margin-right: 10rem;                                                                                                                                                          
+/* Ficha individual de cada televisor */
+.ficha-tv {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    transition: all 0.4s ease, border 0.5s ease;
+    background: linear-gradient(135deg, #ffffff, #f0fdf9);
+    width: 100%;
+    border: 1px solid #dcdcdc;
 }
 
-.Reacomodaciontele{
-  width: 98.8%;
-  margin-top: 1rem;
+/* Efecto al pasar el cursor sobre la ficha */
+.ficha-tv:hover {
+    box-shadow: 0 15px 30px rgba(46, 204, 113, 0.4);
+    transform: translateY(-8px) scale(1.01);
 }
 
-.bton-cOnfirmacion {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 10px;
-  background-color: #2ecc71;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: background-color 0.3s ease;
-}
-.bton-submit:hover {
-  background-color: #27ae60;
+/* Estilo para la ficha seleccionada */
+.ficha-tv.seleccionado {
+    border: 5px solid #2ecc71;
+    background: #eaf7f2;
+    box-shadow: 0 15px 30px rgba(0, 255, 106, 0.4);
+    transform: translateY(-8px) scale(1.01);
 }
 
-
-.decoracionredondeadaaa {
-  position: relative;
-  display: inline-block;
+/* Sección de la imagen */
+.ficha-img {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.decoracionredondeadaaa::before {
-  content: "";
-  position: absolute;
-  top: 29%;
-  left: 34%;
-  width: 250px;
-  margin-left: -2rem;
-  height: 250px;
-  border-radius: 50%;
-  transform: translate(-40%, -50%);
-  z-index: 0;
-  animation: spinGear 8s linear infinite;
-
-  background: conic-gradient(
-    #02ff02,
-    #00AF00,
-    #02ff02,
-    #00AF00,
-    #02ff02
-  );
-
-  
-  -webkit-mask-image: radial-gradient(circle, transparent 35%, black 36%);
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: cover;
+.ficha-img img {
+    max-width: 200px;
+    border-radius: 15px;
 }
 
-@keyframes spinGear {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+/* Sección de la información */
+.ficha-info {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;
 }
 
-.imagen-Televisorr {
-  position: relative;
-  width: 62%;
-  margin-left: 15rem;
-  height: 92%;
-  margin-top: 1rem;
+.ficha-info .card-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
 }
 
+.ficha-info .card-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 15px;
+}
 
-.ajustTelevisores{
- margin-top: 10rem;
+.ficha-info .card-text {
+    font-size: 15px;
+    color: #555;
+}
+
+/* Botón "Seleccionar" y "Quitar" */
+.boton_televisores {
+    border: none;
+    margin-top: 25px; 
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #2ecc71; 
+    color: white;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+}
+
+.boton_televisores:hover {
+    background: #27ae60;
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(46, 204, 113, 0.4);
+}
+
+/* Botón de la ficha seleccionada */
+.ficha-tv.seleccionado .boton_televisores {
+    background: #e74c3c;
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+}
+
+.ficha-tv.seleccionado .boton_televisores:hover {
+    background: #c0392b;
+}
+
+/* Cuadro de especificaciones */
+.Cuadro_especificaciones-tv {
+    margin-top: 25px;
+    background: #f8f8f8;
+    border-radius: 12px;
+    border: none;
+    padding: 15px;
+    text-align: center;
+}
+
+.Cuadro_especificaciones-tv .card-header {
+    background: transparent;
+    font-weight: 600;
+    font-size: 18px;
+    color: #333;
+    border-bottom: 1px solid #cecdcd;
+    padding-bottom: 10px;
+}
+
+.Cuadro_especificaciones-tv .list-group-item {
+    background: transparent;
+    border: none;
+    color: #555;
+    font-size: 15px;
+    text-align: center;
+    padding: 8px 0;
+    transition: color 0.3s ease;
+}
+
+.Cuadro_especificaciones-tv .list-group-item:hover {
+    color: #2ecc71;
+}
+
+/* Clases de búsqueda y carrito */
+.Ajust-debusquedas {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.group-busqueda {
+    flex-grow: 1;
+    margin-right: 1px;
+}
+
+.input {
+    width: 20%;
+    margin-top: 1rem;
+    margin-left: 2rem;
+    height: 45px;
+    line-height: 30px;
+    padding: 0 1.5rem;
+    padding-left: 3rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 50px;
+    outline: none;
+    background-color: #ffffff;
+    color: #333;
+    transition: .5s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.input::placeholder {
+    color: #a7a7a7;
+}
+
+.input:focus, .input:hover {
+    outline: none;
+    border-color: #2ecc71;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+}
+
+.icon {
+    position: absolute;
+    left: 1rem;
+    color: #888;
+    width: 1rem;
+    height: 1rem;
+}
+
+.cartt-containerrr {
+    position: fixed;
+    margin-left: 93rem;
+    margin-top: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    transition: transform 0.5s ease;
+}
+
+.cartt-containerrr:hover {
+    transform: scale(1.05);
+}
+
+.cartt-containerrr .btn-info {
+    background-color: #ffffff;
+    border-color: #12d400;
+}
+
+.cuerpo-eqisele {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.modal-body .list-group-item {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 15px;
+    font-size: 1rem;
+    color: #333;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-body .list-group-item:hover {
+    transform: translateY(-2px);
+    gap: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.equipos-seleccionados-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.confirmar-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+    .ficha-tv {
+        flex-direction: column;
+        align-items: center;
+    }
+    .ficha-img img {
+        max-width: 150px;
+    }
 }
 
