@@ -86,6 +86,7 @@ function Datos_escritorio() {
 
     const [seleccionados, setSeleccionados] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [showCartModal, setShowCartModal] = useState(false); // Nuevo estado para el modal del carrito
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredEquipos, setFilteredEquipos] = useState(equiposData);
 
@@ -118,11 +119,16 @@ function Datos_escritorio() {
         setShowModal(false);
     };
 
+    const selectedEquiposDetails = seleccionados.map(id => {
+      return equiposData.find(equipo => equipo.id === id);
+    });
+
     return (
+        
         <div className="main-page-container">
-            <div className="group-busquedass">
+            <div className="Ajust-debusquedas">
+            <div className="group-busqueda">
                 <svg stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="icon">
-                    
                 </svg>
                 <input
                     className="input"
@@ -131,6 +137,14 @@ function Datos_escritorio() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
+            </div>
+            {seleccionados.length > 0 && (
+                <div className="cartt-container">
+                    <Button variant="info" onClick={() => setShowCartModal(true)}>
+                        🛒 Equipos ({seleccionados.length})
+                    </Button>
+                </div>
+            )}
             </div>
             <div className="equipos-container">
                 {filteredEquipos.map((equipo) => (
@@ -182,7 +196,7 @@ function Datos_escritorio() {
                 </div>
             )}
 
-            {/* Modal */}
+            {/* Modal de confirmación (Formulario) */}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar solicitud</Modal.Title>
@@ -200,7 +214,7 @@ function Datos_escritorio() {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Cantidad </Form.Label>
+                            <Form.Label>Cantidad</Form.Label>
                             <Form.Control type="number" min="1" />
                         </Form.Group>
 
@@ -210,7 +224,28 @@ function Datos_escritorio() {
                     </Form>
                 </Modal.Body>
             </Modal>
+            
+            {/* Nuevo Modal para mostrar los equipos del carrito */}
+            <Modal show={showCartModal} onHide={() => setShowCartModal(false)} >
+        <Modal.Header closeButton>
+         <Modal.Title>Equipos seleccionados</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <ListGroup className="equipos-seleccionados-list">
+            {selectedEquiposDetails.length > 0 ? (
+                selectedEquiposDetails.map((equipo) => (
+                    <ListGroup.Item key={equipo.id} className="equipo-item">
+                        {equipo.nombre} ({equipo.modelo})
+                    </ListGroup.Item>
+                ))
+            ) : (
+                <p>No hay equipos en el carrito.</p>
+            )}
+        </ListGroup>
+    </Modal.Body>
+</Modal>
         </div>
     );
 }
+
 export default Datos_escritorio;
