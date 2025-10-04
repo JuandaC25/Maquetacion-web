@@ -1,3 +1,9 @@
+
+
+
+
+
+
 .linea{
   display: flex;
   padding-top: 20px;
@@ -44,12 +50,14 @@
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
+    width: 16%;
+    height: 400px;
    
 
 }
 .icono{
    box-shadow: 0 2px 4px rgb(209, 207, 207);
-   height: 180px !important;
+   height: 200px !important;
    width: 90%;
    margin: auto;
    margin-bottom: 10px;

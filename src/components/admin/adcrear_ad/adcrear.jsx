@@ -5,7 +5,7 @@ import "./adcrear_ad.css";
 import Footer from '../../Footer/Footer.jsx';
 import HeaderCrear from '../header_crear/header_crear.jsx'; 
 
-const UserDetailsModal = ({ show, onHide, userDetails, onEliminar }) => {
+const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar }) => {
     if (!userDetails) return null;
 
     return (
@@ -49,9 +49,26 @@ const UserDetailsModal = ({ show, onHide, userDetails, onEliminar }) => {
                         <Form.Control type="text" value={userDetails.rol || ''} readOnly className="modern-form-control-xd118" />
                     </div>
                 </div>
+                <div className="detail-item-xd115">
+                    <label className="detail-label-xd116">Estado:</label>
+                    <div className="detail-value-display-xd117">
+                        <Form.Control 
+                            type="text" 
+                            value={userDetails.activo ? 'Activo' : 'Desactivado'} 
+                            readOnly 
+                            className={`modern-form-control-xd118 ${!userDetails.activo ? 'text-danger' : 'text-success'}`}
+                        />
+                    </div>
+                </div>
             </Modal.Body>
             <Modal.Footer className="modern-modal-footer-xd119">
-                <Button variant="danger" onClick={() => onEliminar(userDetails.id)} className="modal-action-button-xd120 delete-action-xd121">Eliminar</Button>
+                <Button 
+                    variant={userDetails.activo ? "warning" : "success"} 
+                    onClick={() => onDesactivar(userDetails.id, !userDetails.activo)} 
+                    className="modal-action-button-xd120"
+                >
+                    {userDetails.activo ? 'Desactivar' : 'Activar'}
+                </Button>
                 <Button variant="secondary" onClick={onHide} className="modal-action-button-xd120 close-action-xd122">Cerrar</Button>
             </Modal.Footer>
         </Modal>
@@ -59,7 +76,7 @@ const UserDetailsModal = ({ show, onHide, userDetails, onEliminar }) => {
 };
 
 const UserCard = ({ user, onVerClick }) => (
-    <div className="modern-equipment-card-xd101">
+    <div className={`modern-equipment-card-xd101 ${!user.activo ? 'user-desactivado-xd139' : ''}`}>
         <div className="card-img-section-xd102">
             <FaUserCircle />
         </div>
@@ -72,6 +89,7 @@ const UserCard = ({ user, onVerClick }) => (
             </div>
             <p className="card-user-name-xd108">{`${user.nombre} ${user.apellido}`}</p>
             <p className="card-user-id-xd109">ID: {user.id}</p>
+            {!user.activo && <span className="desactivado-badge-xd140">Desactivado</span>}
         </div>
         <button className="card-view-button-xd110" onClick={() => onVerClick(user)}>
             Ver Detalles
@@ -81,30 +99,33 @@ const UserCard = ({ user, onVerClick }) => (
 
 const UserManagementList = () => {
     const usersData = [
-        { id: '12345', correo: 'juan.perez@example.com', nombre: 'Juan', apellido: 'Pérez', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía' },
-        { id: '67890', correo: 'maria.gomez@example.com', nombre: 'María', apellido: 'Gómez', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería' },
-        { id: '13579', correo: 'carlos.lopez@example.com', nombre: 'Carlos', apellido: 'López', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía' },
-        { id: '24680', correo: 'ana.rodriguez@example.com', nombre: 'Ana', apellido: 'Rodríguez', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería' },
-        { id: '11223', correo: 'pedro.martinez@example.com', nombre: 'Pedro', apellido: 'Martínez', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía' },
-        { id: '44556', correo: 'laura.sanchez@example.com', nombre: 'Laura', apellido: 'Sánchez', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería' },
-        { id: '77889', correo: 'sofia.ramirez@example.com', nombre: 'Sofía', apellido: 'Ramírez', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía' },
-        { id: '99001', correo: 'miguel.torres@example.com', nombre: 'Miguel', apellido: 'Torres', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería' },
-        { id: '11111', correo: 'admin.user@example.com', nombre: 'Admin', apellido: 'User', rol: 'administrador', tipoDocumento: 'Cédula de Ciudadanía' },
+        { id: '12345', correo: 'juan.perez@example.com', nombre: 'Juan', apellido: 'Pérez', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía', activo: true },
+        { id: '67890', correo: 'maria.gomez@example.com', nombre: 'María', apellido: 'Gómez', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería', activo: true },
+        { id: '13579', correo: 'carlos.lopez@example.com', nombre: 'Carlos', apellido: 'López', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía', activo: true },
+        { id: '24680', correo: 'ana.rodriguez@example.com', nombre: 'Ana', apellido: 'Rodríguez', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería', activo: false },
+        { id: '11223', correo: 'pedro.martinez@example.com', nombre: 'Pedro', apellido: 'Martínez', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía', activo: true },
+        { id: '44556', correo: 'laura.sanchez@example.com', nombre: 'Laura', apellido: 'Sánchez', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería', activo: false },
+        { id: '77889', correo: 'sofia.ramirez@example.com', nombre: 'Sofía', apellido: 'Ramírez', rol: 'instructor', tipoDocumento: 'Cédula de Ciudadanía', activo: true },
+        { id: '99001', correo: 'miguel.torres@example.com', nombre: 'Miguel', apellido: 'Torres', rol: 'técnico', tipoDocumento: 'Tarjeta de Extranjería', activo: true },
+        { id: '11111', correo: 'admin.user@example.com', nombre: 'Admin', apellido: 'User', rol: 'administrador', tipoDocumento: 'Cédula de Ciudadanía', activo: true },
     ];
 
     const [showAddUserModal, setShowAddUserModal] = useState(false);
-    const [newUserData, setNewUserData] = useState({ id: '', correo: '', nombre: '', apellido: '', rol: '', tipoDocumento: '' });
+    const [newUserData, setNewUserData] = useState({ 
+        id: '', correo: '', nombre: '', apellido: '', rol: '', tipoDocumento: '', activo: true 
+    });
     const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [users, setUsers] = useState(usersData);
     const [emailError, setEmailError] = useState('');
     const [selectedRole, setSelectedRole] = useState('todos');
+    const [selectedEstado, setSelectedEstado] = useState('activos');
     const [searchTerm, setSearchTerm] = useState(''); 
 
     const handleShowAddUserModal = () => setShowAddUserModal(true);
     const handleCloseAddUserModal = () => {
         setShowAddUserModal(false);
-        setNewUserData({ id: '', correo: '', nombre: '', apellido: '', rol: '', tipoDocumento: '' });
+        setNewUserData({ id: '', correo: '', nombre: '', apellido: '', rol: '', tipoDocumento: '', activo: true });
         setEmailError('');
     };
 
@@ -128,7 +149,7 @@ const UserManagementList = () => {
             alert(emailError);
             return;
         }
-        setUsers(prev => [...prev, { ...newUserData }]);
+        setUsers(prev => [...prev, { ...newUserData, activo: true }]);
         handleCloseAddUserModal();
     };
 
@@ -142,9 +163,12 @@ const UserManagementList = () => {
         setSelectedUser(null);
     };
 
-    const handleDeleteUser = (id) => {
-        if (window.confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
-            setUsers(prev => prev.filter(user => user.id !== id));
+    const handleDesactivarUser = (id, nuevoEstado) => {
+        const accion = nuevoEstado ? 'activar' : 'desactivar';
+        if (window.confirm(`¿Estás seguro de que deseas ${accion} este usuario?`)) {
+            setUsers(prev => prev.map(user => 
+                user.id === id ? { ...user, activo: nuevoEstado } : user
+            ));
             handleCloseUserDetailsModal();
         }
     };
@@ -153,14 +177,22 @@ const UserManagementList = () => {
         setSelectedRole(role);
     };
 
+    const handleEstadoFilter = (estado) => {
+        setSelectedEstado(estado);
+    };
+
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
     };
 
     const filteredUsers = users.filter(user => {
         const roleMatch = selectedRole === 'todos' || user.rol === selectedRole;
+        const estadoMatch = 
+            selectedEstado === 'todos' || 
+            (selectedEstado === 'activos' && user.activo) || 
+            (selectedEstado === 'desactivados' && !user.activo);
         const idMatch = searchTerm === '' || user.id.includes(searchTerm);
-        return roleMatch && idMatch;
+        return roleMatch && estadoMatch && idMatch;
     });
 
     return (
@@ -173,7 +205,7 @@ const UserManagementList = () => {
                         <h5 className="inventory-main-title-xd129">Gestión de Usuarios</h5>
                         <div className="filters-row-xd130">
                             <Dropdown className="category-filter-dropdown-xd131">
-                                <Dropdown.Toggle variant="success" id="dropdown-basic" className="dropdown-toggle">
+                                <Dropdown.Toggle variant="success" id="dropdown-role" className="dropdown-toggle">
                                     {selectedRole === 'todos' ? 'Todos los roles' : selectedRole} <span className="dropdown-arrow-xd132">&#9660;</span>
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu className="category-dropdown-menu-xd133">
@@ -200,6 +232,33 @@ const UserManagementList = () => {
                                         active={selectedRole === 'técnico'}
                                     >
                                         Técnico
+                                    </Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+
+                            <Dropdown className="category-filter-dropdown-xd131">
+                                <Dropdown.Toggle variant="info" id="dropdown-estado" className="dropdown-toggle">
+                                    {selectedEstado === 'todos' ? 'Todos' : 
+                                     selectedEstado === 'activos' ? 'Activos' : 'Desactivados'} <span className="dropdown-arrow-xd132">&#9660;</span>
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu className="category-dropdown-menu-xd133">
+                                    <Dropdown.Item 
+                                        onClick={() => handleEstadoFilter('todos')}
+                                        active={selectedEstado === 'todos'}
+                                    >
+                                        Todos los usuarios
+                                    </Dropdown.Item>
+                                    <Dropdown.Item 
+                                        onClick={() => handleEstadoFilter('activos')}
+                                        active={selectedEstado === 'activos'}
+                                    >
+                                        Usuarios activos
+                                    </Dropdown.Item>
+                                    <Dropdown.Item 
+                                        onClick={() => handleEstadoFilter('desactivados')}
+                                        active={selectedEstado === 'desactivados'}
+                                    >
+                                        Usuarios desactivados
                                     </Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
@@ -345,7 +404,7 @@ const UserManagementList = () => {
                 show={showUserDetailsModal}
                 onHide={handleCloseUserDetailsModal}
                 userDetails={selectedUser}
-                onEliminar={handleDeleteUser}
+                onDesactivar={handleDesactivarUser}
             />
 
             <Footer />

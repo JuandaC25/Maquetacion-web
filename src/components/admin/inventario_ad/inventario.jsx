@@ -10,7 +10,30 @@ const EquipoItem = ({ elemento, onVerClick }) => (
     <div className="card-top-section-xd02">
       <span className="equipment-category-xd06">{elemento.categoria}</span>
       <div className="icon-display-xd03">
-        <span role="img" aria-label="computadora">💻</span>
+        {elemento.categoria === "Portátil" ? (
+          <img
+            src={"/imagenes/portatil.png"}
+            alt="Portátil"
+            className="equipment-image-xd-img"
+            style={{ width: "120px", height: "120px", objectFit: "contain" }}
+          />
+        ) : elemento.categoria === "Equipo de Escritorio" ? (
+          <img
+            src={"/imagenes/EscritorioMesa.png"}
+            alt="Escritorio"
+            className="equipment-image-xd-img"
+            style={{ width: "120px", height: "120px", objectFit: "contain" }}
+          />
+        ) : elemento.categoria === "Televisor" ? (
+          <img
+            src={"/imagenes/Televisorr-solicitud.png"}
+            alt="Televisor"
+            className="equipment-image-xd-img"
+            style={{ width: "120px", height: "120px", objectFit: "contain" }}
+          />
+        ) : (
+          <span role="img" aria-label="equipo">💻</span>
+        )}
       </div>
     </div>
     <div className="card-bottom-section-xd04">
@@ -72,6 +95,12 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
           <label className="detail-label-xd16">Observaciones:</label>
           <div className="detail-value-display-xd17">
             <Form.Control as="textarea" rows={3} value={detalles.observaciones} readOnly className="modern-form-control-xd18" />
+          </div>
+          <div className="detail-item-xd15">
+          <label className="detail-label-xd16">componentes:</label>
+          <div className="detail-value-display-xd17">
+            <Form.Control as="textarea" rows={3} value={detalles.componentes} readOnly className="modern-form-control-xd18" />
+            </div>
           </div>
         </div>
       </Modal.Body>
@@ -158,6 +187,20 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
             value={nuevoEquipo.observaciones}
             onChange={onChange}
             placeholder="Cualquier nota adicional sobre el equipo..."
+            className="modern-form-control-xd18"
+          />
+        </div>
+    </div>
+      <div className="detail-item-xd15">
+        <label className="detail-label-xd16">Componentes:</label>
+        <div className="detail-value-display-xd17">
+          <Form.Control
+            as="textarea"
+            rows={3}
+            id="componentes"
+            value={nuevoEquipo.componentes}
+            onChange={onChange}
+            placeholder="Características del equipo, especificaciones técnicas..."
             className="modern-form-control-xd18"
           />
         </div>
@@ -248,7 +291,7 @@ const Admin = () => {
   const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
   const [showNuevo, setShowNuevo] = useState(false);
   const [nuevoEquipo, setNuevoEquipo] = useState({
-    nombre: "", categoria: "", accesorios: "", serie: "", observaciones: ""
+    nombre: "", categoria: "", accesorios: "", serie: "", observaciones: "" , Componentes: ""
   });
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("Todas las Categorías");
   const [searchTerm, setSearchTerm] = useState("");
@@ -277,7 +320,7 @@ const Admin = () => {
   const openNuevo = () => setShowNuevo(true);
   const closeNuevo = () => {
     setShowNuevo(false);
-    setNuevoEquipo({ nombre: "", categoria: "", accesorios: "", serie: "", observaciones: "" });
+    setNuevoEquipo({ nombre: "", categoria: "", accesorios: "", serie: "", observaciones: "" , componenetes: "" });
   };
 
   const handleNuevoChange = (e) => {

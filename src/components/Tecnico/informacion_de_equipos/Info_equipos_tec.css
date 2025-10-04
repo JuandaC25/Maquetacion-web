@@ -46,14 +46,19 @@
     width: 20%;
     margin-top: 50px !important;
     margin-bottom: 50px !important;
-
+    border: 1px solid rgb(202, 202, 202);
     border-radius: 10px;
     text-align: center;
     margin: auto;
     padding-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
-    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.4) ;
+    
+    
+}
+.reportes:hover{
+    box-shadow:  4px 4px 4px 4px rgb(224, 248, 221) ;
+    
 }
 
 .izquierdita{
@@ -75,7 +80,7 @@ color: white;
 cursor: pointer !important;
 padding: 0 !important;
 border: none;
-background: rgb(9, 180, 26);
+background-color: rgb(9, 180, 26) !important;
 width: 40%;
 margin-bottom: 10px;
 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
@@ -85,14 +90,14 @@ margin: auto;
 margin-bottom: 10px;
 }
 .buttoninfo:hover{
-    background-color: rgb(27, 144, 27);
+    background-color: rgb(27, 144, 27) !important;
     color: white;
 }
 
 
 
 .carrusel{
-    height: 600px;
+    
 }
 .carrusel_1{
     display: flex;
@@ -111,3 +116,7 @@ margin-bottom: 10px;
     width: 100%;
     margin-top: 50px;
 }
+.dibsi{
+    display: flex;
+}
+.oter{}
