@@ -1,110 +1,61 @@
 import React, { useState, useEffect } from "react";
 import { Card, ListGroup, Button, Modal, Form } from "react-bootstrap";
 import "./Pedidos_escritorio.css";
+import ElementosService from "../../../api/ElementosApi";
 
 function Datos_escritorio() {
-    const equiposData = [
-        {
-            id: 1,
-            nombre: "HP ProDesk 400 G7",
-            modelo: "ProDesk 400",
-            descripcion: "Equipo ideal para oficina con buen rendimiento.",
-            especificaciones: [
-                "Procesador: Intel i5 10th Gen",
-                "RAM: 8 GB DDR4",
-                "Disco: 512 GB SSD",
-                "Pantalla: 24” Full HD",
-            ],
-            imagen: "/imagenes/EscritorioMesa.png",
-        },
-        {
-            id: 2,
-            nombre: "HP ProDesk 400 G7",
-            modelo: "ProDesk 400",
-            descripcion: "Equipo ideal para oficina con buen rendimiento.",
-            especificaciones: [
-                "Procesador: Intel i5 10th Gen",
-                "RAM: 8 GB DDR4",
-                "Disco: 512 GB SSD",
-                "Pantalla: 24” Full HD",
-            ],
-            imagen: "/imagenes/EscritorioMesa.png",
-        },
-        {
-            id: 3,
-            nombre: "HP ProDesk 400 G7",
-            modelo: "ProDesk 400",
-            descripcion: "Equipo ideal para oficina con buen rendimiento.",
-            especificaciones: [
-                "Procesador: Intel i5 10th Gen",
-                "RAM: 8 GB DDR4",
-                "Disco: 512 GB SSD",
-                "Pantalla: 24” Full HD",
-            ],
-            imagen: "/imagenes/EscritorioMesa.png",
-        },
-        {
-            id: 4,
-            nombre: "HP ProDesk 400 G7",
-            modelo: "ProDesk 400",
-            descripcion: "Equipo ideal para oficina con buen rendimiento.",
-            especificaciones: [
-                "Procesador: Intel i5 10th Gen",
-                "RAM: 8 GB DDR4",
-                "Disco: 512 GB SSD",
-                "Pantalla: 24” Full HD",
-            ],
-            imagen: "/imagenes/EscritorioMesa.png",
-        },
-        {
-            id: 5,
-            nombre: "Dell OptiPlex 7080",
-            modelo: "OptiPlex",
-            descripcion: "Diseñado para tareas pesadas y multitarea.",
-            especificaciones: [
-                "Procesador: Intel i7 11th Gen",
-                "RAM: 16 GB DDR4",
-                "Disco: 1 TB SSD",
-                "Gráfica: NVIDIA GTX 1650",
-            ],
-            imagen: "/imagenes/EscritorioMesa.png",
-        },
-        {
-            id: 6,
-            nombre: "Lenovo ThinkCentre M720",
-            modelo: "ThinkCentre",
-            descripcion: "Compacto y eficiente para oficinas pequeñas.",
-            especificaciones: [
-                "Procesador: Intel i3 9th Gen",
-                "RAM: 4 GB DDR4",
-                "Disco: 256 GB SSD",
-                "Pantalla: 21” Full HD",
-            ],
-            imagen: "/imagenes/EscritorioMesa.png",
-        },
-    ];
-
+    const [equiposApi, setEquiposApi] = useState([]);
+    const [filteredEquipos, setFilteredEquipos] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [seleccionados, setSeleccionados] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    const [showCartModal, setShowCartModal] = useState(false); // Nuevo estado para el modal del carrito
+    const [showCartModal, setShowCartModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-    const [filteredEquipos, setFilteredEquipos] = useState(equiposData);
+
+
+    //Consumo de la api :)
+useEffect(() => {
+    const fetchElementos = async () => {
+        try {
+            setIsLoading(true);
+            const data = await ElementosService.obtenerElementos();
+            
+            const transformedData = data.map(item => ({
+                id: item.id_elemen, 
+                nombre: item.nom_eleme,
+                descripcion: item.obse, 
+                especificaciones: (item.componen || "").split(',').map(s => s.trim()), 
+                imagen: "/imagenes/EscritorioMesa.png", 
+            }));
+            setEquiposApi(transformedData);
+            setFilteredEquipos(transformedData);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    fetchElementos();
+}, []);
+
+
+// Finalizacion del consumo de la api
 
     useEffect(() => {
-        const results = equiposData.filter((equipo) => {
+        const results = equiposApi.filter((equipo) => {
             const lowerSearchTerm = searchTerm.toLowerCase();
-
-            const nombreMatch = equipo.nombre.toLowerCase().includes(lowerSearchTerm);
-            const modeloMatch = equipo.modelo.toLowerCase().includes(lowerSearchTerm);
-            const descripcionMatch = equipo.descripcion.toLowerCase().includes(lowerSearchTerm);
-            const especificacionesMatch = equipo.especificaciones.some((esp) =>
-                esp.toLowerCase().includes(lowerSearchTerm)
+            return (
+                (equipo.nombre || "").toLowerCase().includes(lowerSearchTerm) ||
+                (equipo.modelo || "").toLowerCase().includes(lowerSearchTerm) ||
+                (equipo.descripcion || "").toLowerCase().includes(lowerSearchTerm) ||
+                (equipo.especificaciones || []).some((esp) => (esp || "").toLowerCase().includes(lowerSearchTerm))
             );
-
-            return nombreMatch || modeloMatch || descripcionMatch || especificacionesMatch;
         });
         setFilteredEquipos(results);
-    }, [searchTerm]);
+    }, [searchTerm, equiposApi]);
+
+
 
     const toggleSelect = (id) => {
         setSeleccionados((prev) =>
@@ -114,136 +65,113 @@ function Datos_escritorio() {
 
     const confirmarSolicitud = (e) => {
         e.preventDefault();
-        alert(`Solicitud confirmada ✅ 
-        Equipos seleccionados: ${seleccionados.join(", ")}`);
+        alert(`Solicitud confirmada ✅\nEquipos seleccionados: ${seleccionados.join(", ")}`);
         setShowModal(false);
     };
 
-    const selectedEquiposDetails = seleccionados.map(id => {
-      return equiposData.find(equipo => equipo.id === id);
-    });
+    const selectedEquiposDetails = seleccionados.map(id => filteredEquipos.find(equipo => equipo.id === id));
 
     return (
-        
         <div className="main-page-container">
             <div className="Ajust-debusquedas">
-            <div className="group-busqueda">
-                <svg stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="icon">
-                </svg>
-                <input
-                    className="input"
-                    type="text"
-                    placeholder="Buscar..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-            </div>
-            {seleccionados.length > 0 && (
-                <div className="cartt-container">
-                    <Button variant="info" onClick={() => setShowCartModal(true)}>
-                        🛒 Equipos ({seleccionados.length})
-                    </Button>
+                <div className="group-busqueda">
+                    <input
+                        className="input"
+                        type="text"
+                        placeholder="Buscar..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                 </div>
-            )}
+                {seleccionados.length > 0 && (
+                    <div className="cartt-container">
+                        <Button variant="info" onClick={() => setShowCartModal(true)}>
+                            🛒 Equipos ({seleccionados.length})
+                        </Button>
+                    </div>
+                )}
             </div>
             <div className="equipos-container">
-                {filteredEquipos.map((equipo) => (
-                    <Card
-                        key={equipo.id}
-                        className={`ficha-horizontal ${
-                            seleccionados.includes(equipo.id) ? "seleccionado" : ""
-                        }`}
-                    >
-                        <div className="ficha-img">
-                            <Card.Img src={equipo.imagen} alt={equipo.nombre} />
-                        </div>
-
-                        <div className="ficha-info">
-                            <Card.Body>
-                                <Card.Title>{equipo.nombre}</Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">
-                                    Modelo: {equipo.modelo}
-                                </Card.Subtitle>
-                                <Card.Text>{equipo.descripcion}</Card.Text>
-
-                                <Card className="Cuadro_especificacioness">
-                                    <Card.Header>Especificaciones</Card.Header>
-                                    <ListGroup variant="flush">
-                                        {equipo.especificaciones.map((esp, i) => (
-                                            <ListGroup.Item key={i}>{esp}</ListGroup.Item>
-                                        ))}
-                                    </ListGroup>
-                                </Card>
-
-                                <Button
-                                    className="boton_equiposescritorio"
-                                    variant={seleccionados.includes(equipo.id) ? "danger" : "primary"}
-                                    onClick={() => toggleSelect(equipo.id)}
-                                >
-                                    {seleccionados.includes(equipo.id) ? "Quitar" : "Seleccionar"}
-                                </Button>
-                            </Card.Body>
-                        </div>
-                    </Card>
-                ))}
+                {isLoading ? (
+                    <p className="loading-message">Cargando equipos...</p>
+                ) : error ? (
+                    <div className="alert alert-danger mt-3">{error}</div>
+                ) : filteredEquipos.length > 0 ? (
+                    filteredEquipos.map((equipo) => (
+                        <Card
+                            key={equipo.id}
+                            className={`ficha-horizontal ${seleccionados.includes(equipo.id) ? "seleccionado" : ""}`}
+                        >
+                            <div className="ficha-img">
+                                <Card.Img src={equipo.imagen} alt={equipo.nombre} />
+                            </div>
+                            <div className="ficha-info">
+                                <Card.Body>
+                                    <Card.Title>{equipo.nombre}</Card.Title>
+                                    <Card.Subtitle className="mb-2 text-muted">Modelo: {equipo.modelo}</Card.Subtitle>
+                                    <Card.Text>{equipo.descripcion}</Card.Text>
+                                    <Card className="Cuadro_especificacioness">
+                                        <Card.Header>Especificaciones</Card.Header>
+                                        <ListGroup variant="flush">
+                                            {equipo.especificaciones && equipo.especificaciones.map((esp, i) => (
+                                                <ListGroup.Item key={i}>{esp}</ListGroup.Item>
+                                            ))}
+                                        </ListGroup>
+                                    </Card>
+                                    <Button
+                                        className="boton_equiposescritorio"
+                                        variant={seleccionados.includes(equipo.id) ? "danger" : "primary"}
+                                        onClick={() => toggleSelect(equipo.id)}
+                                    >
+                                        {seleccionados.includes(equipo.id) ? "Quitar" : "Seleccionar"}
+                                    </Button>
+                                </Card.Body>
+                            </div>
+                        </Card>
+                    ))
+                ) : (
+                    <p className="no-results-message">No se encontraron equipos.</p>
+                )}
             </div>
-
+            
             {seleccionados.length > 0 && (
                 <div className="confirmar-container">
-                    <Button variant="success" onClick={() => setShowModal(true)}>
-                        Confirmar solicitud
-                    </Button>
+                    <Button variant="success" onClick={() => setShowModal(true)}>Confirmar solicitud</Button>
                 </div>
             )}
 
-            {/* Modal de confirmación (Formulario) */}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar solicitud</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={confirmarSolicitud}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Ambiente</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: Ambiente 301" />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Fecha de uso</Form.Label>
-                            <Form.Control type="date" />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Cantidad</Form.Label>
-                            <Form.Control type="number" min="1" />
-                        </Form.Group>
-
-                        <Button variant="primary" type="submit">
-                            Enviar
-                        </Button>
+                        <Form.Group className="mb-3"><Form.Label>Ambiente</Form.Label><Form.Control type="text" placeholder="Ej: Ambiente 301" /></Form.Group>
+                        <Form.Group className="mb-3"><Form.Label>Fecha de uso</Form.Label><Form.Control type="date" /></Form.Group>
+                        <Form.Group className="mb-3"><Form.Label>Cantidad</Form.Label><Form.Control type="number" min="1" /></Form.Group>
+                        <Button variant="primary" type="submit">Enviar</Button>
                     </Form>
                 </Modal.Body>
             </Modal>
             
-            {/* Nuevo Modal para mostrar los equipos del carrito */}
             <Modal show={showCartModal} onHide={() => setShowCartModal(false)} >
-        <Modal.Header closeButton>
-         <Modal.Title>Equipos seleccionados</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <ListGroup className="equipos-seleccionados-list">
-            {selectedEquiposDetails.length > 0 ? (
-                selectedEquiposDetails.map((equipo) => (
-                    <ListGroup.Item key={equipo.id} className="equipo-item">
-                        {equipo.nombre} ({equipo.modelo})
-                    </ListGroup.Item>
-                ))
-            ) : (
-                <p>No hay equipos en el carrito.</p>
-            )}
-        </ListGroup>
-    </Modal.Body>
-</Modal>
+                <Modal.Header closeButton>  
+                    <Modal.Title>Equipos seleccionados</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <ListGroup className="equipos-seleccionados-list">
+                        {selectedEquiposDetails.length > 0 ? (
+                            selectedEquiposDetails.map((equipo, index) => (
+                                <ListGroup.Item key={equipo ? equipo.id : index} className="equipo-item">
+                                    {equipo ? `${equipo.nombre} (${equipo.modelo})` : "Equipo no encontrado"}
+                                </ListGroup.Item>
+                            ))
+                        ) : (
+                            <p>No hay equipos en el carrito.</p>
+                        )}
+                    </ListGroup>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 }
