@@ -397,6 +397,7 @@
     border: 2px solid transparent;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background-color: #218838;
 }
 
 .delete-action-xd121 {
