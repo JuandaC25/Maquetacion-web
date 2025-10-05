@@ -384,7 +384,7 @@
 
 .view-details-button-xd08 {
   position: absolute;
-  top: 100px; /* Ajusta para que quede sobre la división */
+  top: 100px; 
   left: 50%;
   transform: translate(-50%, 10px);
   opacity: 0;
@@ -399,3 +399,8 @@
   z-index: 3;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
+.header-buttons-section {
+  display: flex;
+  gap: 10px;
+}
+

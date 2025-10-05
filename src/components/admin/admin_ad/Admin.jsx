@@ -1,28 +1,80 @@
-import React, { useState } from 'react';
-import { Button, Alert, Dropdown, Modal, Form } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Button, Alert, Dropdown, Modal, Form, Spinner } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import "./admin.css";
 import Footer from '../../Footer/Footer.jsx';
 import HeaderAd from '../header_admin/header_ad.jsx'; 
 import { Ticket } from 'react-bootstrap-icons';
+import { obtenertickets } from '../../../api/ticket.js';
 
 const Listaxd = ({ onVerClick }) => {
-  const [elementoSeleccionado,setElementoSeleccionado]=useState('Todos');
-  const tickets = [
-    { estado: 'En proceso', elemento:'Televisor', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-23',fecha2: '2025-04-23', modelo: 'HP ProBook', serie: 'ABC123', tecnico: 'Juan Pérez', ambiente: 'Oficina 101',ticket:'primer ticket',descripcion: 'El equipo presenta lentitud al iniciar.' } },
-    { estado: 'En proceso', elemento:'Portatil', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-22',fecha2: '2025-04-23', modelo: 'Dell Latitude', serie: 'DEF456', tecnico: 'María Gómez', ambiente: 'Laboratorio A',ticket:'segundo ticket ', descripcion: 'La pantalla parpadea intermitentemente.' } },
-    { estado: 'Pendiente', elemento:'Televisor', ticket: 'Tercer ticket', detalles: { fecha1: '2025-04-21',fecha2: '2025-04-23', modelo: 'Lenovo ThinkPad', serie: 'GHI789', tecnico: 'Carlos López', ambiente: 'Recepción',ticket:'tercer ticket', descripcion: 'No se puede conectar a la red Wi-Fi.' } },
-    { estado: 'Pendiente', elemento:'Equipo de escritorio', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-20',fecha2: '2025-04-23', modelo: 'HP ProDesk', serie: 'JKL012', tecnico: 'Ana Rodríguez', ambiente: 'Sala de juntas',ticket:'primer ticket ', descripcion: 'El teclado no responde.' } },
-    { estado: 'En proceso', elemento:'Televisor', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-19',fecha2: '2025-04-23', modelo: 'Dell OptiPlex', serie: 'MNO345', tecnico: 'Pedro Martínez', ambiente: 'Almacén',ticket:'primer ticket ', descripcion: 'Fallo en el disco duro.' } },
-    { estado: 'Pendiente', elemento:'Portatil', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-18',fecha2: '2025-04-23', modelo: 'Lenovo IdeaCentre', serie: 'PQR678', tecnico: 'Laura Sánchez', ambiente: 'Biblioteca',ticket:'segundo ticket ', descripcion: 'El mouse no funciona correctamente.' } },
-    { estado: 'Pendiente', elemento:'Televisor', ticket: 'Primer ticket', detalles: { fecha1: '2025-04-17',fecha2: '2025-04-23', modelo: 'HP All-in-One', serie: 'STU901', tecnico: 'Sofía Ramírez', ambiente: 'Cafetería',ticket:'primer ticket', descripcion: 'Problemas con el audio.' } },
-    { estado: 'En proceso', elemento:'Equipo de escritorio', ticket: 'Segundo ticket', detalles: { fecha1: '2025-04-16',fecha2: '2025-04-23', modelo: 'Dell Inspiron', serie: 'VWX234', tecnico: 'Miguel Torres', ambiente: 'Aula Magna',ticket:'segundo ticket', descripcion: 'La impresora no imprime.' } },
-  ];
-  const ticketsFiltrados = elementoSeleccionado === 'Todos' ? tickets : tickets.filter(ticket => ticket.elemento.toLowerCase() === elementoSeleccionado.toLowerCase());
+  const [elementoSeleccionado, setElementoSeleccionado] = useState('Todos');
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Función para cargar los tickets desde la API
+  const cargarTickets = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const datosTickets = await obtenertickets();
+      // Asegurarnos de que siempre sea un array, incluso si la API devuelve null/undefined
+      setTickets(Array.isArray(datosTickets) ? datosTickets : []);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error al cargar tickets:', err);
+      // Si hay error, establecer tickets como array vacío
+      setTickets([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Cargar tickets al montar el componente
+  useEffect(() => {
+    cargarTickets();
+  }, []);
+
+  // Asegurarnos de que tickets siempre sea un array para el filter
+  const ticketsArray = Array.isArray(tickets) ? tickets : [];
   
-  const handleselectElemento=(elemento)=>{
+  const ticketsFiltrados = elementoSeleccionado === 'Todos' 
+    ? ticketsArray 
+    : ticketsArray.filter(ticket => 
+        ticket && 
+        ticket.elemento && 
+        ticket.elemento.toLowerCase() === elementoSeleccionado.toLowerCase()
+      );
+  
+  const handleselectElemento = (elemento) => {
     setElementoSeleccionado(elemento);
   };
+
+  if (loading) {
+    return (
+      <div className="container-1201 d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Cargando tickets...</span>
+        </Spinner>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container-1201">
+        <Alert variant="danger">
+          <strong>Error:</strong> {error}
+          <div className="mt-2">
+            <Button variant="primary" onClick={cargarTickets}>
+              Reintentar
+            </Button>
+          </div>
+        </Alert>
+      </div>
+    );
+  }
 
   return (
     <div className="container-1201">
@@ -35,43 +87,57 @@ const Listaxd = ({ onVerClick }) => {
                 {elementoSeleccionado}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item onClick={()=>handleselectElemento('Todos')}>Todos</Dropdown.Item>
-                <Dropdown.Item onClick={()=>handleselectElemento('portatil')}>Portátiles</Dropdown.Item>
-                <Dropdown.Item onClick={()=> handleselectElemento('Equipo de escritorio')}>Equipos de escritorio</Dropdown.Item>
-                <Dropdown.Item onClick={()=>handleselectElemento('Televisor')}>Televisores</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleselectElemento('Todos')}>Todos</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleselectElemento('portatil')}>Portátiles</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleselectElemento('Equipo de escritorio')}>Equipos de escritorio</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleselectElemento('Televisor')}>Televisores</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </div>
           <div className='contador-ticket-1207'>
-            monstrando {ticketsFiltrados.length} tickets
-            de {tickets.length} tickets
+            mostrando {ticketsFiltrados.length} tickets
+            de {ticketsArray.length} tickets
           </div>
         </div>
       </Alert>
       
-      <div className="grid-1208">
-        {ticketsFiltrados.map((t, i) => (
-          <div className="card-ticket-1209" key={i}>
-            <div className="header-card-1210"></div>
-            <div className="info-card-1211">
-              <p className="title-card-1212">{t.ticket}</p>
-              <p className="elemento-card-1213">{t.elemento}</p>
-              <span className={`status-card-1214 ${t.estado.toLowerCase().replace(' ', '-')}`}>
-                {t.estado}
-              </span>
-            </div>
-<div className="footer-card-1215">
-  <button 
-    type="button" 
-    className="action-card-1216"
-    onClick={() => onVerClick(t.detalles)}
-  >
-    Ver
-  </button>
-</div>
+      {/* Mostrar mensaje cuando no hay tickets */}
+      {ticketsFiltrados.length === 0 && !loading && (
+        <div className="text-center py-5">
+          <div className="mb-3">
+            <Ticket size={48} className="text-muted" />
           </div>
-        ))}
-      </div>
+          <h5 className="text-muted">Libre de tickets</h5>
+          <p className="text-muted">No hay tickets para mostrar en este momento</p>
+        </div>
+      )}
+      
+      {/* Mostrar grid solo si hay tickets */}
+      {ticketsFiltrados.length > 0 && (
+        <div className="grid-1208">
+          {ticketsFiltrados.map((t, i) => (
+            <div className="card-ticket-1209" key={t?.id || i}>
+              <div className="header-card-1210"></div>
+              <div className="info-card-1211">
+                <p className="title-card-1212">{t?.ticket || `Ticket ${i + 1}`}</p>
+                <p className="elemento-card-1213">{t?.elemento || 'Sin elemento'}</p>
+                <span className={`status-card-1214 ${(t?.estado?.toLowerCase().replace(' ', '-') || 'pendiente')}`}>
+                  {t?.estado || 'Pendiente'}
+                </span>
+              </div>
+              <div className="footer-card-1215">
+                <button 
+                  type="button" 
+                  className="action-card-1216"
+                  onClick={() => onVerClick(t?.detalles || t)}
+                >
+                  Ver
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       
       <div className="pagination-1217">
         <div className="pagination-inner-1218">
@@ -99,7 +165,8 @@ const Admin = () => {
   const [modalDetalles, setModalDetalles] = useState(null);
 
   const handleVerClick = (detalles) => {
-    setModalDetalles(detalles);
+    // Asegurarnos de que siempre tengamos un objeto, incluso si detalles es null/undefined
+    setModalDetalles(detalles || {});
     setShowModal(true);
   };
 
@@ -120,52 +187,85 @@ const Admin = () => {
           <div className="form-row-1223">
             <label className="form-label-1224">Fecha de inicio:</label>
             <div className="form-control-wrap-1225">
-              <Form.Control type="text" value={modalDetalles?.fecha1 || ''} readOnly />
+              <Form.Control 
+                type="text" 
+                value={modalDetalles?.fecha1 || modalDetalles?.fechaInicio || 'No disponible'} 
+                readOnly 
+              />
             </div>
           </div>
           <div className="form-row-1223">
             <label className="form-label-1224">Fecha de fin:</label>
             <div className="form-control-wrap-1225">
-              <Form.Control type="text" value={modalDetalles?.fecha2 || ''} readOnly />
+              <Form.Control 
+                type="text" 
+                value={modalDetalles?.fecha2 || modalDetalles?.fechaFin || 'No disponible'} 
+                readOnly 
+              />
             </div>
           </div>
           <div className="form-row-1223">
             <label className="form-label-1224">Modelo de PC:</label>
             <div className="form-control-wrap-1225">
-              <Form.Control type="text" value={modalDetalles?.modelo || ''} readOnly />
+              <Form.Control 
+                type="text" 
+                value={modalDetalles?.modelo || 'No disponible'} 
+                readOnly 
+              />
             </div>
           </div>
 
           <div className="form-row-1223">
             <label className="form-label-1224">Número de serie:</label>
             <div className="form-control-wrap-1225">
-              <Form.Control type="text" value={modalDetalles?.serie || ''} readOnly />
+              <Form.Control 
+                type="text" 
+                value={modalDetalles?.serie || modalDetalles?.numeroSerie || 'No disponible'} 
+                readOnly 
+              />
             </div>
           </div>
 
           <div className="form-row-1223">
             <label className="form-label-1224">Nombre del técnico:</label>
             <div className="form-control-wrap-1225">
-              <Form.Control type="text" value={modalDetalles?.tecnico || ''} readOnly />
+              <Form.Control 
+                type="text" 
+                value={modalDetalles?.tecnico || modalDetalles?.tecnicoNombre || 'No disponible'} 
+                readOnly 
+              />
             </div>
           </div>
 
           <div className="form-row-1223">
             <label className="form-label-1224">Ambiente:</label>
             <div className="form-control-wrap-1225">
-              <Form.Control type="text" value={modalDetalles?.ambiente || ''} readOnly />
+              <Form.Control 
+                type="text" 
+                value={modalDetalles?.ambiente || 'No disponible'} 
+                readOnly 
+              />
             </div>
           </div>
           <div className="form-row-1223">
-            <label className="form-label-1224">ticket:</label>
+            <label className="form-label-1224">Ticket:</label>
             <div className="form-control-wrap-1225">
-              <Form.Control type="text" value={modalDetalles?.ticket || ''} readOnly />
+              <Form.Control 
+                type="text" 
+                value={modalDetalles?.ticket || modalDetalles?.id || 'No disponible'} 
+                readOnly 
+              />
             </div>
           </div>
           <div className="form-row-1223 mt-3">
             <label className="form-label-1224">Descripción:</label>
             <div className="form-control-wrap-1225">
-              <Form.Control as="textarea" rows={3} value={modalDetalles?.descripcion || ''} readOnly />
+              <Form.Control 
+                as="textarea" 
+                rows={3} 
+                value={modalDetalles?.descripcion || modalDetalles?.problema || 'No disponible'} 
+                readOnly 
+              />
             </div>
           </div>
         </Modal.Body>
