@@ -156,7 +156,7 @@ alt={accesorio.nom_acces || 'Accesorio'} /> </div>
   <div className="card-details">
     <h3 className="card-title"> {accesorio.nom_acces || accesorio.nombre || 'Sin Nombre'} </h3>
     <p className="card-info"> <strong>ID:</strong> {accesorio.id_accesorio} </p>
-    <p className="card-info"><strong>Serial:</strong> {accesorio.num_ser || accesorio.serial || 'N/A'} </p>
+    <p className="card-info"><strong>Numero de serie:</strong> {accesorio.num_ser || accesorio.serial || 'N/A'} </p>
       <div className="card-actions">
       {/*Boton para despues de darle añadir */}
         <button className="edit-btn" onClick={() => handleAnadir(accesorio)}disabled={estaSeleccionado} >{estaSeleccionado ? 'Añadido ✅' : 'Añadir'}
@@ -176,14 +176,7 @@ return (
 <div className='cuer-inve'>
   <div className='Elementos_arriba'>
     <div className="Grupo_buscador">
-      <input 
-        type="text" 
-        className="Cuadro_busc_port" 
-        placeholder="Buscar accesorio por nombre..."
-        value={terminoBusqueda}
-      onChange={handleBusqueda}
-      />
-  <svg className="btn_buscar" aria-hidden="true" viewBox="0 0 24 24">{/* ... path ... */}</svg>
+      <input type="text" className="Cuadro_busc_port" placeholder="Buscar accesorio por nombre..." value={terminoBusqueda} onChange={handleBusqueda}/>
 </div>
   <div className='Boton_campana' onClick={handleAbrirModal}>
     <button className="Boton_campanita">
