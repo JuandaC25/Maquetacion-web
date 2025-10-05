@@ -1,9 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, Alert, Dropdown, Modal, Form, InputGroup } from "react-bootstrap";
+import { Button, Alert, Dropdown, Modal, Form, InputGroup, Spinner } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 import "./inventario.css";
 import Footer from "../../Footer/Footer.jsx";
 import HeaderInv from "../header_inv/header_inv.jsx";
+import ElementosService from "../../../api/ElementosApi.js";
+import { 
+  obtenerAccesorios, 
+  crearAccesorio, 
+  eliminarAccesorio,
+  obtenerAccesorioPorId 
+} from "../../../api/AccesoriosApi.js";
 
 const EquipoItem = ({ elemento, onVerClick }) => (
   <div className="modern-equipment-card-xd01">
@@ -31,6 +38,13 @@ const EquipoItem = ({ elemento, onVerClick }) => (
             className="equipment-image-xd-img"
             style={{ width: "120px", height: "120px", objectFit: "contain" }}
           />
+        ) : elemento.categoria === "Accesorio" ? (
+          <img
+            src={"/imagenes/accesorios.png"}
+            alt="Accesorio"
+            className="equipment-image-xd-img"
+            style={{ width: "120px", height: "120px", objectFit: "contain" }}
+          />
         ) : (
           <span role="img" aria-label="equipo">💻</span>
         )}
@@ -39,6 +53,7 @@ const EquipoItem = ({ elemento, onVerClick }) => (
     <div className="card-bottom-section-xd04">
       <h5 className="equipment-title-xd05">{elemento.nombre}</h5>
       <p className="equipment-serie-xd07">Serie: {elemento.serie}</p>
+      {elemento.marca && <p className="equipment-marca-xd07">Marca: {elemento.marca}</p>}
     </div>
     <button className="view-details-button-xd08" onClick={() => onVerClick(elemento)}>
       Ver Detalles
@@ -46,25 +61,42 @@ const EquipoItem = ({ elemento, onVerClick }) => (
   </div>
 );
 
-const ListaEquipos = ({ elementos, onVerClick }) => (
-  <div className="equipment-list-grid-xd09">
-    {elementos.length > 0 ? (
-      elementos.map((el, index) => (
-        <EquipoItem key={index} elemento={el} onVerClick={onVerClick} />
-      ))
-    ) : (
-      <p className="empty-list-message-xd10">No se encontraron equipos con ese número de serie.</p>
-    )}
-  </div>
-);
+const ListaEquipos = ({ elementos, onVerClick, loading }) => {
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </Spinner>
+        <p>Cargando equipos y accesorios...</p>
+      </div>
+    );
+  }
 
-const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
+  return (
+    <div className="equipment-list-grid-xd09">
+      {elementos.length > 0 ? (
+        elementos.map((el, index) => (
+          <EquipoItem key={index} elemento={el} onVerClick={onVerClick} />
+        ))
+      ) : (
+        <p className="empty-list-message-xd10">No se encontraron equipos ni accesorios.</p>
+      )}
+    </div>
+  );
+};
+
+const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando }) => {
   if (!detalles) return null;
+
+  const esAccesorio = detalles.tipo === 'accesorio';
 
   return (
     <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog-xd11">
       <Modal.Header closeButton className="modern-modal-header-xd12">
-        <Modal.Title className="modern-modal-title-xd13">Detalles del Equipo</Modal.Title>
+        <Modal.Title className="modern-modal-title-xd13">
+          Detalles del {esAccesorio ? "Accesorio" : "Equipo"}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body className="modern-modal-body-xd14">
         <div className="detail-item-xd15">
@@ -73,40 +105,59 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
             <Form.Control type="text" value={detalles.nombre} readOnly className="modern-form-control-xd18" />
           </div>
         </div>
-        <div className="detail-item-xd15">
-          <label className="detail-label-xd16">Categoría:</label>
-          <div className="detail-value-display-xd17">
-            <Form.Control type="text" value={detalles.categoria} readOnly className="modern-form-control-xd18" />
-          </div>
-        </div>
-        <div className="detail-item-xd15">
-          <label className="detail-label-xd16">Accesorios:</label>
-          <div className="detail-value-display-xd17">
-            <Form.Control type="text" value={detalles.accesorios} readOnly className="modern-form-control-xd18" />
-          </div>
-        </div>
-        <div className="detail-item-xd15">
-          <label className="detail-label-xd16">Número de serie:</label>
-          <div className="detail-value-display-xd17">
-            <Form.Control type="text" value={detalles.serie} readOnly className="modern-form-control-xd18" />
-          </div>
-        </div>
-        <div className="detail-item-xd15">
-          <label className="detail-label-xd16">Observaciones:</label>
-          <div className="detail-value-display-xd17">
-            <Form.Control as="textarea" rows={3} value={detalles.observaciones} readOnly className="modern-form-control-xd18" />
-          </div>
-          <div className="detail-item-xd15">
-          <label className="detail-label-xd16">componentes:</label>
-          <div className="detail-value-display-xd17">
-            <Form.Control as="textarea" rows={3} value={detalles.componentes} readOnly className="modern-form-control-xd18" />
+        
+        {esAccesorio ? (
+          <>
+            <div className="detail-item-xd15">
+              <label className="detail-label-xd16">Marca:</label>
+              <div className="detail-value-display-xd17">
+                <Form.Control type="text" value={detalles.marca} readOnly className="modern-form-control-xd18" />
+              </div>
             </div>
-          </div>
-        </div>
+            <div className="detail-item-xd15">
+              <label className="detail-label-xd16">Número de serie:</label>
+              <div className="detail-value-display-xd17">
+                <Form.Control type="text" value={detalles.serie} readOnly className="modern-form-control-xd18" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="detail-item-xd15">
+              <label className="detail-label-xd16">Categoría:</label>
+              <div className="detail-value-display-xd17">
+                <Form.Control type="text" value={detalles.categoria} readOnly className="modern-form-control-xd18" />
+              </div>
+            </div>
+            <div className="detail-item-xd15">
+              <label className="detail-label-xd16">Número de serie:</label>
+              <div className="detail-value-display-xd17">
+                <Form.Control type="text" value={detalles.serie} readOnly className="modern-form-control-xd18" />
+              </div>
+            </div>
+            <div className="detail-item-xd15">
+              <label className="detail-label-xd16">Observaciones:</label>
+              <div className="detail-value-display-xd17">
+                <Form.Control as="textarea" rows={3} value={detalles.observaciones || "N/A"} readOnly className="modern-form-control-xd18" />
+              </div>
+            </div>
+            <div className="detail-item-xd15">
+              <label className="detail-label-xd16">Componentes:</label>
+              <div className="detail-value-display-xd17">
+                <Form.Control as="textarea" rows={3} value={detalles.componentes || "N/A"} readOnly className="modern-form-control-xd18" />
+              </div>
+            </div>
+          </>
+        )}
       </Modal.Body>
       <Modal.Footer className="modern-modal-footer-xd19">
-        <Button variant="danger" onClick={() => onEliminar(detalles.nombre)} className="modal-action-button-xd20 delete-action-xd21">
-          Eliminar
+        <Button 
+          variant="danger" 
+          onClick={() => onEliminar(detalles.id, esAccesorio)} 
+          disabled={eliminando}
+          className="modal-action-button-xd20 delete-action-xd21"
+        >
+          {eliminando ? <Spinner animation="border" size="sm" /> : "Eliminar"}
         </Button>
         <Button variant="secondary" onClick={onHide} className="modal-action-button-xd20 close-action-xd22">
           Cerrar
@@ -116,7 +167,7 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar }) => {
   );
 };
 
-const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => (
+const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit, guardando }) => (
   <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog-xd11">
     <Modal.Header closeButton className="modern-modal-header-xd12">
       <Modal.Title className="modern-modal-title-xd13">Añadir Nuevo Equipo</Modal.Title>
@@ -152,19 +203,6 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
         </div>
       </div>
       <div className="detail-item-xd15">
-        <label className="detail-label-xd16">Accesorios:</label>
-        <div className="detail-value-display-xd17">
-          <Form.Control
-            type="text"
-            id="accesorios"
-            value={nuevoEquipo.accesorios}
-            onChange={onChange}
-            placeholder="Ej. Cargador, Mouse inalámbrico"
-            className="modern-form-control-xd18"
-          />
-        </div>
-      </div>
-      <div className="detail-item-xd15">
         <label className="detail-label-xd16">Número de serie:</label>
         <div className="detail-value-display-xd17">
           <Form.Control
@@ -190,7 +228,7 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
             className="modern-form-control-xd18"
           />
         </div>
-    </div>
+      </div>
       <div className="detail-item-xd15">
         <label className="detail-label-xd16">Componentes:</label>
         <div className="detail-value-display-xd17">
@@ -210,97 +248,197 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit }) => 
       <Button variant="secondary" onClick={onHide} className="modal-action-button-xd20 cancel-action-xd23">
         Cancelar
       </Button>
-      <Button variant="success" onClick={onSubmit} className="modal-action-button-xd20 add-action-xd24">
-        Añadir Equipo
+      <Button 
+        variant="success" 
+        onClick={onSubmit} 
+        disabled={guardando}
+        className="modal-action-button-xd20 add-action-xd24"
+      >
+        {guardando ? <Spinner animation="border" size="sm" /> : "Añadir Equipo"}
+      </Button>
+    </Modal.Footer>
+  </Modal>
+);
+
+const NuevoAccesorioModal = ({ show, onHide, nuevoAccesorio, onChange, onSubmit, guardando }) => (
+  <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog-xd11">
+    <Modal.Header closeButton className="modern-modal-header-xd12">
+      <Modal.Title className="modern-modal-title-xd13">Añadir Nuevo Accesorio</Modal.Title>
+    </Modal.Header>
+    <Modal.Body className="modern-modal-body-xd14">
+      <div className="detail-item-xd15">
+        <label className="detail-label-xd16">Nombre del accesorio:</label>
+        <div className="detail-value-display-xd17">
+          <Form.Control
+            type="text"
+            id="nombre"
+            value={nuevoAccesorio.nombre}
+            onChange={onChange}
+            placeholder="Ej. Mouse inalámbrico, Cargador, Teclado"
+            className="modern-form-control-xd18"
+          />
+        </div>
+      </div>
+      <div className="detail-item-xd15">
+        <label className="detail-label-xd16">Marca:</label>
+        <div className="detail-value-display-xd17">
+          <Form.Control
+            type="text"
+            id="marca"
+            value={nuevoAccesorio.marca}
+            onChange={onChange}
+            placeholder="Ej. Logitech, Dell, HP"
+            className="modern-form-control-xd18"
+          />
+        </div>
+      </div>
+      <div className="detail-item-xd15">
+        <label className="detail-label-xd16">Número de serie:</label>
+        <div className="detail-value-display-xd17">
+          <Form.Control
+            type="text"
+            id="serie"
+            value={nuevoAccesorio.serie}
+            onChange={onChange}
+            placeholder="Ej. ABC123XYZ789"
+            className="modern-form-control-xd18"
+          />
+        </div>
+      </div>
+    </Modal.Body>
+    <Modal.Footer className="modern-modal-footer-xd19">
+      <Button variant="secondary" onClick={onHide} className="modal-action-button-xd20 cancel-action-xd23">
+        Cancelar
+      </Button>
+      <Button 
+        variant="success" 
+        onClick={onSubmit} 
+        disabled={guardando}
+        className="modal-action-button-xd20 add-action-xd24"
+      >
+        {guardando ? <Spinner animation="border" size="sm" /> : "Añadir Accesorio"}
       </Button>
     </Modal.Footer>
   </Modal>
 );
 
 const Admin = () => {
-  const [allElementosInventario] = useState([
-    {
-      nombre: "Laptop Dell Latitude 7420",
-      categoria: "Portátil",
-      accesorios: "Cargador, Mouse inalámbrico Logitech MX Master 3",
-      serie: "DLT7420-ABCD-1234",
-      observaciones: "Asignado al departamento de IT. Batería con 85% de capacidad."
-    },
-    {
-      nombre: "PC de Escritorio HP EliteDesk 800 G6",
-      categoria: "Equipo de Escritorio",
-      accesorios: "Teclado, Mouse, Monitor HP E24 G4",
-      serie: "HPE800G6-EFGH-5678",
-      observaciones: "Ubicado en la oficina 305. Procesador Intel i7."
-    },
-    {
-      nombre: "Televisor Samsung Smart TV 55 Pulgadas",
-      categoria: "Televisor",
-      accesorios: "Control remoto, Cable de poder",
-      serie: "SAMSG55-TV-001",
-      observaciones: "Ubicado en la sala de reuniones principal."
-    },
-    {
-      nombre: "Impresora Multifuncional Epson EcoTank L3150",
-      categoria: "Equipo de Escritorio", 
-      accesorios: "Cable de poder, Cable USB",
-      serie: "ETL3150-IJKL-9012",
-      observaciones: "Color, con sistema de tanque de tinta. Ideal para alto volumen."
-    },
-    {
-      nombre: "Monitor LG UltraWide 29UM69G-B",
-      categoria: "Televisor", 
-      accesorios: "Cable HDMI, Cable de poder",
-      serie: "LG29UM-MNOP-3456",
-      observaciones: "Monitor de 29 pulgadas, ideal para diseño gráfico."
-    },
-    {
-      nombre: "Proyector Epson PowerLite 1780W",
-      categoria: "Portátil", 
-      accesorios: "Control remoto, Cable HDMI, Estuche de transporte",
-      serie: "EP1780W-QRST-7890",
-      observaciones: "Portátil, para presentaciones en salas de reuniones pequeñas."
-    },
-    {
-      nombre: "Servidor Dell PowerEdge R640",
-      categoria: "Equipo de Escritorio", 
-      accesorios: "Cables de red, Rieles para rack",
-      serie: "DPR640-UVWX-1122",
-      observaciones: "Ubicado en el centro de datos. 64GB RAM, 2TB SSD."
-    },
-    {
-      nombre: "Teléfono IP Cisco SPA504G",
-      categoria: "Portátil",
-      accesorios: "Cable Ethernet, Base de soporte",
-      serie: "CSISPA504G-YZAB-3344",
-      observaciones: "Teléfono de oficina con 4 líneas programables."
-    },
-    {
-      nombre: "Disco Duro Externo Seagate Expansion 4TB",
-      categoria: "Portátil",
-      accesorios: "Cable USB 3.0",
-      serie: "SGEXP4TB-CDEF-5566",
-      observaciones: "Utilizado para copias de seguridad de datos críticos."
-    }
-  ]);
+  const [elementosInventario, setElementosInventario] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [guardando, setGuardando] = useState(false);
+  const [guardandoAccesorio, setGuardandoAccesorio] = useState(false);
+  const [eliminando, setEliminando] = useState(false);
+  const [error, setError] = useState(null);
 
-  const allowedCategories = ["Portátil", "Equipo de Escritorio", "Televisor"];
-  const [elementosInventario, setElementosInventario] = useState(allElementosInventario);
-
+  const allowedCategories = ["Portátil", "Equipo de Escritorio", "Televisor", "Accesorio"];
+  
   const [showDetalles, setShowDetalles] = useState(false);
   const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
   const [showNuevo, setShowNuevo] = useState(false);
+  const [showNuevoAccesorio, setShowNuevoAccesorio] = useState(false);
   const [nuevoEquipo, setNuevoEquipo] = useState({
-    nombre: "", categoria: "", accesorios: "", serie: "", observaciones: "" , Componentes: ""
+    nombre: "", 
+    categoria: "", 
+    serie: "", 
+    observaciones: "",
+    componentes: ""
+  });
+  const [nuevoAccesorio, setNuevoAccesorio] = useState({
+    nombre: "",
+    marca: "",
+    serie: ""
   });
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("Todas las Categorías");
   const [searchTerm, setSearchTerm] = useState("");
 
   const bottomRef = useRef(null);
 
-  const openDetalles = (equipo) => {
-    setEquipoSeleccionado(equipo);
-    setShowDetalles(true);
+  const obtenerIdCategoria = (categoria) => {
+    const categorias = {
+      "Portátil": 1,
+      "Equipo de Escritorio": 2,
+      "Televisor": 3
+    };
+    return categorias[categoria] || 1;
+  };
+
+  useEffect(() => {
+    cargarTodo();
+  }, []);
+
+  const cargarTodo = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const [elementos, accesorios] = await Promise.all([
+        ElementosService.obtenerElementos(),
+        obtenerAccesorios()
+      ]);
+      
+      const elementosNormalizados = elementos.map(el => ({
+        id: el.id_elemen,
+        nombre: el.nom_eleme,
+        categoria: el.tip_catg || "Sin categoría",
+        serie: el.num_seri?.toString() || "",
+        observaciones: el.obse,
+        componentes: el.componen,
+        tipo: 'elemento'
+      }));
+      
+      const accesoriosNormalizados = accesorios.map(acc => ({
+        id: acc.id_accesorio,
+        nombre: acc.nom_acces,
+        marca: acc.marc,
+        serie: acc.num_ser?.toString() || "",
+        categoria: "Accesorio",
+        tipo: 'accesorio'
+      }));
+      
+      const todosLosItems = [...elementosNormalizados, ...accesoriosNormalizados];
+      setElementosInventario(todosLosItems);
+      
+    } catch (error) {
+      setError('Error al cargar los datos del inventario: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openDetalles = async (item) => {
+    try {
+      let detallesCompletos;
+      
+      if (item.tipo === 'accesorio') {
+        detallesCompletos = await obtenerAccesorioPorId(item.id);
+        detallesCompletos = {
+          ...detallesCompletos,
+          id: detallesCompletos.id_accesorio,
+          nombre: detallesCompletos.nom_acces,
+          marca: detallesCompletos.marc,
+          serie: detallesCompletos.num_ser?.toString() || "",
+          categoria: "Accesorio",
+          tipo: 'accesorio'
+        };
+      } else {
+        detallesCompletos = await ElementosService.obtenerPorId(item.id);
+        detallesCompletos = {
+          ...detallesCompletos,
+          id: detallesCompletos.id_elemen,
+          nombre: detallesCompletos.nom_eleme,
+          categoria: detallesCompletos.tip_catg,
+          serie: detallesCompletos.num_seri?.toString() || "",
+          observaciones: detallesCompletos.obse,
+          componentes: detallesCompletos.componen,
+          tipo: 'elemento'
+        };
+      }
+      
+      setEquipoSeleccionado(detallesCompletos);
+      setShowDetalles(true);
+    } catch (error) {
+      setError('Error al cargar los detalles: ' + error.message);
+    }
   };
 
   const closeDetalles = () => {
@@ -308,19 +446,53 @@ const Admin = () => {
     setEquipoSeleccionado(null);
   };
 
-  const eliminarEquipo = (nombre) => {
-    const isConfirmed = window.confirm(`¿Estás seguro de que quieres eliminar el equipo "${nombre}"?`);
-    if (isConfirmed) {
-      const updatedElements = allElementosInventario.filter((e) => e.nombre !== nombre);
-      setElementosInventario(updatedElements);
+  const eliminarItem = async (id, esAccesorio = false) => {
+    const tipo = esAccesorio ? "accesorio" : "equipo";
+    const isConfirmed = window.confirm(`¿Estás seguro de que quieres eliminar este ${tipo}?`);
+    if (!isConfirmed) return;
+
+    try {
+      setEliminando(true);
+      
+      if (esAccesorio) {
+        await eliminarAccesorio(id);
+      } else {
+        await ElementosService.eliminarElemento(id);
+      }
+      
+      setElementosInventario(prev => prev.filter(item => item.id !== id));
       closeDetalles();
+      
+      alert(`${esAccesorio ? 'Accesorio' : 'Equipo'} eliminado correctamente`);
+      
+    } catch (error) {
+      setError(`Error al eliminar el ${tipo}: ` + error.message);
+    } finally {
+      setEliminando(false);
     }
   };
 
   const openNuevo = () => setShowNuevo(true);
+  const openNuevoAccesorio = () => setShowNuevoAccesorio(true);
+  
   const closeNuevo = () => {
     setShowNuevo(false);
-    setNuevoEquipo({ nombre: "", categoria: "", accesorios: "", serie: "", observaciones: "" , componenetes: "" });
+    setNuevoEquipo({ 
+      nombre: "", 
+      categoria: "", 
+      serie: "", 
+      observaciones: "",
+      componentes: "" 
+    });
+  };
+
+  const closeNuevoAccesorio = () => {
+    setShowNuevoAccesorio(false);
+    setNuevoAccesorio({
+      nombre: "",
+      marca: "",
+      serie: ""
+    });
   };
 
   const handleNuevoChange = (e) => {
@@ -328,51 +500,114 @@ const Admin = () => {
     setNuevoEquipo((prev) => ({ ...prev, [id]: value }));
   };
 
-  const submitNuevo = () => {
+  const handleNuevoAccesorioChange = (e) => {
+    const { id, value } = e.target;
+    setNuevoAccesorio((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const submitNuevo = async () => {
     if (!nuevoEquipo.nombre || !nuevoEquipo.categoria || !nuevoEquipo.serie) {
-      alert("Por favor, completa los campos obligatorios.");
+      alert("Por favor, completa los campos obligatorios: Nombre, Categoría y Número de serie.");
       return;
     }
-    const updatedElements = [...allElementosInventario, nuevoEquipo];
-    setElementosInventario(updatedElements);
-    closeNuevo();
+
+    try {
+      setGuardando(true);
+      
+      const elementoParaBackend = {
+        nom_eleme: nuevoEquipo.nombre,
+        num_seri: parseInt(nuevoEquipo.serie),
+        obse: nuevoEquipo.observaciones || "",
+        componen: nuevoEquipo.componentes || "",
+        est_elem: 1,
+        id_categoria: obtenerIdCategoria(nuevoEquipo.categoria)
+      };
+      
+      const elementoCreado = await ElementosService.crearElemento(elementoParaBackend);
+      
+      const elementoNormalizado = {
+        id: elementoCreado.id_elemen,
+        nombre: elementoCreado.nom_eleme,
+        categoria: nuevoEquipo.categoria,
+        serie: nuevoEquipo.serie,
+        observaciones: nuevoEquipo.observaciones,
+        componentes: nuevoEquipo.componentes,
+        tipo: 'elemento'
+      };
+      
+      setElementosInventario(prev => [...prev, elementoNormalizado]);
+      closeNuevo();
+      alert('Equipo añadido correctamente');
+      
+    } catch (error) {
+      if (error.message.includes('el elemento ya existe') || error.message.includes('Conflicto')) {
+        alert('Error: Ya existe un equipo con ese número de serie');
+      } else {
+        alert('Error al crear el equipo: ' + error.message);
+      }
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  const submitNuevoAccesorio = async () => {
+    if (!nuevoAccesorio.nombre || !nuevoAccesorio.marca || !nuevoAccesorio.serie) {
+      alert("Por favor, completa los campos obligatorios: Nombre del accesorio, Marca y Número de serie.");
+      return;
+    }
+
+    try {
+      setGuardandoAccesorio(true);
+      
+      const accesorioParaBackend = {
+        nom_acces: nuevoAccesorio.nombre,
+        marc: nuevoAccesorio.marca,
+        num_ser: parseInt(nuevoAccesorio.serie)
+      };
+      
+      const accesorioCreado = await crearAccesorio(accesorioParaBackend);
+      
+      const accesorioNormalizado = {
+        id: accesorioCreado.id_accesorio,
+        nombre: accesorioCreado.nom_acces,
+        marca: accesorioCreado.marc,
+        serie: accesorioCreado.num_ser?.toString() || "",
+        categoria: "Accesorio",
+        tipo: 'accesorio'
+      };
+      
+      setElementosInventario(prev => [...prev, accesorioNormalizado]);
+      closeNuevoAccesorio();
+      alert('Accesorio añadido correctamente');
+      
+    } catch (error) {
+      if (error.message.includes('Conflicto')) {
+        alert('Error: Ya existe un accesorio con ese número de serie');
+      } else {
+        alert('Error al crear el accesorio: ' + error.message);
+      }
+    } finally {
+      setGuardandoAccesorio(false);
+    }
   };
 
   const handleCategoryFilter = (category) => {
     setSelectedCategoryFilter(category);
-    setSearchTerm(""); 
-    
-    let filteredElements = allElementosInventario;
-    
-    if (category !== "Todas las Categorías") {
-      filteredElements = filteredElements.filter(item => item.categoria === category);
-    }
-    
-    setElementosInventario(filteredElements);
   };
 
   const handleSearch = (e) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-    
-    if (term === "") {
-
-      handleCategoryFilter(selectedCategoryFilter);
-      return;
-    }
-    
-    let filteredElements = allElementosInventario;
-
-    if (selectedCategoryFilter !== "Todas las Categorías") {
-      filteredElements = filteredElements.filter(item => item.categoria === selectedCategoryFilter);
-    }
-
-    filteredElements = filteredElements.filter(item => 
-      item.serie.toLowerCase().includes(term.toLowerCase())
-    );
-    
-    setElementosInventario(filteredElements);
+    setSearchTerm(e.target.value);
   };
+
+  const elementosFiltrados = elementosInventario.filter(elemento => {
+    const coincideCategoria = selectedCategoryFilter === "Todas las Categorías" || 
+                             elemento.categoria === selectedCategoryFilter;
+    const coincideBusqueda = searchTerm === "" || 
+                           elemento.serie.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           elemento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (elemento.marca && elemento.marca.toLowerCase().includes(searchTerm.toLowerCase()));
+    return coincideCategoria && coincideBusqueda;
+  });
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -381,10 +616,17 @@ const Admin = () => {
   return (
     <div className="inventory-app-container-xd25">
       <HeaderInv />
+      
+      {error && (
+        <Alert variant="danger" dismissible onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+      
       <Alert variant="info" className="inventory-header-bar-xd26">
         <div className="header-bar-content-xd27">
           <div className="header-left-section-xd28">
-            <h1 className="inventory-main-title-xd29">Inventario de Equipos</h1>
+            <h1 className="inventory-main-title-xd29">Inventario de Equipos y Accesorios</h1>
             <div className="filters-row-xd30">
               <Dropdown className="category-filter-dropdown-xd31">
                 <Dropdown.Toggle variant="light" id="dropdown-category">
@@ -406,20 +648,32 @@ const Admin = () => {
                 </InputGroup.Text>
                 <Form.Control
                   type="text"
-                  placeholder="Buscar por número de serie..."
+                  placeholder="Buscar por número de serie, nombre o marca..."
                   value={searchTerm}
                   onChange={handleSearch}
                 />
               </InputGroup>
             </div>
           </div>
-          <Button className="add-new-equipment-button-xd35" onClick={openNuevo}>
-            <span role="img" aria-label="añadir">➕</span> Añadir Equipo
-          </Button>
+          <div className="header-buttons-section">
+            <Button className="add-new-equipment-button-xd35" onClick={openNuevo}>
+              <span role="img" aria-label="añadir">➕</span> Añadir Equipo
+            </Button>
+            <Button className="add-new-equipment-button-xd35 add-accessory-button" onClick={openNuevoAccesorio}>
+              <span role="img" aria-label="añadir">🎧</span> Añadir Accesorio
+            </Button>
+          </div>
         </div>
       </Alert>
-      <ListaEquipos elementos={elementosInventario} onVerClick={openDetalles} />
+      
+      <ListaEquipos 
+        elementos={elementosFiltrados} 
+        onVerClick={openDetalles} 
+        loading={loading}
+      />
+      
       <div ref={bottomRef} />
+      
       <div className="pagination-1215-xd36">
         <div className="pagination-inner-1216-xd37">
           <label>
@@ -438,8 +692,32 @@ const Admin = () => {
         </div>
       </div>
 
-      <DetallesEquipoModal show={showDetalles} onHide={closeDetalles} detalles={equipoSeleccionado} onEliminar={eliminarEquipo} />
-      <NuevoEquipoModal show={showNuevo} onHide={closeNuevo} nuevoEquipo={nuevoEquipo} onChange={handleNuevoChange} onSubmit={submitNuevo} />
+      <DetallesEquipoModal 
+        show={showDetalles} 
+        onHide={closeDetalles} 
+        detalles={equipoSeleccionado} 
+        onEliminar={eliminarItem}
+        eliminando={eliminando}
+      />
+      
+      <NuevoEquipoModal 
+        show={showNuevo} 
+        onHide={closeNuevo} 
+        nuevoEquipo={nuevoEquipo} 
+        onChange={handleNuevoChange} 
+        onSubmit={submitNuevo}
+        guardando={guardando}
+      />
+
+      <NuevoAccesorioModal 
+        show={showNuevoAccesorio} 
+        onHide={closeNuevoAccesorio} 
+        nuevoAccesorio={nuevoAccesorio} 
+        onChange={handleNuevoAccesorioChange} 
+        onSubmit={submitNuevoAccesorio}
+        guardando={guardandoAccesorio}
+      />
+      
       <Footer />
     </div>
   );
