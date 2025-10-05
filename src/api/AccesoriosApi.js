@@ -21,7 +21,7 @@ export const obtenerAccesorioPorId = async (id) =>{
     return res.json();
 }
 
-const BASE_URL = 'http://localhost:8080/api/accesorios';
+const BASE_URL = 'http://localhost:8081/api/accesorios';
 
 
 export const crearAccesorio = async (data) => {
