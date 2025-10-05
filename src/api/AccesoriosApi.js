@@ -23,35 +23,6 @@ export const obtenerAccesorioPorId = async (id) =>{
 
 const BASE_URL = 'http://localhost:8080/api/accesorios';
 
-export const obtenerAccesorios = async () => {
-    try {
-        const res = await fetch(BASE_URL);
-        if (!res.ok) {
-            throw new Error("Error al obtener los accesorios");
-        }
-        return await res.json();
-    } catch (error) {
-        if (error.message.includes("failed to fetch") || error.message.includes("NetworkError")) {
-            throw new Error("No se pudo conectar con el servidor");
-        }
-        throw error;
-    }
-};
-
-export const obtenerAccesorioPorId = async (id) => {
-    try {
-        const res = await fetch(`${BASE_URL}/${id}`, {
-            method: "GET",
-        });
-        if (!res.ok) throw new Error("Accesorio no encontrado");
-        return res.json();
-    } catch (error) {
-        if (error.message.includes("failed to fetch") || error.message.includes("NetworkError")) {
-            throw new Error("No se pudo conectar con el servidor");
-        }
-        throw error;
-    }
-};
 
 export const crearAccesorio = async (data) => {
     try {
