@@ -9,6 +9,46 @@ border-radius: 8px;
 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+.contenedor-paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.boton-pagina {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1em;
+    min-width: 40px;
+    text-align: center;
+}
+
+.boton-pagina:hover:not(:disabled) {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.boton-pagina.activo {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+    font-weight: bold;
+}
+
+.boton-pagina:disabled {
+    cursor: not-allowed;
+    background-color: #e9ecef;
+    opacity: 0.6;
+}
 .page-title {
 text-align: center;
 color: #333;
@@ -144,4 +184,57 @@ background-color: #dc3545;
 
 .card-actions .delete-btn:hover {
 background-color: #c82333;
+}
+
+.Boton_campana {
+    position: relative;
+    cursor: pointer;
+}
+
+.contador-campana {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 8px;
+    font-size: 0.75em;
+    font-weight: bold;
+    line-height: 1;
+    z-index: 10;
+}
+
+.modal_header_Acce{
+    background-color: #28a745;
+    color: white;
+}
+
+.lista-seleccionados {
+    list-style: none;
+    padding: 0;
+}
+
+.lista-seleccionados li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.lista-seleccionados li:last-child {
+    border-bottom: none;
+}
+
+.lista-seleccionados li span {
+    font-weight: 500;
+}
+
+.btn_cerrar_mdl_ele{
+    background-color: #28a745;
+}
+
+.Btn_add_acce_modal{
+    background-color:#28a745;
 }
