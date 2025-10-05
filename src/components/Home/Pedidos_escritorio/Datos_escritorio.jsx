@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Card, ListGroup, Button, Modal, Form } from "react-bootstrap";
+import { Card, ListGroup, Button, Modal, Form, Pagination } from "react-bootstrap";
 import "./Pedidos_escritorio.css";
 import ElementosService from "../../../api/ElementosApi";
 
 function Datos_escritorio() {
+    // ... [Tu código de estados actual]
     const [equiposApi, setEquiposApi] = useState([]);
     const [filteredEquipos, setFilteredEquipos] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -12,35 +13,37 @@ function Datos_escritorio() {
     const [showModal, setShowModal] = useState(false);
     const [showCartModal, setShowCartModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [equiposPerPage] = useState(6);
 
+    // Consumo de la api
+    useEffect(() => {
+        const fetchElementos = async () => {
+            try {
+                setIsLoading(true);
+                const data = await ElementosService.obtenerElementos();
+                const equiposDeEscritorio = data.filter(item => item.id_categ === 2);
+                
+                const transformedData = equiposDeEscritorio.map(item => ({
+                    id: item.id_elemen,
+                    nombre: item.nom_eleme,
+                    descripcion: item.obse,
+                    especificaciones: (item.componen || "").split(',').map(s => s.trim()),
+                    imagen: "/imagenes/EscritorioMesa.png",
+                }));
+                
+                setEquiposApi(transformedData);
+                setFilteredEquipos(transformedData);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchElementos();
+    }, []);
 
-    //Consumo de la api :)
-useEffect(() => {
-    const fetchElementos = async () => {
-        try {
-            setIsLoading(true);
-            const data = await ElementosService.obtenerElementos();
-            
-            const transformedData = data.map(item => ({
-                id: item.id_elemen, 
-                nombre: item.nom_eleme,
-                descripcion: item.obse, 
-                especificaciones: (item.componen || "").split(',').map(s => s.trim()), 
-                imagen: "/imagenes/EscritorioMesa.png", 
-            }));
-            setEquiposApi(transformedData);
-            setFilteredEquipos(transformedData);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-    fetchElementos();
-}, []);
-
-
-// Finalizacion del consumo de la api
+    // Finalizacion delConsumo de la api
 
     useEffect(() => {
         const results = equiposApi.filter((equipo) => {
@@ -53,9 +56,8 @@ useEffect(() => {
             );
         });
         setFilteredEquipos(results);
+        setCurrentPage(1);
     }, [searchTerm, equiposApi]);
-
-
 
     const toggleSelect = (id) => {
         setSeleccionados((prev) =>
@@ -69,10 +71,29 @@ useEffect(() => {
         setShowModal(false);
     };
 
-    const selectedEquiposDetails = seleccionados.map(id => filteredEquipos.find(equipo => equipo.id === id));
+    const selectedEquiposDetails = seleccionados.map(id => equiposApi.find(equipo => equipo.id === id));
+    const indexOfLastEquipo = currentPage * equiposPerPage;
+    const indexOfFirstEquipo = indexOfLastEquipo - equiposPerPage;
+    const currentEquipos = filteredEquipos.slice(indexOfFirstEquipo, indexOfLastEquipo);
+    const totalPages = Math.ceil(filteredEquipos.length / equiposPerPage);
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    const renderPaginationItems = () => {
+        const items = [];
+        for (let number = 1; number <= totalPages; number++) {
+            items.push(
+                <Pagination.Item key={number} active={number === currentPage} onClick={() => paginate(number)}>
+                    {number}
+                </Pagination.Item>
+            );
+        }
+        return items;
+    };
+
 
     return (
         <div className="main-page-container">
+            {/* ... [Código del buscador y el carrito] ... */}
             <div className="Ajust-debusquedas">
                 <div className="group-busqueda">
                     <input
@@ -91,13 +112,14 @@ useEffect(() => {
                     </div>
                 )}
             </div>
+            
             <div className="equipos-container">
                 {isLoading ? (
                     <p className="loading-message">Cargando equipos...</p>
                 ) : error ? (
                     <div className="alert alert-danger mt-3">{error}</div>
-                ) : filteredEquipos.length > 0 ? (
-                    filteredEquipos.map((equipo) => (
+                ) : currentEquipos.length > 0 ? (
+                    currentEquipos.map((equipo) => (
                         <Card
                             key={equipo.id}
                             className={`ficha-horizontal ${seleccionados.includes(equipo.id) ? "seleccionado" : ""}`}
@@ -108,7 +130,7 @@ useEffect(() => {
                             <div className="ficha-info">
                                 <Card.Body>
                                     <Card.Title>{equipo.nombre}</Card.Title>
-                                    <Card.Subtitle className="mb-2 text-muted">Modelo: {equipo.modelo}</Card.Subtitle>
+                                    <Card.Subtitle className="mb-2text-mutedd">Observaciones: {equipo.modelo}</Card.Subtitle>
                                     <Card.Text>{equipo.descripcion}</Card.Text>
                                     <Card className="Cuadro_especificacioness">
                                         <Card.Header>Especificaciones</Card.Header>
@@ -133,13 +155,18 @@ useEffect(() => {
                     <p className="no-results-message">No se encontraron equipos.</p>
                 )}
             </div>
-            
-            {seleccionados.length > 0 && (
-                <div className="confirmar-container">
-                    <Button variant="success" onClick={() => setShowModal(true)}>Confirmar solicitud</Button>
+
+
+            {totalPages > 1 && (
+                <div className="d-flex justify-content-center mt-4">
+                    <Pagination>
+                        <Pagination.Prev onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} />
+                        {renderPaginationItems()}
+                        <Pagination.Next onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} />
+                    </Pagination>
                 </div>
             )}
-
+            
             <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar solicitud</Modal.Title>
@@ -155,7 +182,7 @@ useEffect(() => {
             </Modal>
             
             <Modal show={showCartModal} onHide={() => setShowCartModal(false)} >
-                <Modal.Header closeButton>  
+                <Modal.Header closeButton> 
                     <Modal.Title>Equipos seleccionados</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -163,7 +190,7 @@ useEffect(() => {
                         {selectedEquiposDetails.length > 0 ? (
                             selectedEquiposDetails.map((equipo, index) => (
                                 <ListGroup.Item key={equipo ? equipo.id : index} className="equipo-item">
-                                    {equipo ? `${equipo.nombre} (${equipo.modelo})` : "Equipo no encontrado"}
+                                    {equipo ? equipo.nombre : "Equipo no encontrado"}
                                 </ListGroup.Item>
                             ))
                         ) : (

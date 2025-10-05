@@ -176,7 +176,9 @@
   margin: 20px auto; 
   max-width: 400px; 
 }
-
+.mb-2text-mutedd{
+  margin-top: 0.3rem;
+}
 .input {
   width: 20%;
   margin-top: 1rem;
