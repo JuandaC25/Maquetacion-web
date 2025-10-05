@@ -68,7 +68,7 @@ function Header_ad() {
             </Offcanvas.Body>
           </Offcanvas>
 
-          <h1 className='title-main-1513'>Estado De Ticket</h1>
+          <h1 className='title-main-1513'>solicitudes elementos</h1>
 
           <div className='icons-container-1514'>
             <div className="buttons-wrapper-1515">
