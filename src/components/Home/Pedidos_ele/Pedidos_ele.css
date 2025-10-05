@@ -1,70 +1,147 @@
-.pedidos-ele{
-    height: 100%;
-    width: 100%;
+
+.page-container {
+padding: 30px;
+max-width: 1200px;
+margin: 40px auto;
+font-family: Arial, sans-serif;
+background-color: #f9f9f9;
+border-radius: 8px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-.Cont_elemen{
-    display:flex;
-    gap: 42px;
-    margin-left: 6rem;
-    margin-top: 22px;
+
+.page-title {
+text-align: center;
+color: #333;
+margin-bottom: 25px;
+border-bottom: 2px solid #007bff;
+padding-bottom: 10px;
 }
-.Btn_ele{
-    width: 15rem;
-    background-color:azure;
-    color: black;
-    border-color: black;
-} 
-.Btn_cable{
-    width: 15rem;
+
+.loading-message {
+text-align: center;
+padding: 20px;
+color: #007bff;
 }
-.Cont_inv{
-    margin-top: 8px;
-    
+
+.error-message {
+text-align: center;
+padding: 20px;
+color: #dc3545;
+border: 1px solid #dc3545;
+background-color: #f8d7da;
+border-radius: 4px;
 }
-.p-2{
-    display: flex;
-    gap: 40rem;
-    border-color: black;
-    border-style:inset;
-    border-radius: 15px;
-    border-width: 2px;
+
+.empty-message {
+text-align: center;
+padding: 20px;
+color: #6c757d;
 }
-.Btn_add{
-    width: 10rem;
-    border-color: azure;
-    border-radius: 15px;
+
+
+/*organizador de tarjetas */
+.accesorios-cards-container {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 30px; 
+margin-top: 20px;
 }
-.Lista_ele{
-    margin-right: 1rem;
+
+.card-image-placeholder img {
+max-width: 100%;
+max-height: 100%;
+width: auto;
+height: auto;
+
+
+object-fit: contain; 
 }
-.Btn_conf{
-    height: 3rem;
-    width: 15rem;
-    margin-top: 1rem;
-    margin-left: 40.4rem;
-    background-color: #00AF00;
-    border-radius: 10px;
-    border-color: #00AF00;
+
+/* Tarjeta Individual de los acc*/
+.accesorio-card {
+background-color: white;
+border: 1px solid #e0e0e0;
+border-radius: 8px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+overflow: hidden;
+display: flex;
+flex-direction: column;
+transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.Cont_ele{
-    gap: 2rem;
-      display: flex;
-  justify-content: center;
-  flex-direction: column;
+
+/*Efecto de sobre salir cuando se pasa el mouse*/
+.accesorio-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-.Msj_ele{
-    margin-top: 30rem;
-    margin-left: 42rem;
-    width: 210px;
-    position: absolute;
-    background-color: #00AF00;
-    border-radius: 15px;
-    color: white;
+
+/*Estilo para ajustar la img al card*/
+.card-image-placeholder {
+height: 150px;
+background-color: #e9ecef;
+display: flex;
+justify-content: center;
+align-items: center;
+font-size: 4em;
+color: #adb5bd;
+border-bottom: 1px solid #e0e0e0;
 }
-.Pagi_ele{
-    margin-top: 3rem;
-    margin-right: 1rem;
+
+.card-details {
+padding: 15px;
+flex-grow: 1;
+display: flex;
+flex-direction: column;
 }
-.fotajus{
-    margin-top: 2.7rem;
+
+.card-title {
+font-size: 1.25em;
+color: #333;
+margin-top: 0;
+margin-bottom: 10px;
+}
+
+.card-info {
+font-size: 0.95em;
+color: #6c757d;
+margin-bottom: 5px;
+}
+
+.card-info strong {
+color: #333;
+}
+
+.card-actions {
+display: flex;
+justify-content: space-between;
+gap: 10px;
+margin-top: 15px;
+padding-top: 10px;
+border-top: 1px dashed #e9ecef;
+}
+
+.card-actions button {
+background-color: #28a745;
+color: white;
+border: none;
+padding: 8px 10px;
+text-align: center;
+font-size: 14px;
+border-radius: 4px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+flex-grow: 1;
+margin: 0;
+}
+
+.card-actions button:hover {
+background-color: #218838;
+}
+
+.card-actions .delete-btn {
+background-color: #dc3545;
+}
+
+.card-actions .delete-btn:hover {
+background-color: #c82333;
 }
