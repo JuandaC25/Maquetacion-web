@@ -5,13 +5,8 @@ import { obtenerAccesorios } from '../../../api/AccesoriosApi';
 import './Pedidos_ele.css'; 
 import Header_ad from '.././Pedidos_ele/Header_ele/Header_elemen.jsx';
 import Footer from '../../Footer/Footer.jsx';
-// 1. Importar el modal del formulario (lo renombramos para que coincida con el uso en otros archivos, si aplica)
-import RealizarSolicitudModal from '../Pedidos_port/Modal_solicitud.jsx'; // Asumiendo que esta es la ruta correcta
-// O si quieres usar el nombre original del archivo que proporcionaste:
-// import Soli_port_modal from './Soli_port_modal.jsx'; // Ajusta la ruta si es necesario
+import RealizarSolicitudModal from '../Pedidos_port/Modal_solicitud.jsx';
 
-
-// Reutilizamos la función del archivo Soli_port_modal para el ID de usuario
 const id_usuario = 1;
 
 const obtenerImagenPorTipo = (nombre) => {
@@ -32,19 +27,14 @@ const [error, setError] = useState(null);
 const [terminoBusqueda, setTerminoBusqueda] = useState(''); 
 const [paginaActual, setPaginaActual] = useState(1);
 const [accesoriosSeleccionados, setAccesoriosSeleccionados] = useState([]);
-
-// Estados del modal de la campana y del modal del formulario
 const [mostrarModalAccesorios, setMostrarModalAccesorios] = useState(false);
-const [mostrarModalSolicitud, setMostrarModalSolicitud] = useState(false); // 2. Nuevo estado
-
+const [mostrarModalSolicitud, setMostrarModalSolicitud] = useState(false);
 const handleCerrarModalAccesorios = () => setMostrarModalAccesorios(false);
 const handleAbrirModalAccesorios = () => setMostrarModalAccesorios(true);
-
-// 3. Funciones para manejar el modal de Solicitud
 const handleAbrirModalSolicitud = () => {
     if (accesoriosSeleccionados.length > 0) {
-        handleCerrarModalAccesorios(); // Cerrar el modal de accesorios
-        setMostrarModalSolicitud(true); // Abrir el modal de solicitud
+        handleCerrarModalAccesorios(); 
+        setMostrarModalSolicitud(true); 
     } else {
         alert('Debes seleccionar al menos un accesorio para realizar la solicitud.');
     }
@@ -52,17 +42,16 @@ const handleAbrirModalSolicitud = () => {
 const handleCerrarModalSolicitud = () => setMostrarModalSolicitud(false);
 
 const handleSolicitudEnviada = () => {
-    setAccesoriosSeleccionados([]); // Limpiar la lista de accesorios
-    handleCerrarModalSolicitud(); // Cerrar el modal
+    setAccesoriosSeleccionados([]);
+    handleCerrarModalSolicitud(); 
 };
 
 const handleAnadir = (accesorio) => {
     // Evitar que el usuario agregue el mismo acce dos veces
-    // Normalizamos los datos de los accesorios para que coincidan con la estructura que Soli_port_modal espera (id, nombre)
     const accesorioNormalizado = {
         id: accesorio.id_accesorio || accesorio.serial,
         nombre: accesorio.nom_acces || accesorio.nombre,
-        ...accesorio // Mantenemos el resto de las propiedades por si acaso
+        ...accesorio
     };
     
     const yaExiste = accesoriosSeleccionados.some(item => (item.id || item.id_accesorio || item.serial) === accesorioNormalizado.id);
@@ -184,7 +173,6 @@ alt={accesorio.nom_acces || 'Accesorio'} /> </div>
 <p className="card-info"> <strong>ID:</strong> {accesorio.id_accesorio} </p>
 <p className="card-info"><strong>Numero de serie:</strong> {accesorio.num_ser || accesorio.serial || 'N/A'} </p>
     <div className="card-actions">
-    {/*Boton para despues de darle añadir */}
     <button className="edit-btn" onClick={() => handleAnadir(accesorio)}disabled={estaSeleccionado} >{estaSeleccionado ? 'Añadido ✅' : 'Añadir'}
     </button>
     </div>
@@ -248,8 +236,6 @@ return (
 </Modal.Body>
 <Modal.Footer>
 <Button className='btn_cerrar_mdl_ele' variant="secondary" onClick={handleCerrarModalAccesorios}> Cerrar </Button>
-
-{/* 4. Modificar el botón para abrir el modal del formulario */}
 <Button 
     className='Btn_add_acce_modal' 
     variant="primary" 
@@ -260,12 +246,10 @@ return (
 </Button>
 </Modal.Footer>
 </Modal>
-
-{/* 5. Incluir el componente del formulario de solicitud (oculto hasta que se active) */}
 <RealizarSolicitudModal
     show={mostrarModalSolicitud}
     handleClose={handleCerrarModalSolicitud}
-    equiposSeleccionados={accesoriosSeleccionados} // Pasamos la lista de accesorios
+    equiposSeleccionados={accesoriosSeleccionados}
     onSolicitudEnviada={handleSolicitudEnviada} 
     idUsuario={id_usuario}
 />
