@@ -22,7 +22,7 @@ export const obtenerSolicitudesPorid = async (id) =>{
 export const crearSolicitud = async (data) =>{
     const res = await fetch (`http://localhost:8081/api/solicitudes`, {
         method: "POST",
-        headers:{ "Content-Type": "applicatopm/json" },
+        headers:{ "Content-Type": "application/json" },
         body: JSON.stringify(data),
     });
     if (!res.ok) throw new Error("Error al crear la solicitud");
