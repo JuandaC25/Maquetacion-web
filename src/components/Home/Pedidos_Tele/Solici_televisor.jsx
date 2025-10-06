@@ -1,248 +1,368 @@
 import React, { useState, useEffect } from "react";
-import { Card, ListGroup, Button, Modal, Form } from "react-bootstrap";
+import { Card, ListGroup, Button, Modal, Form, Pagination } from "react-bootstrap";
 import "./Soli_televisor.css";
 import Footer from "../../Footer/Footer";
 import Headertele from "./Header tele/Header";
+import ElementosService from "../../../api/ElementosApi";
+import { crearSolicitud } from "../../../api/solicitudesApi";
 
 function Solitelevisores() {
-    const televisoresData = [
-        {
-            id: 1,
-            nombre: "Samsung UHD 4K",
-            modelo: "UN55AU8000G",
-            descripcion: "Televisor inteligente con colores vibrantes y gran claridad.",
-            especificaciones: [
-                "Tamaño: 55 pulgadas",
-                "Resolución: 3840 x 2160 (4K)",
-                "Tipo de Pantalla: LED",
-                "Conectividad: Wi-Fi, Bluetooth",
-            ],
-            imagen: "/imagenes/Televisorr-solicitud.png"
+  const [televisoresApi, setTelevisoresApi] = useState([]);
+  const [filteredTelevisores, setFilteredTelevisores] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [seleccionados, setSeleccionados] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [televisoresPerPage] = useState(6);
+  const categoryName = "Televisor";
 
-        },
-        {
-            id: 2,
-            nombre: "LG NanoCell",
-            modelo: "50NANO75SQA",
-            descripcion: "Colores puros con tecnología NanoCell y sonido envolvente.",
-            especificaciones: [
-                "Tamaño: 50 pulgadas",
-                "Resolución: 4K UHD",
-                "Tipo de Pantalla: NanoCell",
-                "Asistente de Voz: Google Assistant, Alexa",
-            ],
-            imagen: "/imagenes/Televisorr-solicitud.png"
+  const [form, setForm] = useState({
+    fecha_ini: "",
+    hora_ini: "",
+    fecha_fn: "",
+    hora_fn: "",
+    ambient: "",
+    num_ficha: "",
+    estadosoli: 1,
+    id_usu: 1,
+  });
 
-        },
-        {
-            id: 3,
-            nombre: "Sony Bravia OLED",
-            modelo: "XR-65A80J",
-            descripcion: "Negros perfectos y un contraste impresionante con el procesador XR.",
-            especificaciones: [
-                "Tamaño: 65 pulgadas",
-                "Resolución: 4K (3840 x 2160)",
-                "Tipo de Pantalla: OLED",
-                "Tasa de Refresco: 120Hz",
-            ],
-            imagen: "/imagenes/Televisorr-solicitud.png"
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
 
-        },
-        {
-            id: 4,
-            nombre: "LG OLED evo",
-            modelo: "OLED65C2PUA",
-            descripcion: "Imágenes increíblemente realistas, ideal para cine y videojuegos.",
-            especificaciones: [
-                "Tamaño: 65 pulgadas",
-                "Resolución: 4K Ultra HD",
-                "Tipo de Pantalla: OLED",
-                "Tasa de Refresco: 120Hz",
-            ],
-           imagen: "/imagenes/Televisorr-solicitud.png"
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
 
-        },
-        {
-            id: 5,
-            nombre: "Samsung QLED 8K",
-            modelo: "QN75Q900",
-            descripcion: "La máxima definición en imagen, con inteligencia artificial.",
-            especificaciones: [
-                "Tamaño: 75 pulgadas",
-                "Resolución: 8K (7680 x 4320)",
-                "Tipo de Pantalla: QLED",
-                "Sonido: Audio Inteligente con IA",
-            ],
-            imagen: "/imagenes/Televisorr-solicitud.png"
-        },
-    ];
+    if (seleccionados.length === 0) {
+      alert("Por favor, selecciona al menos un televisor para la solicitud.");
+      return;
+    }
 
-    const [seleccionados, setSeleccionados] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [showCartModal, setShowCartModal] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filteredTelevisores, setFilteredTelevisores] = useState(televisoresData);
+    const fechaInicio = new Date(`${form.fecha_ini}T${form.hora_ini}:00`);
+    const fechaFin = new Date(`${form.fecha_fn}T${form.hora_fn}:00`);
 
-    useEffect(() => {
-        const results = televisoresData.filter((televisor) => {
-            const lowerSearchTerm = searchTerm.toLowerCase();
-            const nombreMatch = televisor.nombre.toLowerCase().includes(lowerSearchTerm);
-            const modeloMatch = televisor.modelo.toLowerCase().includes(lowerSearchTerm);
-            const descripcionMatch = televisor.descripcion.toLowerCase().includes(lowerSearchTerm);
-            const especificacionesMatch = televisor.especificaciones.some((esp) =>
-                esp.toLowerCase().includes(lowerSearchTerm)
-            );
-            return nombreMatch || modeloMatch || descripcionMatch || especificacionesMatch;
-        });
-        setFilteredTelevisores(results);
-    }, [searchTerm]);
+    if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
+      alert("El formato de fecha o hora es inválido.");
+      return;
+    }
 
-    const toggleSelect = (id) => {
-        setSeleccionados((prev) =>
-            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-        );
+    const dto = {
+      fecha_ini: fechaInicio.toISOString(),
+      fecha_fn: fechaFin.toISOString(),
+      ambient: form.ambient,
+      estadosoli: form.estadosoli,
+      id_usu: form.id_usu,
+      num_ficha: form.num_ficha,
+      id_elemen: seleccionados,
     };
 
-    const confirmarSolicitud = (e) => {
-        e.preventDefault();
-        alert(`Solicitud confirmada ✅ 
-        Televisores seleccionados: ${seleccionados.join(", ")}`);
-        setShowModal(false);
-    };
+    try {
+      const resultado = await crearSolicitud(dto);
+      console.log("Solicitud realizada:", resultado);
+      alert("Solicitud realizada correctamente ✅");
+      setShowModal(false);
+      setSeleccionados([]);
+      setForm({
+        fecha_ini: "",
+        hora_ini: "",
+        fecha_fn: "",
+        hora_fn: "",
+        ambient: "",
+        num_ficha: "",
+        estadosoli: "Pendiente",
+        id_usu: 1,
+      });
+    } catch (err) {
+      console.error("Error en la solicitud:", err);
+      alert(`Hubo un problema al realizar la solicitud: ${err.message || "Error desconocido"}`);
+    }
+  };
 
-    const selectedTelevisoresDetails = seleccionados.map(id => {
-      return televisoresData.find(televisor => televisor.id === id);
+  useEffect(() => {
+    const fetchElementos = async () => {
+      try {
+        setIsLoading(true);
+        const data = await ElementosService.obtenerElementos();
+        const televisores = data.filter((item) => item.id_categ === 3);
+        const transformedData = televisores.map((item) => ({
+          id: item.id_elemen,
+          nombre: item.nom_eleme,
+          modelo: item.num_serie,
+          descripcion: item.obse,
+          especificaciones: (item.componen || "").split(",").map((s) => s.trim()),
+          imagen: "/imagenes/Televisorr-solicitud.png",
+        }));
+        setTelevisoresApi(transformedData);
+        setFilteredTelevisores(transformedData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchElementos();
+  }, []);
+
+  useEffect(() => {
+    const results = televisoresApi.filter((elemento) => {
+      const lowerSearchTerm = searchTerm.toLowerCase();
+      return (
+        (elemento.nombre || "").toLowerCase().includes(lowerSearchTerm) ||
+        (elemento.modelo || "").toLowerCase().includes(lowerSearchTerm) ||
+        (elemento.descripcion || "").toLowerCase().includes(lowerSearchTerm) ||
+        (elemento.especificaciones || []).some((esp) => (esp || "").toLowerCase().includes(lowerSearchTerm))
+      );
     });
+    setFilteredTelevisores(results);
+    setCurrentPage(1);
+  }, [searchTerm, televisoresApi]);
 
-    return (
-        <div className="main-page-container">
-          <Headertele/>
-            <div className="Ajust-debusquedas">
-                <div className="group-busqueda">
-                    
-                    <input
-                        className="input"
-                        type="text"
-                        placeholder="Buscar televisores..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </div>
-                {seleccionados.length > 0 && (
-                    <div className="cartt-containerrr">
-                        <Button variant="info" onClick={() => setShowCartModal(true)}>
-                            🛒 Televisores ({seleccionados.length})
-                        </Button>
-                    </div>
-                )}
-            </div>
-            <div className="televisores-container">
-                {filteredTelevisores.map((televisor) => (
-                    <Card
-                        key={televisor.id}
-                        className={`ficha-tv ${
-                            seleccionados.includes(televisor.id) ? "seleccionado" : ""
-                        }`}
-                    >
-                        <div className="ficha-img">
-                            <Card.Img src={televisor.imagen} alt={televisor.nombre} />
-                        </div>
+  const toggleSelect = (id) => {
+    setSeleccionados((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
+  };
 
-                        <div className="ficha-info">
-                            <Card.Body>
-                                <Card.Title>{televisor.nombre}</Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">
-                                    Modelo: {televisor.modelo}
-                                </Card.Subtitle>
-                                <Card.Text>{televisor.descripcion}</Card.Text>
+  const selectedElementosDetails = seleccionados.map((id) =>
+    televisoresApi.find((elemento) => elemento.id === id)
+  );
 
-                                <Card className="Cuadro_especificaciones-tv">
-                                    <Card.Header>Especificaciones</Card.Header>
-                                    <ListGroup variant="flush">
-                                        {televisor.especificaciones.map((esp, i) => (
-                                            <ListGroup.Item key={i}>{esp}</ListGroup.Item>
-                                        ))}
-                                    </ListGroup>
-                                </Card>
+  const indexOfLastElemento = currentPage * televisoresPerPage;
+  const indexOfFirstElemento = indexOfLastElemento - televisoresPerPage;
+  const currentTelevisores = filteredTelevisores.slice(indexOfFirstElemento, indexOfLastElemento);
+  const totalPages = Math.ceil(filteredTelevisores.length / televisoresPerPage);
 
-                                <Button
-                                    className="boton-tv"
-                                    variant={seleccionados.includes(televisor.id) ? "danger" : "primary"}
-                                    onClick={() => toggleSelect(televisor.id)}
-                                >
-                                    {seleccionados.includes(televisor.id) ? "Quitar" : "Seleccionar"}
-                                </Button>
-                            </Card.Body>
-                        </div>
-                    </Card>
-                ))}
-            </div>
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-            {seleccionados.length > 0 && (
-                <div className="confirmar-container">
-                    <Button variant="success" onClick={() => setShowModal(true)}>
-                        Confirmar solicitud
-                    </Button>
-                </div>
-            )}
+  const renderPaginationItems = () => {
+    const items = [];
+    for (let number = 1; number <= totalPages; number++) {
+      items.push(
+        <Pagination.Item key={number} active={number === currentPage} onClick={() => paginate(number)}>
+          {number}
+        </Pagination.Item>
+      );
+    }
+    return items;
+  };
 
-            {/* Modal de confirmación (Formulario) */}
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirmar solicitud</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={confirmarSolicitud}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Ambiente</Form.Label>
-                            <Form.Control type="text" placeholder="Ej: Aula 201" />
-                        </Form.Group>
+  return (
+    <div className="main-page-container">
+      <Headertele />
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Fecha de uso</Form.Label>
-                            <Form.Control type="date" />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Cantidad</Form.Label>
-                            <Form.Control type="number" min="1" />
-                        </Form.Group>
-
-                        <Button variant="primary" type="submit">
-                            Enviar
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-            
-            {/* Nuevo Modal para mostrar los televisores del carrito */}
-            <Modal show={showCartModal} onHide={() => setShowCartModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Televisores seleccionados</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <ListGroup className="equipos-seleccionados-list">
-                        {selectedTelevisoresDetails.length > 0 ? (
-                            selectedTelevisoresDetails.map((televisor) => (
-                                <ListGroup.Item key={televisor.id} className="equipo-item">
-                                    {televisor.nombre} ({televisor.modelo})
-                                </ListGroup.Item>
-                            ))
-                        ) : (
-                            <p>No hay televisores en el carrito.</p>
-                        )}
-                    </ListGroup>
-                </Modal.Body>
-            </Modal>
-         <Footer/>
+      <div className="Ajust-debusquedas">
+        <div className="group-busqueda">
+          <input
+            className="input"
+            type="text"
+            placeholder={`Buscar ${categoryName.toLowerCase()}...`}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-       
-    );
+
+        {seleccionados.length > 0 && (
+          <div className="cartt-container">
+            <Button variant="info" onClick={() => setShowCartModal(true)} className="me-2">
+              🛒 Televisores ({seleccionados.length})
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* Cards de televisores */}
+      <div className="equipos-container">
+        {isLoading ? (
+          <p className="loading-message">Cargando {categoryName.toLowerCase()}...</p>
+        ) : error ? (
+          <div className="alert alert-danger mt-3">{error}</div>
+        ) : currentTelevisores.length > 0 ? (
+          currentTelevisores.map((elemento) => (
+            <Card
+              key={elemento.id}
+              className={`ficha-horizontal ${seleccionados.includes(elemento.id) ? "seleccionado" : ""}`}
+            >
+              <div className="ficha-img">
+                <Card.Img src={elemento.imagen} alt={elemento.nombre} />
+              </div>
+              <div className="ficha-info">
+                <Card.Body>
+                  <Card.Title>{elemento.nombre}</Card.Title>
+                  {elemento.modelo && (
+                    <Card.Subtitle className="mb-2 text-muted">
+                      Modelo: {elemento.modelo}
+                    </Card.Subtitle>
+                  )}
+                  <Card.Text>{elemento.descripcion}</Card.Text>
+                  <Card className="Cuadro_especificacioness">
+                    <Card.Header>Especificaciones</Card.Header>
+                    <ListGroup variant="flush">
+                      {elemento.especificaciones.map((esp, i) => (
+                        <ListGroup.Item key={i}>{esp}</ListGroup.Item>
+                      ))}
+                    </ListGroup>
+                  </Card>
+                  <Button
+                    className="boton_equiposescritorio"
+                    variant={seleccionados.includes(elemento.id) ? "danger" : "primary"}
+                    onClick={() => toggleSelect(elemento.id)}
+                  >
+                    {seleccionados.includes(elemento.id) ? "Quitar" : "Seleccionar"}
+                  </Button>
+                </Card.Body>
+              </div>
+            </Card>
+          ))
+        ) : (
+          <p className="no-results-message">No se encontraron {categoryName.toLowerCase()}s.</p>
+        )}
+      </div>
+
+      {/* ✅ Botón final de confirmación */}
+      {seleccionados.length > 0 && (
+        <div className="text-center mt-4 mb-5">
+          <Button variant="success" size="lg" onClick={() => setShowModal(true)}>
+            Confirmar Solicitud
+          </Button>
+        </div>
+      )}
+
+      {/* Paginación */}
+      {totalPages > 1 && (
+        <div className="d-flex justify-content-center mt-4">
+          <Pagination>
+            <Pagination.Prev
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            />
+            {renderPaginationItems()}
+            <Pagination.Next
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            />
+          </Pagination>
+        </div>
+      )}
+
+      {/* Modal de formulario */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="modal-title">Realizar Solicitud</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="modal-form">
+          <Form onSubmit={handleFormSubmit}>
+            <div className="form-section-title">Detalles de la solicitud</div>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Fecha y Hora de Inicio</Form.Label>
+              <div className="row g-2">
+                <div className="col-md-6">
+                  <Form.Control
+                    type="date"
+                    name="fecha_ini"
+                    value={form.fecha_ini}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="col-md-6">
+                  <Form.Control
+                    type="time"
+                    name="hora_ini"
+                    value={form.hora_ini}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Fecha y Hora de Fin</Form.Label>
+              <div className="row g-2">
+                <div className="col-md-6">
+                  <Form.Control
+                    type="date"
+                    name="fecha_fn"
+                    value={form.fecha_fn}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="col-md-6">
+                  <Form.Control
+                    type="time"
+                    name="hora_fn"
+                    value={form.hora_fn}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <div className="row g-2">
+                <div className="col-md-6">
+                  <Form.Label>Ambiente</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ej: Ambiente 301"
+                    name="ambient"
+                    value={form.ambient}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="col-md-6">
+                  <Form.Label>Número de ficha</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ej: 2560014"
+                    name="num_ficha"
+                    value={form.num_ficha}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+            </Form.Group>
+
+            <div className="text-center mt-4">
+              <Button variant="primary" type="submit" className="px-4">
+                Enviar Solicitud
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+      {/* Modal del carrito */}
+      <Modal show={showCartModal} onHide={() => setShowCartModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Equipos seleccionados</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ListGroup className="equipos-seleccionados-list">
+            {selectedElementosDetails.length > 0 ? (
+              selectedElementosDetails.map((elemento, index) => (
+                <ListGroup.Item key={elemento ? elemento.id : index} className="equipo-item">
+                  {elemento ? elemento.nombre : "Equipo no encontrado"}
+                </ListGroup.Item>
+              ))
+            ) : (
+              <p>No hay equipos en el carrito.</p>
+            )}
+          </ListGroup>
+        </Modal.Body>
+      </Modal>
+
+      <Footer />
+    </div>
+  );
 }
 
 export default Solitelevisores;
-
-
-
-  
-
