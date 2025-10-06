@@ -11,15 +11,24 @@ export const obtenertickets = async () => {
         }
     }
 };
-export const creartickets = async (data) => {
-    const res = await fetch (`http://localhost:8080/api/tickets`,{
-        method:"Post",
-        headers:{"Content-Type":"aplicatopm/json"},
-        body: JSON.stringify(data),
+export const crearTicket = async (data) => {
+  try {
+    const res = await fetch(BASE_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
-    if(!res.ok) throw new Error("Error al crear el ticket");
-    return res.json();
-}
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Error al crear el ticket: ${text}`);
+    }
+    return await res.json();
+  } catch (error) {
+    console.error("❌ Error en crearTicket:", error);
+    throw error;
+  }
+};
 
 export const obtenerTicketsPorid = async (id) =>{
     const res = await fetch (`http://localhost:8080/api/tickets/${id}`,{

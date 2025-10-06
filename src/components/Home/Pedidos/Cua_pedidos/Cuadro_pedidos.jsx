@@ -5,9 +5,7 @@ import './Cuadro_Pedidos.css';
 function Cuadro_Pedidos() {
   return (
     <div className='Cuadrost'> 
-      <div className='fila-superiorr'>
-
-        
+      <div className='fila-superiorr'>  
         <Card className="CuadroP0rt">
           <div className="background-effect-port"></div>
           <img src="/imagenes/portatil.png" className="imagen-animada-port" alt="Portátil" />
@@ -22,7 +20,7 @@ function Cuadro_Pedidos() {
           <img src="/imagenes/Equipo de escritorio.png" className="imagen-animada-escr" alt="Escritorio" />
           <Card.Body>
             <Card.Title className='Tit-002'><h4>Equipos de escritorio</h4></Card.Title>
-            <Button href='/Pedidoescritorio' className='boton_esc'>Seleccionar</Button>
+            <Button href='/Pedidoescritorio' className='boton_escs'>Seleccionar</Button>
           </Card.Body>
         </Card>
       </div>
@@ -53,4 +51,3 @@ function Cuadro_Pedidos() {
 }
 
 export default Cuadro_Pedidos;
-
