@@ -38,7 +38,6 @@
   height: 750px;
 }
 
-/* === CAMBIO AQUÍ === */
 .recipiente {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -47,7 +46,7 @@
   width: 100%;
 }
 
-/* cada tarjeta conserva tu mismo estilo */
+
 .cuadra1 {
   border: 1px solid rgba(43, 255, 0, 0.688);
   border-radius: 5px;

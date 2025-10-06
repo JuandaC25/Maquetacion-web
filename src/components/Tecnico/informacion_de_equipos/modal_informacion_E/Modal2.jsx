@@ -9,7 +9,7 @@ function Modal2({ show, onHide, ticket, elementos }) {
   const abrirOtromodal = () => setMostrarOtromodal(true);
   const cerrarOtromodal = () => setMostrarOtromodal(false);
 
-  // 🔹 Traer información del elemento usando los datos ya cargados
+
   const elementoRelacionado = ticket
     ? elementos.find(el => el.id_elemen === ticket.id_eleme)
     : null;

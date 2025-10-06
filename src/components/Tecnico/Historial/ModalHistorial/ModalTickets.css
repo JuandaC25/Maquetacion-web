@@ -1,12 +1,12 @@
 .modal-tickets .modal-content {
   border-radius: 15px;
   padding: 0;
-  background-color: white; /* formulario blanco */
+  background-color: white;
   box-shadow: 0 5px 20px rgba(0,0,0,0.2);
 }
 
 .modal-header-verde {
-  background-color: rgb(9, 180, 26); /* verde intenso */
+  background-color: rgb(9, 180, 26); 
   color: white;
   display: flex;
   justify-content: center;
@@ -43,7 +43,7 @@
 .modal-item-blanco span,
 .modal-item-full-blanco span {
   font-weight: 600;
-  color:rgb(9, 180, 26); /* labels verdes */
+  color:rgb(9, 180, 26);
   margin-bottom: 5px;
 }
 
@@ -52,7 +52,7 @@
   background-color: #f9f9f9;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #c0e6b0; /* borde verde suave */
+  border: 1px solid #c0e6b0; 
   font-size: 0.95rem;
   margin: 0;
 }
@@ -70,10 +70,10 @@
   border-radius: 10px;
   font-weight: 600;
   padding: 8px 20px;
-  background-color: rgb(9, 180, 26); /* verde intenso */
+  background-color: rgb(9, 180, 26); 
   border: none;
 }
 
 .btn-verde:hover {
-  background-color: rgb(9, 180, 26); /* verde más oscuro al pasar el mouse */
+  background-color: rgb(9, 180, 26); 
 }

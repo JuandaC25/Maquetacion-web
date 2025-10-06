@@ -154,7 +154,7 @@ const Historial_ptec = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <Footer />
+      <Footer/>
     </div>
   );
 };

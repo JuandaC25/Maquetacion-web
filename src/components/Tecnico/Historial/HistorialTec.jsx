@@ -9,8 +9,8 @@ import { FaFilter } from "react-icons/fa";
 import ModalTickets from "./ModalHistorial/ModalTickets.jsx";
 
 const HistorialTec = () => {
-  const [categoriaGeneral, setCategoriaGeneral] = useState("Tickets"); // Tickets o Préstamos
-  const [categoriaEquipo, setCategoriaEquipo] = useState("Todos"); // Categoría de elemento
+  const [categoriaGeneral, setCategoriaGeneral] = useState("Tickets"); 
+  const [categoriaEquipo, setCategoriaEquipo] = useState("Todos"); 
   const [searchTerm, setSearchTerm] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
