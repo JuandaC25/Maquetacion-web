@@ -9,7 +9,6 @@
   min-height: 750px;
 }
 
-/* Barra superior unificada */
 .barra-filtros {
   display: flex;
   align-items: center;
@@ -22,7 +21,6 @@
   gap: 0.8rem;
 }
 
-/* Dropdown principal */
 .filtro-btn {
   background-color: rgb(169, 169, 169) !important;
   border: none !important;
@@ -35,7 +33,6 @@
   background-color: rgb(9, 180, 26) !important;
 }
 
-/* Dropdown icono minimalista */
 .filtro-icono {
   border-radius: 8px;
   width: 60px !important;
@@ -60,7 +57,7 @@
   border: 1px solid rgba(9, 180, 26, 0.901) !important;
 }
 
-/* Rango de fechas pequeño */
+
 .rango-fechas-min {
   display: flex;
   align-items: center;
@@ -76,7 +73,6 @@
   border: 1px solid rgba(9, 180, 26, 0.901) !important;
 }
 
-/* Lista de historial: tarjetas de a dos por fila */
 .tecnico-historial__lista {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -84,7 +80,6 @@
   justify-items: center;
 }
 
-/* ===== Tarjetas ajustadas (mantienen tamaño al filtrar) ===== */
 .historial-item {
   width: 100%;
   max-width: 400px;
@@ -140,7 +135,6 @@
   border: 1px solid rgba(9, 180, 26, 0.901);
 }
 
-/* ===== Corrección color botón icono ===== */
 .filtro-icono.btn,
 .filtro-icono .dropdown-toggle {
   background-color: rgba(255, 255, 255, 0.901) !important;
@@ -156,7 +150,6 @@
   color: white !important;
 }
 
-/* ===== Botón principal (Tickets / Préstamos) ===== */
 #dropdown-general.btn-primary,
 #dropdown-general.dropdown-toggle {
   background-color: #ffffff !important;
@@ -177,7 +170,6 @@
   transform: translateY(-1px);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .barra-filtros {
     flex-direction: column;

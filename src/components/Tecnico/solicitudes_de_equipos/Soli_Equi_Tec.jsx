@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Soli_Equi_Tec.css';
 import Footer from '../../Footer/Footer';
 import Button from 'react-bootstrap/Button';
-
 import ModalFormulario from './modal_soli_E/FormularioModal/ModalFormulario';
-import ConfirmacionModal from './modal_soli_E/ConfrirmacionModal/ConfirmacionModal';
 import Header_solicitud_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
 
 export default function Tecnico() {
@@ -18,9 +16,7 @@ export default function Tecnico() {
   const [fechaFin, setFechaFin] = useState('');
   const [paginaActual, setPaginaActual] = useState(1);
 
-
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
 
   useEffect(() => {
@@ -57,21 +53,14 @@ export default function Tecnico() {
 
   const irPagina = n => setPaginaActual(Math.min(Math.max(1, n), totalPaginas));
 
-
   const abrirFormulario = equipo => {
     setEquipoSeleccionado(equipo);
     setMostrarFormulario(true);
   };
+
   const cerrarFormulario = () => {
     setEquipoSeleccionado(null);
     setMostrarFormulario(false);
-  };
-  const abrirConfirmacion = () => setMostrarConfirmacion(true);
-  const cerrarConfirmacion = () => setMostrarConfirmacion(false);
-  const aceptarConfirmacion = () => {
-    setMostrarConfirmacion(false);
-    setMostrarFormulario(false);
-    alert('Solicitud cerrada correctamente');
   };
 
   return (
@@ -139,13 +128,6 @@ export default function Tecnico() {
         show={mostrarFormulario}
         onHide={cerrarFormulario}
         prest={equipoSeleccionado}
-        onFinalizar={abrirConfirmacion}
-      />
-
-      <ConfirmacionModal
-        show={mostrarConfirmacion}
-        onHide={cerrarConfirmacion}
-        onConfirm={aceptarConfirmacion}
       />
 
       <Footer />

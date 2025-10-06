@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import './ModalTec1.css';
-import ConfirmacionModal from '../ConfrirmacionModal/ConfirmacionModal';
-
+import ConfirmacionModal from '../../Modal_Confriamcion/ConfirmacionModal';
 function ModalFormulario({ show, onHide, prest, onActualizado }) {
   const [loading, setLoading] = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
   if (!show || !prest) return null;
+
+
   const formatDate = (fecha) => {
     if (!fecha) return '';
     const d = new Date(fecha);
@@ -15,13 +16,15 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
     const year = d.getFullYear();
     return `${year}-${month}-${day}`;
   };
+
+
   const finalizarSolicitud = async () => {
     setLoading(true);
     try {
       const response = await fetch(
         `http://localhost:8081/api/solicitudes/${prest.id_soli}/finalizar`,
         {
-          method: 'PUT', 
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ estado: 'finalizado' }),
         }
@@ -30,7 +33,7 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
       const data = await response.json();
       console.log('Solicitud actualizada:', data);
       onActualizado && onActualizado(prest.id_soli);
-      onHide(); 
+      onHide();
     } catch (error) {
       console.error('❌ Error al finalizar la solicitud:', error);
       alert('No se pudo finalizar la solicitud');
@@ -38,8 +41,12 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
       setLoading(false);
     }
   };
+
+
   const abrirConfirmacion = () => setMostrarConfirmacion(true);
   const cerrarConfirmacion = () => setMostrarConfirmacion(false);
+
+
   const confirmarFinalizacion = () => {
     cerrarConfirmacion();
     finalizarSolicitud();
@@ -49,10 +56,13 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
     <>
       <div className="modal-overlay" onClick={onHide}></div>
       <div className="principe">
+
         <div className="cabeza">
           <h1 className="titulito">Detalle de solicitud</h1>
           <button className="close-btn" onClick={onHide}>×</button>
         </div>
+
+
         <div className="cuerpito">
           <div className="cont_mod_tec1">
             <div className="Cont_label_tec">
@@ -90,7 +100,7 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
           </div>
         </div>
 
-  
+
         <div className="piecito">
           <button
             id="buttonModalTec"
