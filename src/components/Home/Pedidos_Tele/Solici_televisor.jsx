@@ -25,7 +25,7 @@ function Solitelevisores() {
     fecha_fn: "",
     hora_fn: "",
     ambient: "",
-    num_ficha: "",
+    num_fich: "",
     estadosoli: 1,
     id_usu: 1,
   });
@@ -57,7 +57,7 @@ function Solitelevisores() {
       ambient: form.ambient,
       estadosoli: form.estadosoli,
       id_usu: form.id_usu,
-      num_ficha: form.num_ficha,
+      num_fich: form.num_fich,
       id_elemen: seleccionados,
     };
 
@@ -73,7 +73,7 @@ function Solitelevisores() {
         fecha_fn: "",
         hora_fn: "",
         ambient: "",
-        num_ficha: "",
+        num_fich: "",
         estadosoli: "Pendiente",
         id_usu: 1,
       });

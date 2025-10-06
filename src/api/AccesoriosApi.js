@@ -1,6 +1,6 @@
 
 
-const BASE_URL = 'http://localhost:8081/api/accesorios';
+const BASE_URL = 'http://localhost:8080/api/accesorios';
 
 export const obtenerAccesorios = async () => {
     try {

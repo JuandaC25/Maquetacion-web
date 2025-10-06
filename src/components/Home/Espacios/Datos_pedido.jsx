@@ -207,7 +207,7 @@ Ofrece comodidad, buena acústica y equipamiento audiovisual de alta calidad.
               <Form.Control
                 type="text"
                 name="ambient"
-                placeholder="Ej: Polideportivo / Auditorio"
+                placeholder="Ej: Ambiente301"
                 value={form.ambient}
                 onChange={handleChange}
                 required
