@@ -63,7 +63,7 @@ export default function Tecnico() {
     setMostrarFormulario(false);
   };
 
-  // ✅ NUEVA FUNCIÓN PARA MOSTRAR 8 TARJETAS, 4 POR FILA
+
   const renderTarjetasEnFilas = () => {
     const filas = [];
     for (let i = 0; i < itemsPagina.length; i += 4) {

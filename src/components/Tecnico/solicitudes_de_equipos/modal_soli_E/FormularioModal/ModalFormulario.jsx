@@ -8,7 +8,6 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
 
   if (!show || !prest) return null;
 
-  // ✅ Función para formatear fechas (mantiene tu formato original)
   const formatDate = (fecha) => {
     if (!fecha) return '';
     const d = new Date(fecha);
@@ -18,11 +17,11 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
     return `${year}-${month}-${day}`;
   };
 
-  // ✅ Abre y cierra el modal de confirmación
+
   const abrirConfirmacion = () => setMostrarConfirmacion(true);
   const cerrarConfirmacion = () => setMostrarConfirmacion(false);
 
-  // ✅ Función principal: cambia estado y crea préstamo
+
   const confirmarFinalizacion = async () => {
     cerrarConfirmacion();
     setLoading(true);
@@ -30,7 +29,6 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
     try {
       console.log("🔹 Datos de la solicitud recibidos:", prest);
 
-      // 1️⃣ Cambiar estado de la solicitud a 1 (sin eliminarla)
       const updateResponse = await fetch(`http://localhost:8081/api/solicitudes/${prest.id_soli}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -40,7 +38,6 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
       if (!updateResponse.ok) throw new Error('Error al actualizar el estado de la solicitud');
       console.log("✅ Solicitud actualizada correctamente");
 
-      // 2️⃣ Crear el registro de préstamo en el backend
       const postResponse = await fetch('http://localhost:8081/api/prestamos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
