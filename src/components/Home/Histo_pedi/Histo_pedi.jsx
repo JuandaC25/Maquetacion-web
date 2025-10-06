@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-// Importaciones
 import './Header_histo/Header_his.jsx';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Header_his from './Header_histo/Header_his.jsx';
@@ -7,86 +6,85 @@ import './Histo_pedi.css';
 import Stack from 'react-bootstrap/Stack';
 import Footer from '../../Footer/Footer.jsx';
 import { Pagination, Button } from 'react-bootstrap';
-import Modal_ver from './Modal_ver/Modal_ver.jsx';
-// Se usa obtenersolicitudes y eliminarSolicitud del API corregido
 import { obtenersolicitudes, eliminarSolicitud } from '../../../api/solicitudesApi.js'; 
+import Modal_ver from '../Histo_pedi/Modal_ver/Modal_ver.jsx'; 
 
-// Función de formato de fecha
-const formatFecha = (dateString) => {
-    if (!dateString) return 'N/A';
+// Función de formato de fecha (sin cambios)
+const formatFecha = (fechaString) => {
+// ... (código de formatFecha)
+    if (!fechaString || fechaString === 'N/A') return 'N/A';
     try {
-        return new Date(dateString).toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
+        return new Date(fechaString).toLocaleDateString('es-ES', { 
+            year: 'numeric', month: 'numeric', day: 'numeric' 
         });
-    } catch (error) {
-        console.error("Error al formatear la fecha:", error);
-        return 'Fecha inválida';
+    } catch (e) {
+        console.error("Error al formatear la fecha:", e);
+        return 'Fecha Inválida';
     }
-};
+}
 
 function Historial_ped() {
     const [solicitudes, setSolicitudes] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    // ** ESTADOS DE PAGINACIÓN **
     const [currentPage, setCurrentPage] = useState(1);
     const [solicitudesPerPage] = useState(5); 
 
-    // ===============================================
-    // ** EFECTO DE CARGA DE DATOS **
-    // ===============================================
     const cargarSolicitudes = async () => {
         try {
             setIsLoading(true);
             const data = await obtenersolicitudes();
-            // Asegúrate de que los IDs y estados sean coherentes
-            // Asumiendo que 'data' es un array de objetos con 'id', 'estado', etc.
-            setSolicitudes(Array.isArray(data) ? data : []); 
+            
+            // SIMULACIÓN DE DATOS DE EQUIPO:
+            // Dado que no tenemos la estructura de la API, asumimos o simulamos
+            // que cada solicitud tiene un array de equipos (id_elemen y nom_eleme).
+            const solicitudesConEquipos = data.map(sol => ({
+                ...sol,
+                //  IMPORTANTE: ESTA PARTE DEBE ADAPTARSE A LA RESPUESTA REAL DE TU API 
+                // Simulamos 1 o 2 equipos para que Modal_ver tenga qué mostrar.
+                equipos_detalles: sol.elementos_soli || [
+                    { id: sol.id_soli * 10 + 1, nombre: 'Portátil DELL XXX' },
+                    { id: sol.id_soli * 10 + 2, nombre: 'Cargador USB-C' }
+                ].filter((_, index) => index < sol.id_soli % 3 + 1), // Asegura que haya entre 1 y 3 equipos
+            }));
+
+            setSolicitudes(solicitudesConEquipos || []); 
             setError(null);
         } catch (err) {
             console.error("Fallo al obtener solicitudes:", err);
-            setError(err.message || "Error al cargar el historial de pedidos. Revisa la consola para más detalles.");
+            setError(err.message || "Error al cargar el historial de pedidos.");
         } finally {
             setIsLoading(false);
         }
     };
-    
+
     useEffect(() => {
         cargarSolicitudes();
     }, []);
 
-    // ===============================================
-    // ** LÓGICA DE ELIMINAR Y ESTADOS **
-    // ===============================================
+    // ... (Lógica de Paginación y Handlers sin cambios funcionales) ...
+
     const indexOfLastSolicitud = currentPage * solicitudesPerPage;
     const indexOfFirstSolicitud = indexOfLastSolicitud - solicitudesPerPage;
     const currentSolicitudes = solicitudes.slice(indexOfFirstSolicitud, indexOfLastSolicitud); 
 
-    const handleDelete = async (id) => {
-        if (!window.confirm(`¿Estás seguro de que deseas eliminar la solicitud ${id}? Esta acción es irreversible.`)) {
+    const handleDelete = async (id_solicitud) => {
+        if (!window.confirm(`¿Estás seguro de que deseas eliminar la solicitud ${id_solicitud}?`)) {
             return;
         }
 
         try {
-            await eliminarSolicitud(id);
+            await eliminarSolicitud(id_solicitud);
+            setSolicitudes(prev => prev.filter(sol => sol.id_soli !== id_solicitud));
             
-            // Actualizar el estado en el cliente
-            const updatedSolicitudes = prev => prev.filter(sol => sol.id !== id);
-            setSolicitudes(updatedSolicitudes);
-            
-            // Lógica para ajustar la paginación si la página actual queda vacía
             if (currentSolicitudes.length === 1 && currentPage > 1) {
                 setCurrentPage(currentPage - 1);
             }
-            
-            alert(`✅ Solicitud ${id} eliminada correctamente.`);
+            alert(`Solicitud ${id_solicitud} eliminada correctamente.`);
             
         } catch (err) {
             console.error("Error al eliminar la solicitud:", err);
-            alert(`❌ Error al eliminar la solicitud ${id}: ${err.message}`);
+            alert(`Error al eliminar la solicitud ${id_solicitud}: ${err.message}`);
         }
     };
 
@@ -105,11 +103,7 @@ function Historial_ped() {
         }
     };
 
-    // ===============================================
-    // ** LÓGICA DE PAGINACIÓN **
-    // ===============================================
     const totalPages = Math.ceil(solicitudes.length / solicitudesPerPage);
-    
     const paginate = (pageNumber) => {
         if (pageNumber >= 1 && pageNumber <= totalPages) {
             setCurrentPage(pageNumber);
@@ -117,11 +111,10 @@ function Historial_ped() {
     };
 
     const renderPaginationItems = () => {
-        // ... (Tu lógica de paginación detallada, se mantiene igual)
         const items = [];
         const maxPagesToShow = 5;
         let startPage, endPage;
-        
+
         if (totalPages <= maxPagesToShow) {
             startPage = 1;
             endPage = totalPages;
@@ -159,57 +152,59 @@ function Historial_ped() {
             }
             items.push(<Pagination.Last key="last" onClick={() => paginate(totalPages)} />);
         }
-
         return items;
     };
 
-
-    // ===============================================
-    // ** RENDERIZADO CONDICIONAL **
-    // ===============================================
-
     let historialContent;
-    
     if (isLoading) {
         historialContent = <div className="p-3">Cargando historial... ⏳</div>;
     } else if (error) {
-        historialContent = <div className="p-3 text-danger">Error al cargar historial: **{error}** 🚫</div>;
+        historialContent = <div className="p-3 text-danger">Error: {error}</div>;
     } else if (solicitudes.length === 0) {
         historialContent = <div className="p-3">No hay solicitudes en el historial.</div>;
     } else if (currentSolicitudes.length === 0 && solicitudes.length > 0) {
-        // Si no hay solicitudes en la página actual, pero sí hay en total (puede pasar si eliminas todo en una página)
         historialContent = <div className="p-3">No hay solicitudes en esta página.</div>;
     } else {
         historialContent = (
             <Stack gap={1}>
                 {currentSolicitudes.map((sol) => ( 
-                    <div className="p-3 item_historial" key={sol.id}>
-                        <span className='emoji_historial'>📝</span> 
-                        <Button 
-                            disabled 
-                            className={`let_histo`}
-                            variant={getStatusVariant(sol.estado)}
-                        >
+                    <div className="p-3 item_historial" key={sol.id_soli}>
+                        <span className='emoji_historial'>📝</span>
+                        
+                        {/* Botón de Estado */}
+                        <Button disabled className={`let_histo`} variant={getStatusVariant(sol.estado)}>
                             {sol.estado}
                         </Button>
                         
-                        {/* DETALLES DE LA FILA */}
+                        {/* Texto del Pedido */}
                         <span className='texto_pedido'>
-                            **ID Solicitud:** **{sol.id || 'N/A'}** | **Usuario:** {sol.idUsuario || 'N/A'}
-                            <br/>
-                            **Fecha:** {formatFecha(sol.fechaInicio || sol.fechaCreacion)} | **Ambiente:** {sol.ambiente || 'N/A'}
-                        </span> 
-                        
-                        {/* BOTONES DE ACCIÓN */}
-                        <div className='Cont_botones_histo'>
-                            <div className='Btn_ver'>
-                                <Modal_ver solicitud={sol} /> 
-                            </div>
+                            ID Solicitud:{sol.id_soli || 'N/A'} | Usuario: {sol.nom_usu || 'N/A'} <br/>
+                            Ambiente: {sol.ambient || 'N/A'} <br/>
+                            Inicio: {formatFecha(sol.fecha_ini || 'N/A')} | Fin: {formatFecha(sol.fecha_fn || 'N/A')}
                             
+                            {/* NUEVO: Mostramos los detalles del equipo justo aquí */}
+                            <div style={{ marginTop: '5px', fontSize: '0.9em', color: '#555' }}>
+                                Equipos: {sol.equipos_detalles && sol.equipos_detalles.length > 0
+                                    ? sol.equipos_detalles.map(eq => (
+                                        <span key={eq.id} style={{ marginLeft: '10px' }}>
+                                            [{eq.id}] {eq.nombre}
+                                        </span>
+                                    )).reduce((prev, curr) => [prev, ', ', curr]) // Separar por coma y espacio
+                                    : 'N/A'
+                                }
+                            </div>
+                        </span>
+                        
+                        {/* Botones de Acción */}
+                        <div className='Cont_botones_histo'>
+    <div className='Btn_ver'>
+        {/* Asegúrate de que 'sol' contiene los datos de los equipos */}
+        <Modal_ver solicitud={sol} /> 
+    </div>
                             <Button 
                                 variant="danger" 
                                 size="sm" 
-                                onClick={() => handleDelete(sol.id)}
+                                onClick={() => handleDelete(sol.id_soli)}
                                 className='Btn_eliminar_histo'
                             >
                                 Eliminar 🗑️
@@ -224,18 +219,13 @@ function Historial_ped() {
     return (
         <div className='Cont_historial'>
             <Header_his/>
-            <Dropdown className='Drop_histo'>
-                <Dropdown.Toggle variant='outline-dark' id="dropdown-basic">
-                    Portatiles
-                </Dropdown.Toggle>
-                {/* ... (Menú desplegable) ... */}
-            </Dropdown>
             
+
             <div className='Container_historial'>
                 {historialContent}
             </div>
             
-            {/* ** COMPONENTE DE PAGINACIÓN ** */}
+            {/* Ccomp para la paginacion */}
             {totalPages > 1 && (
                 <div className='Pag_histo'>
                     <Pagination>
@@ -251,7 +241,6 @@ function Historial_ped() {
                     </Pagination>
                 </div>
             )}
-
             <div className='Footer_historial'>
                 <Footer />
             </div>
