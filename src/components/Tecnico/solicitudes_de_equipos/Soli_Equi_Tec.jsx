@@ -63,6 +63,34 @@ export default function Tecnico() {
     setMostrarFormulario(false);
   };
 
+  // ✅ NUEVA FUNCIÓN PARA MOSTRAR 8 TARJETAS, 4 POR FILA
+  const renderTarjetasEnFilas = () => {
+    const filas = [];
+    for (let i = 0; i < itemsPagina.length; i += 4) {
+      const fila = itemsPagina.slice(i, i + 4);
+      filas.push(
+        <div className="recipiente" key={i}>
+          {fila.map(prest => (
+            <div className="cuadra1" key={prest.id_soli}>
+              <div className="cuadra2">
+                <div className="card-tipo">{prest.categoria}</div>
+                <div className="card-modelo">{prest.nom_elem}</div>
+                <div className="card-usuario">Usuario: {prest.nom_usu}</div>
+                <div className="card-fecha">Fecha inicio: {new Date(prest.fecha_ini).toLocaleString()}</div>
+                <div className="card-accion">
+                  <Button className="botun" size="sm" onClick={() => abrirFormulario(prest)}>
+                    Revisar
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return filas;
+  };
+
   return (
     <>
       <Header_solicitud_tec />
@@ -90,23 +118,7 @@ export default function Tecnico() {
         </div>
 
         {itemsPagina.length > 0 ? (
-          itemsPagina.map(prest => (
-            <div className="recipiente" key={prest.id_soli}>
-              <div className="cuadra1">
-                <div className="cuadra2">
-                  <div className="card-tipo">{prest.categoria}</div>
-                  <div className="card-modelo">{prest.nom_elem}</div>
-                  <div className="card-usuario">Usuario: {prest.nom_usu}</div>
-                  <div className="card-fecha">Fecha inicio: {new Date(prest.fecha_ini).toLocaleString()}</div>
-                  <div className="card-accion">
-                    <Button className="botun" size="sm" onClick={() => abrirFormulario(prest)}>
-                      Revisar
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
+          renderTarjetasEnFilas()
         ) : (
           <p style={{ textAlign: 'center', marginTop: '20px', color: 'gray' }}>No hay solicitudes disponibles.</p>
         )}

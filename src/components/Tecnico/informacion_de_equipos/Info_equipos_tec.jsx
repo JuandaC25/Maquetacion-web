@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import Footer from '../../Footer/Footer';
-import ModalPeticion from './modal_informacion_E/Modal2';
+import ModalPeticion from './modal_informacion_E/Modal2'; // ahora recibe ticket y elementos
 import './Info_equipos_tec.css';
 import Otromodal from './OTRO.MODAL/Otro_modal';
 import Header_informacion from '../header_informacion_E/Header_informacion_E.jsx';
@@ -11,48 +11,54 @@ import Dropdown from 'react-bootstrap/Dropdown';
 
 function Cuarta() {
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [ticketSeleccionado, setTicketSeleccionado] = useState(null); // ticket seleccionado
   const [searchTerm, setSearchTerm] = useState('');
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
-  const [activeIndex, setActiveIndex] = useState(0); 
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [ticketsData, setTicketsData] = useState([]);
+  const [ticketsFiltrados, setTicketsFiltrados] = useState([]);
+  const [elementos, setElementos] = useState([]);
 
-  const equiposData = [
-    { id: 1, tipo: 'Equipo de escritorio', modelo: 'Hp Victus', imagen: '/imagenes/jacson.png', categoria: 'Equipos escritorio' },
-    { id: 2, tipo: 'Equipo de escritorio', modelo: 'Hp Victus', imagen: '/imagenes/jacson.png', categoria: 'Equipos escritorio' },
-    { id: 3, tipo: 'Equipo de escritorio', modelo: 'Hp Victus', imagen: '/imagenes/jacson.png', categoria: 'Equipos escritorio' },
-    { id: 4, tipo: 'Portatil', modelo: 'Hp Victus', imagen: '/imagenes/pc.png', categoria: 'Portatiles' },
-    { id: 5, tipo: 'Portatil', modelo: 'Hp Victus', imagen: '/imagenes/pc.png', categoria: 'Portatiles' },
-    { id: 6, tipo: 'Televisor', modelo: 'Samsung 42"', imagen: '/imagenes/tele.jpg', categoria: 'Televisores' },
-    { id: 7, tipo: 'Televisor', modelo: 'Samsung 42"', imagen: '/imagenes/tele.jpg', categoria: 'Televisores' },
-    { id: 8, tipo: 'Televisor', modelo: 'Samsung 42"', imagen: '/imagenes/tele.jpg', categoria: 'Televisores' },
-    { id: 9, tipo: 'Televisor', modelo: 'Samsung 42"', imagen: '/imagenes/tele.jpg', categoria: 'Televisores' },
-    { id: 10, tipo: 'Elemento', modelo: 'Teclado Logitech', imagen: '/imagenes/tecla.jpg', categoria: 'Elementos' },
-    { id: 11, tipo: 'Elemento', modelo: 'Teclado Logitech', imagen: '/imagenes/teclado.png', categoria: 'Elementos' },
-    { id: 12, tipo: 'Elemento', modelo: 'Teclado Logitech', imagen: '/imagenes/tecla.jpg', categoria: 'Elementos' },
-    { id: 13, tipo: 'Elemento', modelo: 'Teclado Logitech', imagen: '/imagenes/teclado.png', categoria: 'Elementos' },
-    { id: 14, tipo: 'Equipo de escritorio', modelo: 'Dell Optiplex', imagen: '/imagenes/jacson.png', categoria: 'Equipos escritorio' },
-    { id: 15, tipo: 'Portatil', modelo: 'Lenovo ThinkPad', imagen: '/imagenes/pc.png', categoria: 'Portatiles' },
-    { id: 16, tipo: 'Portatil', modelo: 'Lenovo ThinkPad', imagen: '/imagenes/pc.png', categoria: 'Portatiles' },
-  ];
+  const categoriasDropdown = ['Equipo de mesa', 'Portátiles', 'Televisores', 'Accesorios'];
 
-  const [equiposFiltrados, setEquiposFiltrados] = useState(equiposData);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const ticketsRes = await fetch('http://localhost:8081/api/tickets');
+        const ticketsJson = await ticketsRes.json();
+        setTicketsData(ticketsJson);
+        setTicketsFiltrados(ticketsJson);
 
-  const abrirModal = () => setMostrarModal(true);
+        const elementosRes = await fetch('http://localhost:8081/api/elementos');
+        const elementosJson = await elementosRes.json();
+        setElementos(elementosJson);
+      } catch (error) {
+        console.error('Error al obtener datos:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const abrirModal = (ticket) => {
+    setTicketSeleccionado(ticket);
+    setMostrarModal(true);
+  };
   const cerrarModal = () => setMostrarModal(false);
 
-  const filtrarEquipos = (busqueda, categoria) => {
-    const filtrados = equiposData.filter(equipo => {
-      const coincideCategoria = categoria ? equipo.categoria === categoria : true;
+  const filtrarTickets = (busqueda, categoria) => {
+    const filtrados = ticketsData.filter(ticket => {
+      const elemento = elementos.find(e => e.id_elemen === ticket.id_eleme);
+      const categoriaElem = elemento ? elemento.tip_catg : '';
+      const coincideCategoria = categoria ? categoriaElem === categoria : true;
       const coincideBusqueda = busqueda
-        ? equipo.modelo.toLowerCase().includes(busqueda.toLowerCase()) ||
-          equipo.tipo.toLowerCase().includes(busqueda.toLowerCase())
+        ? ticket.nom_elem?.toLowerCase().includes(busqueda.toLowerCase())
         : true;
       return coincideCategoria && coincideBusqueda;
     });
-    setEquiposFiltrados(filtrados);
-    setActiveIndex(0); 
+    setTicketsFiltrados(filtrados);
+    setActiveIndex(0);
   };
 
- 
   const dividirEnSlides = (lista, tamaño) => {
     const slides = [];
     for (let i = 0; i < lista.length; i += tamaño) {
@@ -61,22 +67,21 @@ function Cuarta() {
     return slides;
   };
 
-  const slides = dividirEnSlides(equiposFiltrados, 4);
+  const slides = dividirEnSlides(ticketsFiltrados, 4);
 
   return (
-    
     <div className='suprem'>
       <Header_informacion />
       <div className='carrusel'>
         <div className='dibsi'>
           <input
             className="Cuadro_busc_port"
-            placeholder="Buscar..."
+            placeholder="Buscar por nombre..."
             type="text"
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              filtrarEquipos(e.target.value, categoriaSeleccionada);
+              filtrarTickets(e.target.value, categoriaSeleccionada);
             }}
           />
           <Dropdown className='Drop_histo'>
@@ -84,11 +89,17 @@ function Cuarta() {
               {categoriaSeleccionada || "Categoría"}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item onClick={() => { setCategoriaSeleccionada('Equipos escritorio'); filtrarEquipos(searchTerm, 'Equipos escritorio'); }}>Equipos escritorio</Dropdown.Item>
-              <Dropdown.Item onClick={() => { setCategoriaSeleccionada('Portatiles'); filtrarEquipos(searchTerm, 'Portatiles'); }}>Portatiles</Dropdown.Item>
-              <Dropdown.Item onClick={() => { setCategoriaSeleccionada('Televisores'); filtrarEquipos(searchTerm, 'Televisores'); }}>Televisores</Dropdown.Item>
-              <Dropdown.Item onClick={() => { setCategoriaSeleccionada('Elementos'); filtrarEquipos(searchTerm, 'Elementos'); }}>Elementos</Dropdown.Item>
-              <Dropdown.Item onClick={() => { setCategoriaSeleccionada(''); filtrarEquipos(searchTerm, ''); }}>Todos</Dropdown.Item>
+              {categoriasDropdown.map(cat => (
+                <Dropdown.Item
+                  key={cat}
+                  onClick={() => { setCategoriaSeleccionada(cat); filtrarTickets(searchTerm, cat); }}
+                >
+                  {cat}
+                </Dropdown.Item>
+              ))}
+              <Dropdown.Item onClick={() => { setCategoriaSeleccionada(''); filtrarTickets(searchTerm, ''); }}>
+                Todos
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </div>
@@ -101,35 +112,45 @@ function Cuarta() {
           {slides.length === 0 ? (
             <Carousel.Item>
               <div className="carrusel_1">
-                <p style={{ margin: 'auto' }}>No se encontraron equipos.</p>
+                <p style={{ margin: 'auto' }}>No se encontraron tickets.</p>
               </div>
             </Carousel.Item>
           ) : (
             slides.map((grupo, index) => (
               <Carousel.Item key={index}>
                 <div className='carrusel_1'>
-                  {grupo.map(equipo => (
-                    <div key={equipo.id} className='reportes'>
-                      <h4 className='oter'>DETALLES DEL EQUIPO</h4>
-                      <div className='pcesito'>
-                        <img src={equipo.imagen} alt="equipo" className='comp' />
+                  {grupo.map(ticket => {
+                    const elemento = elementos.find(e => e.id_elemen === ticket.id_eleme);
+                    const categoriaElem = elemento ? elemento.tip_catg : '';
+                    return (
+                      <div key={ticket.id_tickets} className='reportes'>
+                        <h4 className='oter'>{ticket.nom_elem}</h4>
+                        <div className='pcesito'>
+                          <img src="/imagenes/ticket.png" alt="ticket" className='comp' />
+                        </div>
+                        <h5>Ambiente:</h5>
+                        <h6>{ticket.ambient}</h6>
+                        <h5>Categoría:</h5>
+                        <h6>{categoriaElem}</h6>
+                        <Button className='buttoninfo' onClick={() => abrirModal(ticket)}>Abrir</Button>
                       </div>
-                      <h5>{equipo.tipo}</h5>
-                      <h5 className='izquierdita'>Modelo equipo:</h5><h6>{equipo.modelo}</h6>
-                      <Button className='buttoninfo' onClick={abrirModal}>Abrir</Button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </Carousel.Item>
             ))
           )}
         </Carousel>
 
-        <ModalPeticion show={mostrarModal} onHide={cerrarModal} />
+        <ModalPeticion 
+          show={mostrarModal} 
+          onHide={cerrarModal} 
+          ticket={ticketSeleccionado} 
+          elementos={elementos} 
+        />
       </div>
       <Footer />
-      </div>
-    
+    </div>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./HistorialTec.css";
 import Header_HistorialTec from "../header_historialTec/Header_HistorialTec.jsx";
 import Footer from "../../Footer/Footer";
@@ -6,55 +6,100 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import { FaFilter } from "react-icons/fa";
+import ModalTickets from "./ModalHistorial/ModalTickets.jsx";
 
 const HistorialTec = () => {
-  const [categoriaGeneral, setCategoriaGeneral] = useState("Tickets");
-  const [categoriaEquipo, setCategoriaEquipo] = useState("Todos");
+  const [categoriaGeneral, setCategoriaGeneral] = useState("Tickets"); // Tickets o Préstamos
+  const [categoriaEquipo, setCategoriaEquipo] = useState("Todos"); // Categoría de elemento
   const [searchTerm, setSearchTerm] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
 
-  const historialData = [
+  const [historial, setHistorial] = useState([]);
+  const [elementos, setElementos] = useState([]);
+  const [error, setError] = useState("");
+  const [ticketSeleccionado, setTicketSeleccionado] = useState(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
 
-    { id: 1, tipo: "Tickets", fecha: "2025-09-01", titulo: "Ticket #001", descripcion: "Revisión general del equipo HP.", marca: "HP", categoria: "Portátiles" },
-    { id: 2, tipo: "Tickets", fecha: "2025-09-05", titulo: "Ticket #002", descripcion: "Cambio de ventilador.", marca: "Dell", categoria: "Escritorio" },
-    { id: 3, tipo: "Tickets", fecha: "2025-09-10", titulo: "Ticket #003", descripcion: "Instalación de firmware.", marca: "Samsung", categoria: "Televisores" },
-    { id: 7, tipo: "Tickets", fecha: "2025-09-18", titulo: "Ticket #004", descripcion: "Mantenimiento preventivo.", marca: "Lenovo", categoria: "Portátiles" },
-    { id: 8, tipo: "Tickets", fecha: "2025-09-22", titulo: "Ticket #005", descripcion: "Actualización de BIOS.", marca: "Asus", categoria: "Escritorio" },
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setError("");
+        let dataHistorial = [];
+        let dataElementos = [];
 
+        if (categoriaGeneral === "Tickets") {
+          const resTickets = await fetch("http://localhost:8081/api/tickets");
+          if (!resTickets.ok) throw new Error(`Error ${resTickets.status}`);
+          dataHistorial = await resTickets.json();
+        } else {
+          const resPrestamos = await fetch("http://localhost:8081/api/prestamos");
+          if (!resPrestamos.ok) throw new Error(`Error ${resPrestamos.status}`);
+          dataHistorial = await resPrestamos.json();
+        }
 
-    { id: 4, tipo: "Préstamos", fecha: "2025-09-12", titulo: "Préstamo #004", descripcion: "Modelo: 29-8324156", marca: "HP", categoria: "Portátiles" },
-    { id: 5, tipo: "Préstamos", fecha: "2025-09-15", titulo: "Préstamo #005", descripcion: "Modelo: 29-4251687", marca: "Lenovo", categoria: "Escritorio" },
-    { id: 6, tipo: "Préstamos", fecha: "2025-09-20", titulo: "Préstamo #006", descripcion: "Modelo: 29-7543298", marca: "Logitech", categoria: "Accesorios" },
-    { id: 9, tipo: "Préstamos", fecha: "2025-09-25", titulo: "Préstamo #007", descripcion: "Modelo: 29-8473610", marca: "Samsung", categoria: "Televisores" },
-    { id: 10, tipo: "Préstamos", fecha: "2025-09-29", titulo: "Préstamo #008", descripcion: "Modelo: 29-9902741", marca: "HP", categoria: "Portátiles" },
-  ];
+        const resElementos = await fetch("http://localhost:8081/api/elementos");
+        if (!resElementos.ok) throw new Error(`Error ${resElementos.status}`);
+        dataElementos = await resElementos.json();
+
+        setHistorial(dataHistorial);
+        setElementos(dataElementos);
+      } catch (err) {
+        console.error("Error al obtener historial:", err);
+        setError("No se pudo conectar con el backend. Verifica que esté corriendo y la URL sea correcta.");
+      }
+    };
+
+    fetchData();
+  }, [categoriaGeneral]);
+
+  const historialConCategoria = historial.map((item) => {
+    const elementoRelacionado = elementos.find(
+      (el) => el.id_elemen === (categoriaGeneral === "Tickets" ? item.id_eleme : item.id_elem)
+    );
+    return {
+      ...item,
+      categoria: elementoRelacionado ? elementoRelacionado.tip_catg : "Sin categoría",
+      numSerie: elementoRelacionado ? elementoRelacionado.num_seri : "No registrada",
+    };
+  });
 
   const filtrarHistorial = () => {
-    return historialData.filter((item) => {
-      const coincideTipo = item.tipo === categoriaGeneral;
+    return historialConCategoria.filter((item) => {
       const coincideCategoria =
-        categoriaEquipo === "Todos" || item.categoria === categoriaEquipo;
+        categoriaEquipo === "Todos" ||
+        (item.categoria && item.categoria.toLowerCase() === categoriaEquipo.toLowerCase());
+
+      const itemFecha =
+        categoriaGeneral === "Tickets" ? item.fecha_in : item.fecha_entreg;
+
       const coincideBusqueda =
         searchTerm === "" ||
-        item.marca.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.categoria.toLowerCase().includes(searchTerm.toLowerCase());
-      const coincideFecha =
-        (!fechaInicio || item.fecha >= fechaInicio) &&
-        (!fechaFin || item.fecha <= fechaFin);
+        (item.nom_elem && item.nom_elem.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (item.categoria && item.categoria.toLowerCase().includes(searchTerm.toLowerCase()));
 
-      return coincideTipo && coincideCategoria && coincideBusqueda && coincideFecha;
+      const coincideFecha =
+        (!fechaInicio || itemFecha >= fechaInicio) &&
+        (!fechaFin || itemFecha <= fechaFin);
+
+      return coincideCategoria && coincideBusqueda && coincideFecha;
     });
   };
 
   const historialFiltrado = filtrarHistorial();
+
+  const abrirModal = (ticket) => {
+    setTicketSeleccionado(ticket);
+    setMostrarModal(true);
+  };
+
+  const cerrarModal = () => setMostrarModal(false);
 
   return (
     <>
       <Header_HistorialTec />
       <section className="tecnico-historial">
         <div className="barra-filtros">
-
           <DropdownButton
             as={ButtonGroup}
             title={categoriaGeneral}
@@ -66,7 +111,6 @@ const HistorialTec = () => {
             <Dropdown.Item eventKey="Préstamos">Préstamos</Dropdown.Item>
           </DropdownButton>
 
-
           <DropdownButton
             title={<FaFilter />}
             className="filtro-icono"
@@ -74,20 +118,18 @@ const HistorialTec = () => {
           >
             <Dropdown.Item eventKey="Todos">Todos</Dropdown.Item>
             <Dropdown.Item eventKey="Portátiles">Portátiles</Dropdown.Item>
-            <Dropdown.Item eventKey="Escritorio">Equipos de escritorio</Dropdown.Item>
+            <Dropdown.Item eventKey="Equipo de mesa">Equipo de mesa</Dropdown.Item>
             <Dropdown.Item eventKey="Accesorios">Accesorios</Dropdown.Item>
             <Dropdown.Item eventKey="Televisores">Televisores</Dropdown.Item>
           </DropdownButton>
 
-
           <input
             type="text"
-            placeholder="Buscar marca o categoría..."
+            placeholder="Buscar por nombre..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="input-busqueda-min"
           />
-
 
           <div className="rango-fechas-min">
             <input
@@ -104,29 +146,63 @@ const HistorialTec = () => {
           </div>
         </div>
 
+        {error && <p className="error-backend">{error}</p>}
 
         <div className="tecnico-historial__lista">
           {historialFiltrado.length > 0 ? (
-            historialFiltrado.map((item) => (
-              <div className="historial-item" key={item.id}>
-                <div className="historial-item__contenido">
-                  <span className="historial-item__fecha">{item.fecha}</span>
-                  <h3 className="historial-item__titulo">{item.titulo}</h3>
-                  <p className="historial-item__descripcion">{item.descripcion}</p>
-                  <p className="historial-item__detalle">
-                    <strong>Marca:</strong> {item.marca} |{" "}
-                    <strong>Categoría:</strong> {item.categoria}
-                  </p>
+            historialFiltrado.map((item) => {
+              const itemFecha =
+                categoriaGeneral === "Tickets" ? item.fecha_in : item.fecha_entreg;
+
+              return (
+                <div className="historial-item" key={item.id_tickets || item.id_prest}>
+                  <div className="historial-item__contenido">
+                    <span className="historial-item__fecha">
+                      {new Date(itemFecha).toLocaleString()}
+                    </span>
+                    <h3 className="historial-item__titulo">
+                      {categoriaGeneral === "Tickets"
+                        ? `Ticket #${item.id_tickets}`
+                        : `Préstamo #${item.id_prest}`}
+                    </h3>
+                    <p className="historial-item__descripcion">
+                      {item.descripcion || item.tipo_pres || "Sin descripción"}
+                    </p>
+                    <p className="historial-item__detalle">
+                      <strong>Elemento:</strong> {item.nom_elem || "Desconocido"} |{" "}
+                      <strong>Categoría:</strong> {item.categoria} |{" "}
+                      <strong>Número de serie:</strong> {item.numSerie}
+                    </p>
+                    <button
+                      className="buttoninfo"
+                      onClick={() => abrirModal(item)}
+                    >
+                      Ver detalle
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <p className="tecnico-historial__vacio">
-              No hay resultados que coincidan con los filtros.
+              {categoriaGeneral === "Tickets"
+                ? "No hay información disponible para Tickets."
+                : "No hay resultados que coincidan con los filtros."}
             </p>
           )}
         </div>
       </section>
+
+      {ticketSeleccionado && (
+        <ModalTickets
+          show={mostrarModal}
+          onHide={cerrarModal}
+          ticket={ticketSeleccionado}
+          elementos={elementos}
+          tipo={categoriaGeneral}
+        />
+      )}
+
       <Footer />
     </>
   );
