@@ -4,20 +4,13 @@ import './Soli_port.css';
 import Footer from '../../Footer/Footer.jsx';
 import Header_port from './Header soli/Header.jsx';
 import Modal_com_port from './Modal_comp_port.jsx';
-import { Modal, Button, Pagination, Form, Carousel, Alert } from 'react-bootstrap';
-// ** Importar el servicio de API **
 import ElementosService from "../../../api/ElementosApi";
 
-// =======================================================
-// ** NUEVO COMPONENTE: MODAL DEL FORMULARIO DE SOLICITUD **
-// =======================================================
 const SolicitudFormModal = ({ show, handleClose, equiposSeleccionados }) => {
-    // La fecha de solicitud se puede auto-generar como la fecha actual
     const fechaSolicitud = new Date().toLocaleDateString('es-ES');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Lógica para enviar la solicitud (ej. a una API)
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
 
@@ -29,10 +22,9 @@ const SolicitudFormModal = ({ show, handleClose, equiposSeleccionados }) => {
 
         console.log("Datos de la Solicitud:", solicitudFinal);
         
-        // Aquí se llamaría al servicio de API para enviar los datos
         alert(`Solicitud enviada con éxito. Revisar consola para ver los datos.`);
         
-        handleClose(); // Cerrar el modal después del envío (o error)
+        handleClose();
     };
 
     return (
@@ -45,8 +37,6 @@ const SolicitudFormModal = ({ show, handleClose, equiposSeleccionados }) => {
                     <Alert variant="info">
                         <strong>Fecha de Solicitud:</strong> {fechaSolicitud}
                     </Alert>
-
-                    {/* Campo 1: Fecha de Inicio (Para cuando los necesita) */}
                     <Form.Group className="mb-3" controlId="formFechaInicio">
                         <Form.Label>Fecha de Inicio Requerida</Form.Label>
                         <Form.Control 
@@ -58,8 +48,6 @@ const SolicitudFormModal = ({ show, handleClose, equiposSeleccionados }) => {
                             Día en que necesita los equipos.
                         </Form.Text>
                     </Form.Group>
-
-                    {/* Campo 2: Fecha de Devolución (Cuando los devuelve) */}
                     <Form.Group className="mb-3" controlId="formFechaFin">
                         <Form.Label>Fecha Estimada de Devolución</Form.Label>
                         <Form.Control 
@@ -72,7 +60,6 @@ const SolicitudFormModal = ({ show, handleClose, equiposSeleccionados }) => {
                         </Form.Text>
                     </Form.Group>
                     
-                    {/* Campo 3: Ambiente (Lugar) */}
                     <Form.Group className="mb-3" controlId="formAmbiente">
                         <Form.Label>Ambiente / Ubicación</Form.Label>
                         <Form.Control 
@@ -106,9 +93,6 @@ const SolicitudFormModal = ({ show, handleClose, equiposSeleccionados }) => {
     );
 };
 
-// =======================================================
-// COMPONENTE CONSULTA ITEM
-// =======================================================
 const ConsultaItem = ({ onAddClick, equipoDetalles, equipoAnadido }) => {
 
     const handleAddClick = () => {
@@ -117,7 +101,6 @@ const ConsultaItem = ({ onAddClick, equipoDetalles, equipoAnadido }) => {
         }
     };
 
-    // Usar la imagen de la API si está disponible, sino usar un array por defecto
     const Imagenes_portatiles = equipoDetalles.imagen || [
         '/imagenes/imagenes_port/portatil1.png',
         '/imagenes/imagenes_port/portatil2.png',
@@ -136,7 +119,6 @@ const ConsultaItem = ({ onAddClick, equipoDetalles, equipoAnadido }) => {
                             <Carousel.Item key={index}>
                                 <img
                                     className="d-block w-100 carrusel_img_port"
-                                    // Asegúrate de que 'imagen' es la URL correcta si vienes de la API
                                     src={typeof imagen === 'string' ? imagen : '/imagenes/imagenes_port/portatil1.png'}
                                     alt={`${equipoDetalles.nombre || 'Portátil'} - Diapositiva ${index + 1}`}
                                 />
@@ -161,43 +143,32 @@ const ConsultaItem = ({ onAddClick, equipoDetalles, equipoAnadido }) => {
     );
 };
 
-// =======================================================
-// COMPONENTE LISTA CONSULTAS (MODIFICADO)
-// =======================================================
 const ListaConsultas = () => {
-    // ** ESTADOS NUEVOS Y MODIFICADOS PARA LA LÓGICA **
+
     const [equiposApi, setEquiposApi] = useState([]);
     const [filteredEquipos, setFilteredEquipos] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const [equiposPerPage] = useState(5); // 5 equipos por página
+    const [equiposPerPage] = useState(5);
 
-    // Estado para el modal de la lista de equipos agregados
     const [showModal, setShowModal] = useState(false);
-    // Estado para el modal de limite alcanzado
     const [showLimitModal, setShowLimitModal] = useState(false);
-    // ** NUEVO ESTADO: Modal de Confirmación de Solicitud **
     const [showConfirmModal, setShowConfirmModal] = useState(false);
-    // Estado para la lista de equipos añadido
     const [equiposAnadidos, setequiposAnadidos] = useState([]);
 
-
-    // ** CONSUMO DE LA API Y FILTRADO POR CATEGORÍA 1 (Portátil) **
     useEffect(() => {
         const fetchElementos = async () => {
             try {
                 setIsLoading(true);
                 const data = await ElementosService.obtenerElementos();
-                // Filtrar por id_categ === 1 (Portátil)
                 const equiposDePortatil = data.filter(item => item.id_categ === 1);
 
                 const transformedData = equiposDePortatil.map(item => ({
                     id: item.id_elemen,
                     nombre: item.nom_eleme,
                     descripcion: item.obse,
-                    // Usaremos un array de imágenes estático para simplificar la vista del carrusel, 
                     imagen: [
                         '/imagenes/imagenes_port/portatil1.png',
                         '/imagenes/imagenes_port/portatil2.png',
@@ -216,8 +187,6 @@ const ListaConsultas = () => {
         fetchElementos();
     }, []);
 
-
-    // ** LÓGICA DE BÚSQUEDA **
     useEffect(() => {
         const results = equiposApi.filter((equipo) => {
             const lowerSearchTerm = searchTerm.toLowerCase();
@@ -260,7 +229,7 @@ const ListaConsultas = () => {
         setequiposAnadidos(prevTeams => prevTeams.filter(team => team.id !== teamId));
     };
 
-    // ** LÓGICA DE PAGINACIÓN **
+    {/*logica de la paginacion */}
     const indexOfLastEquipo = currentPage * equiposPerPage;
     const indexOfFirstEquipo = indexOfLastEquipo - equiposPerPage;
     const currentEquipos = filteredEquipos.slice(indexOfFirstEquipo, indexOfLastEquipo);
@@ -325,15 +294,6 @@ const ListaConsultas = () => {
                     <p>No se encontraron portátiles.</p>
                 )}
             </div>
-
-            {/* ======================================================= */}
-            {/* ** NUEVO BOTÓN: CONFIRMAR SOLICITUD ** */}
-            {/* Se muestra si hay equipos añadidos, y va ANTES del footer/paginación */}
-            {/* ======================================================= */}
-            
-
-
-            {/* ... MODALES DE EQUIPOS AGREGADOS Y LÍMITE ALCANZADO ... */}
             <Modal show={showModal} onHide={handleClose}>
                 <Modal.Header closeButton className='Btn_cerrar_mdl_add'>
                     <Modal.Title>Equipos agregados</Modal.Title>
@@ -378,10 +338,6 @@ const ListaConsultas = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            
-            {/* ======================================================= */}
-            {/* ** INTEGRACIÓN DEL NUEVO MODAL DE FORMULARIO ** */}
-            {/* ======================================================= */}
             <SolicitudFormModal
                 show={showConfirmModal}
                 handleClose={handleCloseConfirm}
@@ -389,7 +345,7 @@ const ListaConsultas = () => {
             />
 
 
-            {/* ** PAGINACIÓN DINÁMICA ** */}
+{/*Apartado para la paginacion */}
             {totalPages > 1 && (
                 <div className='Foo_port'>
                     <div id="piepor">
