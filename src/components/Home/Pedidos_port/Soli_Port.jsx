@@ -5,6 +5,7 @@ import Footer from '../../Footer/Footer.jsx';
 import Header_port from './Header soli/Header.jsx';
 import Modal_com_port from './Modal_comp_port.jsx';
 import ElementosService from "../../../api/ElementosApi";
+import { Modal, Button, Form, Alert, Carousel, Pagination } from 'react-bootstrap';
 
 const SolicitudFormModal = ({ show, handleClose, equiposSeleccionados }) => {
     const fechaSolicitud = new Date().toLocaleDateString('es-ES');
