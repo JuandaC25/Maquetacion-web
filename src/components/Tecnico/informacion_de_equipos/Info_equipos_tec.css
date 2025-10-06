@@ -37,9 +37,12 @@
     width: 85%;
 }
 .pcesito{
-    height: 320px;
-    width: 90%;
+    
+    width: 70%;
     margin: auto;
+    margin-bottom: 10px;
+    height: 200px;
+
    
 }
 .reportes{
@@ -49,12 +52,12 @@
     border: 1px solid rgb(202, 202, 202);
     border-radius: 10px;
     text-align: center;
-    margin: auto;
     padding-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
-    
-    
+    border: 1px solid rgba(0, 128, 0, 0.818);
+    margin: auto;
+    height: 400px;
 }
 .reportes:hover{
     box-shadow:  4px 4px 4px 4px rgb(224, 248, 221) ;
@@ -97,7 +100,8 @@ margin-bottom: 10px;
 
 
 .carrusel{
-    
+    padding-top: 80px;
+    height: 760px;
 }
 .carrusel_1{
     display: flex;
@@ -119,4 +123,15 @@ margin-bottom: 10px;
 .dibsi{
     display: flex;
 }
-.oter{}
+.oscuro{
+    border: 1px solid green;
+}
+.oscuro:hover{
+    background-color:rgb(9, 180, 26) ;
+    color: white;
+    border: 1px solid white;
+}
+.oscuro:active{
+    background-color:rgb(9, 180, 26) !important ;
+
+}

@@ -13,124 +13,25 @@ function Cuarta() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
-  
+  const [activeIndex, setActiveIndex] = useState(0); 
+
   const equiposData = [
-    {
-      id: 1,
-      tipo: 'Equipo de escritorio',
-      modelo: 'Hp Victus',
-      imagen: '/imagenes/jacson.png',
-      categoria: 'Equipos escritorio'
-    },
-    {
-      id:2,
-      tipo:'Equipo de escritorio',
-      modelo: 'Hp Victus',
-      imagen: '/imagenes/jacson.png',
-      categoria: 'Equipos escritorio'
-
-    },
-      {
-      id:3,
-      tipo:'Equipo de escritorio',
-      modelo: 'Hp Victus',
-      imagen: '/imagenes/jacson.png',
-      categoria: 'Equipos escritorio'
-
-    },
-    {
-      
-      tipo: 'Portatil',
-      modelo: 'Hp Victus',
-      imagen: '/imagenes/pc.png',
-      categoria: 'Portatiles'
-    },
-     {
-    
-      tipo: 'Portatil',
-      modelo: 'Hp Victus',
-      imagen: '/imagenes/pc.png',
-      categoria: 'Portatiles'
-    },
-    {
-      
-      tipo: 'Televisor',
-      modelo: 'Samsung 42"',
-      imagen: '/imagenes/tele.jpg',
-      categoria: 'Televisores'
-    },
-    {
-      
-      tipo: 'Televisor',
-      modelo: 'Samsung 42"',
-      imagen: '/imagenes/tv.png',
-      categoria: 'Televisores'
-    },
-    {
-      
-      tipo: 'Televisor',
-      modelo: 'Samsung 42"',
-      imagen: '/imagenes/tele.jpg',
-      categoria: 'Televisores'
-    },
-    {
-      
-      tipo: 'Televisor',
-      modelo: 'Samsung 42"',
-      imagen: '/imagenes/tele .jpg',
-      categoria: 'Televisores'
-    },
-    {
-      id: 4,
-      tipo: 'Elemento',
-      modelo: 'Teclado Logitech',
-      imagen: '/imagenes/tecla.jpg',
-      categoria: 'Elementos'
-    },
-    {
-      id: 4,
-      tipo: 'Elemento',
-      modelo: 'Teclado Logitech',
-      imagen: '/imagenes/teclado.png',
-      categoria: 'Elementos'
-    },
-    {
-      id: 4,
-      tipo: 'Elemento',
-      modelo: 'Teclado Logitech',
-      imagen: '/imagenes/tecla.jpg',
-      categoria: 'Elementos'
-    },
-    {
-      id: 4,
-      tipo: 'Elemento',
-      modelo: 'Teclado Logitech',
-      imagen: '/imagenes/teclado.png',
-      categoria: 'Elementos'
-    },
-    {
-      id: 4,
-      tipo: 'Equipo de escritorio',
-      modelo: 'Dell Optiplex',
-      imagen: '/imagenes/jacson.png',
-      categoria: 'Equipos escritorio'
-    },
-    {
-     
-      tipo: 'Portatil',
-      modelo: 'Lenovo ThinkPad',
-      imagen: '/imagenes/pc.png',
-      categoria: 'Portatiles'
-    },
-    {
-     
-      tipo: 'Portatil',
-      modelo: 'Lenovo ThinkPad',
-      imagen: '/imagenes/pc.png',
-      categoria: 'Portatiles'
-    },
-   
-    
+    { id: 1, tipo: 'Equipo de escritorio', modelo: 'Hp Victus', imagen: '/imagenes/jacson.png', categoria: 'Equipos escritorio' },
+    { id: 2, tipo: 'Equipo de escritorio', modelo: 'Hp Victus', imagen: '/imagenes/jacson.png', categoria: 'Equipos escritorio' },
+    { id: 3, tipo: 'Equipo de escritorio', modelo: 'Hp Victus', imagen: '/imagenes/jacson.png', categoria: 'Equipos escritorio' },
+    { id: 4, tipo: 'Portatil', modelo: 'Hp Victus', imagen: '/imagenes/pc.png', categoria: 'Portatiles' },
+    { id: 5, tipo: 'Portatil', modelo: 'Hp Victus', imagen: '/imagenes/pc.png', categoria: 'Portatiles' },
+    { id: 6, tipo: 'Televisor', modelo: 'Samsung 42"', imagen: '/imagenes/tele.jpg', categoria: 'Televisores' },
+    { id: 7, tipo: 'Televisor', modelo: 'Samsung 42"', imagen: '/imagenes/tele.jpg', categoria: 'Televisores' },
+    { id: 8, tipo: 'Televisor', modelo: 'Samsung 42"', imagen: '/imagenes/tele.jpg', categoria: 'Televisores' },
+    { id: 9, tipo: 'Televisor', modelo: 'Samsung 42"', imagen: '/imagenes/tele.jpg', categoria: 'Televisores' },
+    { id: 10, tipo: 'Elemento', modelo: 'Teclado Logitech', imagen: '/imagenes/tecla.jpg', categoria: 'Elementos' },
+    { id: 11, tipo: 'Elemento', modelo: 'Teclado Logitech', imagen: '/imagenes/teclado.png', categoria: 'Elementos' },
+    { id: 12, tipo: 'Elemento', modelo: 'Teclado Logitech', imagen: '/imagenes/tecla.jpg', categoria: 'Elementos' },
+    { id: 13, tipo: 'Elemento', modelo: 'Teclado Logitech', imagen: '/imagenes/teclado.png', categoria: 'Elementos' },
+    { id: 14, tipo: 'Equipo de escritorio', modelo: 'Dell Optiplex', imagen: '/imagenes/jacson.png', categoria: 'Equipos escritorio' },
+    { id: 15, tipo: 'Portatil', modelo: 'Lenovo ThinkPad', imagen: '/imagenes/pc.png', categoria: 'Portatiles' },
+    { id: 16, tipo: 'Portatil', modelo: 'Lenovo ThinkPad', imagen: '/imagenes/pc.png', categoria: 'Portatiles' },
   ];
 
   const [equiposFiltrados, setEquiposFiltrados] = useState(equiposData);
@@ -148,9 +49,10 @@ function Cuarta() {
       return coincideCategoria && coincideBusqueda;
     });
     setEquiposFiltrados(filtrados);
+    setActiveIndex(0); 
   };
 
-  // Divide los equipos filtrados en grupos de 4 para cada slide del carrusel
+ 
   const dividirEnSlides = (lista, tamaño) => {
     const slides = [];
     for (let i = 0; i < lista.length; i += tamaño) {
@@ -162,7 +64,8 @@ function Cuarta() {
   const slides = dividirEnSlides(equiposFiltrados, 4);
 
   return (
-    <>
+    
+    <div className='suprem'>
       <Header_informacion />
       <div className='carrusel'>
         <div className='dibsi'>
@@ -177,35 +80,24 @@ function Cuarta() {
             }}
           />
           <Dropdown className='Drop_histo'>
-            <Dropdown.Toggle variant='outline-dark' id="dropdown-basic">
+            <Dropdown.Toggle variant='outline-dark' id="dropdown-basic" className='oscuro'>
               {categoriaSeleccionada || "Categoría"}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item onClick={() => {
-                setCategoriaSeleccionada('Equipos escritorio');
-                filtrarEquipos(searchTerm, 'Equipos escritorio');
-              }}>Equipos escritorio</Dropdown.Item>
-              <Dropdown.Item onClick={() => {
-                setCategoriaSeleccionada('Portatiles');
-                filtrarEquipos(searchTerm, 'Portatiles');
-              }}>Portatiles</Dropdown.Item>
-              <Dropdown.Item onClick={() => {
-                setCategoriaSeleccionada('Televisores');
-                filtrarEquipos(searchTerm, 'Televisores');
-              }}>Televisores</Dropdown.Item>
-              <Dropdown.Item onClick={() => {
-                setCategoriaSeleccionada('Elementos');
-                filtrarEquipos(searchTerm, 'Elementos');
-              }}>Elementos</Dropdown.Item>
-              <Dropdown.Item onClick={() => {
-                setCategoriaSeleccionada('');
-                filtrarEquipos(searchTerm, '');
-              }}>Todos</Dropdown.Item>
+              <Dropdown.Item onClick={() => { setCategoriaSeleccionada('Equipos escritorio'); filtrarEquipos(searchTerm, 'Equipos escritorio'); }}>Equipos escritorio</Dropdown.Item>
+              <Dropdown.Item onClick={() => { setCategoriaSeleccionada('Portatiles'); filtrarEquipos(searchTerm, 'Portatiles'); }}>Portatiles</Dropdown.Item>
+              <Dropdown.Item onClick={() => { setCategoriaSeleccionada('Televisores'); filtrarEquipos(searchTerm, 'Televisores'); }}>Televisores</Dropdown.Item>
+              <Dropdown.Item onClick={() => { setCategoriaSeleccionada('Elementos'); filtrarEquipos(searchTerm, 'Elementos'); }}>Elementos</Dropdown.Item>
+              <Dropdown.Item onClick={() => { setCategoriaSeleccionada(''); filtrarEquipos(searchTerm, ''); }}>Todos</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </div>
 
-        <Carousel data-bs-theme="dark">
+        <Carousel 
+          data-bs-theme="dark" 
+          activeIndex={activeIndex} 
+          onSelect={(selectedIndex) => setActiveIndex(selectedIndex)}
+        >
           {slides.length === 0 ? (
             <Carousel.Item>
               <div className="carrusel_1">
@@ -218,7 +110,7 @@ function Cuarta() {
                 <div className='carrusel_1'>
                   {grupo.map(equipo => (
                     <div key={equipo.id} className='reportes'>
-                      <h3 className='oter'>DETALLES DEL EQUIPO</h3>
+                      <h4 className='oter'>DETALLES DEL EQUIPO</h4>
                       <div className='pcesito'>
                         <img src={equipo.imagen} alt="equipo" className='comp' />
                       </div>
@@ -236,7 +128,8 @@ function Cuarta() {
         <ModalPeticion show={mostrarModal} onHide={cerrarModal} />
       </div>
       <Footer />
-    </>
+      </div>
+    
   );
 }
 

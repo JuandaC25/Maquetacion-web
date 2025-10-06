@@ -21,10 +21,12 @@ import Desplegable from './components/desplegable/desplegable.jsx';
 import HistorialTec from './components/Tecnico/Historial/HistorialTec.jsx';
 import Historial_ptec from './components/Tecnico/Historial/Historial_ptec/Historial_ptec.jsx';
 import Historial_ptec2 from './components/Tecnico/Historial/Historial_ptec1/Historial_ptec2.jsx';
-
+import Solicitudes from './paginas/Solicitudes/Solicitudes.jsx';
 function App() {
   return (
+
     <BrowserRouter>
+
       <Routes>
         <Route path='/Login' element={<Login/>}/> 
         <Route path='/Cuarta' element={<Cuarta />} />
@@ -49,7 +51,9 @@ function App() {
         <Route path='/HistorialTec' element={<HistorialTec/>}/>
           <Route path='/Historial_TicketsTec' element={<Historial_ptec/>}/>
           <Route path='/Historial_TicketsTec2' element={<Historial_ptec2/>}/>
+        <Route path='/Solicitudes' element={<Solicitudes/>}/>
         <Route />
+        
 
 
       </Routes>
