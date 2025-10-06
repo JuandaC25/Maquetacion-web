@@ -11,6 +11,43 @@
     justify-content: end;
     margin-left: auto;
 }
+
+/* Estilos para el Stack item en Historial_ped */
+.item_historial {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Distribuye el espacio entre los elementos */
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.emoji_historial {
+    margin-right: 15px;
+    font-size: 1.2em;
+}
+
+.let_histo {
+    /* Estilo general para el botón de estado */
+    width: 100px; /* Ancho fijo para consistencia */
+    margin-right: 15px;
+}
+
+.texto_pedido {
+    flex-grow: 1; /* Permite que el texto ocupe el espacio restante */
+    margin-right: 20px;
+}
+
+.Cont_botones_histo {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Estilos de los botones de estado (para que se vean como buttons de bootstrap) */
+.btn-status-warning { background-color: #ffc107; color: #000; border: none; }
+.btn-status-success { background-color: #198754; color: #fff; border: none; }
+.btn-status-danger { background-color: #dc3545; color: #fff; border: none; }
 .p-3{
     margin-top: 1rem;
     display: flex;
