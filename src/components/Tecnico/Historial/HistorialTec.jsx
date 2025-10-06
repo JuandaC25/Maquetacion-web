@@ -15,14 +15,14 @@ const HistorialTec = () => {
   const [fechaFin, setFechaFin] = useState("");
 
   const historialData = [
-    // Tickets
+
     { id: 1, tipo: "Tickets", fecha: "2025-09-01", titulo: "Ticket #001", descripcion: "Revisión general del equipo HP.", marca: "HP", categoria: "Portátiles" },
     { id: 2, tipo: "Tickets", fecha: "2025-09-05", titulo: "Ticket #002", descripcion: "Cambio de ventilador.", marca: "Dell", categoria: "Escritorio" },
     { id: 3, tipo: "Tickets", fecha: "2025-09-10", titulo: "Ticket #003", descripcion: "Instalación de firmware.", marca: "Samsung", categoria: "Televisores" },
     { id: 7, tipo: "Tickets", fecha: "2025-09-18", titulo: "Ticket #004", descripcion: "Mantenimiento preventivo.", marca: "Lenovo", categoria: "Portátiles" },
     { id: 8, tipo: "Tickets", fecha: "2025-09-22", titulo: "Ticket #005", descripcion: "Actualización de BIOS.", marca: "Asus", categoria: "Escritorio" },
 
-    // Préstamos
+
     { id: 4, tipo: "Préstamos", fecha: "2025-09-12", titulo: "Préstamo #004", descripcion: "Modelo: 29-8324156", marca: "HP", categoria: "Portátiles" },
     { id: 5, tipo: "Préstamos", fecha: "2025-09-15", titulo: "Préstamo #005", descripcion: "Modelo: 29-4251687", marca: "Lenovo", categoria: "Escritorio" },
     { id: 6, tipo: "Préstamos", fecha: "2025-09-20", titulo: "Préstamo #006", descripcion: "Modelo: 29-7543298", marca: "Logitech", categoria: "Accesorios" },
@@ -54,7 +54,7 @@ const HistorialTec = () => {
       <Header_HistorialTec />
       <section className="tecnico-historial">
         <div className="barra-filtros">
-          {/* Dropdown general */}
+
           <DropdownButton
             as={ButtonGroup}
             title={categoriaGeneral}
@@ -66,7 +66,7 @@ const HistorialTec = () => {
             <Dropdown.Item eventKey="Préstamos">Préstamos</Dropdown.Item>
           </DropdownButton>
 
-          {/* Dropdown minimalista */}
+
           <DropdownButton
             title={<FaFilter />}
             className="filtro-icono"
@@ -79,7 +79,7 @@ const HistorialTec = () => {
             <Dropdown.Item eventKey="Televisores">Televisores</Dropdown.Item>
           </DropdownButton>
 
-          {/* Barra de búsqueda */}
+
           <input
             type="text"
             placeholder="Buscar marca o categoría..."
@@ -88,7 +88,7 @@ const HistorialTec = () => {
             className="input-busqueda-min"
           />
 
-          {/* Fechas */}
+
           <div className="rango-fechas-min">
             <input
               type="date"
@@ -104,7 +104,7 @@ const HistorialTec = () => {
           </div>
         </div>
 
-        {/* Lista de resultados */}
+
         <div className="tecnico-historial__lista">
           {historialFiltrado.length > 0 ? (
             historialFiltrado.map((item) => (
