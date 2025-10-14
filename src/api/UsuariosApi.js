@@ -1,6 +1,6 @@
 export const obtenerUsuarios = async () => {
     try {
-        const response = await fetch('http://localhost:8080/api/Usuarios');
+        const response = await fetch('http://localhost:8081/api/Usuarios');
         if (!response.ok) {
             throw new Error('Error al obtener usuarios');
         }

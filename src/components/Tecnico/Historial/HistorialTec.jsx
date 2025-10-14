@@ -21,7 +21,7 @@ const HistorialTec = () => {
   const [ticketSeleccionado, setTicketSeleccionado] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
 
-  useEffect(() => {
+  useEffect(() =>  {
     const fetchData = async () => {
       try {
         setError("");

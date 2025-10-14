@@ -1,6 +1,6 @@
 export const obtenersolicitudes = async () => {
     try{
-        const res = await fetch(`http://localhost:8080/api/solicitudes`);
+        const res = await fetch(`http://localhost:8081/api/solicitudes`);
         if(!res.ok){
             throw new Error ("Error al obtener las solicitudes");
         }

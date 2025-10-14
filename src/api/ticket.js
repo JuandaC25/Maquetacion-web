@@ -1,6 +1,6 @@
 export const obtenertickets = async () => {
     try{
-        const res = await fetch(`http://localhost:8080/api/tickets`);
+        const res = await fetch(`http://localhost:8081/api/tickets`);
         if(!res.ok){
             throw new Error ("Error al obtener los tickets");
         }
