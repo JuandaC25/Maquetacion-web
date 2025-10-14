@@ -15,7 +15,7 @@ export const obtenerUsuarios = async () => {
 
 export const obtenerUsuarioPorId = async (id) => {
     try {
-        const res = await fetch(`http://localhost:8080/api/Usuarios/${id}`, {
+        const res = await fetch(`http://localhost:8081/api/Usuarios/${id}`, {
             method: 'GET',
         });
         if (!res.ok) {
@@ -33,7 +33,7 @@ export const obtenerUsuarioPorId = async (id) => {
 
 export const crearUsuario = async (data) => {
     try {
-        const res = await fetch('http://localhost:8080/api/Usuarios', {
+        const res = await fetch('http://localhost:8081/api/Usuarios', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ export const crearUsuario = async (data) => {
 
 export const eliminarUsuario = async (id) => {
     try {
-        const res = await fetch(`http://localhost:8080/api/Usuarios/${id}`, {
+        const res = await fetch(`http://localhost:8081/api/Usuarios/${id}`, {
             method: 'DELETE',
         });
         
@@ -77,7 +77,7 @@ export const eliminarUsuario = async (id) => {
 
 export const actualizarUsuario = async (id, data) => {
     try {
-        const res = await fetch(`http://localhost:8080/api/Usuarios/${id}`, {
+        const res = await fetch(`http://localhost:8081/api/Usuarios/${id}`, {
             method: 'PUT',
             headers: { 
                 "Content-Type": "application/json" 

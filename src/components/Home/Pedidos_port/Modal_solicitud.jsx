@@ -65,7 +65,7 @@ handleClose();
 
 } catch (err) {
     console.error("Error en la solicitud:", err);
-    alert(`Hubo un problema al realizar la solicitud: ${err.message || "Error desconocido"}`);
+    alert(`Hubo un problema al realizar la solicitud: ${err.message || "Añada un usuario para la solicitud"}`);
 }
 };
 const selectedEquiposDetails = equiposSeleccionados.map(equipo => (

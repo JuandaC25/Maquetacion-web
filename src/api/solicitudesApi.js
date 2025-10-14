@@ -12,7 +12,7 @@ export const obtenersolicitudes = async () => {
     }
 };
 export const obtenerSolicitudesPorid = async (id) =>{
-    const res = await fetch (`http://localhost:8080/api/solicitudes/${id}`,{
+    const res = await fetch (`http://localhost:8081/api/solicitudes/${id}`,{
         method:"GET",
     });
     if(!res.ok) throw new Error("Solicitud no encontrada");
@@ -20,7 +20,7 @@ export const obtenerSolicitudesPorid = async (id) =>{
 }
 
 export const crearSolicitud = async (data) =>{
-    const res = await fetch (`http://localhost:8080/api/solicitudes`, {
+    const res = await fetch (`http://localhost:8081/api/solicitudes`, {
         method: "POST",
         headers:{ "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -30,7 +30,7 @@ export const crearSolicitud = async (data) =>{
 }
 
 export const eliminarSolicitud = async (id) =>{
-    const res = await fetch(`http://localhost:8080/api/solicitudes/${id}`,{
+    const res = await fetch(`http://localhost:8081/api/solicitudes/${id}`,{
         method: "DELETE",
     });
     if(res.status !== 204) {
