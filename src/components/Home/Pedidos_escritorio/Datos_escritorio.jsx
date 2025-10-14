@@ -162,7 +162,7 @@ function Datos_escritorio() {
                 {seleccionados.length > 0 && (
                     <div className="cartt-container">
                         <Button variant="info" onClick={() => setShowCartModal(true)}>
-                            🛒 Equipos ({seleccionados.length})
+                             Equipos ({seleccionados.length})
                         </Button>
                     </div>
                 )}

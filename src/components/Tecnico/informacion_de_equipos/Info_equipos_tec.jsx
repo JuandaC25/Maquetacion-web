@@ -75,7 +75,7 @@ function Cuarta() {
       <div className='carrusel'>
         <div className='dibsi'>
           <input
-            className="Cuadro_busc_port"
+            className="Cuadro_busc_porta"
             placeholder="Buscar por nombre..."
             type="text"
             value={searchTerm}
