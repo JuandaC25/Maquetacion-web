@@ -60,7 +60,7 @@ function Modal2({ show, onHide, ticket, elementos }) {
               </div>
               <div className='modal-item-full'>
                 <label className='modal-label'>Observaciones</label>
-                <textarea value={ticket.Obser || 'Sin observaciones'} readOnly className="modal-textarea" />
+                <textarea value={ticket.obser || 'Sin observaciones'} readOnly className="modal-textarea" />
               </div>
             </div>
           ) : (

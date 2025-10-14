@@ -77,7 +77,7 @@ function ModalTickets({ show, onHide, ticket, elementos, tipo }) {
               )}
               <div className="modal-item-full-blanco">
                 <span>Observaciones:</span>
-                <p>{ticket.Obser || 'Sin observaciones'}</p>
+                <p>{ticket.obser || 'Sin observaciones'}</p>
               </div>
             </div>
           ) : (
