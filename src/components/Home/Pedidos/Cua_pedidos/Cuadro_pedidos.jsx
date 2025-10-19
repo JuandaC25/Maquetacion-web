@@ -28,9 +28,9 @@ function Cuadro_Pedidos() {
       <div className='fila-inferiorr'>      
         <Card className="CuadroTV">
           <div className="background-effect-tv"></div>
-          <img src="/imagenes/Televisor.png" className="imagen-animada-tv" alt="Televisor" />
+          <img src="/imagenes/Audio_video.png" className="imagen-animada-tv" alt="Audio/ video" />
           <Card.Body>
-            <Card.Title className='Tit-003'><h4>Televisores</h4></Card.Title>
+            <Card.Title className='Tit-003'><h4>Audio/video</h4></Card.Title>
             <Button href='/Solicitartelevisores' className='boton_TV'>Seleccionar</Button>
           </Card.Body>
         </Card>

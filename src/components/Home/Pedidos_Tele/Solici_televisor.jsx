@@ -39,7 +39,7 @@ function Solitelevisores() {
     e.preventDefault();
 
     if (seleccionados.length === 0) {
-      alert("Por favor, selecciona al menos un televisor para la solicitud.");
+      alert("Por favor, selecciona al menos un elemento para la solicitud.");
       return;
     }
 
