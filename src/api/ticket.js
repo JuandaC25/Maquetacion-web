@@ -1,3 +1,16 @@
+export const obtenerticketsActivos = async () => {
+  try{
+    const res = await fetch(`http://localhost:8081/api/tickets/activos`);
+    if(!res.ok){
+      throw new Error ("Error al obtener los tickets activos");
+    }
+    return await res.json();
+  }catch(error){
+    if(error.message.includes("failed to fetch") || error.message.includes("NetworkError")){
+      throw new Error("No se pudo conectar con el servidor");
+    }
+  }
+};
 export const obtenertickets = async () => {
     try{
         const res = await fetch(`http://localhost:8081/api/tickets`);

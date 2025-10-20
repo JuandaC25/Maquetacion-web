@@ -151,3 +151,51 @@ margin-bottom: 10px;
   transition: all ease-in-out .5s;
   margin-right: -2rem;
 }
+
+.carrusel-centro {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+}
+.carrusel-centro .carousel-control-prev,
+.carrusel-centro .carousel-control-next {
+  top: 50%;
+  transform: translateY(-50%);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carrusel-centro .carousel-control-prev {
+  left: 0;
+}
+.carrusel-centro .carousel-control-next {
+  right: 0;
+}
+.carrusel-centro .carousel-control-prev-icon,
+.carrusel-centro .carousel-control-next-icon {
+  background-color: #00AF00 !important;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  opacity: 1;
+  background-image: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carrusel-centro .carousel-control-prev-icon::after,
+.carrusel-centro .carousel-control-next-icon::after {
+  content: '';
+}
+.carrusel-centro .carousel-control-prev-icon {
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-chevron-left" viewBox="0 0 16 16"><path fill="white" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>') center/60% no-repeat;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-chevron-left" viewBox="0 0 16 16"><path fill="white" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>') center/60% no-repeat;
+}
+.carrusel-centro .carousel-control-next-icon {
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-chevron-right" viewBox="0 0 16 16"><path fill="white" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>') center/60% no-repeat;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="white" class="bi bi-chevron-right" viewBox="0 0 16 16"><path fill="white" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>') center/60% no-repeat;
+}

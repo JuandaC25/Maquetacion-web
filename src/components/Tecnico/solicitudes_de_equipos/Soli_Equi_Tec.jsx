@@ -33,7 +33,10 @@ export default function Tecnico() {
 
   useEffect(() => setPaginaActual(1), [categoriaFiltro, busquedaMarca, fechaInicio, fechaFin]);
 
-  const prestamosConCategoria = prestamos.map(p => {
+  // Asegura que prestamos sea siempre un array
+  const prestamosArray = Array.isArray(prestamos) ? prestamos : [];
+
+  const prestamosConCategoria = prestamosArray.map(p => {
     const elemento = elementos.find(e => e.id_elemen === p.id_elem);
     return { ...p, categoria: elemento ? elemento.tip_catg : 'Sin categoría' };
   });

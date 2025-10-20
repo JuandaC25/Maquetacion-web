@@ -1,13 +1,13 @@
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import './Header_HistorialTec.css'
+import '../header_tickets_activos/header_tickets_activos.css';
 import Desplegable from '../../desplegable/desplegable';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { Link } from 'react-router-dom';
 
-function Header_HistorialTec() {
+function Header_informacion() {
   const [showMenu, setShowMenu] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
 
@@ -67,7 +67,7 @@ function Header_HistorialTec() {
             </Offcanvas.Body>
           </Offcanvas>
 
-          <h1 className='title-main-xd212tec'>Historial</h1>
+          <h1 className='title-main-xd212tec'>Tickets Activos</h1>
 
           <div className='icons-container-xd213tec'>
             <div className="buttons-wrapper-xd214tec">
@@ -86,7 +86,7 @@ function Header_HistorialTec() {
                     ></path>
                   </svg>
                 </button>
-                <h1 className="button-text-xd218tec">Home</h1>
+                <span className="button-text-xd218tec">Home</span>
               </div>
               
               <div className="button-group-xd215tec">
@@ -107,7 +107,7 @@ function Header_HistorialTec() {
                     ></path>
                   </svg>
                 </button>
-                <h1 className="button-text-xd218tec">Blog CEET</h1>
+                <span className="button-text-xd218tec">Blog CEET</span>
               </div>
               
               <div className="button-group-xd215tec">
@@ -125,7 +125,7 @@ function Header_HistorialTec() {
                     ></path>
                   </svg>
                 </button> 
-                <h1 className="button-text-xd218tec">Perfil</h1>
+                <span className="button-text-xd218tec">Perfil</span>
               </div>
             </div>
           </div>
@@ -228,4 +228,6 @@ function Header_HistorialTec() {
   );
 }
 
-export default Header_HistorialTec;
+export default Header_informacion;
+
+
