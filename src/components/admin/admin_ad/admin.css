@@ -299,3 +299,50 @@ textarea.form-control {
 .pagination-inner-1218 label:hover {
   background-color: rgba(9, 180, 26, 0.1);
 }
+/* Estilos personalizados para el Dropdown */
+.custom-dropdown-toggle {
+  background-color: rgb(9, 180, 26) !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.custom-dropdown-toggle:hover,
+.custom-dropdown-toggle:focus,
+.custom-dropdown-toggle:active {
+  background-color: rgb(7, 160, 22) !important;
+  transform: translateY(-2px) !important;
+}
+
+.custom-dropdown-toggle:active {
+  transform: translateY(0) !important;
+}
+
+.custom-dropdown-menu {
+  border: none !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+              0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+  margin-top: 0.5rem !important;
+}
+
+.custom-dropdown-item {
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+}
+
+.custom-dropdown-item:hover,
+.custom-dropdown-item:focus {
+  background-color: rgba(9, 180, 26, 0.1) !important;
+  color: rgb(9, 180, 26) !important;
+}
+
+.custom-dropdown-item:active {
+  background-color: rgb(9, 180, 26) !important;
+  color: white !important;
+}
