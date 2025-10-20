@@ -7,6 +7,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import { FaFilter } from "react-icons/fa";
 import ModalTickets from "./ModalHistorial/ModalTickets.jsx";
+import TicketsActivosTec from "./TicketsActivosTec.jsx";
 
 const HistorialTec = () => {
   const [categoriaGeneral, setCategoriaGeneral] = useState("Tickets"); 
@@ -53,16 +54,24 @@ const HistorialTec = () => {
     fetchData();
   }, [categoriaGeneral]);
 
-  const historialConCategoria = historial.map((item) => {
-    const elementoRelacionado = elementos.find(
-      (el) => el.id_elemen === (categoriaGeneral === "Tickets" ? item.id_eleme : item.id_elem)
-    );
-    return {
-      ...item,
-      categoria: elementoRelacionado ? elementoRelacionado.tip_catg : "Sin categoría",
-      numSerie: elementoRelacionado ? elementoRelacionado.num_seri : "No registrada",
-    };
-  });
+  // Filtrar tickets por estado 0 o 4 solo si la categoría general es Tickets
+  const historialConCategoria = historial
+    .filter(item => {
+      if (categoriaGeneral === "Tickets") {
+        return item.estado === 0 || item.estado === 4;
+      }
+      return true;
+    })
+    .map((item) => {
+      const elementoRelacionado = elementos.find(
+        (el) => el.id_elemen === (categoriaGeneral === "Tickets" ? item.id_eleme : item.id_elem)
+      );
+      return {
+        ...item,
+        categoria: elementoRelacionado ? elementoRelacionado.tip_catg : "Sin categoría",
+        numSerie: elementoRelacionado ? elementoRelacionado.num_seri : "No registrada",
+      };
+    });
 
   const filtrarHistorial = () => {
     return historialConCategoria.filter((item) => {
@@ -99,6 +108,8 @@ const HistorialTec = () => {
     <>
       <Header_HistorialTec />
       <section className="tecnico-historial">
+        {/* Apartado de tickets activos */}
+        <TicketsActivosTec />
         <div className="barra-filtros">
           <DropdownButton
             as={ButtonGroup}

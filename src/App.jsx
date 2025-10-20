@@ -22,6 +22,7 @@ import HistorialTec from './components/Tecnico/Historial/HistorialTec.jsx';
 import Historial_ptec from './components/Tecnico/Historial/Historial_ptec/Historial_ptec.jsx';
 import Historial_ptec2 from './components/Tecnico/Historial/Historial_ptec1/Historial_ptec2.jsx';
 import Solicitudes from './paginas/Solicitudes/Solicitudes.jsx';
+import TicketsActivos from './components/Tecnico/tickets_activos/TicketsActivos.jsx';
 function App() {
   return (
 
@@ -52,6 +53,7 @@ function App() {
           <Route path='/Historial_TicketsTec' element={<Historial_ptec/>}/>
           <Route path='/Historial_TicketsTec2' element={<Historial_ptec2/>}/>
         <Route path='/Solicitudes' element={<Solicitudes/>}/>
+  <Route path='/TicketsActivos' element={<TicketsActivos/>}/>
         <Route />
         
 
