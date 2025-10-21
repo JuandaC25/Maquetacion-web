@@ -32,27 +32,43 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
       const updateResponse = await fetch(`http://localhost:8081/api/solicitudes/${prest.id_soli}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...prest, estado: 1 }),
+        body: JSON.stringify({ id_soli: prest.id_soli, id_est_soli: 1 }),
       });
 
       if (!updateResponse.ok) throw new Error('Error al actualizar el estado de la solicitud');
       console.log("✅ Solicitud actualizada correctamente");
 
-      const postResponse = await fetch('http://localhost:8081/api/prestamos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fecha_entreg: prest.fecha_ini,
-          fecha_repc: prest.fecha_fn,
-          tipo_pres: "Elemento",
-          id_usuario: prest.id_usu,
-          id_elem: prest.id_elem,
-          id_acces: prest.id_acces,
-          id_esp: prest.id_espac
-        }),
-      });
+      const idsElem = prest.id_elem
+        ? (typeof prest.id_elem === 'string'
+            ? prest.id_elem.split(',').map(Number)
+            : [prest.id_elem])
+        : [];
+        // Buscar el campo correcto para idEsp
+        const idEsp = prest.id_espac || prest.id_esp || prest.idEsp || null;
+        const postResponse = await fetch('http://localhost:8081/api/prestamos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fechaEntreg: prest.fecha_ini,
+            fechaRepc: prest.fecha_fn,
+            tipoPres: "Elemento",
+            estado: 1,
+            idUsuario: prest.id_usu,
+            idsElem: prest.id_elem
+              ? (typeof prest.id_elem === 'string'
+                  ? prest.id_elem.split(',').map(Number)
+                  : [prest.id_elem])
+              : [],
+            idEsp
+          }),
+        });
 
-      if (!postResponse.ok) throw new Error('Error al registrar el préstamo');
+        if (!postResponse.ok) {
+          const errorData = await postResponse.json().catch(() => ({}));
+          console.error("❌ Detalle del error backend:", errorData);
+          alert("Error al registrar el préstamo:\n" + (errorData.mensaje || errorData.errores1 || errorData.errores2 || JSON.stringify(errorData)));
+          throw new Error('Error al registrar el préstamo');
+        }
 
       console.log("✅ Préstamo creado correctamente");
       alert("Solicitud finalizada y registrada como préstamo");
@@ -118,8 +134,17 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
             id="buttonModalTec"
             onClick={abrirConfirmacion}
             disabled={loading}
+            style={{ minWidth: '110px', marginRight: '18px' }}
           >
-            {loading ? 'Guardando...' : 'Finalizar'}
+            {loading ? 'Guardando...' : 'Tomar'}
+          </button>
+          <button
+            id="buttonModalTec"
+            onClick={onHide}
+            disabled={loading}
+            style={{ minWidth: '110px' }}
+          >
+            Rechazar
           </button>
         </div>
       </div>
@@ -128,7 +153,7 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
         show={mostrarConfirmacion}
         onHide={cerrarConfirmacion}
         onConfirm={confirmarFinalizacion}
-        mensaje="¿Deseas marcar esta solicitud como finalizada?"
+        mensaje="¿Quieres realizar este préstamo?"
       />
     </>
   );

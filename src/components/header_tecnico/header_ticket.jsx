@@ -30,6 +30,11 @@ function Header_tickets() {
               Tickets
               </NavDropdown.Item>
               </div>
+              <div className='header1006'>
+              <NavDropdown.Item href="/PrestamosActivos">
+              Préstamos Activos
+              </NavDropdown.Item>
+              </div>
               <NavDropdown.Divider />
               </div>
             </Nav>

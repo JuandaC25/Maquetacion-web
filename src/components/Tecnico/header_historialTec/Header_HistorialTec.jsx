@@ -1,7 +1,6 @@
-import { Navbar, Container, Nav } from 'react-bootstrap';
+import { Navbar } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Header_HistorialTec.css'
-import Desplegable from '../../desplegable/desplegable';
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
@@ -18,11 +17,11 @@ function Header_HistorialTec() {
   const handleShowProfile = () => setShowProfile(true);
 
   const navigateToHome = () => {
-    window.location.href = "http://localhost:5173/Login";
+    globalThis.location.href = "http://localhost:5173/Login";
   };
 
   const navigateToBlog = () => {
-    window.location.href = "https://electricidadelectronicaytelecomu.blogspot.com/";
+    globalThis.location.href = "https://electricidadelectronicaytelecomu.blogspot.com/";
   };
 
   return (
@@ -48,22 +47,27 @@ function Header_HistorialTec() {
             <Offcanvas.Body className="cards-xd208tec">
               
               
-              <Link to="/Tecnico" className='card-xd209tec'>
+              <Link to="/Prestamos-Tecnico" className='card-xd209tec'>
                 <p className="text-primary-xd210tec"><i className="bi bi-arrow-left-right"></i> Prestamos</p>
                 <p className="text-secondary-xd211tec">Ver solicitudes de prestamos</p>
               </Link>
-              <Link to="/Cuarta" className='card-xd209tec'>
+              <Link to="/Tickets-Tecnico" className='card-xd209tec'>
                 <p className="text-primary-xd210tec"><i className="bi bi-tools"></i> Tickets</p>
                 <p className="text-secondary-xd211tec">Ver tickets de equipos</p>
-              </Link>
-              <Link to="/HistorialTec" className='card-xd209tec'>
-                <p className="text-primary-xd210tec"><i className="bi bi-clock-history"></i> Historial</p>
-                <p className="text-secondary-xd211tec">Ver registros(prestamos y tickets)</p>
               </Link>
               <Link to="/TicketsActivos" className='card-xd209tec'>
                 <p className="text-primary-xd210tec"><i className="bi bi-lightning-charge"></i> Tickets Activos</p>
                 <p className="text-secondary-xd211tec">Ver solo tickets activos</p>
               </Link>
+              <Link to="/PrestamosActivos" className='card-xd209tec'>
+                <p className="text-primary-xd210tec"><i className="bi bi-lightning-charge"></i> Préstamos Activos</p>
+                <p className="text-secondary-xd211tec">Ver solo préstamos activos</p>
+              </Link>
+              <Link to="/HistorialTec" className='card-xd209tec'>
+                <p className="text-primary-xd210tec"><i className="bi bi-clock-history"></i> Historial</p>
+                <p className="text-secondary-xd211tec">Ver registros(prestamos y tickets)</p>
+              </Link>
+              
             </Offcanvas.Body>
           </Offcanvas>
 

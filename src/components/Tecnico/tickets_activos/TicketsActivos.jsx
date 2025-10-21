@@ -143,6 +143,7 @@ function TicketsActivos() {
           </div>
         </div>
 
+
         <Carousel 
           data-bs-theme="dark" 
           activeIndex={activeIndex} 
@@ -184,6 +185,15 @@ function TicketsActivos() {
             ))
           )}
         </Carousel>
+
+        {/* Paginación visual del carrusel */}
+        {slides.length > 1 && (
+          <div style={{ textAlign: 'center', margin: '16px 0' }}>
+            <span style={{ fontWeight: 500, fontSize: '1.1rem', color: '#00AF00' }}>
+              Página {activeIndex + 1} de {slides.length}
+            </span>
+          </div>
+        )}
 
         <ModalPeticion 
           show={mostrarModal} 

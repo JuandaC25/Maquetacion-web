@@ -24,40 +24,42 @@ import Historial_ptec2 from './components/Tecnico/Historial/Historial_ptec1/Hist
 import Solicitudes from './paginas/Solicitudes/Solicitudes.jsx';
 import TicketsActivos from './components/Tecnico/tickets_activos/TicketsActivos.jsx';
 
+import PrestamosActivos from './components/Tecnico/prestamos_activos/PrestamosActivos.jsx';
 function App() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <BrowserRouter>
-        <div style={{ flex: 1 }}>
-          <Routes>
-            <Route path='/Login' element={<Login/>}/> 
-            <Route path='/Cuarta' element={<Cuarta />} />
-            <Route path='/inventario' element={<Inventario />} />
-            <Route path='/adcrear' element={<AdCrear />} />
-            <Route path='/solielemento' element={<Solielemento/>} />
-            <Route path='/soliespacio' element={<Soliespacio/>} />
-            <Route path='/Tecnico' element={<Tecnico />} />
-            <Route path='/espacios' element={<Soliespacios />} />
-            <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
-            <Route path='/Historial_pedidos' element={<Historial_ped />} />
-            <Route path='/Solicitartelevisores' element={<Solitelevisores />} />
-            <Route path='/Pedidos_ele' element={<Pedidos_ele />} />
-            <Route path='/' element={<Login/>}/> 
-            <Route path='/Inicio' element={<Home />}/>
-            <Route path='/Admin' element={<Admin />} />
-            <Route path="/PedidoElementos" element={<Pedidos_ele />} />
-            <Route path='/Pedidoescritorio' element={<Pedidos_escritorio />} />
-            <Route path='/Desplegable' element={<Desplegable />} />
-            <Route path='/Informacion_equiposs' element={<Informacion_equipos />} />
-            <Route path='/HistorialTec' element={<HistorialTec/>}/>
-            <Route path='/Historial_TicketsTec' element={<Historial_ptec/>}/>
-            <Route path='/Historial_TicketsTec2' element={<Historial_ptec2/>}/>
-            <Route path='/Solicitudes' element={<Solicitudes/>}/>
-            <Route path='/TicketsActivos' element={<TicketsActivos/>}/>
-          </Routes>
-        </div>
-      </BrowserRouter>
-    </div>
+
+    <BrowserRouter>
+
+      <Routes>
+        <Route path='/Login' element={<Login/>}/> 
+  <Route path='/Tickets-Tecnico' element={<Cuarta />} />
+        <Route path='/inventario' element={<Inventario />} />
+        <Route path='/adcrear' element={<AdCrear />} />
+        <Route path='/solielemento' element={<Solielemento/>} />
+        <Route path='/soliespacio' element={<Soliespacio/>} />
+  <Route path='/Prestamos-Tecnico' element={<Tecnico />} />
+        <Route path='/espacios' element={<Soliespacios />} />
+        <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
+        <Route path='/Historial_pedidos' element={<Historial_ped />} />
+        <Route path='/Solicitartelevisores' element={<Solitelevisores />} />
+        <Route path='/Pedidos_ele' element={<Pedidos_ele />} />
+        <Route path='/' element={<Login/>}/> 
+        <Route path='/Inicio' element={<Home />}/>
+        
+        <Route path='/Admin' element={<Admin />} />
+        <Route path="/PedidoElementos" element={<Pedidos_ele />} />
+        <Route path='/Pedidoescritorio' element={<Pedidos_escritorio />} />
+        <Route path='/Desplegable' element={<Desplegable />} />
+        <Route path='/Informacion_equiposs' element={<Informacion_equipos />} />
+        <Route path='/HistorialTec' element={<HistorialTec/>}/>
+          <Route path='/Historial_TicketsTec' element={<Historial_ptec/>}/>
+          <Route path='/Historial_TicketsTec2' element={<Historial_ptec2/>}/>
+        <Route path='/Solicitudes' element={<Solicitudes/>}/>
+  <Route path='/TicketsActivos' element={<TicketsActivos/>}/>
+  <Route path='/PrestamosActivos' element={<PrestamosActivos/>}/>
+        <Route />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
