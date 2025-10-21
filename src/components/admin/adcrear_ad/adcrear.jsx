@@ -106,8 +106,8 @@ const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualiza
                     <div className="detail-value-display-xd117">
                         <Form.Control 
                             type="text" 
-                            value={userDetails.tip_docu || ''} 
-                            readOnly 
+                            value={userDetails.tip_document || ''} 
+                            rolesOnly 
                             className="modern-form-control-xd118" 
                         />
                     </div>
@@ -252,14 +252,14 @@ const UserCard = ({ user, onVerClick }) => (
 const UserManagementList = () => {
     const [showAddUserModal, setShowAddUserModal] = useState(false);
     const [newUserData, setNewUserData] = useState({ 
-        nom_su: '', 
-        ape_su: '', 
-        corre: '', 
+        nom_usu: '', 
+        ape_usu: '', 
+        correo: '', 
         num_docu: '', 
-        pasword: '',
-        estad: 1,
-        tip_docu: '', 
-        id_role: '' 
+        password: '',
+        estado: 1,
+        tip_document: '', 
+        roles: '' 
     });
     const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -301,14 +301,14 @@ const UserManagementList = () => {
     const handleCloseAddUserModal = () => {
         setShowAddUserModal(false);
         setNewUserData({ 
-            nom_su: '', 
-            ape_su: '', 
-            corre: '', 
+            nom_usu: '', 
+            ape_usu: '', 
+            correo: '', 
             num_docu: '', 
             pasword: '',
-            estad: 1,
-            tip_docu: '', 
-            id_role: '' 
+            estado: 1,
+            tip_document: '', 
+            roles: '' 
         });
         setEmailError('');
         setPasswordError('');
@@ -333,9 +333,9 @@ const UserManagementList = () => {
 
     const mapearRolAId = (rol) => {
         const rolesMap = {
-            'instructor': 1,
-            'técnico': 2,
-            'administrador': 3
+            'instructor': 2,
+            'técnico': 3,
+            'administrador': 1
         };
         return rolesMap[rol] || '';
     };
@@ -351,7 +351,7 @@ const UserManagementList = () => {
 
     const handleAddUserSubmit = async () => {
         try {
-            const requiredFields = ['num_docu', 'nom_su', 'ape_su', 'corre','pasword'];
+            const requiredFields = ['num_docu', 'nom_usu', 'ape_usu', 'corre','pasword'];
             const missingField = requiredFields.find(field => !newUserData[field]);
             if (missingField) {
                 alert(`Por favor complete el campo: ${missingField}`);
@@ -367,16 +367,16 @@ const UserManagementList = () => {
                 
             }
 
-            if (!newUserData.tip_docu || !newUserData.id_role) {
-                alert('Por favor seleccione el tipo de documento y el rol');
+            if (!newUserData.tip_document || !newUserData.id_role) {
+                alert('Por favor roleseccione el tipo de documento y el rol');
                 return;
             }
 
             const usuarioParaCrear = {
                 ...newUserData,
                 num_docu: parseInt(newUserData.num_docu),
-                tip_docu: mapearTipoDocumentoAId(newUserData.tip_docu),
-                id_role: mapearRolAId(newUserData.id_role),
+                tip_document: mapearTipoDocumentoAId(newUserData.tip_document),
+                roles: mapearRolAId(newUserData.rolesole),
                 estad: 1
             };
 
@@ -627,14 +627,14 @@ const UserManagementList = () => {
                     </div>
 
                     <div className="detail-item-xd115">
-                        <label className="detail-label-xd116" htmlFor="tip_docu">Tipo de Documento</label>
-                        <div className="detail-value-display-xd117">
+                        <label className="detail-label-xd116" htmlFor="tip_document">Tipo de Documento</label>
+                        <div className="detail-value-display-roles117">
                             <Form.Control 
                                 as="select" 
-                                id="tip_docu" 
-                                name="tip_docu" 
-                                value={newUserData.tip_docu} 
-                                onChange={handleNewUserChange} 
+                                id="tip_document" 
+                                name="rolesocument" 
+                                value={rolesrData.tip_document} 
+                                onChange={rolesnge} 
                                 className="modern-form-control-xd118"
                             >
                                 <option value="">Seleccionar tipo</option>
@@ -668,14 +668,14 @@ const UserManagementList = () => {
                     </div>
 
                     <div className="detail-item-xd115">
-                        <label className="detail-label-xd116" htmlFor="nom_su">Nombre</label>
+                        <label className="detail-label-xd116" htmlFor="nom_usu">Nombre</label>
                         <div className="detail-value-display-xd117">
                             <Form.Control 
                                 type="text" 
-                                id="nom_su" 
+                                id="nom_usu" 
                                 placeholder="Ingrese el nombre" 
-                                name="nom_su" 
-                                value={newUserData.nom_su} 
+                                name="nom_usu" 
+                                value={newUserData.nom_usu} 
                                 onChange={handleNewUserChange} 
                                 className="modern-form-control-xd118" 
                             />
@@ -683,14 +683,14 @@ const UserManagementList = () => {
                     </div>
 
                     <div className="detail-item-xd115">
-                        <label className="detail-label-xd116" htmlFor="ape_su">Apellido</label>
+                        <label className="detail-label-xd116" htmlFor="ape_usu">Apellido</label>
                         <div className="detail-value-display-xd117">
                             <Form.Control 
                                 type="text" 
-                                id="ape_su" 
+                                id="ape_usu" 
                                 placeholder="Ingrese el apellido" 
-                                name="ape_su" 
-                                value={newUserData.ape_su} 
+                                name="ape_usu" 
+                                value={newUserData.ape_usu} 
                                 onChange={handleNewUserChange} 
                                 className="modern-form-control-xd118" 
                             />
