@@ -13,30 +13,25 @@ const Listaxd = ({ onVerClick }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Función para cargar los tickets desde la API
   const cargarTickets = async () => {
     try {
       setLoading(true);
       setError(null);
       const datosTickets = await obtenertickets();
-      // Asegurarnos de que siempre sea un array, incluso si la API devuelve null/undefined
       setTickets(Array.isArray(datosTickets) ? datosTickets : []);
     } catch (err) {
       setError(err.message);
       console.error('Error al cargar tickets:', err);
-      // Si hay error, establecer tickets como array vacío
       setTickets([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Cargar tickets al montar el componente
   useEffect(() => {
     cargarTickets();
   }, []);
 
-  // Asegurarnos de que tickets siempre sea un array para el filter
   const ticketsArray = Array.isArray(tickets) ? tickets : [];
   
   const ticketsFiltrados = elementoSeleccionado === 'Todos' 
@@ -83,14 +78,38 @@ const Listaxd = ({ onVerClick }) => {
           <div className="flex-inner-1204">
             <strong className="strong-1205">TICKET</strong>
             <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic-1206">
+              <Dropdown.Toggle 
+                variant="success" 
+                id="dropdown-basic-1206"
+                className="custom-dropdown-toggle"
+              >
                 {elementoSeleccionado}
               </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={() => handleselectElemento('Todos')}>Todos</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleselectElemento('portatil')}>Portátiles</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleselectElemento('Equipo de escritorio')}>Equipos de escritorio</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleselectElemento('Televisor')}>Televisores</Dropdown.Item>
+              <Dropdown.Menu className="custom-dropdown-menu">
+                <Dropdown.Item 
+                  onClick={() => handleselectElemento('Todos')}
+                  className="custom-dropdown-item"
+                >
+                  Todos
+                </Dropdown.Item>
+                <Dropdown.Item 
+                  onClick={() => handleselectElemento('portatil')}
+                  className="custom-dropdown-item"
+                >
+                  Portátiles
+                </Dropdown.Item>
+                <Dropdown.Item 
+                  onClick={() => handleselectElemento('Equipo de escritorio')}
+                  className="custom-dropdown-item"
+                >
+                  Equipos de escritorio
+                </Dropdown.Item>
+                <Dropdown.Item 
+                  onClick={() => handleselectElemento('Televisor')}
+                  className="custom-dropdown-item"
+                >
+                  Televisores
+                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </div>
@@ -100,8 +119,6 @@ const Listaxd = ({ onVerClick }) => {
           </div>
         </div>
       </Alert>
-      
-      {/* Mostrar mensaje cuando no hay tickets */}
       {ticketsFiltrados.length === 0 && !loading && (
         <div className="text-center py-5">
           <div className="mb-3">
@@ -111,8 +128,6 @@ const Listaxd = ({ onVerClick }) => {
           <p className="text-muted">No hay tickets para mostrar en este momento</p>
         </div>
       )}
-      
-      {/* Mostrar grid solo si hay tickets */}
       {ticketsFiltrados.length > 0 && (
         <div className="grid-1208">
           {ticketsFiltrados.map((t, i) => (
@@ -165,7 +180,6 @@ const Admin = () => {
   const [modalDetalles, setModalDetalles] = useState(null);
 
   const handleVerClick = (detalles) => {
-    // Asegurarnos de que siempre tengamos un objeto, incluso si detalles es null/undefined
     setModalDetalles(detalles || {});
     setShowModal(true);
   };
