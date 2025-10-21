@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, ListGroup, Button, Modal, Form, Pagination } from "react-bootstrap";
+import { Card, ListGroup, Button, Modal, Form, Pagination, ButtonGroup, ToggleButton } from "react-bootstrap";
 import "./Pedidos_escritorio.css";
 import ElementosService from "../../../api/ElementosApi";
 import { crearSolicitud } from "../../../api/solicitudesApi"; // Importar la función
@@ -16,6 +16,7 @@ function Datos_escritorio() {
     const [currentPage, setCurrentPage] = useState(1);
     const [equiposPerPage] = useState(6);
     const categoryName = "Equipo de Escritorio";
+    const [categoriaFiltro, setCategoriaFiltro] = useState("computo"); // computo | multimedia
 
     const [form, setForm] = useState({
         fecha_ini: "",
@@ -87,18 +88,19 @@ function Datos_escritorio() {
             try {
                 setIsLoading(true);
                 const data = await ElementosService.obtenerElementos();
-                // Ajustar mapeo para coincidir con backend
-                const equiposDeEscritorio = data.filter(item => item.id_categ === 2);
-
-                const transformedData = equiposDeEscritorio.map(item => ({
+                // Guardar todos los equipos, filtrado se hace después
+                const transformedData = data.map(item => ({
                     id: item.id_elemen,
                     nombre: item.nom_eleme,
                     descripcion: item.obse,
-                    modelo: item.num_serie,
+                    modelo: item.num_seri,
                     especificaciones: (item.componen || "").split(',').map(s => s.trim()),
+                    marca: item.marc,
+                    estado: item.est_elemn,
+                    sub_catg: item.sub_catg,
+                    tip_catg: item.tip_catg,
                     imagen: "/imagenes/EscritorioMesa.png",
                 }));
-
                 setEquiposApi(transformedData);
                 setFilteredEquipos(transformedData);
             } catch (err) {
@@ -110,19 +112,24 @@ function Datos_escritorio() {
         fetchElementos();
     }, []);
 
+    // Filtrado por categoría y subcategoría
     useEffect(() => {
+        let subCatgFiltro = categoriaFiltro === "computo" ? "Equipo de mesa" : "Equipo de edicion";
         const results = equiposApi.filter((equipo) => {
             const lowerSearchTerm = searchTerm.toLowerCase();
             return (
-                (equipo.nombre || "").toLowerCase().includes(lowerSearchTerm) ||
-                (equipo.modelo || "").toLowerCase().includes(lowerSearchTerm) ||
-                (equipo.descripcion || "").toLowerCase().includes(lowerSearchTerm) ||
-                (equipo.especificaciones || []).some((esp) => (esp || "").toLowerCase().includes(lowerSearchTerm))
+                equipo.sub_catg === subCatgFiltro &&
+                (
+                    (equipo.nombre || "").toLowerCase().includes(lowerSearchTerm) ||
+                    (equipo.modelo || "").toLowerCase().includes(lowerSearchTerm) ||
+                    (equipo.descripcion || "").toLowerCase().includes(lowerSearchTerm) ||
+                    (equipo.especificaciones || []).some((esp) => (esp || "").toLowerCase().includes(lowerSearchTerm))
+                )
             );
         });
         setFilteredEquipos(results);
         setCurrentPage(1);
-    }, [searchTerm, equiposApi]);
+    }, [searchTerm, equiposApi, categoriaFiltro]);
 
     const toggleSelect = (id) => {
         setSeleccionados((prev) =>
@@ -151,6 +158,34 @@ function Datos_escritorio() {
 
     return (
         <div className="main-page-container">
+            {/* Filtro de categoría */}
+            <div className="mb-3 d-flex justify-content-center">
+                <ButtonGroup>
+                    <ToggleButton
+                        id="filtro-computo"
+                        type="radio"
+                        variant={categoriaFiltro === "computo" ? "primary" : "outline-primary"}
+                        name="categoriaFiltro"
+                        value="computo"
+                        checked={categoriaFiltro === "computo"}
+                        onChange={() => setCategoriaFiltro("computo")}
+                    >
+                        Computo
+                    </ToggleButton>
+                    <ToggleButton
+                        id="filtro-multimedia"
+                        type="radio"
+                        variant={categoriaFiltro === "multimedia" ? "primary" : "outline-primary"}
+                        name="categoriaFiltro"
+                        value="multimedia"
+                        checked={categoriaFiltro === "multimedia"}
+                        onChange={() => setCategoriaFiltro("multimedia")}
+                    >
+                        Multimedia
+                    </ToggleButton>
+                </ButtonGroup>
+            </div>
+
             <div className="Ajust-debusquedas">
                 <div className="group-busqueda">
                     <input
@@ -187,8 +222,13 @@ function Datos_escritorio() {
                             <div className="ficha-info">
                                 <Card.Body>
                                     <Card.Title>{equipo.nombre}</Card.Title>
-                                    <Card.Subtitle className="mb-2 text-muted">Observaciones: {equipo.modelo}</Card.Subtitle>
+                                    <Card.Subtitle className="mb-2 text-muted">
+                                        Numero de Serie: {equipo.modelo} {/* Cambiado a Serie */}
+                                    </Card.Subtitle>
                                     <Card.Text>{equipo.descripcion}</Card.Text>
+                                    <div>Marca: {equipo.marca}</div>
+                                    {/* Puedes mostrar el estado si lo necesitas */}
+                                    {/* <div>Estado: {equipo.estado}</div> */}
                                     <Card className="Cuadro_especificacioness">
                                         <Card.Header>Especificaciones</Card.Header>
                                         <ListGroup variant="flush">
@@ -230,7 +270,6 @@ function Datos_escritorio() {
                     </Pagination>
                 </div>
             )}
-
             <Modal show={showModal} onHide={() => setShowModal(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title className="modal-title">Realizar Solicitud</Modal.Title>
@@ -322,7 +361,6 @@ function Datos_escritorio() {
                     </Form>
                 </Modal.Body>
             </Modal>
-
             <Modal show={showCartModal} onHide={() => setShowCartModal(false)} >
                 <Modal.Header closeButton>
                     <Modal.Title>Equipos seleccionados</Modal.Title>
