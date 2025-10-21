@@ -1,90 +1,219 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./HistorialTec.css";
-import Header_HistorialTec from '../header_historialTec/Header_HistorialTec.jsx';
-import Footer from '../../Footer/Footer';
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
+import Header_HistorialTec from "../header_historialTec/Header_HistorialTec.jsx";
+import Footer from "../../Footer/Footer";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import { FaFilter } from "react-icons/fa";
+import ModalTickets from "./ModalHistorial/ModalTickets.jsx";
+import TicketsActivosTec from "./TicketsActivosTec.jsx";
 
 const HistorialTec = () => {
-  const [historial, setHistorial] = useState([
-    {
-      id: 1,
-      fecha: "2025-09-01",
-      titulo: "Ticket #001",
-      descripcion: "Se hizo una revisión general del equipo.",
-    },
-    {
-      id: 2,
-      fecha: "2025-09-05",
-      titulo: "Ticket #002",
-      descripcion: "Se cambió el filtro de ventilación.",
-    },
-    {
-      id: 3,
-      fecha: "2025-09-10",
-      titulo: "Ticket #003",
-      descripcion: "Se instaló nueva versión del firmware.",
-    },
-  ]);
+  const [categoriaGeneral, setCategoriaGeneral] = useState("Tickets"); 
+  const [categoriaEquipo, setCategoriaEquipo] = useState("Todos"); 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
 
-  const agregarHistorial = () => {
-    const nuevoId = historial.length > 0 ? historial[historial.length - 1].id + 1 : 1;
-    const nuevo = {
-      id: nuevoId,
-      fecha: new Date().toISOString().substring(0, 10),
-      titulo: `Prestamo #00${nuevoId}`,
-      descripcion: `detalles de la revision `,
-      
+  const [historial, setHistorial] = useState([]);
+  const [elementos, setElementos] = useState([]);
+  const [error, setError] = useState("");
+  const [ticketSeleccionado, setTicketSeleccionado] = useState(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
+
+  useEffect(() =>  {
+    const fetchData = async () => {
+      try {
+        setError("");
+        let dataHistorial = [];
+        let dataElementos = [];
+
+        if (categoriaGeneral === "Tickets") {
+          const resTickets = await fetch("http://localhost:8081/api/tickets");
+          if (!resTickets.ok) throw new Error(`Error ${resTickets.status}`);
+          dataHistorial = await resTickets.json();
+        } else {
+          const resPrestamos = await fetch("http://localhost:8081/api/prestamos");
+          if (!resPrestamos.ok) throw new Error(`Error ${resPrestamos.status}`);
+          dataHistorial = await resPrestamos.json();
+        }
+
+        const resElementos = await fetch("http://localhost:8081/api/elementos");
+        if (!resElementos.ok) throw new Error(`Error ${resElementos.status}`);
+        dataElementos = await resElementos.json();
+
+        setHistorial(dataHistorial);
+        setElementos(dataElementos);
+      } catch (err) {
+        console.error("Error al obtener historial:", err);
+        setError("No se pudo conectar con el backend. Verifica que esté corriendo y la URL sea correcta.");
+      }
     };
-    setHistorial([...historial, nuevo]);
+
+    fetchData();
+  }, [categoriaGeneral]);
+
+  // Filtrar tickets por estado 0 o 4 solo si la categoría general es Tickets
+  const historialConCategoria = historial
+    .filter(item => {
+      if (categoriaGeneral === "Tickets") {
+        return item.estado === 0 || item.estado === 4;
+      }
+      return true;
+    })
+    .map((item) => {
+      const elementoRelacionado = elementos.find(
+        (el) => el.id_elemen === (categoriaGeneral === "Tickets" ? item.id_eleme : item.id_elem)
+      );
+      return {
+        ...item,
+        categoria: elementoRelacionado ? elementoRelacionado.tip_catg : "Sin categoría",
+        numSerie: elementoRelacionado ? elementoRelacionado.num_seri : "No registrada",
+      };
+    });
+
+  const filtrarHistorial = () => {
+    return historialConCategoria.filter((item) => {
+      const coincideCategoria =
+        categoriaEquipo === "Todos" ||
+        (item.categoria && item.categoria.toLowerCase() === categoriaEquipo.toLowerCase());
+
+      const itemFecha =
+        categoriaGeneral === "Tickets" ? item.fecha_in : item.fecha_entreg;
+
+      const coincideBusqueda =
+        searchTerm === "" ||
+        (item.nom_elem && item.nom_elem.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (item.categoria && item.categoria.toLowerCase().includes(searchTerm.toLowerCase()));
+
+      const coincideFecha =
+        (!fechaInicio || itemFecha >= fechaInicio) &&
+        (!fechaFin || itemFecha <= fechaFin);
+
+      return coincideCategoria && coincideBusqueda && coincideFecha;
+    });
   };
 
-  const eliminarHistorial = (id) => {
-    setHistorial(historial.filter(item => item.id !== id));
+  const historialFiltrado = filtrarHistorial();
+
+  const abrirModal = (ticket) => {
+    setTicketSeleccionado(ticket);
+    setMostrarModal(true);
   };
+
+  const cerrarModal = () => setMostrarModal(false);
 
   return (
     <>
       <Header_HistorialTec />
       <section className="tecnico-historial">
-       
-        <div className="tecnico-historial__acciones">
+        {/* Apartado de tickets activos */}
+        <TicketsActivosTec />
+        <div className="barra-filtros">
           <DropdownButton
             as={ButtonGroup}
-            title="Dropdown"
-            id="bg-vertical-dropdown-2"
-            className="butin"
+            title={categoriaGeneral}
+            id="dropdown-general"
+            className="filtro-btn"
+            onSelect={(key) => setCategoriaGeneral(key)}
           >
-            <Dropdown.Item eventKey="1">Prestamos</Dropdown.Item>
-            <Dropdown.Item eventKey="2">Elementos </Dropdown.Item>
+            <Dropdown.Item eventKey="Tickets">Tickets</Dropdown.Item>
+            <Dropdown.Item eventKey="Préstamos">Préstamos</Dropdown.Item>
           </DropdownButton>
+
+          <DropdownButton
+            title={<FaFilter />}
+            className="filtro-icono"
+            onSelect={(key) => setCategoriaEquipo(key)}
+          >
+            <Dropdown.Item eventKey="Todos">Todos</Dropdown.Item>
+            <Dropdown.Item eventKey="Portátiles">Portátiles</Dropdown.Item>
+            <Dropdown.Item eventKey="Equipo de mesa">Equipo de mesa</Dropdown.Item>
+            <Dropdown.Item eventKey="Accesorios">Accesorios</Dropdown.Item>
+            <Dropdown.Item eventKey="Televisores">Televisores</Dropdown.Item>
+          </DropdownButton>
+
+          <input
+            type="text"
+            placeholder="Buscar por nombre..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="input-busqueda-min"
+          />
+
+          <div className="rango-fechas-min">
+            <input
+              type="date"
+              value={fechaInicio}
+              onChange={(e) => setFechaInicio(e.target.value)}
+            />
+            <span>—</span>
+            <input
+              type="date"
+              value={fechaFin}
+              onChange={(e) => setFechaFin(e.target.value)}
+            />
+          </div>
         </div>
+
+        {error && <p className="error-backend">{error}</p>}
+
         <div className="tecnico-historial__lista">
-          {historial.length > 0 ? (
-            historial.map(item => (
-              <div className="historial-item" key={item.id}>
-                <div className="historial-item__contenido">
-                  <span className="historial-item__fecha">{item.fecha}</span>
-                  <h3 className="historial-item__titulo">{item.titulo}</h3>
-                  <p className="historial-item__descripcion">{item.descripcion}</p>
+          {historialFiltrado.length > 0 ? (
+            historialFiltrado.map((item) => {
+              const itemFecha =
+                categoriaGeneral === "Tickets" ? item.fecha_in : item.fecha_entreg;
+
+              return (
+                <div className="historial-item" key={item.id_tickets || item.id_prest}>
+                  <div className="historial-item__contenido">
+                    <span className="historial-item__fecha">
+                      {new Date(itemFecha).toLocaleString()}
+                    </span>
+                    <h3 className="historial-item__titulo">
+                      {categoriaGeneral === "Tickets"
+                        ? `Ticket #${item.id_tickets}`
+                        : `Préstamo #${item.id_prest}`}
+                    </h3>
+                    <p className="historial-item__descripcion">
+                      {item.descripcion || item.tipo_pres || "Sin descripción"}
+                    </p>
+                    <p className="historial-item__detalle">
+                      <strong>Elemento:</strong> {item.nom_elem || "Desconocido"} |{" "}
+                      <strong>Categoría:</strong> {item.categoria} |{" "}
+                      <strong>Número de serie:</strong> {item.numSerie}
+                    </p>
+                    <button
+                      className="buttoninfo"
+                      onClick={() => abrirModal(item)}
+                    >
+                      Ver detalle
+                    </button>
+                  </div>
                 </div>
-                <div className="historial-item__acciones">
-                  <button
-                    className="btn-eliminar"
-                    onClick={() => eliminarHistorial(item.id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              </div>
-            ))
+              );
+            })
           ) : (
-            <p className="tecnico-historial__vacio">No hay eventos en el historial.</p>
+            <p className="tecnico-historial__vacio">
+              {categoriaGeneral === "Tickets"
+                ? "No hay información disponible para Tickets."
+                : "No hay resultados que coincidan con los filtros."}
+            </p>
           )}
         </div>
       </section>
+
+      {ticketSeleccionado && (
+        <ModalTickets
+          show={mostrarModal}
+          onHide={cerrarModal}
+          ticket={ticketSeleccionado}
+          elementos={elementos}
+          tipo={categoriaGeneral}
+        />
+      )}
+
       <Footer />
     </>
   );

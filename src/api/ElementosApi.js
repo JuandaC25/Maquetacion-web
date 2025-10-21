@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api/elementos';
+const API_URL = 'http://localhost:8081/api/elementos';
 
 class ElementosService {
   async obtenerElementos() {
@@ -45,7 +45,6 @@ class ElementosService {
       console.log('📨 Respuesta del servidor - Data:', responseData);
       
       if (!response.ok) {
-        // Manejar errores específicos del backend
         if (response.status === 409) {
           throw new Error(`Conflicto: ${responseData.errores1 || responseData.mensaje || 'El elemento ya existe'}`);
         } else if (response.status === 400) {
@@ -56,9 +55,6 @@ class ElementosService {
           throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
       }
-      
-      // Ajusta según la estructura de respuesta de tu backend
-      // Si tu backend devuelve { "data": {...} } o directamente el objeto
       return responseData.data || responseData;
       
     } catch (error) {

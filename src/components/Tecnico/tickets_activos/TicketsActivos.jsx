@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import Footer from '../../Footer/Footer';
-import ModalPeticion from './modal_informacion_E/Modal2'; // ahora recibe ticket y elementos
-import './Info_equipos_tec.css';
-import Otromodal from './OTRO.MODAL/Otro_modal';
-import Header_informacion from '../header_informacion_E/Header_informacion_E.jsx';
+import ModalPeticion from '../informacion_de_equipos/modal_informacion_E/Modal2'; // ahora recibe ticket y elementos
+import '../informacion_de_equipos/Info_equipos_tec.css';
+import Otromodal from '../informacion_de_equipos/OTRO.MODAL/Otro_modal';
+import HeaderTicketsActivos from '../header_tickets_activos/header_tickets_activos.jsx';
 import Carousel from 'react-bootstrap/Carousel';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-function Cuarta() {
+function TicketsActivos() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [ticketSeleccionado, setTicketSeleccionado] = useState(null); // ticket seleccionado
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,15 +22,12 @@ function Cuarta() {
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
 
-  // ...eliminado categoriasDropdown...
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const ticketsRes = await fetch('http://localhost:8081/api/tickets');
-        let ticketsJson = await ticketsRes.json();
-        // Excluir tickets con estado 0 (inactivos)
-        ticketsJson = ticketsJson.filter(ticket => ticket.estado !== 0);
+        // Solo obtener tickets activos
+        const ticketsRes = await fetch('http://localhost:8081/api/tickets/activos');
+        const ticketsJson = await ticketsRes.json();
         setTicketsData(ticketsJson);
         setTicketsFiltrados(ticketsJson);
 
@@ -77,7 +74,7 @@ function Cuarta() {
 
   return (
     <div className='suprem'>
-      <Header_informacion />
+      <HeaderTicketsActivos />
       <div className='carrusel'>
         <div className="barra-filtros">
           <select value={categoriaSeleccionada} onChange={e => {
@@ -158,7 +155,7 @@ function Cuarta() {
           {slides.length === 0 ? (
             <Carousel.Item>
               <div className="carrusel_1">
-                <p style={{ margin: 'auto' }}>No se encontraron tickets.</p>
+                <p style={{ margin: 'auto' }}>No se encontraron tickets activos.</p>
               </div>
             </Carousel.Item>
           ) : (
@@ -200,4 +197,4 @@ function Cuarta() {
   );
 }
 
-export default Cuarta;
+export default TicketsActivos;

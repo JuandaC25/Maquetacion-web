@@ -5,9 +5,7 @@ import './Cuadro_Pedidos.css';
 function Cuadro_Pedidos() {
   return (
     <div className='Cuadrost'> 
-      <div className='fila-superiorr'>
-
-        
+      <div className='fila-superiorr'>  
         <Card className="CuadroP0rt">
           <div className="background-effect-port"></div>
           <img src="/imagenes/portatil.png" className="imagen-animada-port" alt="Portátil" />
@@ -22,7 +20,7 @@ function Cuadro_Pedidos() {
           <img src="/imagenes/Equipo de escritorio.png" className="imagen-animada-escr" alt="Escritorio" />
           <Card.Body>
             <Card.Title className='Tit-002'><h4>Equipos de escritorio</h4></Card.Title>
-            <Button href='/Pedidoescritorio' className='boton_esc'>Seleccionar</Button>
+            <Button href='/Pedidoescritorio' className='boton_escs'>Seleccionar</Button>
           </Card.Body>
         </Card>
       </div>
@@ -30,9 +28,9 @@ function Cuadro_Pedidos() {
       <div className='fila-inferiorr'>      
         <Card className="CuadroTV">
           <div className="background-effect-tv"></div>
-          <img src="/imagenes/Televisor.png" className="imagen-animada-tv" alt="Televisor" />
+          <img src="/imagenes/Audio_video.png" className="imagen-animada-tv" alt="Audio/ video" />
           <Card.Body>
-            <Card.Title className='Tit-003'><h4>Televisores</h4></Card.Title>
+            <Card.Title className='Tit-003'><h4>Audio/video</h4></Card.Title>
             <Button href='/Solicitartelevisores' className='boton_TV'>Seleccionar</Button>
           </Card.Body>
         </Card>
@@ -53,4 +51,3 @@ function Cuadro_Pedidos() {
 }
 
 export default Cuadro_Pedidos;
-

@@ -1,8 +1,8 @@
 export const obtenersolicitudes = async () => {
     try{
-        const res = await fetch(`http://localhost:8081/api/solicitudes`);
+        const res = await fetch(`http://localhost:8081/api/subcategoria`);
         if(!res.ok){
-            throw new Error ("Error al obtener las solicitudes");
+            throw new Error ("Error al obtener las subcategorias");
         }
         return await res.json();
     }catch(error){
@@ -11,16 +11,16 @@ export const obtenersolicitudes = async () => {
         }
     }
 };
-export const obtenerSolicitudesPorid = async (id) =>{
-    const res = await fetch (`http://localhost:8081/api/solicitudes/${id}`,{
+export const obtenerSubcategoriaPorid = async (id) =>{
+    const res = await fetch (`http://localhost:8081/api/subcategoria/${id}`,{
         method:"GET",
     });
     if(!res.ok) throw new Error("Solicitud no encontrada");
     return res.json();
 }
 
-export const crearSolicitud = async (data) =>{
-    const res = await fetch (`http://localhost:8081/api/solicitudes`, {
+export const crearSubcategoria = async (data) =>{
+    const res = await fetch (`http://localhost:8081/api/subcategoria`, {
         method: "POST",
         headers:{ "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -29,13 +29,12 @@ export const crearSolicitud = async (data) =>{
     return res.json();
 }
 
-export const eliminarSolicitud = async (id) =>{
-    const res = await fetch(`http://localhost:8081/api/solicitudes/${id}`,{
+export const eliminarSubcategoria = async (id) =>{
+    const res = await fetch(`http://localhost:8081/api/subcategoria/${id}`,{
         method: "DELETE",
     });
     if(res.status !== 204) {
         return res.json();
     }
-
     return null
 }

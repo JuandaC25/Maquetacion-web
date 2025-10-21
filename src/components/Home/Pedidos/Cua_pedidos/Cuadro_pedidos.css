@@ -22,18 +22,17 @@
   background-color: rgb(9, 180, 26);
   border-color: rgb(9, 180, 26);
   color: white;
-  height: 55%;
   width: 45%;
   border-radius: 12px;
   text-decoration: none;
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
-.boton_esc{
+.boton_escs{
 background-color: rgb(9, 180, 26);
   border-color: rgb(9, 180, 26);
   color: white;
-  height: 92%;
   width: 45%;
+  margin-top: -0.1rem;
   border-radius: 12px;
   text-decoration: none;
   transition: background-color 0.3s ease, border-color 0.3s ease;
@@ -42,7 +41,7 @@ background-color: rgb(9, 180, 26);
 background-color: rgb(9, 180, 26);
   border-color: rgb(9, 180, 26);
   color: white;
-  height: 55%;
+
   width: 45%;
   border-radius: 12px;
   text-decoration: none;
@@ -52,7 +51,7 @@ background-color: rgb(9, 180, 26);
 background-color: rgb(9, 180, 26);
   border-color: rgb(9, 180, 26);
   color: white;
-  height: 150%;
+  margin-top: -0.1rem;
   width: 45%;
   border-radius: 12px;
   text-decoration: none;
@@ -141,7 +140,7 @@ background-image: linear-gradient(to right, #888888, rgb(255, 255, 255));
 }
 .imagen-animada-escr {
   width: 200px;
-  margin-top: 1.3rem;
+  margin-top: 1.5rem;
   margin-left: auto;
   margin-right: auto;
   z-index: 2;
@@ -187,7 +186,7 @@ background-image: linear-gradient(to right, #888888, rgb(255, 255, 255));
   transition: transform 0.5s ease;
 }
 .imagen-animada-tv {
-  width: 200px;
+  width: 150px;
   margin-top: 2.5rem;
   margin-left: auto;
   margin-right: auto;
@@ -231,9 +230,9 @@ background-image: linear-gradient(to right, #888888, rgb(255, 255, 255));
 }
 .imagen-animada-elem {
   width: 200px;
-  margin-top: 2.5rem;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 2.3rem;
   z-index: 2;
   transition: transform 0.5s ease;
 }

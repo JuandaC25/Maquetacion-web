@@ -26,6 +26,9 @@ function Desplegable() {
           <Button style={{textAlign:'center',backgroundColor:'lightgray',color:'black',margin:'auto',border:'2px solid black',height:'42px', borderRadius: '10px'}} onClick={handleClose}>
             Editar informacion 
           </Button>
+          <Button className='iconbut' href="/TicketsActivos" style={{textAlign:'center',backgroundColor:'#00AF00',color:'white',margin:'10px auto',border:'2px solid #00AF00', borderRadius: '10px',height:'42px',width:'100%'}} onClick={handleClose} >
+            Tickets Activos
+          </Button>
           </div>
           <div style={{width:'100%',textAlign:'center'}}>
           <Button className='iconbut' href="http://localhost:5173/Login" style={{textAlign:'center',backgroundColor:'lightgray',color:'black',margin:'auto',border:'2px solid black', borderRadius: '10px',height:'42px'}} onClick={handleClose} >

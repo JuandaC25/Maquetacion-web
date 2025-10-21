@@ -176,7 +176,9 @@
   margin: 20px auto; 
   max-width: 400px; 
 }
-
+.mb-2text-mutedd{
+  margin-top: 0.3rem;
+}
 .input {
   width: 20%;
   margin-top: 1rem;
@@ -228,7 +230,7 @@
 
 .cartt-container {
   position: fixed;
-  margin-left: 94rem;
+  margin-left: 105rem;
   margin-top: 1.5rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     border-radius: 8px; 

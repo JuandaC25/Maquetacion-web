@@ -1,0 +1,79 @@
+.modal-tickets .modal-content {
+  border-radius: 15px;
+  padding: 0;
+  background-color: white;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.modal-header-verde {
+  background-color: rgb(9, 180, 26); 
+  color: white;
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+  border-bottom: none;
+}
+
+.modal-titulo-verde {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.modal-body-blanco {
+  padding: 25px;
+}
+
+.modal-grid-blanco {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.modal-item-blanco {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-item-full-blanco {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-item-blanco span,
+.modal-item-full-blanco span {
+  font-weight: 600;
+  color:rgb(9, 180, 26);
+  margin-bottom: 5px;
+}
+
+.modal-item-blanco p,
+.modal-item-full-blanco p {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #c0e6b0; 
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.modal-footer-verde {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding-top: 20px;
+  border-top: none;
+}
+
+.btn-verde {
+  min-width: 120px;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 8px 20px;
+  background-color: rgb(9, 180, 26); 
+  border: none;
+}
+
+.btn-verde:hover {
+  background-color: rgb(9, 180, 26); 
+}

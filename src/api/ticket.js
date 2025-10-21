@@ -1,6 +1,19 @@
+export const obtenerticketsActivos = async () => {
+  try{
+    const res = await fetch(`http://localhost:8081/api/tickets/activos`);
+    if(!res.ok){
+      throw new Error ("Error al obtener los tickets activos");
+    }
+    return await res.json();
+  }catch(error){
+    if(error.message.includes("failed to fetch") || error.message.includes("NetworkError")){
+      throw new Error("No se pudo conectar con el servidor");
+    }
+  }
+};
 export const obtenertickets = async () => {
     try{
-        const res = await fetch(`http://localhost:8080/api/tickets`);
+        const res = await fetch(`http://localhost:8081/api/tickets`);
         if(!res.ok){
             throw new Error ("Error al obtener los tickets");
         }
@@ -11,18 +24,27 @@ export const obtenertickets = async () => {
         }
     }
 };
-export const creartickets = async (data) => {
-    const res = await fetch (`http://localhost:8080/api/tickets`,{
-        method:"Post",
-        headers:{"Content-Type":"aplicatopm/json"},
-        body: JSON.stringify(data),
+export const crearTicket = async (data) => {
+  try {
+    const res = await fetch(BASE_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
-    if(!res.ok) throw new Error("Error al crear el ticket");
-    return res.json();
-}
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Error al crear el ticket: ${text}`);
+    }
+    return await res.json();
+  } catch (error) {
+    console.error("❌ Error en crearTicket:", error);
+    throw error;
+  }
+};
 
 export const obtenerTicketsPorid = async (id) =>{
-    const res = await fetch (`http://localhost:8080/api/tickets/${id}`,{
+    const res = await fetch (`http://localhost:8081/api/tickets/${id}`,{
         method:"GET",
     });
     if(!res.ok) throw new Error("Ticket no encontrado");
@@ -31,7 +53,7 @@ export const obtenerTicketsPorid = async (id) =>{
 
 
 export const eliminarTickets = async (id) =>{
-    const res = await fetch(`http://localhost:8080/api/tickets/${id}`,{
+    const res = await fetch(`http://localhost:8081/api/tickets/${id}`,{
         method: "DELETE",
     });
     if(res.status !== 204) {

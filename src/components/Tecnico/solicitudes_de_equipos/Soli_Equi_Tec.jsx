@@ -1,178 +1,151 @@
-import React, { useState } from 'react';
-import ListGroup from 'react-bootstrap/ListGroup';
+import React, { useState, useEffect } from 'react';
 import './Soli_Equi_Tec.css';
 import Footer from '../../Footer/Footer';
 import Button from 'react-bootstrap/Button';
 import ModalFormulario from './modal_soli_E/FormularioModal/ModalFormulario';
-import ConfirmacionModal from './modal_soli_E/ConfrirmacionModal/ConfirmacionModal';
 import Header_solicitud_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
-import { FaDesktop } from 'react-icons/fa';
-import Carousel from 'react-bootstrap/Carousel';
-import Dropdown from 'react-bootstrap/Dropdown';
-function Tecnico() {
+
+export default function Tecnico() {
+  const categorias = ['Portátiles', 'Televisores', 'Equipos de escritorio', 'Accesorios', 'Espacios'];
+
+  const [prestamos, setPrestamos] = useState([]);
+  const [elementos, setElementos] = useState([]);
+  const [categoriaFiltro, setCategoriaFiltro] = useState('');
+  const [busquedaMarca, setBusquedaMarca] = useState('');
+  const [fechaInicio, setFechaInicio] = useState('');
+  const [fechaFin, setFechaFin] = useState('');
+  const [paginaActual, setPaginaActual] = useState(1);
+
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
 
-  const abrirFormulario = () => setMostrarFormulario(true);
-  const cerrarFormulario = () => setMostrarFormulario(false);
+  useEffect(() => {
+    fetch('http://localhost:8081/api/solicitudes')
+      .then(res => res.json())
+      .then(data => setPrestamos(data))
+      .catch(err => console.error('Error al obtener solicitudes:', err));
 
-  const abrirConfirmacion = () => setMostrarConfirmacion(true);
-  const cerrarConfirmacion = () => setMostrarConfirmacion(false);
+    fetch('http://localhost:8081/api/elementos')
+      .then(res => res.json())
+      .then(data => setElementos(data))
+      .catch(err => console.error('Error al obtener elementos:', err));
+  }, []);
 
-  const aceptarConfirmacion = () => {
-    setMostrarConfirmacion(false);
+  useEffect(() => setPaginaActual(1), [categoriaFiltro, busquedaMarca, fechaInicio, fechaFin]);
+
+  // Asegura que prestamos sea siempre un array
+  const prestamosArray = Array.isArray(prestamos) ? prestamos : [];
+
+  const prestamosConCategoria = prestamosArray.map(p => {
+    const elemento = elementos.find(e => e.id_elemen === p.id_elem);
+    return { ...p, categoria: elemento ? elemento.tip_catg : 'Sin categoría' };
+  });
+
+  const equiposFiltrados = prestamosConCategoria.filter(eq => {
+    const cumpleCategoria = categoriaFiltro ? eq.categoria?.toLowerCase().includes(categoriaFiltro.toLowerCase()) : true;
+    const cumpleMarca = busquedaMarca ? eq.nom_elem?.toLowerCase().includes(busquedaMarca.toLowerCase()) : true;
+    const cumpleFecha =
+      (!fechaInicio || new Date(eq.fecha_ini) >= new Date(fechaInicio)) &&
+      (!fechaFin || new Date(eq.fecha_ini) <= new Date(fechaFin));
+    return cumpleCategoria && cumpleMarca && cumpleFecha;
+  });
+
+  const itemsPorPagina = 8;
+  const totalPaginas = Math.max(1, Math.ceil(equiposFiltrados.length / itemsPorPagina));
+  const itemsPagina = equiposFiltrados.slice((paginaActual - 1) * itemsPorPagina, paginaActual * itemsPorPagina);
+
+  const irPagina = n => setPaginaActual(Math.min(Math.max(1, n), totalPaginas));
+
+  const abrirFormulario = equipo => {
+    setEquipoSeleccionado(equipo);
+    setMostrarFormulario(true);
+  };
+
+  const cerrarFormulario = () => {
+    setEquipoSeleccionado(null);
     setMostrarFormulario(false);
-    alert("Solicitud cerrada correctamente");
-};
+  };
 
-return (
+
+  const renderTarjetasEnFilas = () => {
+    const filas = [];
+    for (let i = 0; i < itemsPagina.length; i += 4) {
+      const fila = itemsPagina.slice(i, i + 4);
+      filas.push(
+        <div className="recipiente" key={i}>
+          {fila.map(prest => (
+            <div className="cuadra1" key={prest.id_soli}>
+              <div className="cuadra2">
+                <div className="card-tipo">{prest.categoria}</div>
+                <div className="card-modelo">{prest.nom_elem}</div>
+                <div className="card-usuario">Usuario: {prest.nom_usu}</div>
+                <div className="card-fecha">Fecha inicio: {new Date(prest.fecha_ini).toLocaleString()}</div>
+                <div className="card-accion">
+                  <Button className="botun" size="sm" onClick={() => abrirFormulario(prest)}>
+                    Revisar
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return filas;
+  };
+
+  return (
     <>
-    
-      <Header_solicitud_tec/>
-      <div className='dibsi'>
-         <input class="Cuadro_busc_port" placeholder="Buscar..." type="text"></input>
-         <Dropdown className='Drop_histo'>
-            <Dropdown.Toggle variant='outline-dark' id="dropdown-basic">
-            Categoria
-            </Dropdown.Toggle>
+      <Header_solicitud_tec />
 
-            <Dropdown.Menu>
-            <Dropdown.Item href="#/action-1">Equipos escritorio</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Televisores</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">Elementos</Dropdown.Item>
-            </Dropdown.Menu>
-         </Dropdown>
-      </div>
-      <div className='conten'>
-        <Carousel data-bs-theme="dark">
-        <Carousel.Item>
-       
-        <div className='linea'>
-          <div className='peticiones'>
-            <h3 className='jaaa'>Prestamo#001</h3>
-            <div className='icono'>
-               <img src="/imagenes/otroc.png" alt="Computador" className='imagenzita' />
-            </div>
-            <h7 className='letras'>Instrutor:</h7>
-            <h7 className='letras'>Ambiente:</h7>
-            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
-          </div>
-          <div className='peticiones'>
-            <h3 className='jaaa'>Prestamo#002</h3>
-            <div className='icono'>
-              <img src="/imagenes/otroc.png" alt="Computador" className='imagenzita' />
+      <main className="contenedor-principal-peq">
+        <div className="barra-filtros">
+          <select value={categoriaFiltro} onChange={e => setCategoriaFiltro(e.target.value)}>
+            <option value="">Todos</option>
+            {categorias.map((cat, i) => <option key={i} value={cat}>{cat}</option>)}
+          </select>
 
+          <input
+            type="text"
+            placeholder="Buscar por marca..."
+            value={busquedaMarca}
+            onChange={e => setBusquedaMarca(e.target.value)}
+          />
 
-            </div>
-            <h7 className='letras'>Instrutor:</h7>
-            <h7 className='letras'>Ambiente:</h7>
-            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
-          </div>
-          <div className='peticiones'>
-            <h3 className='jaaa'>Prestamo#003</h3>
-            <div className='icono'>
-               <img src="/imagenes/otroc.png" alt="Computador" className='imagenzita' />
-
-            </div>
-            <h7 className='letras'>Instrutor:</h7>
-            <h7 className='letras'>Ambiente:</h7>
-            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
-          </div>
-          <div className='peticiones'>
-            <h3 className='jaaa'>Prestamo#004</h3>
-            <div className='icono'>
-               <img src="/imagenes/otroc.png" alt="Computador" className='imagenzita' />
-            </div>
-            <h7 className='letras'>Instrutor:</h7>
-            <h7 className='letras'>Ambiente:</h7>
-            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
-          </div>
-          <div className='peticiones'>
-            <h3 className='jaaa'>Prestamo#005</h3>
-            <div className='icono'>
-              <img src="/imagenes/otroc.png" alt="Computador" className='imagenzita' />
-
-            </div>
-            <h7 className='letras'>Instrutor:</h7>
-            <h7 className='letras'>Ambiente:</h7>
-            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+          <div className="rango-fechas">
+            <label>Desde:</label>
+            <input type="date" value={fechaInicio} onChange={e => setFechaInicio(e.target.value)} />
+            <label>Hasta:</label>
+            <input type="date" value={fechaFin} onChange={e => setFechaFin(e.target.value)} />
           </div>
         </div>
-        </Carousel.Item>
-        <Carousel.Item>
-        
-        <div className='linea'>
-          <div className='peticiones'>
-            <h3 className='jaaa'>Prestamo#001</h3>
-            <div className='icono'>
-               <img src="/imagenes/otroc.png" alt="Computador" className='imagenzita' />
-            </div>
-            <h7 className='letras'>Instrutor:</h7>
-            <h7 className='letras'>Ambiente:</h7>
-            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
-          </div>
-          <div className='peticiones'>
-            <h3 className='jaaa'>Prestamo#002</h3>
-            <div className='icono'>
-              <img src="/imagenes/otroc.png" alt="Computador" className='imagenzita' />
 
+        {itemsPagina.length > 0 ? (
+          renderTarjetasEnFilas()
+        ) : (
+          <p style={{ textAlign: 'center', marginTop: '20px', color: 'gray' }}>No hay solicitudes disponibles.</p>
+        )}
 
-            </div>
-            <h7 className='letras'>Instrutor:</h7>
-            <h7 className='letras'>Ambiente:</h7>
-            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
+        <nav className="paginacion-peq" aria-label="Paginación">
+          <button onClick={() => irPagina(paginaActual - 1)} disabled={paginaActual === 1}>← Anterior</button>
+          <div className="numeros">
+            {Array.from({ length: totalPaginas }).map((_, i) => (
+              <button key={i} className={paginaActual === i + 1 ? 'activo' : ''} onClick={() => irPagina(i + 1)}>
+                {i + 1}
+              </button>
+            ))}
           </div>
-          <div className='peticiones'>
-            <h3 className='jaaa'>Prestamo#003</h3>
-            <div className='icono'>
-               <img src="/imagenes/otroc.png" alt="Computador" className='imagenzita' />
+          <button onClick={() => irPagina(paginaActual + 1)} disabled={paginaActual === totalPaginas}>Siguiente →</button>
+        </nav>
+      </main>
 
-            </div>
-            <h7 className='letras'>Instrutor:</h7>
-            <h7 className='letras'>Ambiente:</h7>
-            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
-          </div>
-          <div className='peticiones'>
-            <h3 className='jaaa'>Prestamo#004</h3>
-            <div className='icono'>
-               <img src="/imagenes/otroc.png" alt="Computador" className='imagenzita' />
-            </div>
-            <h7 className='letras'>Instrutor:</h7>
-            <h7 className='letras'>Ambiente:</h7>
-            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
-          </div>
-          <div className='peticiones'>
-            <h3 className='jaaa'>Prestamo#005</h3>
-            <div className='icono'>
-              <img src="/imagenes/otroc.png" alt="Computador" className='imagenzita' />
-
-            </div>
-            <h7 className='letras'>Instrutor:</h7>
-            <h7 className='letras'>Ambiente:</h7>
-            <button className='clicksito' onClick={abrirFormulario}>Ver</button>
-          </div>
-        </div>
-        </Carousel.Item>
-        </Carousel>
-        
-      </div>
-      {}
       <ModalFormulario
         show={mostrarFormulario}
         onHide={cerrarFormulario}
-        onFinalizar={abrirConfirmacion}
+        prest={equipoSeleccionado}
       />
-      <ConfirmacionModal
-        show={mostrarConfirmacion}
-        
-        onHide={cerrarConfirmacion}
-        onConfirm={aceptarConfirmacion}
-      />
+
       <Footer />
-    
-    
     </>
   );
 }
-
-export default Tecnico;

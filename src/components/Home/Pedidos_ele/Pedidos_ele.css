@@ -1,5 +1,4 @@
-
-.page-container {
+.page_container {
 padding: 30px;
 max-width: 1200px;
 margin: 40px auto;
@@ -9,7 +8,48 @@ border-radius: 8px;
 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.page-title {
+.contenedor_paginacion {
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 30px;
+gap: 10px;
+padding: 10px 0;
+}
+
+.boton_pagina {
+background-color: #f0f0f0;
+color: #333;
+border: 1px solid #ccc;
+padding: 8px 15px;
+border-radius: 5px;
+cursor: pointer;
+transition: all 0.2s ease;
+font-size: 1em;
+min-width: 40px;
+text-align: center;
+}
+
+.boton_pagina:hover:not(:disabled) {
+background-color: #007bff;
+color: white;
+border-color: #007bff;
+}
+
+.boton_pagina.activo {
+background-color: #28a745;
+color: white;
+border-color: #28a745;
+font-weight: bold;
+}
+
+.boton_pagina:disabled {
+cursor: not-allowed;
+background-color: #e9ecef;
+opacity: 0.6;
+}
+
+.page_title {
 text-align: center;
 color: #333;
 margin-bottom: 25px;
@@ -17,13 +57,13 @@ border-bottom: 2px solid #007bff;
 padding-bottom: 10px;
 }
 
-.loading-message {
+.loading_message {
 text-align: center;
 padding: 20px;
 color: #007bff;
 }
 
-.error-message {
+.error_message {
 text-align: center;
 padding: 20px;
 color: #dc3545;
@@ -32,7 +72,7 @@ background-color: #f8d7da;
 border-radius: 4px;
 }
 
-.empty-message {
+.empty_message {
 text-align: center;
 padding: 20px;
 color: #6c757d;
@@ -40,25 +80,16 @@ color: #6c757d;
 
 
 /*organizador de tarjetas */
-.accesorios-cards-container {
+.accesorios_cards_container {
 display: grid;
 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 gap: 30px; 
 margin-top: 20px;
 }
 
-.card-image-placeholder img {
-max-width: 100%;
-max-height: 100%;
-width: auto;
-height: auto;
-
-
-object-fit: contain; 
-}
 
 /* Tarjeta Individual de los acc*/
-.accesorio-card {
+.accesorio_card {
 background-color: white;
 border: 1px solid #e0e0e0;
 border-radius: 8px;
@@ -70,13 +101,13 @@ transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /*Efecto de sobre salir cuando se pasa el mouse*/
-.accesorio-card:hover {
+.accesorio_card:hover {
 transform: translateY(-5px);
 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 /*Estilo para ajustar la img al card*/
-.card-image-placeholder {
+.card_image_placeholder {
 height: 150px;
 background-color: #e9ecef;
 display: flex;
@@ -87,31 +118,39 @@ color: #adb5bd;
 border-bottom: 1px solid #e0e0e0;
 }
 
-.card-details {
+.card_image_placeholder img {
+max-width: 100%;
+max-height: 100%;
+width: auto;
+height: auto;
+object-fit: contain; 
+}
+
+.card_details {
 padding: 15px;
 flex-grow: 1;
 display: flex;
 flex-direction: column;
 }
 
-.card-title {
+.card_title {
 font-size: 1.25em;
 color: #333;
 margin-top: 0;
 margin-bottom: 10px;
 }
 
-.card-info {
+.card_info {
 font-size: 0.95em;
 color: #6c757d;
 margin-bottom: 5px;
 }
 
-.card-info strong {
+.card_info strong {
 color: #333;
 }
 
-.card-actions {
+.card_actions {
 display: flex;
 justify-content: space-between;
 gap: 10px;
@@ -120,7 +159,7 @@ padding-top: 10px;
 border-top: 1px dashed #e9ecef;
 }
 
-.card-actions button {
+.card_actions button {
 background-color: #28a745;
 color: white;
 border: none;
@@ -134,14 +173,71 @@ flex-grow: 1;
 margin: 0;
 }
 
-.card-actions button:hover {
+.card_actions button:hover {
 background-color: #218838;
 }
 
-.card-actions .delete-btn {
+.card_actions .delete_btn {
 background-color: #dc3545;
 }
 
-.card-actions .delete-btn:hover {
+.card_actions .delete_btn:hover {
 background-color: #c82333;
+}
+
+.Boton_campana {
+position: relative;
+cursor: pointer;
+}
+
+.contador_campana {
+position: absolute;
+top: -5px;
+right: -5px;
+background-color: #dc3545;
+color: white;
+border-radius: 50%;
+padding: 3px 8px;
+font-size: 0.75em;
+font-weight: bold;
+line-height: 1;
+z-index: 10;
+}
+
+.modal_header_Acce{
+background-color: #28a745;
+color: white;
+}
+
+.lista_seleccionados {
+list-style: none;
+padding: 0;
+}
+
+.lista_seleccionados li {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 10px 0;
+border-bottom: 1px solid #eee;
+}
+
+.lista_seleccionados li:last-child {
+border-bottom: none;
+}
+
+.lista_seleccionados li span {
+font-weight: 500;
+}
+
+.btn_cerrar_mdl_ele{
+background-color: #28a745;
+}
+
+.Btn_add_acce_modal{
+background-color:#28a745;
+}
+
+.modal_title_Acce{
+color: white;
 }

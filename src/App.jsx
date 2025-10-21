@@ -16,11 +16,13 @@ import Pedidos_ele from './components/Home/Pedidos_ele/Pedidos_ele.jsx';
 import './components/App.css';
 import Pedidos_escritorio from './components/Home/Pedidos_escritorio/Pedidos_escritorio.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Información_equipos from './components/Home/Informacion_equipos/Informacion_equipos.jsx';
+import Informacion_equipos from './components/Home/Informacion_equipos/Informacion_equipos.jsx';
 import Desplegable from './components/desplegable/desplegable.jsx';
 import HistorialTec from './components/Tecnico/Historial/HistorialTec.jsx';
 import Historial_ptec from './components/Tecnico/Historial/Historial_ptec/Historial_ptec.jsx';
 import Historial_ptec2 from './components/Tecnico/Historial/Historial_ptec1/Historial_ptec2.jsx';
+import Solicitudes from './paginas/Solicitudes/Solicitudes.jsx';
+import TicketsActivos from './components/Tecnico/tickets_activos/TicketsActivos.jsx';
 
 function App() {
   return (
@@ -46,16 +48,15 @@ function App() {
             <Route path="/PedidoElementos" element={<Pedidos_ele />} />
             <Route path='/Pedidoescritorio' element={<Pedidos_escritorio />} />
             <Route path='/Desplegable' element={<Desplegable />} />
-            <Route path='/Informacion_equiposs' element={<Información_equipos />} />
+            <Route path='/Informacion_equiposs' element={<Informacion_equipos />} />
             <Route path='/HistorialTec' element={<HistorialTec/>}/>
             <Route path='/Historial_TicketsTec' element={<Historial_ptec/>}/>
             <Route path='/Historial_TicketsTec2' element={<Historial_ptec2/>}/>
-            <Route />
+            <Route path='/Solicitudes' element={<Solicitudes/>}/>
+            <Route path='/TicketsActivos' element={<TicketsActivos/>}/>
           </Routes>
         </div>
       </BrowserRouter>
-      {/* Importa el Footer aquí si no está */}
-      {/* <Footer /> */}
     </div>
   );
 }
