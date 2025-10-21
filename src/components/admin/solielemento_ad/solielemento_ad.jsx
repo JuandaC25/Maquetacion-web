@@ -68,18 +68,21 @@ const ticketsFiltrados = elementoSeleccionado === 'Todos' ? tickets : tickets.fi
         <div className="d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-3">
             <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic-1615">
+              <Dropdown.Toggle 
+                variant="success" 
+                id="dropdown-basic-1615"
+                className="dropdown-toggle-xd146"
+              >
                 Elemento
               </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={() => handleSelectElemento('Todos')}>Todos</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleSelectElemento('Portatil')}>Portátiles</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleSelectElemento('Equipo de escritorio')}>Equipos de escritorio</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleSelectElemento('Televisor')}>Televisores</Dropdown.Item>
+              <Dropdown.Menu className="dropdown-menu-xd147">
+                <Dropdown.Item onClick={() => handleSelectElemento('Todos')} className="dropdown-item-xd148">Todos</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSelectElemento('Portatil')} className="dropdown-item-xd148">Portátiles</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSelectElemento('Equipo de escritorio')} className="dropdown-item-xd148">Equipos de escritorio</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSelectElemento('Televisor')} className="dropdown-item-xd148">Televisores</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </div>
-
         </div>
       </Alert>
 

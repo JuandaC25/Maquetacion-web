@@ -42,7 +42,7 @@ const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualiza
                 nom_us: editedUser.nom_usua,
                 ape_us: editedUser.ape_usua,
                 corre: editedUser.corre,
-                password: userDetails.password || '123456',
+                password: userDetails.password,
                 est_usu: editedUser.estadoEdit === 'activo' ? 1 : 0,
                 id_role: mapearRolAId(editedUser.rolEdit)
             };
@@ -124,8 +124,6 @@ const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualiza
                         />
                     </div>
                 </div>
-
-                {/* ✅ EDITABLE: Rol */}
                 <div className="detail-item-xd115">
                     <label className="detail-label-xd116">Rol:</label>
                     <div className="detail-value-display-xd117">
@@ -258,7 +256,7 @@ const UserManagementList = () => {
         ape_su: '', 
         corre: '', 
         num_docu: '', 
-        pasword: '123456',
+        pasword: '',
         estad: 1,
         tip_docu: '', 
         id_role: '' 
@@ -269,6 +267,7 @@ const UserManagementList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const [selectedRole, setSelectedRole] = useState('todos');
     const [selectedEstado, setSelectedEstado] = useState('activos');
     const [searchTerm, setSearchTerm] = useState('');
@@ -306,12 +305,13 @@ const UserManagementList = () => {
             ape_su: '', 
             corre: '', 
             num_docu: '', 
-            pasword: '123456',
+            pasword: '',
             estad: 1,
             tip_docu: '', 
             id_role: '' 
         });
         setEmailError('');
+        setPasswordError('');
     };
 
     const handleNewUserChange = (e) => {
@@ -321,6 +321,13 @@ const UserManagementList = () => {
         if (name === 'corre') {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             setEmailError(emailRegex.test(value) ? '' : 'Ingrese un correo válido (ejemplo@dominio.com)');
+        }
+        if (name === 'pasword') {
+            if (value.length > 0 && value.length < 6) {
+                setPasswordError('La contraseña debe tener al menos 6 caracteres.');
+            } else {
+                setPasswordError('');
+            }
         }
     };
 
@@ -344,7 +351,7 @@ const UserManagementList = () => {
 
     const handleAddUserSubmit = async () => {
         try {
-            const requiredFields = ['num_docu', 'nom_su', 'ape_su', 'corre'];
+            const requiredFields = ['num_docu', 'nom_su', 'ape_su', 'corre','pasword'];
             const missingField = requiredFields.find(field => !newUserData[field]);
             if (missingField) {
                 alert(`Por favor complete el campo: ${missingField}`);
@@ -354,6 +361,10 @@ const UserManagementList = () => {
             if (emailError) {
                 alert('Por favor corrija el error en el correo electrónico');
                 return;
+            }
+            if(passwordError){
+                alert('Por favor corrija el error en la contraseña');
+                
             }
 
             if (!newUserData.tip_docu || !newUserData.id_role) {
@@ -394,7 +405,7 @@ const UserManagementList = () => {
     const handleDesactivarUser = async (id, activar) => {
         try {
             const accion = activar ? 'activar' : 'desactivar';
-            console.log('🔧 Iniciando acción:', { id, activar, accion, selectedUser });
+            console.log('Iniciando acción:', { id, activar, accion, selectedUser });
             
             if (window.confirm(`¿Estás seguro de que deseas ${accion} este usuario?`)) {
                 const usuarioActualizado = {
@@ -402,11 +413,11 @@ const UserManagementList = () => {
                     nom_us: selectedUser.nom_usua,
                     ape_us: selectedUser.ape_usua,
                     corre: selectedUser.corre,
-                    password: selectedUser.password || '123456',
+                    password: selectedUser.password ,
                     est_usu: activar ? 1 : 0
                 };
 
-                console.log('📤 Enviando actualización:', usuarioActualizado);
+                console.log('Enviando actualización:', usuarioActualizado);
                 
                 await actualizarUsuario(id, usuarioActualizado);
                 await cargarUsuarios();
@@ -414,17 +425,17 @@ const UserManagementList = () => {
                 alert(`Usuario ${accion}do exitosamente`);
             }
         } catch (err) {
-            console.error('❌ Error completo al actualizar usuario:', err);
+            console.error('Error completo al actualizar usuario:', err);
             alert(`Error al ${activar ? 'activar' : 'desactivar'} usuario: ${err.message}`);
         }
     };
 
     const handleActualizarUsuario = async (id, usuarioActualizado) => {
         try {
-            console.log('🔄 Actualizando usuario desde modal:', { id, usuarioActualizado });
+            console.log('Actualizando usuario desde modal:', { id, usuarioActualizado });
             
             const resultado = await actualizarUsuario(id, usuarioActualizado);
-            console.log('✅ Actualización exitosa desde modal:', resultado);
+            console.log('Actualización exitosa desde modal:', resultado);
             
             await cargarUsuarios();
 
@@ -432,7 +443,7 @@ const UserManagementList = () => {
             
             alert('Usuario actualizado exitosamente');
         } catch (err) {
-            console.error('❌ Error al actualizar usuario desde modal:', err);
+            console.error('Error al actualizar usuario desde modal:', err);
             throw err;
         }
     };
@@ -479,14 +490,19 @@ const UserManagementList = () => {
                             </Alert>
                         )}
                         <div className="filters-row-xd130">
-                            <Dropdown className="category-filter-dropdown-xd131">
-                                <Dropdown.Toggle variant="success" id="dropdown-role" className="dropdown-toggle">
-                                    {selectedRole === 'todos' ? 'Todos los roles' : selectedRole} <span className="dropdown-arrow-xd132">&#9660;</span>
+                            <Dropdown>
+                                <Dropdown.Toggle 
+                                    variant="success" 
+                                    id="dropdown-role" 
+                                    className="dropdown-toggle-xd146"
+                                >
+                                    {selectedRole === 'todos' ? 'Todos los roles' : selectedRole}
                                 </Dropdown.Toggle>
-                                <Dropdown.Menu className="category-dropdown-menu-xd133">
+                                <Dropdown.Menu className="dropdown-menu-xd147">
                                     <Dropdown.Item 
                                         onClick={() => handleRoleFilter('todos')}
                                         active={selectedRole === 'todos'}
+                                        className="dropdown-item-xd148"
                                     >
                                         Todos los roles
                                     </Dropdown.Item>
@@ -495,6 +511,7 @@ const UserManagementList = () => {
                                             key={index}
                                             onClick={() => handleRoleFilter(rol)}
                                             active={selectedRole === rol}
+                                            className="dropdown-item-xd148"
                                         >
                                             {rol}
                                         </Dropdown.Item>
@@ -502,27 +519,34 @@ const UserManagementList = () => {
                                 </Dropdown.Menu>
                             </Dropdown>
 
-                            <Dropdown className="category-filter-dropdown-xd131">
-                                <Dropdown.Toggle variant="info" id="dropdown-estado" className="dropdown-toggle">
+                            <Dropdown>
+                                <Dropdown.Toggle 
+                                    variant="success" 
+                                    id="dropdown-estado" 
+                                    className="dropdown-toggle-xd146"
+                                >
                                     {selectedEstado === 'todos' ? 'Todos' : 
-                                     selectedEstado === 'activos' ? 'Activos' : 'Desactivados'} <span className="dropdown-arrow-xd132">&#9660;</span>
+                                     selectedEstado === 'activos' ? 'Activos' : 'Desactivados'}
                                 </Dropdown.Toggle>
-                                <Dropdown.Menu className="category-dropdown-menu-xd133">
+                                <Dropdown.Menu className="dropdown-menu-xd147">
                                     <Dropdown.Item 
                                         onClick={() => handleEstadoFilter('todos')}
                                         active={selectedEstado === 'todos'}
+                                        className="dropdown-item-xd148"
                                     >
                                         Todos los usuarios
                                     </Dropdown.Item>
                                     <Dropdown.Item 
                                         onClick={() => handleEstadoFilter('activos')}
                                         active={selectedEstado === 'activos'}
+                                        className="dropdown-item-xd148"
                                     >
                                         Usuarios activos
                                     </Dropdown.Item>
                                     <Dropdown.Item 
                                         onClick={() => handleEstadoFilter('desactivados')}
                                         active={selectedEstado === 'desactivados'}
+                                        className="dropdown-item-xd148"
                                     >
                                         Usuarios desactivados
                                     </Dropdown.Item>
@@ -691,19 +715,24 @@ const UserManagementList = () => {
                             </Form.Control.Feedback>
                         </div>
                     </div>
-
-                    <div className="detail-item-xd115">
-                        <label className="detail-label-xd116">Contraseña</label>
+                        <div className="detail-item-xd115">
+                            <label className="detail-label-xd116" htmlFor="pasword">Contraseña</label>
                         <div className="detail-value-display-xd117">
                             <Form.Control
-                                type="text"
-                                value="123456"
-                                readOnly
+                                type="password"
+                                id="pasword"
+                                placeholder="Ingrese la contraseña"
+                                name="pasword"
+                                value={newUserData.pasword}
+                                onChange={handleNewUserChange}
+                                isInvalid={!!passwordError}
                                 className="modern-form-control-xd118"
-                            />
-                            <small className="text-muted">Contraseña por defecto. El usuario puede cambiarla después.</small>
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {passwordError}
+                                </Form.Control.Feedback>
+                            </div>
                         </div>
-                    </div>
                 </Modal.Body>
                 <Modal.Footer className="modern-modal-footer-xd119">
                     <Button variant="secondary" onClick={handleCloseAddUserModal} className="modal-action-button-xd120 cancel-action-xd123">

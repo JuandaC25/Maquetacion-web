@@ -23,7 +23,7 @@ function Datos_escritorio() {
         fecha_fn: "",
         hora_fn: "",
         ambient: "",
-        num_fich: "",
+        num_ficha: "", // corregido nombre
         estadosoli: 1,
         id_usu: 1,
     });
@@ -49,13 +49,14 @@ function Datos_escritorio() {
             return;
         }
 
+        // Ajustar DTO para coincidir con el backend
         const dto = {
             fecha_ini: fechaInicio.toISOString(),
             fecha_fn: fechaFin.toISOString(),
             ambient: form.ambient,
             estadosoli: form.estadosoli,
             id_usu: form.id_usu,
-            num_fich: form.num_ficha,
+            num_ficha: form.num_ficha, // corregido nombre
             id_elemen: seleccionados,
         };
 
@@ -71,7 +72,7 @@ function Datos_escritorio() {
                 fecha_fn: "",
                 hora_fn: "",
                 ambient: "",
-                num_fich: "",
+                num_ficha: "", // corregido nombre
                 estadosoli: 1,
                 id_usu: 1,
             });
@@ -86,6 +87,7 @@ function Datos_escritorio() {
             try {
                 setIsLoading(true);
                 const data = await ElementosService.obtenerElementos();
+                // Ajustar mapeo para coincidir con backend
                 const equiposDeEscritorio = data.filter(item => item.id_categ === 2);
 
                 const transformedData = equiposDeEscritorio.map(item => ({
@@ -303,8 +305,8 @@ function Datos_escritorio() {
                                     <Form.Control
                                         type="text"
                                         placeholder="Ej: 2560014"
-                                        name="num_ficha"
-                                        value={form.num_ficha}
+                                        name="num_ficha" // corregido name
+                                        value={form.num_ficha} // corregido value
                                         onChange={handleChange}
                                         required
                                     />
