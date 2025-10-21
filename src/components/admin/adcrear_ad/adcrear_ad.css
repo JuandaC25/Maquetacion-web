@@ -1,3 +1,53 @@
+.dropdown-toggle-xd146 {
+    background-color: var(--green) !important;
+    border: none !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+.dropdown-toggle-xd146:hover,
+.dropdown-toggle-xd146:focus,
+.dropdown-toggle-xd146:active {
+    background-color: var(--green-dark) !important;
+    transform: translateY(-2px) !important;
+}
+
+.dropdown-toggle-xd146:active {
+    transform: translateY(0) !important;
+}
+
+.dropdown-menu-xd147 {
+    border: none !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+    overflow: hidden !important;
+    margin-top: 0.5rem !important;
+}
+
+.dropdown-item-xd148 {
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+    background-color: transparent !important;
+    color: var(--text) !important;
+}
+
+.dropdown-item-xd148:hover,
+.dropdown-item-xd148:focus {
+    background-color: rgba(40, 167, 69, 0.15) !important;
+    color: var(--green) !important;
+}
+
+.dropdown-item-xd148:active,
+.dropdown-item-xd148.active,
+.dropdown-item-xd148[aria-selected="true"] {
+    background-color: var(--green) !important;
+    color: #fff !important;
+}
 :root {
     --green: #28a745;
     --green-dark: #218838;
@@ -7,7 +57,7 @@
     --white: #fff;
     --text: #333;
     --text-light: #6c757d;
-    --card-bg-light: #8b8e8f; /* light gray for card description */
+    --card-bg-light: #8b8e8f;
     --border: #e0e6ed;
     --shadow: rgba(0, 0, 0, 0.1);
     --radius: 12px;

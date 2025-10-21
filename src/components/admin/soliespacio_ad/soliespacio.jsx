@@ -50,13 +50,17 @@ const Listaxd = ({ onVerClick }) => {
         <div className="d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-3">
             <Dropdown>
-              <Dropdown.Toggle variant="success" id="dropdown-basic">
+              <Dropdown.Toggle 
+                variant="success" 
+                id="dropdown-basic-espacio"
+                className="dropdown-toggle-xd146"
+              >
                 Espacio
               </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={() => handleSelectEspacio('Todos')}>Todos</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleSelectEspacio('canchas')}>Canchas</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleSelectEspacio('auditorio')}>Auditorio</Dropdown.Item>
+              <Dropdown.Menu className="dropdown-menu-xd147">
+                <Dropdown.Item onClick={() => handleSelectEspacio('Todos')} className="dropdown-item-xd148">Todos</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSelectEspacio('canchas')} className="dropdown-item-xd148">Canchas</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleSelectEspacio('auditorio')} className="dropdown-item-xd148">Auditorio</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </div>

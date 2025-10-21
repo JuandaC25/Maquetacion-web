@@ -629,13 +629,26 @@ const Admin = () => {
             <h1 className="inventory-main-title-xd29">Inventario de Equipos y Accesorios</h1>
             <div className="filters-row-xd30">
               <Dropdown className="category-filter-dropdown-xd31">
-                <Dropdown.Toggle variant="light" id="dropdown-category">
+                <Dropdown.Toggle 
+                  variant="success" 
+                  id="dropdown-category-xd31"
+                  className="dropdown-toggle-xd146"
+                >
                   {selectedCategoryFilter} <span className="dropdown-arrow-xd32">▼</span>
                 </Dropdown.Toggle>
-                <Dropdown.Menu className="category-dropdown-menu-xd33">
-                  <Dropdown.Item onClick={() => handleCategoryFilter("Todas las Categorías")}>Todas las Categorías</Dropdown.Item>
+                <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
+                  <Dropdown.Item 
+                    onClick={() => handleCategoryFilter("Todas las Categorías")}
+                    className="dropdown-item-xd148"
+                  >
+                    Todas las Categorías
+                  </Dropdown.Item>
                   {allowedCategories.map((category) => (
-                    <Dropdown.Item key={category} onClick={() => handleCategoryFilter(category)}>
+                    <Dropdown.Item 
+                      key={category} 
+                      onClick={() => handleCategoryFilter(category)}
+                      className="dropdown-item-xd148"
+                    >
                       {category}
                     </Dropdown.Item>
                   ))}

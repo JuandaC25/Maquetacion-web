@@ -405,7 +405,7 @@ const UserManagementList = () => {
     const handleDesactivarUser = async (id, activar) => {
         try {
             const accion = activar ? 'activar' : 'desactivar';
-            console.log('🔧 Iniciando acción:', { id, activar, accion, selectedUser });
+            console.log('Iniciando acción:', { id, activar, accion, selectedUser });
             
             if (window.confirm(`¿Estás seguro de que deseas ${accion} este usuario?`)) {
                 const usuarioActualizado = {
@@ -417,7 +417,7 @@ const UserManagementList = () => {
                     est_usu: activar ? 1 : 0
                 };
 
-                console.log('📤 Enviando actualización:', usuarioActualizado);
+                console.log('Enviando actualización:', usuarioActualizado);
                 
                 await actualizarUsuario(id, usuarioActualizado);
                 await cargarUsuarios();
@@ -425,17 +425,17 @@ const UserManagementList = () => {
                 alert(`Usuario ${accion}do exitosamente`);
             }
         } catch (err) {
-            console.error('❌ Error completo al actualizar usuario:', err);
+            console.error('Error completo al actualizar usuario:', err);
             alert(`Error al ${activar ? 'activar' : 'desactivar'} usuario: ${err.message}`);
         }
     };
 
     const handleActualizarUsuario = async (id, usuarioActualizado) => {
         try {
-            console.log('🔄 Actualizando usuario desde modal:', { id, usuarioActualizado });
+            console.log('Actualizando usuario desde modal:', { id, usuarioActualizado });
             
             const resultado = await actualizarUsuario(id, usuarioActualizado);
-            console.log('✅ Actualización exitosa desde modal:', resultado);
+            console.log('Actualización exitosa desde modal:', resultado);
             
             await cargarUsuarios();
 
@@ -443,7 +443,7 @@ const UserManagementList = () => {
             
             alert('Usuario actualizado exitosamente');
         } catch (err) {
-            console.error('❌ Error al actualizar usuario desde modal:', err);
+            console.error('Error al actualizar usuario desde modal:', err);
             throw err;
         }
     };
@@ -490,14 +490,19 @@ const UserManagementList = () => {
                             </Alert>
                         )}
                         <div className="filters-row-xd130">
-                            <Dropdown className="category-filter-dropdown-xd131">
-                                <Dropdown.Toggle variant="success" id="dropdown-role" className="dropdown-toggle">
-                                    {selectedRole === 'todos' ? 'Todos los roles' : selectedRole} <span className="dropdown-arrow-xd132">&#9660;</span>
+                            <Dropdown>
+                                <Dropdown.Toggle 
+                                    variant="success" 
+                                    id="dropdown-role" 
+                                    className="dropdown-toggle-xd146"
+                                >
+                                    {selectedRole === 'todos' ? 'Todos los roles' : selectedRole}
                                 </Dropdown.Toggle>
-                                <Dropdown.Menu className="category-dropdown-menu-xd133">
+                                <Dropdown.Menu className="dropdown-menu-xd147">
                                     <Dropdown.Item 
                                         onClick={() => handleRoleFilter('todos')}
                                         active={selectedRole === 'todos'}
+                                        className="dropdown-item-xd148"
                                     >
                                         Todos los roles
                                     </Dropdown.Item>
@@ -506,6 +511,7 @@ const UserManagementList = () => {
                                             key={index}
                                             onClick={() => handleRoleFilter(rol)}
                                             active={selectedRole === rol}
+                                            className="dropdown-item-xd148"
                                         >
                                             {rol}
                                         </Dropdown.Item>
@@ -513,27 +519,34 @@ const UserManagementList = () => {
                                 </Dropdown.Menu>
                             </Dropdown>
 
-                            <Dropdown className="category-filter-dropdown-xd131">
-                                <Dropdown.Toggle variant="info" id="dropdown-estado" className="dropdown-toggle">
+                            <Dropdown>
+                                <Dropdown.Toggle 
+                                    variant="success" 
+                                    id="dropdown-estado" 
+                                    className="dropdown-toggle-xd146"
+                                >
                                     {selectedEstado === 'todos' ? 'Todos' : 
-                                     selectedEstado === 'activos' ? 'Activos' : 'Desactivados'} <span className="dropdown-arrow-xd132">&#9660;</span>
+                                     selectedEstado === 'activos' ? 'Activos' : 'Desactivados'}
                                 </Dropdown.Toggle>
-                                <Dropdown.Menu className="category-dropdown-menu-xd133">
+                                <Dropdown.Menu className="dropdown-menu-xd147">
                                     <Dropdown.Item 
                                         onClick={() => handleEstadoFilter('todos')}
                                         active={selectedEstado === 'todos'}
+                                        className="dropdown-item-xd148"
                                     >
                                         Todos los usuarios
                                     </Dropdown.Item>
                                     <Dropdown.Item 
                                         onClick={() => handleEstadoFilter('activos')}
                                         active={selectedEstado === 'activos'}
+                                        className="dropdown-item-xd148"
                                     >
                                         Usuarios activos
                                     </Dropdown.Item>
                                     <Dropdown.Item 
                                         onClick={() => handleEstadoFilter('desactivados')}
                                         active={selectedEstado === 'desactivados'}
+                                        className="dropdown-item-xd148"
                                     >
                                         Usuarios desactivados
                                     </Dropdown.Item>
