@@ -108,8 +108,6 @@ const HistorialTec = () => {
     <>
       <Header_HistorialTec />
       <section className="tecnico-historial">
-        {/* Apartado de tickets activos */}
-        <TicketsActivosTec />
         <div className="barra-filtros">
           <DropdownButton
             as={ButtonGroup}

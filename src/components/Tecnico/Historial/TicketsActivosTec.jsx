@@ -15,7 +15,7 @@ const TicketsActivosTec = () => {
         if (!res.ok) throw new Error(`Error ${res.status}`);
         const data = await res.json();
         setTickets(Array.isArray(data) ? data : []);
-      } catch (err) {
+      } catch {
         setError("No se pudo conectar con el backend o no hay tickets activos.");
         setTickets([]);
       } finally {
@@ -35,7 +35,7 @@ const TicketsActivosTec = () => {
       <ul>
         {tickets.map(ticket => (
           <li key={ticket.id_tickets}>
-            #{ticket.id_tickets} - {ticket.ambient} - Estado: {ticket.estado}
+            #{ticket.id_tickets} - {ticket.ambient}
           </li>
         ))}
       </ul>
