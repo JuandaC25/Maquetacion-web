@@ -30,6 +30,9 @@ function Solitelevisores() {
     id_usu: 1,
   });
 
+  const [subcategoriaFiltro, setSubcategoriaFiltro] = useState("Todos");
+  const [subcategoriasDisponibles, setSubcategoriasDisponibles] = useState([]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -88,13 +91,30 @@ function Solitelevisores() {
       try {
         setIsLoading(true);
         const data = await ElementosService.obtenerElementos();
-        const televisores = data.filter((item) => item.id_categ === 3);
-        const transformedData = televisores.map((item) => ({
+        const subcategoriasPermitidas = [
+          "Microfono",
+          "Audifonos",
+          "tabletas graficas",
+          "Pantallas verdes",
+          "Reflectores",
+          "Traje de cromas"
+        ];
+        const filtrados = data.filter(
+          (item) => subcategoriasPermitidas.includes(item.sub_catg)
+        );
+        // Obtener subcategorías únicas
+        const subcats = [
+          ...new Set(filtrados.map((item) => item.sub_catg))
+        ];
+        setSubcategoriasDisponibles(subcats);
+
+        const transformedData = filtrados.map((item) => ({
           id: item.id_elemen,
           nombre: item.nom_eleme,
           modelo: item.num_serie,
           descripcion: item.obse,
           especificaciones: (item.componen || "").split(",").map((s) => s.trim()),
+          sub_catg: item.sub_catg,
           imagen: "/imagenes/Televisorr-solicitud.png",
         }));
         setTelevisoresApi(transformedData);
@@ -108,19 +128,22 @@ function Solitelevisores() {
     fetchElementos();
   }, []);
 
+  // Nuevo filtrado por subcategoría
   useEffect(() => {
-    const results = televisoresApi.filter((elemento) => {
-      const lowerSearchTerm = searchTerm.toLowerCase();
-      return (
-        (elemento.nombre || "").toLowerCase().includes(lowerSearchTerm) ||
-        (elemento.modelo || "").toLowerCase().includes(lowerSearchTerm) ||
-        (elemento.descripcion || "").toLowerCase().includes(lowerSearchTerm) ||
-        (elemento.especificaciones || []).some((esp) => (esp || "").toLowerCase().includes(lowerSearchTerm))
-      );
-    });
+    let results = televisoresApi;
+    if (subcategoriaFiltro !== "Todos") {
+      results = results.filter(e => e.sub_catg === subcategoriaFiltro);
+    }
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    results = results.filter((elemento) =>
+      (elemento.nombre || "").toLowerCase().includes(lowerSearchTerm) ||
+      (elemento.modelo || "").toLowerCase().includes(lowerSearchTerm) ||
+      (elemento.descripcion || "").toLowerCase().includes(lowerSearchTerm) ||
+      (elemento.especificaciones || []).some((esp) => (esp || "").toLowerCase().includes(lowerSearchTerm))
+    );
     setFilteredTelevisores(results);
     setCurrentPage(1);
-  }, [searchTerm, televisoresApi]);
+  }, [searchTerm, televisoresApi, subcategoriaFiltro]);
 
   const toggleSelect = (id) => {
     setSeleccionados((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
@@ -152,6 +175,21 @@ function Solitelevisores() {
   return (
     <div className="main-page-container">
       <Headertele />
+
+      {/* Filtro de subcategoría */}
+      <div className="mb-3 d-flex justify-content-center">
+        <select
+          className="form-select"
+          style={{ maxWidth: 300 }}
+          value={subcategoriaFiltro}
+          onChange={e => setSubcategoriaFiltro(e.target.value)}
+        >
+          <option value="Todos">Todas las subcategorías</option>
+          {subcategoriasDisponibles.map(subcat => (
+            <option key={subcat} value={subcat}>{subcat}</option>
+          ))}
+        </select>
+      </div>
 
       <div className="Ajust-debusquedas">
         <div className="group-busqueda">
