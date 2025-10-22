@@ -11,7 +11,7 @@ import {
   eliminarUsuario 
 } from '../../../api/UsuariosApi.js';
 
-const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualizarUsuario }) => {
+const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) => {
     const [editMode, setEditMode] = useState(false);
     const [editedUser, setEditedUser] = useState(null);
 
@@ -19,7 +19,6 @@ const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualiza
         if (userDetails) {
             setEditedUser({
                 ...userDetails,
-                rolEdit: userDetails.nomb_rol || '',
                 estadoEdit: userDetails.nom_est === 1 ? 'activo' : 'inactivo'
             });
         }
@@ -44,8 +43,7 @@ const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualiza
                 corre: editedUser.corre,
                 password: userDetails.password,
                 // backend espera 1 = activo, 2 = inactivo
-                est_usu: editedUser.estadoEdit === 'activo' ? 1 : 2,
-                id_role: mapearRolAId(editedUser.rolEdit)
+                est_usu: editedUser.estadoEdit === 'activo' ? 1 : 2
             };
             console.log(' Guardando cambios:', usuarioActualizado);
             await onActualizarUsuario(userDetails.id_usuari, usuarioActualizado);
@@ -54,15 +52,6 @@ const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualiza
             console.error('Error al guardar cambios:', error);
             alert('Error al guardar los cambios');
         }
-    };
-
-    const mapearRolAId = (rol) => {
-        const rolesMap = {
-            'instructor': 2,
-            'técnico': 3,
-            'administrador': 1
-        };
-    return rolesMap[rol] || userDetails.id_rol;
     };
 
     return (
@@ -107,8 +96,8 @@ const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualiza
                     <div className="detail-value-display-xd117">
                         <Form.Control 
                             type="text" 
-                            value={userDetails.tip_document || ''} 
-                            rolesOnly 
+                            value={userDetails.tip_docu || ''} 
+                            readOnly 
                             className="modern-form-control-xd118" 
                         />
                     </div>
@@ -128,25 +117,12 @@ const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualiza
                 <div className="detail-item-xd115">
                     <label className="detail-label-xd116">Rol:</label>
                     <div className="detail-value-display-xd117">
-                        {editMode ? (
-                            <Form.Control
-                                as="select"
-                                value={editedUser.rolEdit}
-                                onChange={(e) => handleEditChange('rolEdit', e.target.value)}
-                                className="modern-form-control-xd118"
-                            >
-                                <option value="administrador">Administrador</option>
-                                <option value="instructor">Instructor</option>
-                                <option value="técnico">Técnico</option>
-                            </Form.Control>
-                        ) : (
-                            <Form.Control 
-                                type="text" 
-                                value={userDetails.nomb_rol || ''} 
-                                readOnly 
-                                className="modern-form-control-xd118" 
-                            />
-                        )}
+                        <Form.Control 
+                            type="text" 
+                            value={userDetails.nomb_rol || ''} 
+                            readOnly 
+                            className="modern-form-control-xd118" 
+                        />
                     </div>
                 </div>
 
@@ -205,13 +181,6 @@ const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualiza
                         >
                             Editar
                         </Button>
-                        <Button 
-                            variant={userDetails.nom_est === 1 ? "warning" : "success"} 
-                            onClick={() => onDesactivar(userDetails.id_usuari, userDetails.nom_est !== 1)}
-                            className="modal-action-button-xd120"
-                        >
-                            {userDetails.nom_est === 1 ? 'Desactivar' : 'Activar'}
-                        </Button>
                         <Button variant="secondary" onClick={onHide} className="modal-action-button-xd120 close-action-xd122">
                             Cerrar
                         </Button>
@@ -252,7 +221,6 @@ const UserCard = ({ user, onVerClick }) => (
 
 const UserManagementList = () => {
     const [showAddUserModal, setShowAddUserModal] = useState(false);
-    // Ajustado a los nombres esperados por el backend (UsuariosCreateDto)
     const [newUserData, setNewUserData] = useState({ 
         nom_su: '', 
         ape_su: '', 
@@ -405,34 +373,6 @@ const UserManagementList = () => {
     const handleCloseUserDetailsModal = () => {
         setShowUserDetailsModal(false);
         setSelectedUser(null);
-    };
-
-    const handleDesactivarUser = async (id, activar) => {
-        try {
-            const accion = activar ? 'activar' : 'desactivar';
-            console.log('Iniciando acción:', { id, activar, accion, selectedUser });
-            
-            if (window.confirm(`¿Estás seguro de que deseas ${accion} este usuario?`)) {
-                const usuarioActualizado = {
-                    id_Usu: id,
-                    nom_us: selectedUser.nom_usua,
-                    ape_us: selectedUser.ape_usua,
-                    corre: selectedUser.corre,
-                    password: selectedUser.password ,
-                    est_usu: activar ? 1 : 0
-                };
-
-                console.log('Enviando actualización:', usuarioActualizado);
-                
-                await actualizarUsuario(id, usuarioActualizado);
-                await cargarUsuarios();
-                handleCloseUserDetailsModal();
-                alert(`Usuario ${accion}do exitosamente`);
-            }
-        } catch (err) {
-            console.error('Error completo al actualizar usuario:', err);
-            alert(`Error al ${activar ? 'activar' : 'desactivar'} usuario: ${err.message}`);
-        }
     };
 
     const handleActualizarUsuario = async (id, usuarioActualizado) => {
@@ -753,7 +693,6 @@ const UserManagementList = () => {
                 show={showUserDetailsModal}
                 onHide={handleCloseUserDetailsModal}
                 userDetails={selectedUser}
-                onDesactivar={handleDesactivarUser}
                 onActualizarUsuario={handleActualizarUsuario}
             />
 
