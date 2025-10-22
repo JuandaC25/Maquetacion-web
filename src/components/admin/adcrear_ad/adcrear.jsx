@@ -43,7 +43,8 @@ const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualiza
                 ape_us: editedUser.ape_usua,
                 corre: editedUser.corre,
                 password: userDetails.password,
-                est_usu: editedUser.estadoEdit === 'activo' ? 1 : 0,
+                // backend espera 1 = activo, 2 = inactivo
+                est_usu: editedUser.estadoEdit === 'activo' ? 1 : 2,
                 id_role: mapearRolAId(editedUser.rolEdit)
             };
             console.log(' Guardando cambios:', usuarioActualizado);
@@ -61,7 +62,7 @@ const UserDetailsModal = ({ show, onHide, userDetails, onDesactivar, onActualiza
             'técnico': 3,
             'administrador': 1
         };
-        return rolesMap[rol] || userDetails.id_role;
+    return rolesMap[rol] || userDetails.id_rol;
     };
 
     return (
@@ -251,15 +252,16 @@ const UserCard = ({ user, onVerClick }) => (
 
 const UserManagementList = () => {
     const [showAddUserModal, setShowAddUserModal] = useState(false);
+    // Ajustado a los nombres esperados por el backend (UsuariosCreateDto)
     const [newUserData, setNewUserData] = useState({ 
-        nom_usu: '', 
-        ape_usu: '', 
-        correo: '', 
+        nom_su: '', 
+        ape_su: '', 
+        corre: '', 
         num_docu: '', 
-        password: '',
-        estado: 1,
-        tip_document: '', 
-        roles: '' 
+        pasword: '',
+        estad: 1,
+        id_tip_docu: '', 
+        id_role: '' 
     });
     const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -301,14 +303,14 @@ const UserManagementList = () => {
     const handleCloseAddUserModal = () => {
         setShowAddUserModal(false);
         setNewUserData({ 
-            nom_usu: '', 
-            ape_usu: '', 
-            correo: '', 
+            nom_su: '', 
+            ape_su: '', 
+            corre: '', 
             num_docu: '', 
             pasword: '',
-            estado: 1,
-            tip_document: '', 
-            roles: '' 
+            estad: 1,
+            id_tip_docu: '', 
+            id_role: '' 
         });
         setEmailError('');
         setPasswordError('');
@@ -351,7 +353,7 @@ const UserManagementList = () => {
 
     const handleAddUserSubmit = async () => {
         try {
-            const requiredFields = ['num_docu', 'nom_usu', 'ape_usu', 'corre','pasword'];
+            const requiredFields = ['num_docu', 'nom_su', 'ape_su', 'corre','pasword'];
             const missingField = requiredFields.find(field => !newUserData[field]);
             if (missingField) {
                 alert(`Por favor complete el campo: ${missingField}`);
@@ -367,16 +369,19 @@ const UserManagementList = () => {
                 
             }
 
-            if (!newUserData.tip_document || !newUserData.id_role) {
-                alert('Por favor roleseccione el tipo de documento y el rol');
+            if (!newUserData.id_tip_docu || !newUserData.id_role) {
+                alert('Por favor seleccione el tipo de documento y el rol');
                 return;
             }
 
             const usuarioParaCrear = {
-                ...newUserData,
+                nom_su: newUserData.nom_su,
+                ape_su: newUserData.ape_su,
+                corre: newUserData.corre,
+                pasword: newUserData.pasword,
                 num_docu: parseInt(newUserData.num_docu),
-                tip_document: mapearTipoDocumentoAId(newUserData.tip_document),
-                roles: mapearRolAId(newUserData.rolesole),
+                id_tip_docu: mapearTipoDocumentoAId(newUserData.id_tip_docu),
+                id_role: mapearRolAId(newUserData.id_role),
                 estad: 1
             };
 
@@ -627,14 +632,14 @@ const UserManagementList = () => {
                     </div>
 
                     <div className="detail-item-xd115">
-                        <label className="detail-label-xd116" htmlFor="tip_document">Tipo de Documento</label>
-                        <div className="detail-value-display-roles117">
+                        <label className="detail-label-xd116" htmlFor="id_tip_docu">Tipo de Documento</label>
+                        <div className="detail-value-display-xd117">
                             <Form.Control 
                                 as="select" 
-                                id="tip_document" 
-                                name="rolesocument" 
-                                value={rolesrData.tip_document} 
-                                onChange={rolesnge} 
+                                id="id_tip_docu" 
+                                name="id_tip_docu" 
+                                value={newUserData.id_tip_docu} 
+                                onChange={handleNewUserChange} 
                                 className="modern-form-control-xd118"
                             >
                                 <option value="">Seleccionar tipo</option>
@@ -672,10 +677,10 @@ const UserManagementList = () => {
                         <div className="detail-value-display-xd117">
                             <Form.Control 
                                 type="text" 
-                                id="nom_usu" 
+                                id="nom_su" 
                                 placeholder="Ingrese el nombre" 
-                                name="nom_usu" 
-                                value={newUserData.nom_usu} 
+                                name="nom_su" 
+                                value={newUserData.nom_su} 
                                 onChange={handleNewUserChange} 
                                 className="modern-form-control-xd118" 
                             />
@@ -687,10 +692,10 @@ const UserManagementList = () => {
                         <div className="detail-value-display-xd117">
                             <Form.Control 
                                 type="text" 
-                                id="ape_usu" 
+                                id="ape_su" 
                                 placeholder="Ingrese el apellido" 
-                                name="ape_usu" 
-                                value={newUserData.ape_usu} 
+                                name="ape_su" 
+                                value={newUserData.ape_su} 
                                 onChange={handleNewUserChange} 
                                 className="modern-form-control-xd118" 
                             />
