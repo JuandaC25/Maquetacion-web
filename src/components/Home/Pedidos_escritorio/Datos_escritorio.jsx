@@ -24,7 +24,7 @@ function Datos_escritorio() {
         fecha_fn: "",
         hora_fn: "",
         ambient: "",
-        num_ficha: "", // corregido nombre
+        num_ficha: "", 
         estadosoli: 1,
         id_usu: 1,
     });
@@ -50,14 +50,14 @@ function Datos_escritorio() {
             return;
         }
 
-        // Ajustar DTO para coincidir con el backend
+
         const dto = {
             fecha_ini: fechaInicio.toISOString(),
             fecha_fn: fechaFin.toISOString(),
             ambient: form.ambient,
             estadosoli: form.estadosoli,
             id_usu: form.id_usu,
-            num_ficha: form.num_ficha, // corregido nombre
+            num_ficha: form.num_ficha, 
             id_elemen: seleccionados,
         };
 
@@ -73,7 +73,7 @@ function Datos_escritorio() {
                 fecha_fn: "",
                 hora_fn: "",
                 ambient: "",
-                num_ficha: "", // corregido nombre
+                num_ficha: "", 
                 estadosoli: 1,
                 id_usu: 1,
             });
@@ -88,7 +88,6 @@ function Datos_escritorio() {
             try {
                 setIsLoading(true);
                 const data = await ElementosService.obtenerElementos();
-                // Guardar todos los equipos, filtrado se hace después
                 const transformedData = data.map(item => ({
                     id: item.id_elemen,
                     nombre: item.nom_eleme,
@@ -156,6 +155,37 @@ function Datos_escritorio() {
         return items;
     };
 
+    const [subcatInfo, setSubcatInfo] = useState(null);
+
+    useEffect(() => {
+        const fetchSubcatInfo = async () => {
+            try {
+                setIsLoading(true);
+                const data = await ElementosService.obtenerElementos();
+                // Determinar subcategoría según filtro
+                let subCatgFiltro = categoriaFiltro === "computo" ? "Equipo de mesa" : "Equipo de edicion";
+                // Filtrar solo los de la subcategoría
+                const filtrados = data.filter(item => item.sub_catg === subCatgFiltro);
+                if (filtrados.length > 0) {
+                    // Tomar las especificaciones generales y observaciones de los primeros (o agrupar si quieres)
+                    setSubcatInfo({
+                        nombre: subCatgFiltro,
+                        observacion: filtrados[0].obse || "",
+                        especificaciones: (filtrados[0].componen || "").split(',').map(s => s.trim()),
+                        imagen: "/imagenes/EscritorioMesa.png"
+                    });
+                } else {
+                    setSubcatInfo(null);
+                }
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchSubcatInfo();
+    }, [categoriaFiltro]);
+
     return (
         <div className="main-page-container">
             {/* Filtro de categoría */}
@@ -186,80 +216,44 @@ function Datos_escritorio() {
                 </ButtonGroup>
             </div>
 
-            <div className="Ajust-debusquedas">
-                <div className="group-busqueda">
-                    <input
-                        className="input"
-                        type="text"
-                        placeholder={`Buscar ${categoryName.toLowerCase()}...`}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </div>
-                {seleccionados.length > 0 && (
-                    <div className="cartt-container">
-                        <Button variant="info" onClick={() => setShowCartModal(true)}>
-                             Equipos ({seleccionados.length})
-                        </Button>
-                    </div>
-                )}
-            </div>
-
             <div className="equipos-container">
                 {isLoading ? (
-                    <p className="loading-message">Cargando equipos...</p>
+                    <p className="loading-message">Cargando especificaciones...</p>
                 ) : error ? (
                     <div className="alert alert-danger mt-3">{error}</div>
-                ) : currentEquipos.length > 0 ? (
-                    currentEquipos.map((equipo) => (
-                        <Card
-                            key={equipo.id}
-                            className={`ficha-horizontal ${seleccionados.includes(equipo.id) ? "seleccionado" : ""}`}
-                        >
-                            <div className="ficha-img">
-                                <Card.Img src={equipo.imagen} alt={equipo.nombre} />
-                            </div>
-                            <div className="ficha-info">
-                                <Card.Body>
-                                    <Card.Title>{equipo.nombre}</Card.Title>
-                                    <Card.Subtitle className="mb-2 text-muted">
-                                        Numero de Serie: {equipo.modelo} {/* Cambiado a Serie */}
-                                    </Card.Subtitle>
-                                    <Card.Text>{equipo.descripcion}</Card.Text>
-                                    <div>Marca: {equipo.marca}</div>
-                                    {/* Puedes mostrar el estado si lo necesitas */}
-                                    {/* <div>Estado: {equipo.estado}</div> */}
-                                    <Card className="Cuadro_especificacioness">
-                                        <Card.Header>Especificaciones</Card.Header>
-                                        <ListGroup variant="flush">
-                                            {equipo.especificaciones && equipo.especificaciones.map((esp, i) => (
-                                                <ListGroup.Item key={i}>{esp}</ListGroup.Item>
-                                            ))}
-                                        </ListGroup>
-                                    </Card>
-                                    <Button
-                                        className="boton_equiposescritorio"
-                                        variant={seleccionados.includes(equipo.id) ? "danger" : "primary"}
-                                        onClick={() => toggleSelect(equipo.id)}
-                                    >
-                                        {seleccionados.includes(equipo.id) ? "Quitar" : "Seleccionar"}
-                                    </Button>
-                                </Card.Body>
-                            </div>
-                        </Card>
-                    ))
+                ) : subcatInfo ? (
+                    <Card className="ficha-horizontal">
+                        <div className="ficha-img">
+                            <Card.Img src={subcatInfo.imagen} alt={subcatInfo.nombre} />
+                        </div>
+                        <div className="ficha-info">
+                            <Card.Body>
+                                <Card.Title>{subcatInfo.nombre}</Card.Title>
+                                <Card.Subtitle className="mb-2 text-muted">
+                                    Especificaciones generales: {subcatInfo.observacion}
+                                </Card.Subtitle>
+                                <Card className="Cuadro_especificacioness">
+                                    <Card.Header>Especificaciones generales</Card.Header>
+                                    <ListGroup variant="flush">
+                                        {subcatInfo.especificaciones.map((esp, i) => (
+                                            <ListGroup.Item key={i}>{esp}</ListGroup.Item>
+                                        ))}
+                                    </ListGroup>
+                                </Card>
+                                <Button
+                                    className="boton_equiposescritorio"
+                                    variant="primary"
+                                    onClick={() => setShowModal(true)}
+                                >
+                                    Seleccionar
+                                </Button>
+                            </Card.Body>
+                        </div>
+                    </Card>
                 ) : (
-                    <p className="no-results-message">No se encontraron equipos.</p>
+                    <p className="no-results-message">No se encontraron especificaciones.</p>
                 )}
             </div>
-
-            {seleccionados.length > 0 && (
-                <div className="text-center mt-4 mb-5">
-                    <Button variant="success" size="lg" onClick={() => setShowModal(true)}>
-                        Confirmar Solicitud
-                    </Button>
-                </div>
-            )}
 
             {totalPages > 1 && (
                 <div className="d-flex justify-content-center mt-4">
