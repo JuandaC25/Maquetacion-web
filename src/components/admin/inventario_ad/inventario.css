@@ -121,10 +121,6 @@
   box-shadow: 3px 3px 0px var(--green-dark);
 }
 
-.view-details-button-xd08 {
-  /* Estilos actualizados más abajo */
-}
-
 .view-details-button-xd08:hover {
   background: var(--green-dark); transform: scale(1.05);
 }
@@ -259,7 +255,8 @@
   display: flex; justify-content: space-between; align-items: center;
 }
 
-.modern-modal-title-xd13 { font-size: 1.6rem; font-weight: bold; }
+.modern-modal-title-xd13 { font-size: 1.6rem; font-weight: bold;
+color:white }
 
 .modern-modal-body-xd14 { padding: 30px; background: #fcfcfc; }
 

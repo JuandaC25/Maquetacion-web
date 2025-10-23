@@ -459,3 +459,49 @@
 .solicitud-pagination-inner label:hover {
   background-color: rgba(9, 180, 26, 0.1);
 }
+
+/* Inventory modal styles continuation for soliespacio (1700+ series) */
+.modern-modal-dialog-1700 .modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 8px 8px 0 rgba(9,180,26,0.12);
+}
+.modern-modal-header-1701 {
+  background: linear-gradient(90deg, #28a745, #218838);
+  color: #fff;
+  padding: 16px 22px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modern-modal-title-1702 { font-size: 1.2rem; font-weight:700; margin:0; }
+.modern-modal-body-1703 { background:#fcfcfc; padding:24px 20px; }
+.detail-item-1704 { margin-bottom:14px; display:flex; gap:12px; align-items:center; }
+.detail-label-1705 { min-width:200px; font-weight:700; color:#333; }
+.detail-value-display-1706 { flex:1; }
+.modern-modal-footer-1707 { background:var(--bg, #f5f7fa); padding:14px 20px; display:flex; justify-content:flex-end; gap:10px; }
+.modal-action-button-1708 { padding:8px 16px; border-radius:8px; font-weight:600; }
+.cancel-action-1709 { background:#f8f9fa; border:1px solid #ced4da; color:#333; }
+
+@media (max-width: 576px) {
+  .detail-label-1705 { min-width: 130px; font-size: 0.9rem; }
+  .modern-modal-body-1703 { padding:14px; }
+}
+
+/* Animations for modern inventory modal (soliespacio) */
+.modern-modal-dialog-1700 .modal-content {
+  animation: modalScaleIn-1710 0.28s cubic-bezier(.2,.9,.3,1) both;
+}
+.modern-modal-header-1701 {
+  transform: translateY(-8px);
+  opacity: 0;
+  animation: headerSlideIn-1711 0.32s 0.08s cubic-bezier(.2,.9,.3,1) both;
+}
+
+@keyframes modalScaleIn-1710 {
+  from { opacity: 0; transform: scale(.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes headerSlideIn-1711 {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

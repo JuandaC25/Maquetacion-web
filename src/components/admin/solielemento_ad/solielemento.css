@@ -326,3 +326,49 @@ textarea.form-control {
 .modal-footer-1626 .btn-secondary:hover {
   background-color: #5a6268;
 }
+
+/* Inventory modal styles continuation (1630+ series) */
+.modern-modal-dialog-1627 .modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 8px 8px 0 rgba(9,180,26,0.15);
+}
+.modern-modal-header-1628 {
+  background: linear-gradient(90deg, #28a745, #218838);
+  color: #fff;
+  padding: 18px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modern-modal-title-1629 { font-size: 1.25rem; font-weight:700; margin:0; }
+.modern-modal-body-1630 { background:#fcfcfc; padding:28px 24px; }
+.detail-item-1631 { margin-bottom:16px; display:flex; gap:12px; align-items:center; }
+.detail-label-1632 { min-width:220px; font-weight:700; color:#333; }
+.detail-value-display-1633 { flex:1; }
+.modern-modal-footer-1634 { background:var(--bg, #f5f7fa); padding:16px 24px; display:flex; justify-content:flex-end; gap:12px; }
+.modal-action-button-1635 { padding:8px 18px; border-radius:8px; font-weight:600; }
+.cancel-action-1636 { background:#f8f9fa; border:1px solid #ced4da; color:#333; }
+
+@media (max-width: 576px) {
+  .detail-label-1632 { min-width: 140px; font-size: 0.9rem; }
+  .modern-modal-body-1630 { padding:18px; }
+}
+
+/* Animations for modern inventory modal */
+.modern-modal-dialog-1627 .modal-content {
+  animation: modalScaleIn-1637 0.28s cubic-bezier(.2,.9,.3,1) both;
+}
+.modern-modal-header-1628 {
+  transform: translateY(-8px);
+  opacity: 0;
+  animation: headerSlideIn-1638 0.32s 0.08s cubic-bezier(.2,.9,.3,1) both;
+}
+
+@keyframes modalScaleIn-1637 {
+  from { opacity: 0; transform: scale(.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes headerSlideIn-1638 {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

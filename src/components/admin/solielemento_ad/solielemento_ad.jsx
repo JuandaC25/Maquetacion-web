@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Alert, Dropdown, Modal, Form, Pagination } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import "./solielemento.css";
 import Footer from '../../Footer/Footer.jsx';
-import HeaderAd from '../header_solielemento/header_solielemento.jsx'; 
+import HeaderAd from '../header_solielemento/header_solielemento.jsx';
+import { obtenersolicitudes } from '../../../api/solicitudesApi';
 
 const Ticketxd = ({ estado, onVerClick, detalles }) => {
   return (
@@ -48,20 +49,41 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
 };
 
 const Listaxd = ({ onVerClick }) => {
-  const[elementoSeleccionado, setElementoSeleccionado] = useState('Todos');
-  const tickets = [
-    { estado: 'pendiente',elemento:'Televisor', detalles: { fecha1: '2023-05-15 08:30', fecha2: '2023-05-15 10:45', elemento: 'Portátil HP EliteBook', elementoserie: 'SNHPELB83472', accesorios: 'Mouse inalámbrico', accesoriosserie: 'SNMSWL89234', usuario: 'María Rodríguez', tecnico: 'Carlos Méndez', ambiente: '203', estado: 'pendiente' } },
-    { estado: 'pendiente',elemento:'Portatil', detalles: { fecha1: '2023-11-10 09:15', fecha2: '2023-11-10 11:30', elemento: 'Portátil Dell Latitude', elementoserie: 'SNDLLT542189', accesorios: 'Cargador y mousepad', accesoriosserie: 'SNCHGDL887/SNMPDL442', usuario: 'Andrés Gutiérrez', tecnico: 'Luisa Fernández', ambiente: '205', estado: 'pendiente' } },
-    { estado: 'en proceso',elemento:'Equipo de escritorio', detalles: { fecha1: '2023-11-12 14:00', fecha2: '2023-11-12 16:20', elemento: 'Computador todo en uno Lenovo', elementoserie: 'SNLNVAI789032', accesorios: 'Teclado inalámbrico', accesoriosserie: 'SNTKLN55621', usuario: 'Carolina Méndez', tecnico: 'Roberto Jiménez', ambiente: '102', estado: 'en proceso' } },
-    { estado: 'pendiente',elemento:'Equipo de escritorio', detalles: { fecha1: '2023-11-15 08:45', fecha2: '2023-11-15 10:15', elemento: 'Portátil MacBook Pro', elementoserie: 'SNMBP2023567', accesorios: 'Adaptador USB-C a HDMI', accesoriosserie: 'SNUSBHD789', usuario: 'Sofía Ramírez', tecnico: 'Diego Castro', ambiente: '302', estado: 'pendiente' } },
-    { estado: 'en proceso',elemento:'Portatil', detalles: { fecha1: '2023-11-18 10:30', fecha2: '2023-11-18 12:45', elemento: 'Computador todo en uno HP', elementoserie: 'SNHPAIO334567', accesorios: 'Mouse óptico y cable de red', accesoriosserie: 'SNMSHP445/SNETHP778', usuario: 'Jorge Navarro', tecnico: 'María López', ambiente: '201', estado: 'en proceso' } },
-    { estado: 'pendiente',elemento:'Televisor', detalles: { fecha1: '2023-11-20 13:20', fecha2: '2023-11-20 15:40', elemento: 'Portátil Asus VivoBook', elementoserie: 'SNASVB159753', accesorios: 'Cargador original', accesoriosserie: 'SNCHAS88234', usuario: 'Fernanda Soto', tecnico: 'Ricardo Mora', ambiente: '103', estado: 'pendiente' } },
-    { estado: 'pendiente',elemento:'Televisor', detalles: { fecha1: '2023-11-23 11:00', fecha2: '2023-11-23 13:15', elemento: 'Computador todo en uno Acer', elementoserie: 'SNACAI789654', accesorios: 'Teclado mecánico', accesoriosserie: 'SNTKMEC1234', usuario: 'Raúl Villanueva', tecnico: 'Patricia Salazar', ambiente: '107', estado: 'pendiente' } }
-  ];
-const ticketsFiltrados = elementoSeleccionado === 'Todos' ? tickets : tickets.filter(ticket => ticket.elemento.toLowerCase() === elementoSeleccionado.toLowerCase());
-  const handleSelectElemento = (elemento) => {
-    setElementoSeleccionado(elemento);
-  }
+  const [elementoSeleccionado, setElementoSeleccionado] = useState('Todos');
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    obtenersolicitudes()
+      .then((data) => {
+        if (!mounted) return;
+        const arr = Array.isArray(data) ? data : [];
+        const elementos = arr.filter(s => Boolean((s.elemento && s.elemento !== '') || (s.detalles && s.detalles.elemento)));
+        setTickets(elementos);
+      })
+      .catch(err => {
+        console.error('Error al obtener solicitudes:', err);
+        setError(err.message || 'Error al cargar solicitudes');
+      })
+      .finally(() => { if (mounted) setLoading(false); });
+    return () => { mounted = false; };
+  }, []);
+
+  const ticketsFiltrados = elementoSeleccionado === 'Todos'
+    ? tickets
+    : tickets.filter(ticket => {
+        const nombre = (ticket.elemento || ticket.detalles?.elemento || '').toString();
+        return nombre.toLowerCase() === elementoSeleccionado.toLowerCase();
+      });
+
+  const handleSelectElemento = (elemento) => { setElementoSeleccionado(elemento); };
+
+  if (loading) return (<div className="lista-tickets-1613">Cargando solicitudes...</div>);
+  if (error) return (<div className="lista-tickets-1613">Error: {error}</div>);
+
   return (
     <div className="lista-tickets-1613">
       <Alert variant="success" className="alert-1614">
@@ -87,9 +109,24 @@ const ticketsFiltrados = elementoSeleccionado === 'Todos' ? tickets : tickets.fi
       </Alert>
 
       <div className="cards-container-1616">
-        {ticketsFiltrados.map((t, i) => (
-          <Ticketxd key={i} estado={t.estado} detalles={t.detalles} onVerClick={() => onVerClick(t.detalles)} />
-        ))}
+        {ticketsFiltrados.map((t, i) => {
+          const detalles = t.detalles ? t.detalles : {
+            fecha1: t.fecha1,
+            fecha2: t.fecha2,
+            elemento: t.elemento,
+            elementoserie: t.elementoserie,
+            accesorios: t.accesorios,
+            accesoriosserie: t.accesoriosserie,
+            usuario: t.usuario,
+            tecnico: t.tecnico,
+            ambiente: t.ambiente,
+            estado: t.estado
+          };
+          const estado = t.estado || detalles.estado || '';
+          return (
+            <Ticketxd key={i} estado={estado} detalles={detalles} onVerClick={() => onVerClick(detalles)} />
+          );
+        })}
       </div>
     </div>
   );
@@ -130,75 +167,83 @@ const Solielemento = () => {
           <span className="selection-1619"></span>
         </div>
       </div>
-      <Modal show={showModal} onHide={handleCloseModal} className="custom-modal-1620" centered>
-        <Modal.Header closeButton className="modal-header-verde-1621">
-          <Modal.Title>Detalles de la solicitud</Modal.Title>
+      <Modal show={showModal} onHide={handleCloseModal} centered dialogClassName="modern-modal-dialog-1627">
+        <Modal.Header closeButton className="modern-modal-header-1628">
+          <Modal.Title className="modern-modal-title-1629">Detalles de la solicitud</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="modal-body-1622">
-          <div className="form-group-row-1623">
-            <label className="form-label-1624">Fecha y hora de inicio:</label>
-            <div className="form-control-wrapper-1625">
+        <Modal.Body className="modern-modal-body-1630">
+          <div className="detail-item-1631">
+            <label className="detail-label-1632">Fecha y hora de inicio:</label>
+            <div className="detail-value-display-1633">
               <Form.Control type="text" value={modalDetalles?.fecha1 || ''} readOnly />
             </div>
           </div>
 
-          <div className="form-group-row-1623">
-            <label className="form-label-1624">Fecha y hora de fin:</label>
-            <div className="form-control-wrapper-1625">
+          <div className="detail-item-1631">
+            <label className="detail-label-1632">Fecha y hora de fin:</label>
+            <div className="detail-value-display-1633">
               <Form.Control type="text" value={modalDetalles?.fecha2 || ''} readOnly />
             </div>
           </div>
-          <div className="form-group-row-1623">
-            <label className="form-label-1624">Tipo de elemento:</label>
-            <div className="form-control-wrapper-1625">
+
+          <div className="detail-item-1631">
+            <label className="detail-label-1632">Tipo de elemento:</label>
+            <div className="detail-value-display-1633">
               <Form.Control type="text" value={modalDetalles?.elemento || ''} readOnly />
             </div>
           </div>
-          <div className="form-group-row-1623">
-            <label className="form-label-1624">Número de serie del elemento:</label>
-            <div className="form-control-wrapper-1625">
+
+          <div className="detail-item-1631">
+            <label className="detail-label-1632">Número de serie del elemento:</label>
+            <div className="detail-value-display-1633">
               <Form.Control type="text" value={modalDetalles?.elementoserie || ''} readOnly />
             </div>
           </div>
-          <div className="form-group-row-1623">
-            <label className="form-label-1624">Accesorios:</label>
-            <div className="form-control-wrapper-1625">
+
+          <div className="detail-item-1631">
+            <label className="detail-label-1632">Accesorios:</label>
+            <div className="detail-value-display-1633">
               <Form.Control type="text" value={modalDetalles?.accesorios || ''} readOnly />
             </div>
           </div>
-          <div className="form-group-row-1623">
-            <label className="form-label-1624">Número de serie de accesorio:</label>
-            <div className="form-control-wrapper-1625">
+
+          <div className="detail-item-1631">
+            <label className="detail-label-1632">Número de serie de accesorio:</label>
+            <div className="detail-value-display-1633">
               <Form.Control type="text" value={modalDetalles?.accesoriosserie || ''} readOnly />
             </div>
           </div>
-          <div className="form-group-row-1623">
-            <label className="form-label-1624">Nombre del Usuario:</label>
-            <div className="form-control-wrapper-1625">
+
+          <div className="detail-item-1631">
+            <label className="detail-label-1632">Nombre del Usuario:</label>
+            <div className="detail-value-display-1633">
               <Form.Control type="text" value={modalDetalles?.usuario || ''} readOnly />
             </div>
           </div>
-          <div className="form-group-row-1623">
-            <label className="form-label-1624">Nombre del técnico:</label>
-            <div className="form-control-wrapper-1625">
+
+          <div className="detail-item-1631">
+            <label className="detail-label-1632">Nombre del técnico:</label>
+            <div className="detail-value-display-1633">
               <Form.Control type="text" value={modalDetalles?.tecnico || ''} readOnly />
             </div>
           </div>
-          <div className="form-group-row-1623">
-            <label className="form-label-1624">Ambiente:</label>
-            <div className="form-control-wrapper-1625">
+
+          <div className="detail-item-1631">
+            <label className="detail-label-1632">Ambiente:</label>
+            <div className="detail-value-display-1633">
               <Form.Control type="text" value={modalDetalles?.ambiente || ''} readOnly />
             </div>
           </div>
-          <div className="form-group-row-1623">
-            <label className="form-label-1624">Estado:</label>
-            <div className="form-control-wrapper-1625">
+
+          <div className="detail-item-1631">
+            <label className="detail-label-1632">Estado:</label>
+            <div className="detail-value-display-1633">
               <Form.Control type="text" value={modalDetalles?.estado || ''} readOnly />
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer className="modal-footer-1626">
-          <Button variant="secondary" onClick={handleCloseModal}>
+        <Modal.Footer className="modern-modal-footer-1634">
+          <Button variant="secondary" onClick={handleCloseModal} className="modal-action-button-1635 cancel-action-1636">
             Cerrar
           </Button>
         </Modal.Footer>

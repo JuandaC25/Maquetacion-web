@@ -6,10 +6,7 @@ import Footer from "../../Footer/Footer.jsx";
 import HeaderInv from "../header_inv/header_inv.jsx";
 import ElementosService from "../../../api/ElementosApi.js";
 import { 
-  obtenerAccesorios, 
-  crearAccesorio, 
-  eliminarAccesorio,
-  obtenerAccesorioPorId 
+  obtenerAccesorios
 } from "../../../api/AccesoriosApi.js";
 
 const EquipoItem = ({ elemento, onVerClick }) => (
@@ -357,7 +354,10 @@ const Admin = () => {
     const categorias = {
       "Portátil": 1,
       "Equipo de Escritorio": 2,
-      "Televisor": 3
+      "Televisor": 3,
+      // Asumimos que la categoría 'Accesorio' tiene id 4 en el backend.
+      // Si tu base de datos usa otro id, actualiza este valor.
+      "Accesorio": 4
     };
     return categorias[categoria] || 1;
   };
@@ -370,12 +370,24 @@ const Admin = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      const [elementos, accesorios] = await Promise.all([
+      // Hacemos la carga resistente a que el endpoint de accesorios no exista
+      // (el backend puede no haber implementado /api/accesorios). Usamos
+      // Promise.allSettled para no fallar toda la carga si una petición falla.
+      const resultados = await Promise.allSettled([
         ElementosService.obtenerElementos(),
         obtenerAccesorios()
       ]);
-      
+
+      const elementosResult = resultados[0];
+      const accesoriosResult = resultados[1];
+
+      if (elementosResult.status !== 'fulfilled') {
+        throw elementosResult.reason || new Error('Error al obtener elementos');
+      }
+
+      const elementos = elementosResult.value;
+      const accesorios = accesoriosResult.status === 'fulfilled' ? accesoriosResult.value : [];
+
       const elementosNormalizados = elementos.map(el => ({
         id: el.id_elemen,
         nombre: el.nom_eleme,
@@ -410,14 +422,17 @@ const Admin = () => {
       let detallesCompletos;
       
       if (item.tipo === 'accesorio') {
-        detallesCompletos = await obtenerAccesorioPorId(item.id);
+        // Si el backend no tiene un endpoint separado para accesorios,
+        // tratamos el accesorio como un elemento (Elementos) con categoría
+        // 'Accesorio' y usamos el servicio de elementos para obtenerlo.
+        detallesCompletos = await ElementosService.obtenerPorId(item.id);
         detallesCompletos = {
           ...detallesCompletos,
-          id: detallesCompletos.id_accesorio,
-          nombre: detallesCompletos.nom_acces,
+          id: detallesCompletos.id_elemen,
+          nombre: detallesCompletos.nom_eleme,
           marca: detallesCompletos.marc,
-          serie: detallesCompletos.num_ser?.toString() || "",
-          categoria: "Accesorio",
+          serie: detallesCompletos.num_seri?.toString() || "",
+          categoria: detallesCompletos.tip_catg || "Accesorio",
           tipo: 'accesorio'
         };
       } else {
@@ -455,7 +470,8 @@ const Admin = () => {
       setEliminando(true);
       
       if (esAccesorio) {
-        await eliminarAccesorio(id);
+        // Si los accesorios se almacenan como elementos, borramos el elemento
+        await ElementosService.eliminarElemento(id);
       } else {
         await ElementosService.eliminarElemento(id);
       }
@@ -520,7 +536,7 @@ const Admin = () => {
         obse: nuevoEquipo.observaciones || "",
         componen: nuevoEquipo.componentes || "",
         est_elem: 1,
-        id_categoria: obtenerIdCategoria(nuevoEquipo.categoria)
+        id_categ: obtenerIdCategoria(nuevoEquipo.categoria)
       };
       
       const elementoCreado = await ElementosService.crearElemento(elementoParaBackend);
@@ -558,20 +574,25 @@ const Admin = () => {
 
     try {
       setGuardandoAccesorio(true);
-      
+      // Si no existe un endpoint de accesorios, creamos el accesorio como
+      // un elemento con categoría 'Accesorio' (ElementosCreateDto)
       const accesorioParaBackend = {
-        nom_acces: nuevoAccesorio.nombre,
+        nom_eleme: nuevoAccesorio.nombre,
         marc: nuevoAccesorio.marca,
-        num_ser: parseInt(nuevoAccesorio.serie)
+        num_seri: parseInt(nuevoAccesorio.serie),
+        est_elem: 1,
+        obse: "",
+        componen: "",
+        id_categ: obtenerIdCategoria("Accesorio")
       };
-      
-      const accesorioCreado = await crearAccesorio(accesorioParaBackend);
-      
+
+      const accesorioCreado = await ElementosService.crearElemento(accesorioParaBackend);
+
       const accesorioNormalizado = {
-        id: accesorioCreado.id_accesorio,
-        nombre: accesorioCreado.nom_acces,
+        id: accesorioCreado.id_elemen,
+        nombre: accesorioCreado.nom_eleme,
         marca: accesorioCreado.marc,
-        serie: accesorioCreado.num_ser?.toString() || "",
+        serie: accesorioCreado.num_seri?.toString() || "",
         categoria: "Accesorio",
         tipo: 'accesorio'
       };
