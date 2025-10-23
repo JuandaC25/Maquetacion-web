@@ -459,8 +459,6 @@
 .solicitud-pagination-inner label:hover {
   background-color: rgba(9, 180, 26, 0.1);
 }
-
-/* Inventory modal styles continuation for soliespacio (1700+ series) */
 .modern-modal-dialog-1700 .modal-content {
   border-radius: 12px;
   overflow: hidden;
@@ -486,7 +484,6 @@
   .modern-modal-body-1703 { padding:14px; }
 }
 
-/* Animations for modern inventory modal (soliespacio) */
 .modern-modal-dialog-1700 .modal-content {
   animation: modalScaleIn-1710 0.28s cubic-bezier(.2,.9,.3,1) both;
 }
@@ -504,4 +501,47 @@
 @keyframes headerSlideIn-1711 {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+.page-with-footer-1712 {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 100px);
+}
+.page-with-footer-1712 > .solicitud-lista-tickets {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+.page-with-footer-1712 > .solicitud-lista-tickets > .solicitud-tickets-grid {
+  flex: 1 1 auto;
+}
+.page-with-footer-1712 .solicitud-pagination {
+  margin-top: auto;
+  padding-bottom: 12px;
+}
+
+.solicitud-empty-placeholder-1713 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+}
+
+.solicitud-empty-inner-1714 {
+  background: #f3f5f7;
+  color: #2b3b43;
+  padding: 28px 24px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(43,59,67,0.06);
+  max-width: 560px;
+}
+.solicitud-empty-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin: 0 0 6px 0;
+}
+.solicitud-empty-text {
+  margin: 0;
+  color: #556670;
 }
