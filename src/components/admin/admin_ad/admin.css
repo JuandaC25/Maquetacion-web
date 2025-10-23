@@ -345,3 +345,17 @@ textarea.form-control {
   background-color: rgb(9, 180, 26) !important;
   color: white !important;
 }
+
+.page-with-footer-1227 {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 100px);
+}
+.page-with-footer-1227 > .container-1201,
+.page-with-footer-1227 > .grid-1208 {
+  flex: 1 1 auto; 
+}
+.page-with-footer-1227 .pagination-1217 {
+  margin-top: auto; 
+  padding-bottom: 12px;
+}

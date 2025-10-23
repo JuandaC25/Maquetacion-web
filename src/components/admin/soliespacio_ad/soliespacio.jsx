@@ -59,7 +59,6 @@ const Listaxd = ({ onVerClick }) => {
 
   if (loading) return (<div className="solicitud-lista-tickets">Cargando solicitudes...</div>);
   if (error) return (<div className="solicitud-lista-tickets">Error: {error}</div>);
-
   return (
     <div className="solicitud-lista-tickets">
       <Alert variant="success" className="solicitud-alert">
@@ -83,8 +82,16 @@ const Listaxd = ({ onVerClick }) => {
         </div>
       </Alert>
 
-      <div className="solicitud-tickets-grid">
-        {espacioFiltrado.map((t, i) => {
+      {espacioFiltrado.length === 0 ? (
+        <div className="solicitud-empty-placeholder-1713">
+          <div className="solicitud-empty-inner-1714">
+            <p className="solicitud-empty-title">No hay espacios para visualizar</p>
+            <p className="solicitud-empty-text">No se encontraron solicitudes para el filtro seleccionado.</p>
+          </div>
+        </div>
+      ) : (
+        <div className="solicitud-tickets-grid">
+          {espacioFiltrado.map((t, i) => {
           const detalles = t.detalles ? t.detalles : {
             fecha1: t.fecha1,
             fecha2: t.fecha2,
@@ -94,8 +101,9 @@ const Listaxd = ({ onVerClick }) => {
           };
           const estado = t.estado || detalles.estado || '';
           return (<Ticketxd key={i} estado={estado} detalles={detalles} onVerClick={() => onVerClick(detalles)} />);
-        })}
-      </div>
+          })}
+        </div>
+      )}
     </div>
   );
 };
@@ -115,7 +123,7 @@ const Soliespacio = () => {
   };
 
   return (
-    <div>
+  <div className="page-with-footer-1712">
       <HeaderAd />
       <Listaxd onVerClick={handleVerClick} />
       <div className='solicitud-pagination'>

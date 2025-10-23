@@ -190,7 +190,7 @@ const Admin = () => {
   };
 
   return (
-    <div>
+    <div className="page-with-footer-1227">
       <HeaderAd />
       <Listaxd onVerClick={handleVerClick} />
       <Modal show={showModal} onHide={handleCloseModal} className="modal-1220" centered>

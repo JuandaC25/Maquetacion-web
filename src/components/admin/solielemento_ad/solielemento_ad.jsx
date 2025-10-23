@@ -108,8 +108,16 @@ const Listaxd = ({ onVerClick }) => {
         </div>
       </Alert>
 
-      <div className="cards-container-1616">
-        {ticketsFiltrados.map((t, i) => {
+      {ticketsFiltrados.length === 0 ? (
+        <div className="elemento-empty-placeholder-1640">
+          <div className="elemento-empty-inner-1641">
+            <p className="elemento-empty-title">No hay elementos para visualizar</p>
+            <p className="elemento-empty-text">No se encontraron solicitudes de elementos para el filtro seleccionado.</p>
+          </div>
+        </div>
+      ) : (
+        <div className="cards-container-1616">
+          {ticketsFiltrados.map((t, i) => {
           const detalles = t.detalles ? t.detalles : {
             fecha1: t.fecha1,
             fecha2: t.fecha2,
@@ -126,8 +134,9 @@ const Listaxd = ({ onVerClick }) => {
           return (
             <Ticketxd key={i} estado={estado} detalles={detalles} onVerClick={() => onVerClick(detalles)} />
           );
-        })}
-      </div>
+          })}
+        </div>
+      )}
     </div>
   );
 };
@@ -147,7 +156,7 @@ const Solielemento = () => {
   };
 
   return (
-    <div>
+    <div className="page-with-footer-1639">
       <HeaderAd />
       <Listaxd onVerClick={handleVerClick} />
       <div className="pagination-1617">
