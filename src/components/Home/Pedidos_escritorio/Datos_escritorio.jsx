@@ -111,7 +111,6 @@ function Datos_escritorio() {
         fetchElementos();
     }, []);
 
-    // Filtrado por categoría y subcategoría
     useEffect(() => {
         let subCatgFiltro = categoriaFiltro === "computo" ? "Equipo de mesa" : "Equipo de edicion";
         const results = equiposApi.filter((equipo) => {
@@ -162,12 +161,12 @@ function Datos_escritorio() {
             try {
                 setIsLoading(true);
                 const data = await ElementosService.obtenerElementos();
-                // Determinar subcategoría según filtro
+                
                 let subCatgFiltro = categoriaFiltro === "computo" ? "Equipo de mesa" : "Equipo de edicion";
-                // Filtrar solo los de la subcategoría
+                
                 const filtrados = data.filter(item => item.sub_catg === subCatgFiltro);
                 if (filtrados.length > 0) {
-                    // Tomar las especificaciones generales y observaciones de los primeros (o agrupar si quieres)
+                
                     setSubcatInfo({
                         nombre: subCatgFiltro,
                         observacion: filtrados[0].obse || "",
@@ -216,44 +215,47 @@ function Datos_escritorio() {
                 </ButtonGroup>
             </div>
 
-            <div className="equipos-container">
-                {isLoading ? (
-                    <p className="loading-message">Cargando especificaciones...</p>
-                ) : error ? (
-                    <div className="alert alert-danger mt-3">{error}</div>
-                ) : subcatInfo ? (
-                    <Card className="ficha-horizontal">
-                        <div className="ficha-img">
-                            <Card.Img src={subcatInfo.imagen} alt={subcatInfo.nombre} />
-                        </div>
-                        <div className="ficha-info">
-                            <Card.Body>
-                                <Card.Title>{subcatInfo.nombre}</Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">
-                                    Especificaciones generales: {subcatInfo.observacion}
-                                </Card.Subtitle>
-                                <Card className="Cuadro_especificacioness">
-                                    <Card.Header>Especificaciones generales</Card.Header>
-                                    <ListGroup variant="flush">
-                                        {subcatInfo.especificaciones.map((esp, i) => (
-                                            <ListGroup.Item key={i}>{esp}</ListGroup.Item>
-                                        ))}
-                                    </ListGroup>
-                                </Card>
-                                <Button
-                                    className="boton_equiposescritorio"
-                                    variant="primary"
-                                    onClick={() => setShowModal(true)}
-                                >
-                                    Seleccionar
-                                </Button>
-                            </Card.Body>
-                        </div>
-                    </Card>
-                ) : (
-                    <p className="no-results-message">No se encontraron especificaciones.</p>
-                )}
-            </div>
+        {subcatInfo ? (
+  <Card className="ficha-visual">
+    <div className="ficha-header">
+      <div className="ficha-img-container"></div>
+      <div className="ficha-titulo">
+        <h2>{subcatInfo.nombre}</h2>
+        <p className="ficha-subtitulo">
+          Visualiza aquí los detalles generales de los equipos disponibles
+        </p>
+      </div>
+    </div>
+
+    <div className="ficha-body">
+      <div className="ficha-descripcion">
+        <h4>Descripción general</h4>
+        <p>{subcatInfo.observacion || "Sin observaciones disponibles."}</p>
+      </div>
+
+      <div className="ficha-especificaciones">
+        <h4>Componentes principales</h4>
+        <ul>
+          {subcatInfo.especificaciones.map((esp, i) => (
+            <li key={i}>{esp}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div className="ficha-footer">
+      <Button
+        className="boton-solicitar"
+        variant="success"
+        onClick={() => setShowModal(true)}
+      >
+        Realizar solicitud
+      </Button>
+    </div>
+  </Card>
+) : (
+  <p className="text-center mt-4">Cargando información de la categoría...</p>
+)}
 
             {totalPages > 1 && (
                 <div className="d-flex justify-content-center mt-4">
@@ -376,5 +378,4 @@ function Datos_escritorio() {
         </div>
     );
 }
-
 export default Datos_escritorio;
