@@ -24,7 +24,7 @@ function Datos_escritorio() {
         fecha_fn: "",
         hora_fn: "",
         ambient: "",
-        num_ficha: "", 
+        num_ficha: "",
         estadosoli: 1,
         id_usu: 1,
     });
@@ -161,12 +161,9 @@ function Datos_escritorio() {
             try {
                 setIsLoading(true);
                 const data = await ElementosService.obtenerElementos();
-                
                 let subCatgFiltro = categoriaFiltro === "computo" ? "Equipo de mesa" : "Equipo de edicion";
-                
                 const filtrados = data.filter(item => item.sub_catg === subCatgFiltro);
                 if (filtrados.length > 0) {
-                
                     setSubcatInfo({
                         nombre: subCatgFiltro,
                         observacion: filtrados[0].obse || "",
