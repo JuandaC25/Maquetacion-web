@@ -58,7 +58,7 @@ function Datos_escritorio() {
         fecha_fn: "",
         hora_fn: "",
         ambient: "",
-        num_ficha: "", 
+        num_ficha: "",
         estadosoli: 1,
         id_usu: 1,
       });
