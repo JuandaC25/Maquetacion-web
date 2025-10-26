@@ -1,319 +1,237 @@
-/* Contenedor principal para las fichas de televisores */
-.televisores-container {
-    max-width: 1270px;
-    margin-top: 0.5rem;
-    margin: auto;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(565px, 1fr));
-    gap: 30px;
-    justify-content: center;
+.audio-video-main-container {
+  background-color: #f9fbfd;
 }
 
-/* Ficha individual de cada televisor */
-.ficha-tv {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    border-radius: 20px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    transition: all 0.4s ease, border 0.5s ease;
-    background: linear-gradient(135deg, #ffffff, #f0fdf9);
-    width: 100%;
-    border: 1px solid #dcdcdc;
+.audio-video-ficha-visual {
+  max-width: 1100px;
+  margin: 3rem auto;
+  background: linear-gradient(135deg, #f5f5f5 0%, #f6fff9 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-/* Efecto al pasar el cursor sobre la ficha */
-.ficha-tv:hover {
-    box-shadow: 0 15px 30px rgba(46, 204, 113, 0.4);
-    transform: translateY(-8px) scale(1.01);
+.audio-video-ficha-visual:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(46, 204, 113, 0.4);
+  transition: all 0.5s ease;
 }
 
-/* Estilo para la ficha seleccionada */
-.ficha-tv.seleccionado {
-    border: 5px solid #2ecc71;
-    background: #eaf7f2;
-    box-shadow: 0 15px 30px rgba(0, 255, 106, 0.4);
-    transform: translateY(-8px) scale(1.01);
+.audio-video-ficha-header {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f7fcf7;
+  border-bottom: 2px solid #e0f2e0;
 }
 
-/* Sección de la imagen */
-.ficha-img {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.audio-video-ficha-titulo h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2ecc71;
 }
 
-.ficha-img img {
-    max-width: 200px;
-    border-radius: 15px;
+.audio-video-ficha-subtitulo {
+  color: #555;
+  font-size: 1rem;
+  margin-top: 0.3rem;
 }
 
-/* Sección de la información */
-.ficha-info {
-    flex: 1;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    text-align: center;
+.audio-video-ficha-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 2rem;
 }
 
-.ficha-info .card-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 5px;
+.audio-video-ficha-descripcion,
+.audio-video-ficha-especificaciones {
+  background: #fff;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease;
 }
 
-.ficha-info .card-subtitle {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 15px;
+.audio-video-ficha-descripcion:hover,
+.audio-video-ficha-especificaciones:hover {
+  transform: translateY(-3px);
+  box-shadow: 15px 15px 10px rgba(8, 219, 96, 0.349);
+  transition: all 0.60s ease;
 }
 
-.ficha-info .card-text {
-    font-size: 15px;
-    color: #555;
+.audio-video-ficha-descripcion h4,
+.audio-video-ficha-especificaciones h4 {
+  color: #27ae60;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-/* Botón "Seleccionar" y "Quitar" */
-.boton_televisores {
-    border: none;
-    margin-top: 25px; 
-    padding: 14px 28px;
-    font-size: 16px;
-    font-weight: bold;
-    background: #2ecc71; 
-    color: white;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+.audio-video-ficha-descripcion p {
+  color: #444;
+  line-height: 1.6;
 }
 
-.boton_televisores:hover {
-    background: #27ae60;
-    transform: scale(1.05);
-    box-shadow: 0 6px 15px rgba(46, 204, 113, 0.4);
+.audio-video-ficha-especificaciones ul {
+  list-style: none;
+  padding: 0;
 }
 
-/* Botón de la ficha seleccionada */
-.ficha-tv.seleccionado .boton_televisores {
-    background: #e74c3c;
-    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+.audio-video-ficha-especificaciones li {
+  padding: 8px 0;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+  padding-left: 25px;
+  font-size: 0.95rem;
 }
 
-.ficha-tv.seleccionado .boton_televisores:hover {
-    background: #c0392b;
+.audio-video-ficha-especificaciones li::before {
+  content: "●";
+  color: #2ecc71;
+  font-size: 1.2rem;
+  line-height: 1;
+  position: absolute;
+  left: 0;
+  top: 7px;
 }
 
-/* Cuadro de especificaciones */
-.Cuadro_especificaciones-tv {
-    margin-top: 25px;
-    background: #f8f8f8;
-    border-radius: 12px;
-    border: none;
-    padding: 15px;
-    text-align: center;
+.audio-video-ficha-especificaciones li:last-child {
+  border-bottom: none;
 }
 
-.Cuadro_especificaciones-tv .card-header {
-    background: transparent;
-    font-weight: 600;
-    font-size: 18px;
-    color: #333;
-    border-bottom: 1px solid #cecdcd;
-    padding-bottom: 10px;
+/* Carrusel */
+.audio-video-carrusel {
+  margin-top: 1.5rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.Cuadro_especificaciones-tv .list-group-item {
-    background: transparent;
-    border: none;
-    color: #555;
-    font-size: 15px;
-    text-align: center;
-    padding: 8px 0;
-    transition: color 0.3s ease;
+.audio-video-carrusel-imagen {
+  width: 100%;
+  height: 280px;
+  object-fit: contain;
+  background: #f8fdf8;
+  transition: transform 0.5s ease;
 }
 
-.Cuadro_especificaciones-tv .list-group-item:hover {
-    color: #2ecc71;
+.audio-video-carrusel-imagen:hover {
+  transform: scale(1.03);
 }
 
-/* Clases de búsqueda y carrito */
-.Ajust-debusquedas {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    width: 100%;
+.audio-video-equipos-disponibles {
+  text-align: center;
+  margin-top: 2rem;
+  background: #f5fff8;
+  border-radius: 16px;
+  width: 70%;
+  margin-left: 22rem;
+  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.15);
+}
+.audio-video-equipos-disponibles:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 15px rgba(8, 219, 96, 0.349);
+  transition: all 0.60s ease;
 }
 
-.group-busqueda {
-    flex-grow: 1;
-    margin-right: 1px;
+.audio-video-equipos-disponibles h4 {
+  color: #2e8b57;
+  font-weight: 600;
+  margin-bottom: 1rem;
 }
 
-.input {
-    width: 20%;
-    margin-top: 1rem;
-    margin-left: 2rem;
-    height: 45px;
-    line-height: 30px;
-    padding: 0 1.5rem;
-    padding-left: 3rem;
-    border: 1px solid #dcdcdc;
-    border-radius: 50px;
-    outline: none;
-    background-color: #ffffff;
-    color: #333;
-    transition: .5s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+.audio-video-contador-equipos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.input::placeholder {
-    color: #a7a7a7;
+.audio-video-contador-equipos .audio-video-numero {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #2ecc71;
+  line-height: 1;
 }
 
-.input:focus, .input:hover {
-    outline: none;
-    border-color: #2ecc71;
-    background-color: #fff;
-    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+.audio-video-contador-equipos p {
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+  color: #333;
 }
 
-.icon {
-    position: absolute;
-    left: 1rem;
-    color: #888;
-    width: 1rem;
-    height: 1rem;
+.audio-video-ficha-footer {
+  text-align: center;
+  padding: 2rem;
 }
 
-.cartt-containerrr {
-    position: fixed;
-    margin-left: 93rem;
-    margin-top: 1.5rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    transition: transform 0.5s ease;
+.audio-video-boton-solicitar {
+  outline: none;
+  cursor: pointer;
+  border: none;
+  padding: 1rem 2.8rem;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 50px;
+  position: relative;
+  display: inline-block;
+  color: #fff;
+  letter-spacing: 0.03rem;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  box-shadow: 0 6px 18px rgba(46, 204, 113, 0.35);
+  overflow: hidden;
+  transition: all 0.4s ease;
 }
 
-.cartt-containerrr:hover {
-    transform: scale(1.05);
+.audio-video-boton-solicitar span {
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease;
 }
 
-.cartt-containerrr .btn-info {
-    background-color: #ffffff;
-    border-color: #12d400;
+.audio-video-boton-solicitar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent
+  );
+  transition: all 0.6s ease;
 }
 
-.cuerpo-eqisele {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
+.audio-video-boton-solicitar:hover::before {
+  left: 100%;
 }
 
-.modal-body .list-group-item {
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    padding: 15px;
-    font-size: 1rem;
-    color: #333;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.audio-video-boton-solicitar:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(46, 204, 113, 0.45);
 }
 
-.modal-body .list-group-item:hover {
-    transform: translateY(-2px);
-    gap: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.audio-video-boton-solicitar:active {
+  transform: scale(0.98);
 }
 
-.equipos-seleccionados-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.confirmar-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
+.audio-video-boton-solicitar:hover span {
+  color: #f8fff9;
 }
 
 @media (max-width: 900px) {
-    .ficha-tv {
-        flex-direction: column;
-        align-items: center;
-    }
-    .ficha-img img {
-        max-width: 150px;
-    }
+  .audio-video-ficha-body {
+    grid-template-columns: 1fr;
+  }
+  .audio-video-ficha-titulo h2 {
+    font-size: 1.6rem;
+  }
+  .audio-video-carrusel-imagen {
+    height: 220px;
+  }
 }
-.modal-form {
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 10px;
-}
-
-.modal-title {
-  font-weight: bold;
-  color: #28a745;
-  text-align: center;
-  margin-left: auto;
-  border-bottom: 2px solid #28a745;
-  padding-bottom: 10px;
-}
-
-.form-section-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #495057;
-  border-bottom: 1px solid #dee2e6;
-  padding-bottom: 5px;
-}
-
-.form-label {
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 5px;
-}
-
-.form-control {
-  border-radius: 8px;
-  border: 1px solid #ced4da;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease-in-out;
-}
-
-.form-control:focus {
-  border-color: #28a745;
-  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-}
-
-.btn-primary {
-  background-color: #28a745;
-  border-color: #28a745;
-  font-weight: bold;
-  border-radius: 50px;
-  letter-spacing: 0.5px;
-  transition: background-color 0.3s ease;
-}
-
-.btn-primary:hover {
-  background-color: #218838;
-  border-color: #1e7e34;
-}
-
-.row.g-2 > .col-md-6 {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
