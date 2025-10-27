@@ -128,8 +128,10 @@
 }
 
 .alert-1202 {
-  background-color: #ffffff00;
+background-color: #ffffff00;
   text-align: start;
+  border-bottom: none !important;
+  box-shadow: none !important;
 }
 
 .container-1201 {

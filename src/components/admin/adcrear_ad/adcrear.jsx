@@ -42,7 +42,6 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
                 ape_us: editedUser.ape_usua,
                 corre: editedUser.corre,
                 password: userDetails.password,
-                // backend espera 1 = activo, 2 = inactivo
                 est_usu: editedUser.estadoEdit === 'activo' ? 1 : 2
             };
             console.log(' Guardando cambios:', usuarioActualizado);
