@@ -373,6 +373,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    color: #fff !important;
 }
 
 .modern-modal-body-xd114 {
@@ -538,6 +539,7 @@
     top: 0;
     transition: 0.15s ease;
     background-color: rgb(9, 180, 26);
+    color: #fff !important;
 }
 
 .pagination-inner-1216-xd137 label:has(input:checked) {

@@ -255,8 +255,7 @@
   display: flex; justify-content: space-between; align-items: center;
 }
 
-.modern-modal-title-xd13 { font-size: 1.6rem; font-weight: bold;
-color:white }
+.modern-modal-title-xd13 { font-size: 1.6rem; font-weight: bold; color: #fff !important; }
 
 .modern-modal-body-xd14 { padding: 30px; background: #fcfcfc; }
 
