@@ -4,6 +4,32 @@ import "./Pedidos_escritorio.css";
 import ElementosService from "../../../api/ElementosApi";
 import { crearSolicitud } from "../../../api/solicitudesApi";
 
+// --- FUNCIONES GLOBALES DE FECHA/HORA ---
+
+/**
+ * @returns {string} Fecha actual.
+ */
+const getMinMaxDate = () => {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0"); // Meses empiezan en 0
+  const dd = String(today.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
+
+/**
+ * Obtiene la hora actual en formato HH:mm.
+ * @returns {string} Hora actual.
+ */
+const getMinTime = () => {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+};
+
+const todayDate = getMinMaxDate();
+
 function Datos_escritorio() {
   const [subcatInfo, setSubcatInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -11,6 +37,8 @@ function Datos_escritorio() {
   const [categoriaFiltro, setCategoriaFiltro] = useState("computo");
   const [showModal, setShowModal] = useState(false);
   const [equiposDisponibles, setEquiposDisponibles] = useState([]);
+  // Estado para guardar la hora actual cuando se abre el modal, evitando que cambie mientras está abierto
+  const [minHoraInicio, setMinHoraInicio] = useState(getMinTime());
 
   const [form, setForm] = useState({
     fecha_ini: "",
@@ -18,10 +46,34 @@ function Datos_escritorio() {
     fecha_fn: "",
     hora_fn: "",
     ambient: "",
+    cantid:"",
     num_ficha: "",
     estadosoli: 1,
     id_usu: 1,
   });
+
+  const handleShowModal = () => {
+    // 🔑 Acción clave: Actualiza la hora mínima solo al abrir el modal para fijar el límite (hora actual)
+    setMinHoraInicio(getMinTime());
+    setShowModal(true);
+  };
+
+  const handleHideModal = () => {
+    setShowModal(false);
+    // Limpia el formulario al cerrarse
+    setForm({
+      fecha_ini: "",
+      hora_ini: "",
+      fecha_fn: "",
+      hora_fn: "",
+      ambient: "",
+      cantid:"",
+      num_ficha: "",
+      estadosoli: 1,
+      id_usu: 1,
+    });
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -37,31 +89,28 @@ function Datos_escritorio() {
       alert("El formato de fecha u hora es inválido.");
       return;
     }
+    
+    // Validación de coherencia: La fecha/hora de fin debe ser estrictamente posterior a la de inicio.
+    if (fechaFin <= fechaInicio) {
+        alert("La fecha y hora de fin debe ser posterior a la de inicio.");
+        return;
+    }
 
     const dto = {
       fecha_ini: fechaInicio.toISOString(),
       fecha_fn: fechaFin.toISOString(),
       ambient: form.ambient,
+      cantid: form.cantid,
       estadosoli: form.estadosoli,
       id_usu: form.id_usu,
       num_ficha: form.num_ficha,
-      id_elemen: [], // no hay selección directa en esta versión
+      id_elemen: [],
     };
 
     try {
       await crearSolicitud(dto);
       alert("Solicitud realizada correctamente ✅");
-      setShowModal(false);
-      setForm({
-        fecha_ini: "",
-        hora_ini: "",
-        fecha_fn: "",
-        hora_fn: "",
-        ambient: "",
-        num_ficha: "",
-        estadosoli: 1,
-        id_usu: 1,
-      });
+      handleHideModal(); // Cierra el modal y resetea el form
     } catch (err) {
       console.error("Error al realizar la solicitud:", err);
       alert(`Hubo un problema al enviar la solicitud: ${err.message}`);
@@ -184,7 +233,7 @@ function Datos_escritorio() {
           </div>
 
           <div className="ficha-footer">
-            <Button className="boton-solicitar" onClick={() => setShowModal(true)}>
+            <Button className="boton-solicitar" onClick={handleShowModal}>
               <span>Realizar solicitud</span>
             </Button>
           </div>
@@ -194,9 +243,9 @@ function Datos_escritorio() {
       )}
 
       {/* Modal de solicitud */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Realizar Solicitud</Modal.Title>
+      <Modal show={showModal} onHide={handleHideModal} centered>
+        <Modal.Header className="Modal_hea" closeButton >
+          <Modal.Title className="Txt_modal_header">Realizar Solicitud</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleFormSubmit}>
@@ -209,6 +258,8 @@ function Datos_escritorio() {
                     name="fecha_ini"
                     value={form.fecha_ini}
                     onChange={handleChange}
+                    min={todayDate} // 🔑 Restricción: Solo hoy
+                    max={todayDate} // 🔑 Restricción: Solo hoy
                     required
                   />
                 </div>
@@ -218,6 +269,8 @@ function Datos_escritorio() {
                     name="hora_ini"
                     value={form.hora_ini}
                     onChange={handleChange}
+                    min={minHoraInicio} // 🔑 Desde la hora actual
+                    max="23:59" // 🔑 Hasta la medianoche
                     required
                   />
                 </div>
@@ -233,6 +286,8 @@ function Datos_escritorio() {
                     name="fecha_fn"
                     value={form.fecha_fn}
                     onChange={handleChange}
+                    min={form.fecha_ini || todayDate} // Debe ser igual a la fecha de inicio (hoy)
+                    max={todayDate} // Restricción: Solo hoy
                     required
                   />
                 </div>
@@ -242,6 +297,9 @@ function Datos_escritorio() {
                     name="hora_fn"
                     value={form.hora_fn}
                     onChange={handleChange}
+                    // Si la fecha de fin es igual a la de inicio (hoy), la hora de fin debe ser posterior a la de inicio.
+                    min={form.fecha_fn === form.fecha_ini ? form.hora_ini : ""} 
+                    max="23:59" // También limitada a la medianoche.
                     required
                   />
                 </div>
@@ -268,6 +326,17 @@ function Datos_escritorio() {
                     name="num_ficha"
                     placeholder="Ej: 2560014"
                     value={form.num_ficha}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="col-md">
+                  <Form.Label>Cantidad de equipos</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="cantidad_equipos"
+                    placeholder="max 3"
+                    value={form.cantid}
                     onChange={handleChange}
                     required
                   />
