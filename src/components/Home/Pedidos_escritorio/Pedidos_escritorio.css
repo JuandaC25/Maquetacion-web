@@ -148,6 +148,15 @@
   transition: color 0.3s ease;
 }
 
+.Modal_hea{
+  background-color: #27ae60;
+  color: #f0f0f0;
+}
+
+.Txt_modal_header{
+  justify-content: center;
+}
+
 /* efecto de brillo diagonal */
 .boton-solicitar::before {
   content: "";
