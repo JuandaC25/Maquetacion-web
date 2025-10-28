@@ -1,12 +1,10 @@
+import { getJson, authorizedFetch } from './http';
+
 export const obtenerUsuarios = async () => {
     try {
-        const response = await fetch('http://localhost:8081/api/Usuarios');
-        if (!response.ok) {
-            throw new Error('Error al obtener usuarios');
-        }
-        return await response.json();
+        return await getJson('/api/Usuarios');
     } catch (error) {
-        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        if (error.message?.toLowerCase().includes('failed to fetch') || error.message?.includes('NetworkError')) {
             throw new Error('No se pudo conectar con el servidor');
         }
         throw error;
@@ -15,16 +13,9 @@ export const obtenerUsuarios = async () => {
 
 export const obtenerUsuarioPorId = async (id) => {
     try {
-        const res = await fetch(`http://localhost:8081/api/Usuarios/${id}`, {
-            method: 'GET',
-        });
-        if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.error || 'Usuario no encontrado');
-        }
-        return await res.json();
+        return await getJson(`/api/Usuarios/${id}`);
     } catch (error) {
-        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        if (error.message?.toLowerCase().includes('failed to fetch') || error.message?.includes('NetworkError')) {
             throw new Error('No se pudo conectar con el servidor');
         }
         throw error;
@@ -33,20 +24,19 @@ export const obtenerUsuarioPorId = async (id) => {
 
 export const crearUsuario = async (data) => {
     try {
-        const res = await fetch('http://localhost:8081/api/Usuarios', {
+        const res = await authorizedFetch('/api/Usuarios', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' },
         });
         if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.error || 'Error al crear usuario');
+            let msg = 'Error al crear usuario';
+            try { const e = await res.json(); msg = e.error || e.message || msg; } catch {}
+            throw new Error(msg);
         }
         return await res.json();
     } catch (error) {
-        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        if (error.message?.toLowerCase().includes('failed to fetch') || error.message?.includes('NetworkError')) {
             throw new Error('No se pudo conectar con el servidor');
         }
         throw error;
@@ -55,20 +45,16 @@ export const crearUsuario = async (data) => {
 
 export const eliminarUsuario = async (id) => {
     try {
-        const res = await fetch(`http://localhost:8081/api/Usuarios/${id}`, {
-            method: 'DELETE',
-        });
-        
-        if (res.status === 204) {
-            return null;
-        }
+        const res = await authorizedFetch(`/api/Usuarios/${id}`, { method: 'DELETE' });
+        if (res.status === 204) return null;
         if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.error || 'Error al eliminar usuario');
+            let msg = 'Error al eliminar usuario';
+            try { const e = await res.json(); msg = e.error || e.message || msg; } catch {}
+            throw new Error(msg);
         }
         return await res.json();
     } catch (error) {
-        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        if (error.message?.toLowerCase().includes('failed to fetch') || error.message?.includes('NetworkError')) {
             throw new Error('No se pudo conectar con el servidor');
         }
         throw error;
@@ -77,20 +63,19 @@ export const eliminarUsuario = async (id) => {
 
 export const actualizarUsuario = async (id, data) => {
     try {
-        const res = await fetch(`http://localhost:8081/api/Usuarios/${id}`, {
+        const res = await authorizedFetch(`/api/Usuarios/${id}`, {
             method: 'PUT',
-            headers: { 
-                "Content-Type": "application/json" 
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         });
         if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.error || 'Error al actualizar usuario');
+            let msg = 'Error al actualizar usuario';
+            try { const e = await res.json(); msg = e.error || e.message || msg; } catch {}
+            throw new Error(msg);
         }
         return await res.json();
     } catch (error) {
-        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        if (error.message?.toLowerCase().includes('failed to fetch') || error.message?.includes('NetworkError')) {
             throw new Error('No se pudo conectar con el servidor');
         }
         throw error;

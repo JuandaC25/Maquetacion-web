@@ -16,6 +16,7 @@ import Pedidos_ele from './components/Home/Pedidos_ele/Pedidos_ele.jsx';
 import './components/App.css';
 import Pedidos_escritorio from './components/Home/Pedidos_escritorio/Pedidos_escritorio.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import ProtectedRoute from './auth/ProtectedRoute';
 import Informacion_equipos from './components/Home/Informacion_equipos/Informacion_equipos.jsx';
 import Desplegable from './components/desplegable/desplegable.jsx';
 import HistorialTec from './components/Tecnico/Historial/HistorialTec.jsx';
@@ -32,12 +33,20 @@ function App() {
 
       <Routes>
         <Route path='/Login' element={<Login/>}/> 
-  <Route path='/Tickets-Tecnico' element={<Cuarta />} />
+        <Route path='/Tickets-Tecnico' element={
+          <ProtectedRoute roles={['TECNICO','ADMINISTRADOR']}>
+            <Cuarta />
+          </ProtectedRoute>
+        } />
         <Route path='/inventario' element={<Inventario />} />
         <Route path='/adcrear' element={<AdCrear />} />
         <Route path='/solielemento' element={<Solielemento/>} />
         <Route path='/soliespacio' element={<Soliespacio/>} />
-  <Route path='/Prestamos-Tecnico' element={<Tecnico />} />
+        <Route path='/Prestamos-Tecnico' element={
+          <ProtectedRoute roles={['TECNICO','ADMINISTRADOR']}>
+            <Tecnico />
+          </ProtectedRoute>
+        } />
         <Route path='/espacios' element={<Soliespacios />} />
         <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
         <Route path='/Historial_pedidos' element={<Historial_ped />} />
@@ -46,7 +55,11 @@ function App() {
         <Route path='/' element={<Login/>}/> 
         <Route path='/Inicio' element={<Home />}/>
         
-        <Route path='/Admin' element={<Admin />} />
+        <Route path='/Admin' element={
+          <ProtectedRoute roles={['ADMINISTRADOR']}>
+            <Admin />
+          </ProtectedRoute>
+        } />
         <Route path="/PedidoElementos" element={<Pedidos_ele />} />
         <Route path='/Pedidoescritorio' element={<Pedidos_escritorio />} />
         <Route path='/Desplegable' element={<Desplegable />} />
@@ -55,8 +68,16 @@ function App() {
           <Route path='/Historial_TicketsTec' element={<Historial_ptec/>}/>
           <Route path='/Historial_TicketsTec2' element={<Historial_ptec2/>}/>
         <Route path='/Solicitudes' element={<Solicitudes/>}/>
-  <Route path='/TicketsActivos' element={<TicketsActivos/>}/>
-  <Route path='/PrestamosActivos' element={<PrestamosActivos/>}/>
+        <Route path='/TicketsActivos' element={
+          <ProtectedRoute roles={['TECNICO','ADMINISTRADOR']}>
+            <TicketsActivos/>
+          </ProtectedRoute>
+        }/>
+        <Route path='/PrestamosActivos' element={
+          <ProtectedRoute roles={['TECNICO','ADMINISTRADOR']}>
+            <PrestamosActivos/>
+          </ProtectedRoute>
+        }/>
         <Route />
       </Routes>
     </BrowserRouter>

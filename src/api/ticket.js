@@ -1,32 +1,28 @@
+import { getJson, authorizedFetch } from './http';
+
 export const obtenerticketsActivos = async () => {
   try{
-    const res = await fetch(`http://localhost:8081/api/tickets/activos`);
-    if(!res.ok){
-      throw new Error ("Error al obtener los tickets activos");
-    }
-    return await res.json();
+    return await getJson(`/api/tickets/activos`);
   }catch(error){
-    if(error.message.includes("failed to fetch") || error.message.includes("NetworkError")){
+    if(error.message?.toLowerCase().includes("failed to fetch") || error.message?.includes("NetworkError")){
       throw new Error("No se pudo conectar con el servidor");
     }
+    throw error;
   }
 };
 export const obtenertickets = async () => {
-    try{
-        const res = await fetch(`http://localhost:8081/api/tickets`);
-        if(!res.ok){
-            throw new Error ("Error al obtener los tickets");
-        }
-        return await res.json();
-    }catch(error){
-        if(error.message.includes("failed to fetch") || error.message.includes("NetworkError")){
-            throw new Error("No se pudo conectar con el servidor");
-        }
+  try{
+    return await getJson(`/api/tickets`);
+  }catch(error){
+    if(error.message?.toLowerCase().includes("failed to fetch") || error.message?.includes("NetworkError")){
+      throw new Error("No se pudo conectar con el servidor");
     }
+    throw error;
+  }
 };
 export const crearTicket = async (data) => {
   try {
-    const res = await fetch(BASE_URL, {
+    const res = await authorizedFetch(`/api/tickets`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -44,21 +40,21 @@ export const crearTicket = async (data) => {
 };
 
 export const obtenerTicketsPorid = async (id) =>{
-    const res = await fetch (`http://localhost:8081/api/tickets/${id}`,{
-        method:"GET",
-    });
-    if(!res.ok) throw new Error("Ticket no encontrado");
-    return res.json();
+  const res = await authorizedFetch(`/api/tickets/${id}`,{
+    method:"GET",
+  });
+  if(!res.ok) throw new Error("Ticket no encontrado");
+  return res.json();
 }
 
 
 export const eliminarTickets = async (id) =>{
-    const res = await fetch(`http://localhost:8081/api/tickets/${id}`,{
-        method: "DELETE",
-    });
-    if(res.status !== 204) {
-        return res.json();
-    }
+  const res = await authorizedFetch(`/api/tickets/${id}`,{
+    method: "DELETE",
+  });
+  if(res.status !== 204) {
+    return res.json();
+  }
 
-    return null
+  return null
 }
