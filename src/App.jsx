@@ -38,22 +38,62 @@ function App() {
             <Cuarta />
           </ProtectedRoute>
         } />
-        <Route path='/inventario' element={<Inventario />} />
-        <Route path='/adcrear' element={<AdCrear />} />
-        <Route path='/solielemento' element={<Solielemento/>} />
-        <Route path='/soliespacio' element={<Soliespacio/>} />
+        <Route path='/inventario' element={
+          <ProtectedRoute roles={['ADMINISTRADOR']}>
+            <Inventario />
+          </ProtectedRoute>
+        } />
+        <Route path='/adcrear' element={
+          <ProtectedRoute roles={['ADMINISTRADOR']}>
+            <AdCrear />
+          </ProtectedRoute>
+        } />
+        <Route path='/solielemento' element={
+          <ProtectedRoute roles={['ADMINISTRADOR']}>
+            <Solielemento/>
+          </ProtectedRoute>
+        } />
+        <Route path='/soliespacio' element={
+          <ProtectedRoute roles={['ADMINISTRADOR']}>
+            <Soliespacio/>
+          </ProtectedRoute>
+        } />
         <Route path='/Prestamos-Tecnico' element={
           <ProtectedRoute roles={['TECNICO','ADMINISTRADOR']}>
             <Tecnico />
           </ProtectedRoute>
         } />
-        <Route path='/espacios' element={<Soliespacios />} />
-        <Route path='/Solicitar-Portatiles' element={<Soli_port />} />
-        <Route path='/Historial_pedidos' element={<Historial_ped />} />
-        <Route path='/Solicitartelevisores' element={<Solitelevisores />} />
-        <Route path='/Pedidos_ele' element={<Pedidos_ele />} />
+        <Route path='/espacios' element={
+          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+            <Soliespacios />
+          </ProtectedRoute>
+        } />
+        <Route path='/Solicitar-Portatiles' element={
+          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+            <Soli_port />
+          </ProtectedRoute>
+        } />
+        <Route path='/Historial_pedidos' element={
+          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+            <Historial_ped />
+          </ProtectedRoute>
+        } />
+        <Route path='/Solicitartelevisores' element={
+          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+            <Solitelevisores />
+          </ProtectedRoute>
+        } />
+        <Route path='/Pedidos_ele' element={
+          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+            <Pedidos_ele />
+          </ProtectedRoute>
+        } />
         <Route path='/' element={<Login/>}/> 
-        <Route path='/Inicio' element={<Home />}/>
+        <Route path='/Inicio' element={
+          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+            <Home />
+          </ProtectedRoute>
+        }/>
         
         <Route path='/Admin' element={
           <ProtectedRoute roles={['ADMINISTRADOR']}>
@@ -61,20 +101,30 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path="/PedidoElementos" element={<Pedidos_ele />} />
-        <Route path='/Pedidoescritorio' element={<Pedidos_escritorio />} />
-        <Route path='/Desplegable' element={<Desplegable />} />
-        <Route path='/Informacion_equiposs' element={<Informacion_equipos />} />
-        <Route path='/HistorialTec' element={<HistorialTec/>}/>
-          <Route path='/Historial_TicketsTec' element={<Historial_ptec/>}/>
-          <Route path='/Historial_TicketsTec2' element={<Historial_ptec2/>}/>
-        <Route path='/Solicitudes' element={<Solicitudes/>}/>
+        <Route path='/Pedidoescritorio' element={
+          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+            <Pedidos_escritorio />
+          </ProtectedRoute>
+        } />
+        {/* Ruta Desplegable eliminada para TECNICO */}
+        <Route path='/Informacion_equiposs' element={
+          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+            <Informacion_equipos />
+          </ProtectedRoute>
+        } />
+        <Route path='/HistorialTec' element={
+          <ProtectedRoute roles={['TECNICO']}>
+            <HistorialTec/>
+          </ProtectedRoute>
+        }/>
+        {/* Rutas Historial_TicketsTec y Historial_TicketsTec2 eliminadas para TECNICO */}
         <Route path='/TicketsActivos' element={
-          <ProtectedRoute roles={['TECNICO','ADMINISTRADOR']}>
+          <ProtectedRoute roles={['TECNICO']}>
             <TicketsActivos/>
           </ProtectedRoute>
         }/>
         <Route path='/PrestamosActivos' element={
-          <ProtectedRoute roles={['TECNICO','ADMINISTRADOR']}>
+          <ProtectedRoute roles={['TECNICO']}>
             <PrestamosActivos/>
           </ProtectedRoute>
         }/>

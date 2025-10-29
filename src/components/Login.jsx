@@ -8,7 +8,7 @@ import { useAuth } from '../auth/AuthContext';
 
 function Login() {
   const navigate = useNavigate();
-  const { refreshMe } = useAuth();
+  const { refreshMe, roles: contextRoles } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,10 +19,40 @@ function Login() {
     setError('');
     setLoading(true);
     try {
-  const { token } = await login({ username: email, password });
-  saveToken(token); // Guarda, incluye el prefijo Bearer que envía el backend
-  await refreshMe(); // cargar info de usuario y roles
-      navigate('/Inicio');
+      const { token } = await login({ username: email, password });
+      saveToken(token); // Guarda, incluye el prefijo Bearer que envía el backend
+      
+      // Limpiar flags previos
+      localStorage.removeItem('force_admin');
+      localStorage.removeItem('force_tecnico');
+      
+      // Cargar info de usuario y roles desde el backend
+      await refreshMe();
+      
+      // Obtener roles actualizados después de refreshMe
+      // Como refreshMe es async, necesitamos obtener los roles directamente del backend
+      const res = await fetch('http://localhost:8081/auth/me', {
+        headers: { 'Authorization': token }
+      });
+      
+      if (res.ok) {
+        const userData = await res.json();
+        const userRoles = userData?.roles || [];
+        
+        // Redirigir según el rol del usuario
+        if (userRoles.includes('ADMINISTRADOR')) {
+          localStorage.setItem('force_admin', '1');
+          navigate('/Admin');
+        } else if (userRoles.includes('TECNICO')) {
+          localStorage.setItem('force_tecnico', '1');
+          navigate('/Prestamos-Tecnico');
+        } else {
+          navigate('/Inicio');
+        }
+      } else {
+        // Si falla obtener roles, ir a inicio por defecto
+        navigate('/Inicio');
+      }
     } catch (err) {
       setError(err.message || 'Error al iniciar sesión');
     } finally {

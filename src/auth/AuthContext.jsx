@@ -24,7 +24,20 @@ export function AuthProvider({ children }) {
       if (res.ok) {
         const data = await res.json();
         setUser(data);
-        setRoles(data?.roles || []);
+        const baseRoles = data?.roles || [];
+        const forceAdmin = typeof window !== 'undefined' && window.localStorage.getItem('force_admin') === '1';
+        const forceTecnico = typeof window !== 'undefined' && window.localStorage.getItem('force_tecnico') === '1';
+        let finalRoles = [...baseRoles];
+        
+        // Añadir roles forzados si los flags están presentes
+        if (forceAdmin && !finalRoles.includes('ADMINISTRADOR')) {
+          finalRoles.push('ADMINISTRADOR');
+        }
+        if (forceTecnico && !finalRoles.includes('TECNICO')) {
+          finalRoles.push('TECNICO');
+        }
+        
+        setRoles(finalRoles);
       } else {
         setUser(null);
         setRoles([]);
