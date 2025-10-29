@@ -32,103 +32,103 @@ function App() {
     <BrowserRouter>
 
       <Routes>
+        <Route path='/' element={<Login/>}/> 
         <Route path='/Login' element={<Login/>}/> 
         <Route path='/Tickets-Tecnico' element={
-          <ProtectedRoute roles={['TECNICO','ADMINISTRADOR']}>
+          <ProtectedRoute roles={['TECNICO']} excludeRoles={['ADMINISTRADOR']}>
             <Cuarta />
           </ProtectedRoute>
         } />
         <Route path='/inventario' element={
-          <ProtectedRoute roles={['ADMINISTRADOR']}>
+          <ProtectedRoute roles={['ADMINISTRADOR']} excludeRoles={['TECNICO']}>
             <Inventario />
           </ProtectedRoute>
         } />
         <Route path='/adcrear' element={
-          <ProtectedRoute roles={['ADMINISTRADOR']}>
+          <ProtectedRoute roles={['ADMINISTRADOR']} excludeRoles={['TECNICO']}>
             <AdCrear />
           </ProtectedRoute>
         } />
         <Route path='/solielemento' element={
-          <ProtectedRoute roles={['ADMINISTRADOR']}>
+          <ProtectedRoute roles={['ADMINISTRADOR']} excludeRoles={['TECNICO']}>
             <Solielemento/>
           </ProtectedRoute>
         } />
         <Route path='/soliespacio' element={
-          <ProtectedRoute roles={['ADMINISTRADOR']}>
+          <ProtectedRoute roles={['ADMINISTRADOR']} excludeRoles={['TECNICO']}>
             <Soliespacio/>
           </ProtectedRoute>
         } />
         <Route path='/Prestamos-Tecnico' element={
-          <ProtectedRoute roles={['TECNICO','ADMINISTRADOR']}>
+          <ProtectedRoute roles={['TECNICO']} excludeRoles={['ADMINISTRADOR']}>
             <Tecnico />
           </ProtectedRoute>
         } />
+        <Route path='/Informacion_equiposs' element={
+          <ProtectedRoute excludeRoles={['ADMINISTRADOR', 'TECNICO']}>
+            <Informacion_equipos />
+          </ProtectedRoute>
+        } />
+        <Route path='/Inicio' element={
+          <ProtectedRoute excludeRoles={['ADMINISTRADOR', 'TECNICO']}>
+            <Home />
+          </ProtectedRoute>
+        }/>
         <Route path='/espacios' element={
-          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+          <ProtectedRoute excludeRoles={['ADMINISTRADOR', 'TECNICO']}>
             <Soliespacios />
           </ProtectedRoute>
         } />
         <Route path='/Solicitar-Portatiles' element={
-          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+          <ProtectedRoute excludeRoles={['ADMINISTRADOR', 'TECNICO']}>
             <Soli_port />
           </ProtectedRoute>
         } />
         <Route path='/Historial_pedidos' element={
-          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+          <ProtectedRoute excludeRoles={['ADMINISTRADOR', 'TECNICO']}>
             <Historial_ped />
           </ProtectedRoute>
         } />
         <Route path='/Solicitartelevisores' element={
-          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+          <ProtectedRoute excludeRoles={['ADMINISTRADOR', 'TECNICO']}>
             <Solitelevisores />
           </ProtectedRoute>
         } />
         <Route path='/Pedidos_ele' element={
-          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+          <ProtectedRoute excludeRoles={['ADMINISTRADOR', 'TECNICO']}>
             <Pedidos_ele />
           </ProtectedRoute>
         } />
-        <Route path='/' element={<Login/>}/> 
-        <Route path='/Inicio' element={
-          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
-            <Home />
-          </ProtectedRoute>
-        }/>
-        
-        <Route path='/Admin' element={
-          <ProtectedRoute roles={['ADMINISTRADOR']}>
-            <Admin />
-          </ProtectedRoute>
-        } />
-        <Route path="/PedidoElementos" element={<Pedidos_ele />} />
         <Route path='/Pedidoescritorio' element={
-          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
+          <ProtectedRoute excludeRoles={['ADMINISTRADOR', 'TECNICO']}>
             <Pedidos_escritorio />
           </ProtectedRoute>
         } />
-        {/* Ruta Desplegable eliminada para TECNICO */}
-        <Route path='/Informacion_equiposs' element={
-          <ProtectedRoute roles={[]}> {/* Solo accesible si tienes otro rol, nunca para USUARIO, ADMINISTRADOR o TECNICO */}
-            <Informacion_equipos />
+        <Route path='/Admin' element={
+          <ProtectedRoute roles={['ADMINISTRADOR']} excludeRoles={['TECNICO']}>
+            <Admin />
+          </ProtectedRoute>
+        } />
+        <Route path="/PedidoElementos" element={
+          <ProtectedRoute excludeRoles={['ADMINISTRADOR', 'TECNICO']}>
+            <Pedidos_ele />
           </ProtectedRoute>
         } />
         <Route path='/HistorialTec' element={
-          <ProtectedRoute roles={['TECNICO']}>
+          <ProtectedRoute roles={['TECNICO']} excludeRoles={['ADMINISTRADOR']}>
             <HistorialTec/>
           </ProtectedRoute>
         }/>
-        {/* Rutas Historial_TicketsTec y Historial_TicketsTec2 eliminadas para TECNICO */}
         <Route path='/TicketsActivos' element={
-          <ProtectedRoute roles={['TECNICO']}>
+          <ProtectedRoute roles={['TECNICO']} excludeRoles={['ADMINISTRADOR']}>
             <TicketsActivos/>
           </ProtectedRoute>
         }/>
         <Route path='/PrestamosActivos' element={
-          <ProtectedRoute roles={['TECNICO']}>
+          <ProtectedRoute roles={['TECNICO']} excludeRoles={['ADMINISTRADOR']}>
             <PrestamosActivos/>
           </ProtectedRoute>
         }/>
-        <Route />
       </Routes>
     </BrowserRouter>
   );

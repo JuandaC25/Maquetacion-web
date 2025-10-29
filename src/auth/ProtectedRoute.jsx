@@ -1,8 +1,7 @@
-
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
-export default function ProtectedRoute({ children, roles: allowedRoles }) {
+export default function ProtectedRoute({ children, roles: allowedRoles, excludeRoles }) {
   const { token, roles, loading } = useAuth();
 
   if (loading) {
@@ -13,6 +12,15 @@ export default function ProtectedRoute({ children, roles: allowedRoles }) {
     return <Navigate to="/Login" replace />;
   }
 
+  // Si se especifican roles excluidos, bloquear esos roles
+  if (excludeRoles && excludeRoles.length > 0) {
+    const hasExcludedRole = roles.some(r => excludeRoles.includes(r));
+    if (hasExcludedRole) {
+      return <Navigate to="/Inicio" replace />;
+    }
+  }
+
+  // Si se especifican roles permitidos, verificar que el usuario tenga al menos uno
   if (allowedRoles && allowedRoles.length > 0) {
     const forceAdmin = typeof window !== 'undefined' && window.localStorage.getItem('force_admin') === '1';
     const forceTecnico = typeof window !== 'undefined' && window.localStorage.getItem('force_tecnico') === '1';
@@ -21,11 +29,7 @@ export default function ProtectedRoute({ children, roles: allowedRoles }) {
     }
     const hasRole = roles.some(r => allowedRoles.includes(r));
     if (!hasRole) {
-      return (
-        <div style={{ padding: 24, color: 'red', textAlign: 'center' }}>
-          Acceso denegado: no tienes permisos para ver esta página.
-        </div>
-      );
+      return <Navigate to="/Inicio" replace />;
     }
   }
 
