@@ -64,6 +64,10 @@ function Header_crear() {
                 <p className="text-primary-xd210"><i className="bi bi-search"></i> Solicitudes espacios</p>
                 <p className="text-secondary-xd211">Revisar reservas</p>
               </Link>
+              <Link to="/Categorias" className='card-xd209'>
+                <p className="text-primary-xd210"><i className="bi bi-tags"></i> Gestionar categorías</p>
+                <p className="text-secondary-xd211">Administrar categorías y subcategorías</p>
+              </Link>
             </Offcanvas.Body>
           </Offcanvas>
 

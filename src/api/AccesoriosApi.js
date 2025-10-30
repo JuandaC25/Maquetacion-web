@@ -1,8 +1,10 @@
-const BASE_URL = 'http://localhost:8081/api/accesorios';
+import { authorizedFetch } from './http';
+
+const BASE_URL = '/api/accesorios';
 
 export const obtenerAccesorios = async () => {
     try {
-        const res = await fetch(BASE_URL);
+        const res = await authorizedFetch(BASE_URL);
         if (!res.ok) {
             throw new Error("Error al obtener los accesorios");
         }
@@ -17,7 +19,7 @@ export const obtenerAccesorios = async () => {
 
 export const obtenerAccesorioPorId = async (id) => {
     try {
-        const res = await fetch(`${BASE_URL}/${id}`, {
+        const res = await authorizedFetch(`${BASE_URL}/${id}`, {
             method: "GET",
         });
         if (!res.ok) throw new Error("Accesorio no encontrado");
@@ -32,7 +34,7 @@ export const obtenerAccesorioPorId = async (id) => {
 
 export const crearAccesorio = async (data) => {
     try {
-        const res = await fetch(BASE_URL, {
+        const res = await authorizedFetch(BASE_URL, {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json" 
@@ -61,7 +63,7 @@ export const crearAccesorio = async (data) => {
 
 export const eliminarAccesorio = async (id) => {
     try {
-        const res = await fetch(`${BASE_URL}/${id}`, {
+        const res = await authorizedFetch(`${BASE_URL}/${id}`, {
             method: "DELETE",
         });
 

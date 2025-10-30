@@ -24,7 +24,7 @@ import Historial_ptec from './components/Tecnico/Historial/Historial_ptec/Histor
 import Historial_ptec2 from './components/Tecnico/Historial/Historial_ptec1/Historial_ptec2.jsx';
 import Solicitudes from './paginas/Solicitudes/Solicitudes.jsx';
 import TicketsActivos from './components/Tecnico/tickets_activos/TicketsActivos.jsx';
-
+import Categorias from './components/admin/categoria_admin/Categorias.jsx';
 import PrestamosActivos from './components/Tecnico/prestamos_activos/PrestamosActivos.jsx';
 function App() {
   return (
@@ -127,6 +127,11 @@ function App() {
         <Route path='/PrestamosActivos' element={
           <ProtectedRoute roles={['TECNICO']} excludeRoles={['ADMINISTRADOR']}>
             <PrestamosActivos/>
+          </ProtectedRoute>
+        }/>
+        <Route path='/Categorias' element={
+          <ProtectedRoute roles={['ADMINISTRADOR']} excludeRoles={['TECNICO']}>
+            <Categorias/>
           </ProtectedRoute>
         }/>
       </Routes>

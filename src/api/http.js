@@ -14,8 +14,7 @@ export async function authorizedFetch(path, options = {}) {
 
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
 
-  if (res.status === 401 || res.status === 403) {
-    // Token inválido o no autorizado: limpiar y opcionalmente redirigir
+  if (res.status === 401) {
     clearToken();
   }
 

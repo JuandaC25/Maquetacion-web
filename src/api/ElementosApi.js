@@ -1,9 +1,11 @@
-const API_URL = 'http://localhost:8081/api/elementos';
+import { authorizedFetch } from './http';
+
+const API_URL = '/api/elementos';
 
 class ElementosService {
   async obtenerElementos() {
     try {
-      const response = await fetch(API_URL);
+      const response = await authorizedFetch(API_URL);
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
@@ -16,7 +18,7 @@ class ElementosService {
 
   async obtenerPorId(id) {
     try {
-      const response = await fetch(`${API_URL}/${id}`);
+      const response = await authorizedFetch(`${API_URL}/${id}`);
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
@@ -31,7 +33,7 @@ class ElementosService {
     try {
       console.log('📤 Enviando elemento al backend:', elemento);
       
-      const response = await fetch(API_URL, {
+      const response = await authorizedFetch(API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,20 +43,42 @@ class ElementosService {
 
       console.log('📨 Respuesta del servidor - Status:', response.status);
       
-      const responseData = await response.json();
-      console.log('📨 Respuesta del servidor - Data:', responseData);
-      
       if (!response.ok) {
-        if (response.status === 409) {
-          throw new Error(`Conflicto: ${responseData.errores1 || responseData.mensaje || 'El elemento ya existe'}`);
+        let errorData = {};
+        try {
+          errorData = await response.json();
+        } catch (e) {
+        }
+        
+        console.error('❌ Error del servidor:', errorData);
+        console.error('❌ Status:', response.status);
+        console.error('❌ Status Text:', response.statusText);
+        
+        if (response.status === 403) {
+          throw new Error('Acceso denegado. Por favor, cierra sesión y vuelve a iniciar sesión.');
+        } else if (response.status === 401) {
+          throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+        } else if (response.status === 409) {
+          throw new Error(errorData.errores1 || errorData.mensaje || 'El elemento ya existe');
         } else if (response.status === 400) {
-          throw new Error(`Error de validación: ${responseData.message || 'Datos inválidos'}`);
+          throw new Error(errorData.message || errorData.error || 'Datos inválidos');
         } else if (response.status === 500) {
-          throw new Error(`Error interno del servidor: ${responseData.detalle || responseData.error || 'Error 500'}`);
+          throw new Error(errorData.detalle || errorData.error || 'Error interno del servidor');
         } else {
-          throw new Error(`Error ${response.status}: ${response.statusText}`);
+          throw new Error(errorData.message || errorData.error || `Error ${response.status}`);
         }
       }
+      
+      let responseData;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const text = await response.text();
+        responseData = text ? JSON.parse(text) : { success: true };
+      } else {
+        responseData = { success: true };
+      }
+      
+      console.log('✅ Elemento creado:', responseData);
       return responseData.data || responseData;
       
     } catch (error) {
@@ -65,7 +89,7 @@ class ElementosService {
 
   async eliminarElemento(id) {
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await authorizedFetch(`${API_URL}/${id}`, {
         method: 'DELETE',
       });
       
