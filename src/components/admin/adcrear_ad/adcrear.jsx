@@ -304,9 +304,9 @@ const UserManagementList = () => {
 
     const mapearRolAId = (rol) => {
         const rolesMap = {
-            'instructor': 2,
+            'instructor': 1,
             'técnico': 3,
-            'administrador': 1
+            'administrador': 2
         };
         return rolesMap[rol] || '';
     };
