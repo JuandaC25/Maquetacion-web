@@ -587,19 +587,13 @@ const Admin = () => {
       setGuardando(true);
       
       const subcategoriaSeleccionada = subcategorias.find(s => s.id === parseInt(nuevoEquipo.id_subcateg));
-      const numSerie = parseInt(nuevoEquipo.serie);
-      if (isNaN(numSerie)) {
-        alert("El número de serie debe ser un valor numérico");
-        setGuardando(false);
-        return;
-      }
 
       const categoriaPadre = subcategoriaSeleccionada ? 
         categorias.find(c => c.id_cat === subcategoriaSeleccionada.id_cat) : null;
       
       const elementoParaBackend = {
         nom_eleme: nuevoEquipo.nombre,
-        num_seri: numSerie,
+        num_seri: nuevoEquipo.serie,
         obse: nuevoEquipo.observaciones || "",
         componen: nuevoEquipo.componentes || "",
         est_elem: 1,
@@ -647,7 +641,7 @@ const Admin = () => {
       const accesorioParaBackend = {
         nom_eleme: nuevoAccesorio.nombre,
         marc: nuevoAccesorio.marca,
-        num_seri: parseInt(nuevoAccesorio.serie),
+        num_seri: nuevoAccesorio.serie,
         est_elem: 1,
         obse: "",
         componen: "",
