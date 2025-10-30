@@ -103,6 +103,47 @@ class ElementosService {
       throw error;
     }
   }
+
+  async uploadExcel(formData) {
+    try {
+      const response = await authorizedFetch(`${API_URL}/bulk-upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let errorData = {};
+        try { errorData = await response.json(); } catch(e) {}
+        throw new Error(errorData.error || errorData.message || `Error ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error al subir Excel:', error);
+      throw error;
+    }
+  }
+
+  async downloadTemplate() {
+    try {
+      const response = await authorizedFetch(`${API_URL}/template`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        let errorData = {};
+        try { errorData = await response.json(); } catch(e) {}
+        throw new Error(errorData.error || errorData.message || `Error ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      return blob;
+    } catch (error) {
+      console.error('Error al descargar plantilla:', error);
+      throw error;
+    }
+  }
 }
 
 export default new ElementosService();

@@ -103,3 +103,38 @@ export const uploadUsuariosMasivos = async (file) => {
         throw error;
     }
 };
+
+export const downloadTemplate = async () => {
+    try {
+        const res = await authorizedFetch('/api/Usuarios/template', { method: 'GET' });
+        if (!res.ok) {
+            let msg = 'Error al descargar plantilla';
+            try { const e = await res.json(); msg = e.error || e.message || msg; } catch {}
+            throw new Error(msg);
+        }
+        const blob = await res.blob();
+        return blob;
+    } catch (error) {
+        if (error.message?.toLowerCase().includes('failed to fetch') || error.message?.includes('NetworkError')) {
+            throw new Error('No se pudo conectar con el servidor');
+        }
+        throw error;
+    }
+};
+
+export const getTemplateHeaders = async () => {
+    try {
+        const res = await authorizedFetch('/api/Usuarios/template/headers', { method: 'GET' });
+        if (!res.ok) {
+            let msg = 'Error al obtener cabecera';
+            try { const e = await res.json(); msg = e.error || e.message || msg; } catch {}
+            throw new Error(msg);
+        }
+        return await res.json();
+    } catch (error) {
+        if (error.message?.toLowerCase().includes('failed to fetch') || error.message?.includes('NetworkError')) {
+            throw new Error('No se pudo conectar con el servidor');
+        }
+        throw error;
+    }
+};

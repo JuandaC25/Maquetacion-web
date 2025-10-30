@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Alert, Modal, Form, Dropdown, Pagination, InputGroup } from 'react-bootstrap';
 import { FaUserCircle, FaSearch } from 'react-icons/fa';
 import "./adcrear_ad.css"; 
@@ -11,6 +11,7 @@ import {
     eliminarUsuario,
     uploadUsuariosMasivos
 } from '../../../api/UsuariosApi.js';
+import { downloadTemplate } from '../../../api/UsuariosApi.js';
 
 const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) => {
     const [editMode, setEditMode] = useState(false);
@@ -235,6 +236,10 @@ const UserManagementList = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [users, setUsers] = useState([]);
     const [uploadFile, setUploadFile] = useState(null);
+    const [showUploadModal, setShowUploadModal] = useState(false);
+    const [dragActive, setDragActive] = useState(false);
+    const fileInputRef = useRef(null);
+    const [downloadingTemplate, setDownloadingTemplate] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [emailError, setEmailError] = useState('');
@@ -536,18 +541,11 @@ const UserManagementList = () => {
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <input
-                            id="excel-file-input"
-                            type="file"
-                            accept=".xlsx"
-                            onChange={handleFileChange}
-                            style={{ display: 'inline-block' }}
-                        />
-                        <Button variant="outline-primary" onClick={handleUploadFile} className="modal-action-button-xd120">
-                            Importar usuarios (.xlsx)
-                        </Button>
                         <Button className="add-new-equipment-button-xd135" onClick={handleShowAddUserModal}>
                             <span role="img" aria-label="añadir">➕</span> Añadir Usuario
+                        </Button>
+                        <Button variant="outline-primary" onClick={() => setShowUploadModal(true)} className="modal-action-button-xd120">
+                            Importar usuarios (.xlsx)
                         </Button>
                     </div>
                 </div>
@@ -721,6 +719,86 @@ const UserManagementList = () => {
                     </Button>
                     <Button variant="success" onClick={handleAddUserSubmit} className="modal-action-button-xd120 add-action-xd124">
                         Añadir Usuario
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Upload Modal for .xlsx import */}
+            <Modal show={showUploadModal} onHide={() => { setShowUploadModal(false); setUploadFile(null); }} centered dialogClassName="modern-modal-dialog-xd111">
+                <Modal.Header closeButton className="modern-modal-header-xd112">
+                    <Modal.Title className="modern-modal-title-xd113">Importar usuarios (.xlsx)</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="modern-modal-body-xd114">
+                    <div
+                        className={`upload-modal-dropzone-xd150 ${dragActive ? 'drag-active-xd151' : ''}`}
+                        onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
+                        onDragEnter={(e) => { e.preventDefault(); setDragActive(true); }}
+                        onDragLeave={(e) => { e.preventDefault(); setDragActive(false); }}
+                        onDrop={(e) => {
+                            e.preventDefault();
+                            setDragActive(false);
+                            const files = e.dataTransfer && e.dataTransfer.files;
+                            if (files && files.length > 0) {
+                                const f = files[0];
+                                setUploadFile(f);
+                            }
+                        }}
+                    >
+                        <div className="upload-modal-content-xd152">
+                            <p className="mb-2">Arrastra aquí tu archivo .xlsx o</p>
+                            <Button variant="outline-primary" onClick={() => fileInputRef.current && fileInputRef.current.click()} className="modal-action-button-xd120">Seleccionar archivo</Button>
+                            <input
+                                ref={fileInputRef}
+                                id="excel-file-input"
+                                type="file"
+                                accept=".xlsx"
+                                onChange={(e) => { handleFileChange(e); setShowUploadModal(true); }}
+                                style={{ display: 'none' }}
+                            />
+                            {uploadFile && (
+                                <div className="selected-file-info-xd153 mt-3">
+                                    <strong>Archivo seleccionado:</strong>
+                                    <div className="selected-file-name-xd154">{uploadFile.name}</div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className="modern-modal-footer-xd119">
+                    <Button variant="secondary" onClick={() => { setShowUploadModal(false); setUploadFile(null); }} className="modal-action-button-xd120 cancel-action-xd123">
+                        Cancelar
+                    </Button>
+                    <Button
+                        variant="outline-secondary"
+                        onClick={async () => {
+                            try {
+                                setDownloadingTemplate(true);
+                                const blob = await downloadTemplate();
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'usuarios_plantilla.xlsx';
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();
+                                window.URL.revokeObjectURL(url);
+                            } catch (err) {
+                                console.error(err);
+                                alert('Error al descargar la plantilla: ' + (err.message || err));
+                            } finally {
+                                setDownloadingTemplate(false);
+                            }
+                        }}
+                        disabled={downloadingTemplate}
+                        className="modal-action-button-xd120 template-action-xd125"
+                    >
+                        {downloadingTemplate ? 'Descargando...' : 'Descargar plantilla'}
+                    </Button>
+                    <Button variant="success" onClick={async () => {
+                        await handleUploadFile();
+                        setShowUploadModal(false);
+                    }} className="modal-action-button-xd120 add-action-xd124" disabled={!uploadFile}>
+                        Subir archivo
                     </Button>
                 </Modal.Footer>
             </Modal>

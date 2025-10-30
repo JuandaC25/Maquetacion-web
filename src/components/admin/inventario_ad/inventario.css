@@ -450,3 +450,80 @@
   gap: 10px;
 }
 
+/* Make header buttons consistent in size, not too large, and aligned */
+.header-buttons-section .add-new-equipment-button-xd35,
+.header-buttons-section .btn,
+.header-buttons-section .modal-action-button-xd120 {
+  height: 40px;
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  min-width: 140px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.modern-modal-footer-xd119 {
+  padding: 20px 30px; background: var(--bg); border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 10px; align-items: center;
+}
+
+.modal-action-button-xd120 {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  min-width: 120px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+.modal-action-button-xd120.cancel-action-xd123 {
+  background-color: #f8f9fa; border-color: #ced4da; color: var(--text); box-shadow: 2px 2px 0px #ced4da;
+}
+.modal-action-button-xd120.add-action-xd124 {
+  background-color: var(--green); border-color: var(--green-dark); color: var(--white); box-shadow: 2px 2px 0px var(--green-dark);
+}
+
+.modal-action-button-xd120.template-action-xd125 {
+  background-color: transparent; border-color: #dee2e6; color: var(--text);
+}
+
+.modern-modal-footer-xd119 .modal-action-button-xd120.add-action-xd124 {
+  flex: 0 0 auto;
+}
+
+.modern-modal-footer-xd119 .modal-action-button-xd120.cancel-action-xd123,
+.modern-modal-footer-xd119 .modal-action-button-xd120.template-action-xd125 {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+
+.filters-row-xd30 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filters-row-xd30 .category-filter-dropdown-xd31 .dropdown-toggle {
+  padding: 6px 10px; 
+  font-size: 0.9rem;
+  min-width: 110px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.filters-row-xd30 .category-filter-dropdown-xd31 { display: inline-flex; }
+
+.filters-row-xd30 .search-bar-xd34 { max-width: 260px; }
+
+@media (max-width: 768px) {
+  .filters-row-xd30 { flex-wrap: wrap; gap: 8px; }
+  .filters-row-xd30 .search-bar-xd34 { max-width: 100%; width: 100%; }
+  .filters-row-xd30 .category-filter-dropdown-xd31 .dropdown-toggle { min-width: 100%; }
+}
