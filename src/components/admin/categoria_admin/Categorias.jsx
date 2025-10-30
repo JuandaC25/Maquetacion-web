@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Alert, Modal, Form, Spinner, Tab, Tabs } from 'react-bootstrap';
-import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaFilePdf } from 'react-icons/fa';
 import './Categorias.css';
 import Footer from '../../Footer/Footer.jsx';
 import HeaderCategorias from '../header_categorias/header_categorias.jsx';
@@ -157,6 +157,306 @@ const Categorias = () => {
     return categoria ? categoria.nom_cat : 'Sin categoría';
   };
 
+  const generarPDF = () => {
+    const fecha = new Date().toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    let htmlContent = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte de Categorías y Subcategorías</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 40px;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #20c997;
+    }
+    
+    h1 {
+      color: #198754;
+      font-size: 32px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+    
+    .fecha {
+      color: #666;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      background: linear-gradient(135deg, #20c997 0%, #198754 100%);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 30px 0;
+      color: white;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 36px;
+      font-weight: bold;
+      display: block;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+    
+    .categoria {
+      margin-bottom: 40px;
+      page-break-inside: avoid;
+    }
+    
+    .categoria-titulo {
+      background: linear-gradient(135deg, #20c997 0%, #198754 100%);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(32,201,151,0.2);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    thead {
+      background: #198754;
+      color: #ffffff;
+    }
+    
+    th {
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #e0e0e0;
+      color: #333;
+    }
+    
+    tbody tr:hover {
+      background-color: #d1f2eb;
+    }
+    
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+    .no-subcategorias {
+      color: #999;
+      font-style: italic;
+      padding: 20px;
+      text-align: center;
+      background: #f5f5f5;
+      border-radius: 8px;
+    }
+    
+    .print-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #20c997 0%, #198754 100%);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(32,201,151,0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    
+    .print-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(25,135,84,0.5);
+      background: linear-gradient(135deg, #1ab394 0%, #157347 100%);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+    
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+    
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      
+      .container {
+        box-shadow: none;
+        padding: 20px;
+      }
+      
+      .print-button {
+        display: none;
+      }
+      
+      .categoria {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-button" onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
+  
+  <div class="container">
+    <div class="header">
+      <h1>📊 Reporte de Categorías y Subcategorías</h1>
+      <div class="fecha">Generado el: ${fecha}</div>
+    </div>
+    
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-number">${categorias.length}</span>
+        <span class="stat-label">Categorías</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">${subcategorias.length}</span>
+        <span class="stat-label">Subcategorías</span>
+      </div>
+    </div>
+`;
+
+    if (categorias.length === 0) {
+      htmlContent += `
+    <div class="empty-state">
+      <div class="empty-state-icon">📁</div>
+      <h3>No hay categorías registradas en el sistema</h3>
+    </div>
+`;
+    } else {
+      categorias.forEach((categoria, index) => {
+        htmlContent += `
+    <div class="categoria">
+      <div class="categoria-titulo">${index + 1}. ${categoria.nom_cat}</div>
+`;
+
+        const subcategoriasDeCategoria = subcategorias.filter(
+          sub => sub.id_cat === categoria.id_cat
+        );
+
+        if (subcategoriasDeCategoria.length > 0) {
+          htmlContent += `
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 60px;">#</th>
+            <th>Nombre de Subcategoría</th>
+            <th style="width: 100px;">ID</th>
+          </tr>
+        </thead>
+        <tbody>
+`;
+
+          subcategoriasDeCategoria.forEach((sub, idx) => {
+            htmlContent += `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>${sub.nom_subcateg}</td>
+            <td>${sub.id}</td>
+          </tr>
+`;
+          });
+
+          htmlContent += `
+        </tbody>
+      </table>
+`;
+        } else {
+          htmlContent += `
+      <div class="no-subcategorias">
+        No hay subcategorías registradas en esta categoría
+      </div>
+`;
+        }
+
+        htmlContent += `
+    </div>
+`;
+      });
+    }
+
+    htmlContent += `
+  </div>
+</body>
+</html>`;
+
+    // Crear blob y descargar
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Reporte_Categorias_${new Date().getTime()}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    
+    alert('✅ Archivo descargado. Ábrelo en tu navegador y haz clic en "Imprimir / Guardar como PDF"');
+  };
+
   if (loading) {
     return (
       <div className="categorias-container-cat01">
@@ -227,9 +527,19 @@ const Categorias = () => {
                   </h2>
                   <p className="section-subtitle-cat17">Gestiona las categorías principales de tu sistema</p>
                 </div>
-                <Button className="add-button-cat12" onClick={handleOpenModalCategoria}>
-                  <FaPlus /> Nueva Categoría
-                </Button>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <Button 
+                    className="add-button-cat12" 
+                    onClick={generarPDF}
+                    variant="success"
+                    style={{ backgroundColor: '#00ff00', borderColor: '#00ff00', color: '#000000' }}
+                  >
+                    <FaFilePdf /> Descargar PDF
+                  </Button>
+                  <Button className="add-button-cat12" onClick={handleOpenModalCategoria}>
+                    <FaPlus /> Nueva Categoría
+                  </Button>
+                </div>
               </div>
 
               <div className="cards-grid-cat14">
