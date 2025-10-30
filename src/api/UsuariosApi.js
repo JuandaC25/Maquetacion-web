@@ -81,3 +81,25 @@ export const actualizarUsuario = async (id, data) => {
         throw error;
     }
 };
+
+export const uploadUsuariosMasivos = async (file) => {
+    try {
+        const form = new FormData();
+        form.append('file', file);
+        const res = await authorizedFetch('/api/Usuarios/upload', {
+            method: 'POST',
+            body: form,
+        });
+        if (!res.ok) {
+            let msg = 'Error al subir archivo';
+            try { const e = await res.json(); msg = e.error || e.message || msg; } catch {}
+            throw new Error(msg);
+        }
+        return await res.json();
+    } catch (error) {
+        if (error.message?.toLowerCase().includes('failed to fetch') || error.message?.includes('NetworkError')) {
+            throw new Error('No se pudo conectar con el servidor');
+        }
+        throw error;
+    }
+};

@@ -5,10 +5,11 @@ import "./adcrear_ad.css";
 import Footer from '../../Footer/Footer.jsx';
 import HeaderCrear from '../header_crear/header_crear.jsx'; 
 import { 
-  obtenerUsuarios, 
-  crearUsuario, 
-  actualizarUsuario, 
-  eliminarUsuario 
+    obtenerUsuarios, 
+    crearUsuario, 
+    actualizarUsuario, 
+    eliminarUsuario,
+    uploadUsuariosMasivos
 } from '../../../api/UsuariosApi.js';
 
 const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) => {
@@ -233,6 +234,7 @@ const UserManagementList = () => {
     const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [users, setUsers] = useState([]);
+    const [uploadFile, setUploadFile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [emailError, setEmailError] = useState('');
@@ -396,6 +398,29 @@ const UserManagementList = () => {
         setSelectedRole(role);
     };
 
+    const handleFileChange = (e) => {
+        const f = e.target.files && e.target.files[0];
+        setUploadFile(f || null);
+    };
+
+    const handleUploadFile = async () => {
+        if (!uploadFile) {
+            alert('Seleccione un archivo .xlsx antes de subir');
+            return;
+        }
+        try {
+            const res = await uploadUsuariosMasivos(uploadFile);
+            const creados = res.creados ?? res.creados ?? res.creados;
+            alert(`Subida completa. Creados: ${res.creados || 0}. Errores: ${ (res.errores || []).length }`);
+            await cargarUsuarios();
+            setUploadFile(null);
+            const input = document.getElementById('excel-file-input'); if (input) input.value = '';
+        } catch (err) {
+            console.error('Error al subir archivo:', err);
+            alert('Error al subir archivo: ' + (err.message || err));
+        }
+    };
+
     const handleEstadoFilter = (estado) => {
         setSelectedEstado(estado);
     };
@@ -510,9 +535,21 @@ const UserManagementList = () => {
                             </InputGroup>
                         </div>
                     </div>
-                    <Button className="add-new-equipment-button-xd135" onClick={handleShowAddUserModal}>
-                        <span role="img" aria-label="añadir">➕</span> Añadir Usuario
-                    </Button>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <input
+                            id="excel-file-input"
+                            type="file"
+                            accept=".xlsx"
+                            onChange={handleFileChange}
+                            style={{ display: 'inline-block' }}
+                        />
+                        <Button variant="outline-primary" onClick={handleUploadFile} className="modal-action-button-xd120">
+                            Importar usuarios (.xlsx)
+                        </Button>
+                        <Button className="add-new-equipment-button-xd135" onClick={handleShowAddUserModal}>
+                            <span role="img" aria-label="añadir">➕</span> Añadir Usuario
+                        </Button>
+                    </div>
                 </div>
             </div>
 
