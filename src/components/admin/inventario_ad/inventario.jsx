@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button, Alert, Dropdown, Modal, Form, InputGroup, Spinner } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 import "./inventario.css";
+import "../adcrear_ad/adcrear_ad.css";
 import Footer from "../../Footer/Footer.jsx";
 import HeaderInv from "../header_inv/header_inv.jsx";
 import ElementosService from "../../../api/ElementosApi.js";
@@ -358,6 +359,14 @@ const Admin = () => {
     marca: "",
     serie: ""
   });
+  const [excelFile, setExcelFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadResult, setUploadResult] = useState(null);
+  const [downloadingTemplate, setDownloadingTemplate] = useState(false);
+  const [uploadFile, setUploadFile] = useState(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef(null);
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("Todas las Categorías");
   const [selectedSubcategoryFilter, setSelectedSubcategoryFilter] = useState("Todas las Subcategorías");
   const [searchTerm, setSearchTerm] = useState("");
@@ -493,7 +502,6 @@ const Admin = () => {
       setEliminando(true);
       
       if (esAccesorio) {
-        // Si los accesorios se almacenan como elementos, borramos el elemento
         await ElementosService.eliminarElemento(id);
       } else {
         await ElementosService.eliminarElemento(id);
@@ -544,6 +552,31 @@ const Admin = () => {
     setNuevoAccesorio((prev) => ({ ...prev, [id]: value }));
   };
 
+  const handleFileChange = (e) => {
+    const f = e.target.files && e.target.files[0];
+    setUploadFile(f || null);
+  };
+
+  const handleUploadFile = async () => {
+    if (!uploadFile) { alert('Selecciona un archivo .xlsx primero'); return; }
+    try {
+      setUploading(true);
+      setUploadResult(null);
+      const formData = new FormData();
+      formData.append('file', uploadFile);
+      const res = await ElementosService.uploadExcel(formData);
+      setUploadResult(res);
+      await cargarTodo();
+      alert('Carga completada. Revisar resultados.');
+    } catch (err) {
+      console.error(err);
+      alert('Error al subir el archivo: ' + (err.message || err));
+    } finally {
+      setUploading(false);
+      setUploadFile(null);
+    }
+  };
+
   const submitNuevo = async () => {
     if (!nuevoEquipo.nombre || !nuevoEquipo.id_subcateg || !nuevoEquipo.serie) {
       alert("Por favor, completa los campos obligatorios: Nombre, Subcategoría y Número de serie.");
@@ -554,16 +587,13 @@ const Admin = () => {
       setGuardando(true);
       
       const subcategoriaSeleccionada = subcategorias.find(s => s.id === parseInt(nuevoEquipo.id_subcateg));
-      
-      // Validar que el número de serie sea numérico
       const numSerie = parseInt(nuevoEquipo.serie);
       if (isNaN(numSerie)) {
         alert("El número de serie debe ser un valor numérico");
         setGuardando(false);
         return;
       }
-      
-      // Obtener la categoría padre de la subcategoría
+
       const categoriaPadre = subcategoriaSeleccionada ? 
         categorias.find(c => c.id_cat === subcategoriaSeleccionada.id_cat) : null;
       
@@ -614,8 +644,6 @@ const Admin = () => {
 
     try {
       setGuardandoAccesorio(true);
-      // Si no existe un endpoint de accesorios, creamos el accesorio como
-      // un elemento con categoría 'Accesorio' (ElementosCreateDto)
       const accesorioParaBackend = {
         nom_eleme: nuevoAccesorio.nombre,
         marc: nuevoAccesorio.marca,
@@ -777,6 +805,9 @@ const Admin = () => {
             <Button className="add-new-equipment-button-xd35" onClick={openNuevo}>
               <span role="img" aria-label="añadir">➕</span> Añadir Equipo
             </Button>
+            <Button variant="outline-primary" onClick={() => setShowUploadModal(true)} className="modal-action-button-xd120" style={{ marginLeft: 8 }}>
+              Importar elementos (.xlsx)
+            </Button>
           </div>
         </div>
       </Alert>
@@ -814,6 +845,95 @@ const Admin = () => {
         onEliminar={eliminarItem}
         eliminando={eliminando}
       />
+      <Modal show={showUploadModal} onHide={() => { setShowUploadModal(false); setUploadFile(null); setDragActive(false); }} centered dialogClassName="modern-modal-dialog-xd111">
+        <Modal.Header closeButton className="modern-modal-header-xd112">
+          <Modal.Title className="modern-modal-title-xd113">Importar elementos (.xlsx)</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="modern-modal-body-xd114">
+          <div
+            className={`upload-modal-dropzone-xd150 ${dragActive ? 'drag-active-xd151' : ''}`}
+            onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
+            onDragEnter={(e) => { e.preventDefault(); setDragActive(true); }}
+            onDragLeave={(e) => { e.preventDefault(); setDragActive(false); }}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragActive(false);
+              const files = e.dataTransfer && e.dataTransfer.files;
+              if (files && files.length > 0) {
+                setUploadFile(files[0]);
+              }
+            }}
+          >
+            <div className="upload-modal-content-xd152">
+              <p className="mb-2">Arrastra aquí tu archivo .xlsx o</p>
+              <Button variant="outline-primary" onClick={() => fileInputRef.current && fileInputRef.current.click()} className="modal-action-button-xd120">Seleccionar archivo</Button>
+              <input
+                ref={fileInputRef}
+                id="excel-file-input"
+                type="file"
+                accept=".xlsx"
+                onChange={(e) => { handleFileChange(e); setShowUploadModal(true); }}
+                style={{ display: 'none' }}
+              />
+              {uploadFile && (
+                <div className="selected-file-info-xd153 mt-3">
+                  <strong>Archivo seleccionado:</strong>
+                  <div className="selected-file-name-xd154">{uploadFile.name}</div>
+                </div>
+              )}
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="modern-modal-footer-xd119">
+          <Button variant="secondary" onClick={() => { setShowUploadModal(false); setUploadFile(null); }} className="modal-action-button-xd120 cancel-action-xd123">
+            Cancelar
+          </Button>
+          <Button
+            variant="outline-secondary"
+            onClick={async () => {
+              try {
+                setDownloadingTemplate(true);
+                const blob = await ElementosService.downloadTemplate();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'plantilla_elementos.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+              } catch (err) {
+                console.error(err);
+                alert('Error al descargar la plantilla: ' + (err.message || err));
+              } finally {
+                setDownloadingTemplate(false);
+              }
+            }}
+            disabled={downloadingTemplate}
+            className="modal-action-button-xd120 template-action-xd125"
+          >
+            {downloadingTemplate ? 'Descargando...' : 'Descargar plantilla'}
+          </Button>
+          <Button variant="success" onClick={async () => { await handleUploadFile(); setShowUploadModal(false); }} className="modal-action-button-xd120 add-action-xd124" disabled={!uploadFile || uploading}>
+            {uploading ? 'Subiendo...' : 'Subir archivo'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {uploadResult && (
+        <Alert variant="info" onClose={() => setUploadResult(null)} dismissible>
+          <div><strong>Resultado de la carga:</strong></div>
+          <div>Total filas procesadas: {uploadResult.resultado?.total ?? uploadResult.total ?? 'N/A'}</div>
+          <div>Guardados: {uploadResult.resultado?.guardados ?? uploadResult.guardados ?? 'N/A'}</div>
+          {uploadResult.resultado?.errores && uploadResult.resultado.errores.length > 0 && (
+            <div>
+              <strong>Errores:</strong>
+              <ul>
+                {uploadResult.resultado.errores.map((e, i) => (<li key={i}>{e}</li>))}
+              </ul>
+            </div>
+          )}
+        </Alert>
+      )}
       
       <NuevoEquipoModal 
         show={showNuevo} 
