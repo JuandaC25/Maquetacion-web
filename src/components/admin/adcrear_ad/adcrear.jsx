@@ -19,9 +19,12 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
 
     useEffect(() => {
         if (userDetails) {
+            // Mapear el nombre del rol a su valor en minúsculas
+            const rolActual = userDetails.nomb_rol ? userDetails.nomb_rol.toLowerCase() : '';
             setEditedUser({
                 ...userDetails,
-                estadoEdit: userDetails.nom_est === 1 ? 'activo' : 'inactivo'
+                estadoEdit: userDetails.nom_est === 1 ? 'activo' : 'inactivo',
+                rolEdit: rolActual
             });
         }
         setEditMode(false);
@@ -36,22 +39,42 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
         }));
     };
 
+    const mapearRolAId = (rol) => {
+        const rolesMap = {
+            'instructor': 1,
+            'técnico': 3,
+            'administrador': 2
+        };
+        return rolesMap[rol] || null;
+    };
+
     const handleSaveChanges = async () => {
         try {
             const usuarioActualizado = {
-                id_Usu: userDetails.id_usuari,
                 nom_us: editedUser.nom_usua,
                 ape_us: editedUser.ape_usua,
                 corre: editedUser.corre,
-                password: userDetails.password,
                 est_usu: editedUser.estadoEdit === 'activo' ? 1 : 2
             };
-            console.log(' Guardando cambios:', usuarioActualizado);
+            
+            // Siempre agregar id_rl (incluso si no cambió)
+            if (editedUser.rolEdit) {
+                const idRol = mapearRolAId(editedUser.rolEdit);
+                if (idRol) {
+                    usuarioActualizado.id_rl = idRol;
+                }
+            }
+            
+            console.log('Guardando cambios:', usuarioActualizado);
+            console.log('ID del usuario:', userDetails.id_usuari);
+            
             await onActualizarUsuario(userDetails.id_usuari, usuarioActualizado);
             setEditMode(false);
+            alert('Usuario actualizado exitosamente');
         } catch (error) {
-            console.error('Error al guardar cambios:', error);
-            alert('Error al guardar los cambios');
+            console.error('Error completo:', error);
+            console.error('Mensaje de error:', error.message);
+            alert('Error al guardar los cambios. Verifica la consola para más detalles.');
         }
     };
 
@@ -118,12 +141,26 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
                 <div className="detail-item-xd115">
                     <label className="detail-label-xd116">Rol:</label>
                     <div className="detail-value-display-xd117">
-                        <Form.Control 
-                            type="text" 
-                            value={userDetails.nomb_rol || ''} 
-                            readOnly 
-                            className="modern-form-control-xd118" 
-                        />
+                        {editMode ? (
+                            <Form.Control
+                                as="select"
+                                value={editedUser.rolEdit || ''}
+                                onChange={(e) => handleEditChange('rolEdit', e.target.value)}
+                                className="modern-form-control-xd118"
+                            >
+                                <option value="">Seleccionar rol</option>
+                                <option value="instructor">Instructor</option>
+                                <option value="técnico">Técnico</option>
+                                <option value="administrador">Administrador</option>
+                            </Form.Control>
+                        ) : (
+                            <Form.Control 
+                                type="text" 
+                                value={userDetails.nomb_rol || ''} 
+                                readOnly 
+                                className="modern-form-control-xd118" 
+                            />
+                        )}
                     </div>
                 </div>
 
