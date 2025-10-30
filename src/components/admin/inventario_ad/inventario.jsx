@@ -8,6 +8,8 @@ import ElementosService from "../../../api/ElementosApi.js";
 import { 
   obtenerAccesorios
 } from "../../../api/AccesoriosApi.js";
+import { obtenerCategoria } from "../../../api/CategoriaApi.js";
+import { obtenersolicitudes } from "../../../api/SubcategotiaApi.js";
 
 const EquipoItem = ({ elemento, onVerClick }) => (
   <div className="modern-equipment-card-xd01">
@@ -127,6 +129,12 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando })
               </div>
             </div>
             <div className="detail-item-xd15">
+              <label className="detail-label-xd16">Subcategoría:</label>
+              <div className="detail-value-display-xd17">
+                <Form.Control type="text" value={detalles.subcategoria || "N/A"} readOnly className="modern-form-control-xd18" />
+              </div>
+            </div>
+            <div className="detail-item-xd15">
               <label className="detail-label-xd16">Número de serie:</label>
               <div className="detail-value-display-xd17">
                 <Form.Control type="text" value={detalles.serie} readOnly className="modern-form-control-xd18" />
@@ -164,7 +172,7 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando })
   );
 };
 
-const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit, guardando }) => (
+const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit, guardando, subcategorias, categorias }) => (
   <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog-xd11">
     <Modal.Header closeButton className="modern-modal-header-xd12">
       <Modal.Title className="modern-modal-title-xd13">Añadir Nuevo Equipo</Modal.Title>
@@ -184,18 +192,23 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit, guard
         </div>
       </div>
       <div className="detail-item-xd15">
-        <label className="detail-label-xd16">Categoría:</label>
+        <label className="detail-label-xd16">Subcategoría:</label>
         <div className="detail-value-display-xd17">
           <Form.Select
-            id="categoria"
-            value={nuevoEquipo.categoria}
+            id="id_subcateg"
+            value={nuevoEquipo.id_subcateg || ""}
             onChange={onChange}
             className="modern-form-control-xd18"
           >
-            <option value="">Seleccionar...</option>
-            <option>Portátil</option>
-            <option>Equipo de Escritorio</option>
-            <option>Televisor</option>
+            <option value="">Seleccionar subcategoría...</option>
+            {subcategorias.map((subcat) => {
+              const categoria = categorias.find(cat => cat.id_cat === subcat.id_cat);
+              return (
+                <option key={subcat.id} value={subcat.id}>
+                  {subcat.nom_subcateg} ({categoria ? categoria.nom_cat : 'Sin categoría'})
+                </option>
+              );
+            })}
           </Form.Select>
         </div>
       </div>
@@ -321,21 +334,21 @@ const NuevoAccesorioModal = ({ show, onHide, nuevoAccesorio, onChange, onSubmit,
 
 const Admin = () => {
   const [elementosInventario, setElementosInventario] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [subcategorias, setSubcategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [guardandoAccesorio, setGuardandoAccesorio] = useState(false);
   const [eliminando, setEliminando] = useState(false);
   const [error, setError] = useState(null);
 
-  const allowedCategories = ["Portátil", "Equipo de Escritorio", "Televisor", "Accesorio"];
-  
   const [showDetalles, setShowDetalles] = useState(false);
   const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
   const [showNuevo, setShowNuevo] = useState(false);
   const [showNuevoAccesorio, setShowNuevoAccesorio] = useState(false);
   const [nuevoEquipo, setNuevoEquipo] = useState({
     nombre: "", 
-    categoria: "", 
+    id_subcateg: "", 
     serie: "", 
     observaciones: "",
     componentes: ""
@@ -346,6 +359,7 @@ const Admin = () => {
     serie: ""
   });
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("Todas las Categorías");
+  const [selectedSubcategoryFilter, setSelectedSubcategoryFilter] = useState("Todas las Subcategorías");
   const [searchTerm, setSearchTerm] = useState("");
 
   const bottomRef = useRef(null);
@@ -355,8 +369,6 @@ const Admin = () => {
       "Portátil": 1,
       "Equipo de Escritorio": 2,
       "Televisor": 3,
-      // Asumimos que la categoría 'Accesorio' tiene id 4 en el backend.
-      // Si tu base de datos usa otro id, actualiza este valor.
       "Accesorio": 4
     };
     return categorias[categoria] || 1;
@@ -370,16 +382,18 @@ const Admin = () => {
     try {
       setLoading(true);
       setError(null);
-      // Hacemos la carga resistente a que el endpoint de accesorios no exista
-      // (el backend puede no haber implementado /api/accesorios). Usamos
-      // Promise.allSettled para no fallar toda la carga si una petición falla.
+      
       const resultados = await Promise.allSettled([
         ElementosService.obtenerElementos(),
-        obtenerAccesorios()
+        obtenerAccesorios(),
+        obtenerCategoria(),
+        obtenersolicitudes()
       ]);
 
       const elementosResult = resultados[0];
       const accesoriosResult = resultados[1];
+      const categoriasResult = resultados[2];
+      const subcategoriasResult = resultados[3];
 
       if (elementosResult.status !== 'fulfilled') {
         throw elementosResult.reason || new Error('Error al obtener elementos');
@@ -387,6 +401,11 @@ const Admin = () => {
 
       const elementos = elementosResult.value;
       const accesorios = accesoriosResult.status === 'fulfilled' ? accesoriosResult.value : [];
+      const cats = categoriasResult.status === 'fulfilled' ? categoriasResult.value : [];
+      const subcats = subcategoriasResult.status === 'fulfilled' ? subcategoriasResult.value : [];
+
+      setCategorias(Array.isArray(cats) ? cats : []);
+      setSubcategorias(Array.isArray(subcats) ? subcats : []);
 
       const elementosNormalizados = elementos.map(el => ({
         id: el.id_elemen,
@@ -395,6 +414,7 @@ const Admin = () => {
         serie: el.num_seri?.toString() || "",
         observaciones: el.obse,
         componentes: el.componen,
+        id_subcateg: el.id_subcateg,
         tipo: 'elemento'
       }));
       
@@ -422,9 +442,6 @@ const Admin = () => {
       let detallesCompletos;
       
       if (item.tipo === 'accesorio') {
-        // Si el backend no tiene un endpoint separado para accesorios,
-        // tratamos el accesorio como un elemento (Elementos) con categoría
-        // 'Accesorio' y usamos el servicio de elementos para obtenerlo.
         detallesCompletos = await ElementosService.obtenerPorId(item.id);
         detallesCompletos = {
           ...detallesCompletos,
@@ -437,11 +454,17 @@ const Admin = () => {
         };
       } else {
         detallesCompletos = await ElementosService.obtenerPorId(item.id);
+        
+        const idSubcat = detallesCompletos.id_subcat || detallesCompletos.id_subcateg;
+        const subcategoria = subcategorias.find(s => s.id === idSubcat);
+        const categoriaPadre = subcategoria ? categorias.find(c => c.id_cat === subcategoria.id_cat) : null;
+        
         detallesCompletos = {
           ...detallesCompletos,
           id: detallesCompletos.id_elemen,
           nombre: detallesCompletos.nom_eleme,
-          categoria: detallesCompletos.tip_catg,
+          subcategoria: subcategoria ? subcategoria.nom_subcateg : "Sin subcategoría",
+          categoria: categoriaPadre ? categoriaPadre.nom_cat : "Sin categoría",
           serie: detallesCompletos.num_seri?.toString() || "",
           observaciones: detallesCompletos.obse,
           componentes: detallesCompletos.componen,
@@ -495,7 +518,7 @@ const Admin = () => {
     setShowNuevo(false);
     setNuevoEquipo({ 
       nombre: "", 
-      categoria: "", 
+      id_subcateg: "", 
       serie: "", 
       observaciones: "",
       componentes: "" 
@@ -522,32 +545,49 @@ const Admin = () => {
   };
 
   const submitNuevo = async () => {
-    if (!nuevoEquipo.nombre || !nuevoEquipo.categoria || !nuevoEquipo.serie) {
-      alert("Por favor, completa los campos obligatorios: Nombre, Categoría y Número de serie.");
+    if (!nuevoEquipo.nombre || !nuevoEquipo.id_subcateg || !nuevoEquipo.serie) {
+      alert("Por favor, completa los campos obligatorios: Nombre, Subcategoría y Número de serie.");
       return;
     }
 
     try {
       setGuardando(true);
       
+      const subcategoriaSeleccionada = subcategorias.find(s => s.id === parseInt(nuevoEquipo.id_subcateg));
+      
+      // Validar que el número de serie sea numérico
+      const numSerie = parseInt(nuevoEquipo.serie);
+      if (isNaN(numSerie)) {
+        alert("El número de serie debe ser un valor numérico");
+        setGuardando(false);
+        return;
+      }
+      
+      // Obtener la categoría padre de la subcategoría
+      const categoriaPadre = subcategoriaSeleccionada ? 
+        categorias.find(c => c.id_cat === subcategoriaSeleccionada.id_cat) : null;
+      
       const elementoParaBackend = {
         nom_eleme: nuevoEquipo.nombre,
-        num_seri: parseInt(nuevoEquipo.serie),
+        num_seri: numSerie,
         obse: nuevoEquipo.observaciones || "",
         componen: nuevoEquipo.componentes || "",
         est_elem: 1,
-        id_categ: obtenerIdCategoria(nuevoEquipo.categoria)
+        id_categ: categoriaPadre ? categoriaPadre.id_cat : null,
+        id_subcat: parseInt(nuevoEquipo.id_subcateg)
       };
+      
       
       const elementoCreado = await ElementosService.crearElemento(elementoParaBackend);
       
       const elementoNormalizado = {
         id: elementoCreado.id_elemen,
         nombre: elementoCreado.nom_eleme,
-        categoria: nuevoEquipo.categoria,
+        categoria: subcategoriaSeleccionada ? subcategoriaSeleccionada.nom_subcateg : "Sin categoría",
         serie: nuevoEquipo.serie,
         observaciones: nuevoEquipo.observaciones,
         componentes: nuevoEquipo.componentes,
+        id_subcateg: parseInt(nuevoEquipo.id_subcateg),
         tipo: 'elemento'
       };
       
@@ -614,20 +654,37 @@ const Admin = () => {
 
   const handleCategoryFilter = (category) => {
     setSelectedCategoryFilter(category);
+    setSelectedSubcategoryFilter("Todas las Subcategorías");
+  };
+
+  const handleSubcategoryFilter = (subcategory) => {
+    setSelectedSubcategoryFilter(subcategory);
   };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
+  const subcategoriasFiltradas = selectedCategoryFilter === "Todas las Categorías" 
+    ? subcategorias 
+    : subcategorias.filter(sub => {
+        const categoria = categorias.find(cat => cat.id_cat === sub.id_cat);
+        return categoria && categoria.nom_cat === selectedCategoryFilter;
+      });
+
   const elementosFiltrados = elementosInventario.filter(elemento => {
     const coincideCategoria = selectedCategoryFilter === "Todas las Categorías" || 
                              elemento.categoria === selectedCategoryFilter;
+    
+    const coincideSubcategoria = selectedSubcategoryFilter === "Todas las Subcategorías" ||
+                                elemento.subcategoria === selectedSubcategoryFilter;
+    
     const coincideBusqueda = searchTerm === "" || 
                            elemento.serie.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            elemento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            (elemento.marca && elemento.marca.toLowerCase().includes(searchTerm.toLowerCase()));
-    return coincideCategoria && coincideBusqueda;
+    
+    return coincideCategoria && coincideSubcategoria && coincideBusqueda;
   });
 
   useEffect(() => {
@@ -664,13 +721,40 @@ const Admin = () => {
                   >
                     Todas las Categorías
                   </Dropdown.Item>
-                  {allowedCategories.map((category) => (
+                  {categorias.map((categoria) => (
                     <Dropdown.Item 
-                      key={category} 
-                      onClick={() => handleCategoryFilter(category)}
+                      key={categoria.id_cat} 
+                      onClick={() => handleCategoryFilter(categoria.nom_cat)}
                       className="dropdown-item-xd148"
                     >
-                      {category}
+                      {categoria.nom_cat}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+
+              <Dropdown className="category-filter-dropdown-xd31">
+                <Dropdown.Toggle 
+                  variant="success" 
+                  id="dropdown-subcategory-xd31"
+                  className="dropdown-toggle-xd146"
+                >
+                  {selectedSubcategoryFilter} <span className="dropdown-arrow-xd32">▼</span>
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
+                  <Dropdown.Item 
+                    onClick={() => handleSubcategoryFilter("Todas las Subcategorías")}
+                    className="dropdown-item-xd148"
+                  >
+                    Todas las Subcategorías
+                  </Dropdown.Item>
+                  {subcategoriasFiltradas.map((subcategoria) => (
+                    <Dropdown.Item 
+                      key={subcategoria.id} 
+                      onClick={() => handleSubcategoryFilter(subcategoria.nom_subcateg)}
+                      className="dropdown-item-xd148"
+                    >
+                      {subcategoria.nom_subcateg}
                     </Dropdown.Item>
                   ))}
                 </Dropdown.Menu>
@@ -692,9 +776,6 @@ const Admin = () => {
           <div className="header-buttons-section">
             <Button className="add-new-equipment-button-xd35" onClick={openNuevo}>
               <span role="img" aria-label="añadir">➕</span> Añadir Equipo
-            </Button>
-            <Button className="add-new-equipment-button-xd35 add-accessory-button" onClick={openNuevoAccesorio}>
-              <span role="img" aria-label="añadir">🎧</span> Añadir Accesorio
             </Button>
           </div>
         </div>
@@ -741,6 +822,8 @@ const Admin = () => {
         onChange={handleNuevoChange} 
         onSubmit={submitNuevo}
         guardando={guardando}
+        subcategorias={subcategorias}
+        categorias={categorias}
       />
 
       <NuevoAccesorioModal 

@@ -65,6 +65,10 @@ function Header_ad() {
                 <p className="text-primary-1511"><i className="bi bi-search"></i> Solicitudes espacios</p>
                 <p className="text-secondary-1512">Revisar reservas</p>
               </Link>
+              <Link to="/Categorias" className="card-1510">
+                <p className="text-primary-1511"><i className="bi bi-tags"></i> Gestionar categorías</p>
+                <p className="text-secondary-1512">Administrar categorías y subcategorías</p>
+              </Link>
             </Offcanvas.Body>
           </Offcanvas>
 

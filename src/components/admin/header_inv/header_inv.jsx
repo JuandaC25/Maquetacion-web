@@ -63,6 +63,10 @@ function Header_inv() {
                 <p className="text-primary-xd010"><i className="bi bi-search"></i> Solicitudes espacios</p>
                 <p className="text-secondary-xd011">Revisar reservas</p>
               </Link>
+              <Link to="/Categorias" className='card-xd009'>
+                <p className="text-primary-xd010"><i className="bi bi-tags"></i> Gestionar categorías</p>
+                <p className="text-secondary-xd011">Administrar categorías y subcategorías</p>
+              </Link>
             </Offcanvas.Body>
           </Offcanvas>
 

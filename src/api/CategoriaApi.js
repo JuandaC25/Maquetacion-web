@@ -1,8 +1,10 @@
-const BASE_URL = 'http://localhost:8081/api/categoria'
+import { authorizedFetch } from './http';
+
+const BASE_URL = '/api/categoria'
 
 export const obtenerCategoria = async ()=> {
     try{
-        const res = await fetch(BASE_URL);
+        const res = await authorizedFetch(BASE_URL);
         if (!res.ok) {
             throw new Error("Error al obtener los categorias");
         }
@@ -18,7 +20,7 @@ export const obtenerCategoria = async ()=> {
 
 export const obtenerCategoriaPorId = async (id) => {
     try{
-        const res = await fetch(`${BASE_URL}/${id}`, {
+        const res = await authorizedFetch(`${BASE_URL}/${id}`, {
             method: "GET",
         });
         if (!res.ok) throw new Error("Categoria no encontrada");
@@ -33,7 +35,9 @@ export const obtenerCategoriaPorId = async (id) => {
 
 export const crearCategoria = async (data) => {
     try {
-        const res = await fetch(BASE_URL, {
+        console.log('📤 Enviando categoría:', data);
+        
+        const res = await authorizedFetch(BASE_URL, {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json" 
@@ -41,18 +45,28 @@ export const crearCategoria = async (data) => {
             body: JSON.stringify(data),
         });
 
+        console.log('📨 Respuesta del servidor - Status:', res.status);
+
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({}));
+            console.error('❌ Error del servidor:', errorData);
+            
             if (res.status === 409) {
-                throw new Error(errorData.errores1 || "Conflicto al crear el categoria");
+                throw new Error(errorData.errores1 || errorData.message || "Ya existe una categoría con ese nombre");
             } else if (res.status === 500) {
-                throw new Error(errorData.error || "Error interno del servidor");
+                throw new Error(errorData.error || errorData.message || "Error interno del servidor");
+            } else if (res.status === 400) {
+                throw new Error(errorData.error || errorData.message || "Datos inválidos");
             } else {
-                throw new Error("Error al crear el categoria");
+                throw new Error(errorData.message || errorData.error || `Error ${res.status} al crear la categoría`);
             }
         }
-        return await res.json();
+        
+        const result = await res.json();
+        console.log('✅ Categoría creada:', result);
+        return result;
     } catch (error) {
+        console.error('❌ Error en crearCategoria:', error);
         if (error.message && (error.message.includes("failed to fetch") || error.message.includes("NetworkError"))) {
             throw new Error("No se pudo conectar con el servidor");
         }
@@ -62,7 +76,7 @@ export const crearCategoria = async (data) => {
 
 export const eliminarCategoria = async (id) => {
     try {
-        const res = await fetch(`${BASE_URL}/${id}`, {
+        const res = await authorizedFetch(`${BASE_URL}/${id}`, {
             method: "DELETE",
         });
 
