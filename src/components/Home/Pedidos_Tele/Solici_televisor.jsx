@@ -83,7 +83,7 @@ function SoliciAudioVideo() {
             item.sub_catg !== "Equipo de edicion" &&
             item.sub_catg !== "Portátil de edicion"
         );
-        const activos = multimediaItems.filter((item) => item.est_elemn === 1);
+  const activos = multimediaItems.filter((item) => item.est === 1);
         setEquiposDisponibles(activos);
 
         if (multimediaItems.length > 0) {
