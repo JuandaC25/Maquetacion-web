@@ -51,6 +51,47 @@ export const crearSubcategoria = async (data) =>{
     }
 }
 
+export const actualizarSubcategoria = async (id, data) => {
+    try {
+        console.log('📤 Actualizando subcategoría:', id, data);
+        
+        const res = await authorizedFetch(`/api/subcategoria/${id}`, {
+            method: "PUT",
+            headers: { 
+                "Content-Type": "application/json" 
+            },
+            body: JSON.stringify(data),
+        });
+
+        console.log('📨 Respuesta del servidor - Status:', res.status);
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            console.error('❌ Error del servidor:', errorData);
+            
+            if (res.status === 409 || res.status === 400) {
+                throw new Error(errorData.error || errorData.message || "Error al actualizar la subcategoría");
+            } else if (res.status === 404) {
+                throw new Error("Subcategoría no encontrada");
+            } else if (res.status === 500) {
+                throw new Error(errorData.error || errorData.message || "Error interno del servidor");
+            } else {
+                throw new Error(errorData.error || errorData.message || `Error ${res.status} al actualizar la subcategoría`);
+            }
+        }
+        
+        const result = await res.json();
+        console.log('✅ Subcategoría actualizada:', result);
+        return result;
+    } catch (error) {
+        console.error('❌ Error en actualizarSubcategoria:', error);
+        if (error.message && (error.message.includes("failed to fetch") || error.message.includes("NetworkError"))) {
+            throw new Error("No se pudo conectar con el servidor");
+        }
+        throw error;
+    }
+};
+
 export const eliminarSubcategoria = async (id) =>{
     const res = await authorizedFetch(`/api/subcategoria/${id}`,{
         method: "DELETE",

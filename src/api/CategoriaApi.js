@@ -74,6 +74,47 @@ export const crearCategoria = async (data) => {
     }
 };
 
+export const actualizarCategoria = async (id, data) => {
+    try {
+        console.log('📤 Actualizando categoría:', id, data);
+        
+        const res = await authorizedFetch(`${BASE_URL}/${id}`, {
+            method: "PUT",
+            headers: { 
+                "Content-Type": "application/json" 
+            },
+            body: JSON.stringify(data),
+        });
+
+        console.log('📨 Respuesta del servidor - Status:', res.status);
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            console.error('❌ Error del servidor:', errorData);
+            
+            if (res.status === 409 || res.status === 400) {
+                throw new Error(errorData.error || errorData.message || "Error al actualizar la categoría");
+            } else if (res.status === 404) {
+                throw new Error("Categoría no encontrada");
+            } else if (res.status === 500) {
+                throw new Error(errorData.error || errorData.message || "Error interno del servidor");
+            } else {
+                throw new Error(errorData.error || errorData.message || `Error ${res.status} al actualizar la categoría`);
+            }
+        }
+        
+        const result = await res.json();
+        console.log('✅ Categoría actualizada:', result);
+        return result;
+    } catch (error) {
+        console.error('❌ Error en actualizarCategoria:', error);
+        if (error.message && (error.message.includes("failed to fetch") || error.message.includes("NetworkError"))) {
+            throw new Error("No se pudo conectar con el servidor");
+        }
+        throw error;
+    }
+};
+
 export const eliminarCategoria = async (id) => {
     try {
         const res = await authorizedFetch(`${BASE_URL}/${id}`, {
