@@ -304,7 +304,7 @@
 
 .cards-grid-cat14 {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 25px;
   margin-top: 20px;
 }
@@ -339,7 +339,7 @@
 .category-card-cat17 {
   background: var(--white);
   border-radius: var(--radius);
-  padding: 25px;
+  padding: 28px;
   box-shadow: 0 2px 10px var(--shadow);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid var(--border);
@@ -347,7 +347,8 @@
   gap: 20px;
   align-items: flex-start;
   position: relative;
-  overflow: hidden;
+  /* allow children to overflow slightly (button shadows, large content) */
+  overflow: visible;
 }
 
 .category-card-cat17::before {
@@ -458,6 +459,9 @@
   display: flex;
   gap: 10px;
   margin-top: auto;
+  /* allow action buttons to wrap to next line instead of overflowing the card */
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .delete-btn-cat26 {
@@ -475,7 +479,25 @@
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
-/* Subcategory Specific Styles */
+.toggle-btn-cat30 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 14px;
+  transition: all 0.2s ease;
+  min-width: 110px;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.toggle-btn-cat30:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
 .subcategory-card-cat27::before {
   background: linear-gradient(180deg, var(--blue) 0%, var(--blue-dark) 100%);
 }
@@ -489,7 +511,6 @@
   background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
 }
 
-/* Estilos de Modales */
 .modal-header-cat28 {
   background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
   color: var(--white);
@@ -545,7 +566,6 @@
   border-radius: 8px;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .main-title-cat07 {
     font-size: 1.8rem;

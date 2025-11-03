@@ -7,13 +7,15 @@ import HeaderCategorias from '../header_categorias/header_categorias.jsx';
 import { 
   obtenerCategoria, 
   crearCategoria, 
-  eliminarCategoria 
+  eliminarCategoria,
+  actualizarEstadoCategoria,
 } from '../../../api/CategoriaApi.js';
 import { 
   obtenersolicitudes, 
   crearSubcategoria, 
-  eliminarSubcategoria 
+  eliminarSubcategoria,
 } from '../../../api/SubcategotiaApi.js';
+import { actualizarEstadoSubcategoria } from '../../../api/SubcategotiaApi.js';
 
 const Categorias = () => {
   const [categorias, setCategorias] = useState([]);
@@ -25,6 +27,7 @@ const Categorias = () => {
   const [showModalCategoria, setShowModalCategoria] = useState(false);
   const [nuevaCategoria, setNuevaCategoria] = useState({ nom_cat: '' });
   const [guardandoCategoria, setGuardandoCategoria] = useState(false);
+  const [togglingCategoriaId, setTogglingCategoriaId] = useState(null);
 
   const [showModalSubcategoria, setShowModalSubcategoria] = useState(false);
   const [nuevaSubcategoria, setNuevaSubcategoria] = useState({ 
@@ -32,6 +35,7 @@ const Categorias = () => {
     id_cat: '' 
   });
   const [guardandoSubcategoria, setGuardandoSubcategoria] = useState(false);
+  const [togglingSubcategoriaId, setTogglingSubcategoriaId] = useState(null);
 
   useEffect(() => {
     cargarDatos();
@@ -100,7 +104,27 @@ const Categorias = () => {
     }
   };
 
-  // Funciones para Subcategorías
+  const handleToggleCategoria = async (categoria) => {
+    // Backend expects: 1 = Activo, 2 = Inactivo
+    let currentEstado = typeof categoria.estado !== 'undefined' ? categoria.estado : 1;
+    // map legacy 0 to 2 (inactivo)
+    if (currentEstado === 0) currentEstado = 2;
+    const nuevoEstado = currentEstado === 1 ? 2 : 1;
+    const accion = nuevoEstado === 1 ? 'activar' : 'desactivar';
+    const confirmMsg = `¿Estás seguro de ${accion} la categoría "${categoria.nom_cat}"?`;
+    if (!window.confirm(confirmMsg)) return;
+    try {
+      setTogglingCategoriaId(categoria.id_cat);
+      await actualizarEstadoCategoria(categoria.id_cat, nuevoEstado);
+      await cargarDatos();
+    } catch (err) {
+      alert('Error al actualizar el estado de la categoría: ' + err.message);
+      console.error(err);
+    } finally {
+      setTogglingCategoriaId(null);
+    }
+  };
+
   const handleOpenModalSubcategoria = () => {
     setNuevaSubcategoria({ nom_subcateg: '', id_cat: '' });
     setShowModalSubcategoria(true);
@@ -149,6 +173,26 @@ const Categorias = () => {
       alert('Subcategoría eliminada exitosamente');
     } catch (err) {
       alert('Error al eliminar la subcategoría: ' + err.message);
+    }
+  };
+
+  const handleToggleSubcategoria = async (subcategoria) => {
+    // Backend expects: 1 = Activo, 2 = Inactivo
+    let currentEstado = typeof subcategoria.estado !== 'undefined' ? subcategoria.estado : 1;
+    if (currentEstado === 0) currentEstado = 2;
+    const nuevoEstado = currentEstado === 1 ? 2 : 1;
+    const accion = nuevoEstado === 1 ? 'activar' : 'desactivar';
+    const confirmMsg = `¿Estás seguro de ${accion} la subcategoría "${subcategoria.nom_subcateg}"?`;
+    if (!window.confirm(confirmMsg)) return;
+    try {
+      setTogglingSubcategoriaId(subcategoria.id);
+      await actualizarEstadoSubcategoria(subcategoria.id, nuevoEstado);
+      await cargarDatos();
+    } catch (err) {
+      alert('Error al actualizar el estado de la subcategoría: ' + err.message);
+      console.error(err);
+    } finally {
+      setTogglingSubcategoriaId(null);
     }
   };
 
@@ -571,6 +615,15 @@ const Categorias = () => {
                           >
                             <FaTrash /> Eliminar
                           </Button>
+                          <Button
+                            variant={categoria.estado === 1 ? 'warning' : 'success'}
+                            size="sm"
+                            className="toggle-btn-cat30"
+                            onClick={() => handleToggleCategoria(categoria)}
+                            disabled={togglingCategoriaId === categoria.id_cat}
+                          >
+                            {togglingCategoriaId === categoria.id_cat ? '...' : (categoria.estado === 1 ? 'Desactivar' : 'Activar')}
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -628,6 +681,15 @@ const Categorias = () => {
                             onClick={() => handleEliminarSubcategoria(subcategoria.id)}
                           >
                             <FaTrash /> Eliminar
+                          </Button>
+                          <Button
+                            variant={subcategoria.estado === 1 ? 'warning' : 'success'}
+                            size="sm"
+                            className="toggle-btn-cat30"
+                            onClick={() => handleToggleSubcategoria(subcategoria)}
+                            disabled={togglingSubcategoriaId === subcategoria.id}
+                          >
+                            {togglingSubcategoriaId === subcategoria.id ? '...' : (subcategoria.estado === 1 ? 'Desactivar' : 'Activar')}
                           </Button>
                         </div>
                       </div>
