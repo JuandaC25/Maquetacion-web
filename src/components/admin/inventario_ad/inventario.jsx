@@ -106,7 +106,7 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
 
   const handleSaveEstado = async () => {
     try {
-      const payload = { id_elem: detalles.id, est_elem: editedEstado === 'activo' ? 1 : 0 };
+  const payload = { id_elem: detalles.id, est: editedEstado === 'activo' ? 1 : 0 };
       if (onActualizarEstado) {
         await onActualizarEstado(detalles.id, payload);
       } else {
@@ -659,7 +659,7 @@ const Admin = () => {
         num_seri: nuevoEquipo.serie,
         obse: nuevoEquipo.observaciones || "",
         componen: nuevoEquipo.componentes || "",
-        est_elem: 1,
+        est: 1,
         id_categ: categoriaPadre ? categoriaPadre.id_cat : null,
         id_subcat: parseInt(nuevoEquipo.id_subcateg)
       };
@@ -705,7 +705,7 @@ const Admin = () => {
         nom_eleme: nuevoAccesorio.nombre,
         marc: nuevoAccesorio.marca,
         num_seri: nuevoAccesorio.serie,
-        est_elem: 1,
+        est: 1,
         obse: "",
         componen: "",
         id_categ: obtenerIdCategoria("Accesorio")

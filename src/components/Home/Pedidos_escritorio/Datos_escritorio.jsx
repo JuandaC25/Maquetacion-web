@@ -147,7 +147,7 @@ function Datos_escritorio() {
         const subCatgFiltro = categoriaFiltro === "computo" ? "Equipo de mesa" : "Equipo de edición";
         // Filtrar solo los elementos activos y de la subcategoría seleccionada
         const filtrados = data.filter((item) => item.sub_catg === subCatgFiltro);
-        const activos = filtrados.filter((item) => item.est_elemn === 1);
+  const activos = filtrados.filter((item) => item.est === 1);
         setEquiposDisponibles(activos);
 
         if (filtrados.length > 0) {
