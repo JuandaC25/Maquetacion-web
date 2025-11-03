@@ -48,6 +48,7 @@ class ElementosService {
         try {
           errorData = await response.json();
         } catch (e) {
+          console.error('❌ No se pudo parsear la respuesta de error como JSON:', e);
         }
         
         console.error('❌ Error del servidor:', errorData);
@@ -113,7 +114,10 @@ class ElementosService {
 
       if (!response.ok) {
         let errorData = {};
-        try { errorData = await response.json(); } catch(e) {}
+        try { errorData = await response.json(); } 
+        catch(e) {
+          console.error('No se pudo parsear la respuesta de error como JSON:', e);
+        }
         throw new Error(errorData.error || errorData.message || `Error ${response.status}`);
       }
 
@@ -133,7 +137,10 @@ class ElementosService {
 
       if (!response.ok) {
         let errorData = {};
-        try { errorData = await response.json(); } catch(e) {}
+        try { errorData = await response.json(); }
+         catch(e) {
+          console.error('No se pudo parsear la respuesta de error como JSON:', e);
+         }
         throw new Error(errorData.error || errorData.message || `Error ${response.status}`);
       }
 

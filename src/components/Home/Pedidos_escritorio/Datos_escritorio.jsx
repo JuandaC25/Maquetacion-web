@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button, Modal, Form, ButtonGroup, ToggleButton, Carousel } from "react-bootstrap";
+import { Card, Button, Modal, Form, ButtonGroup, ToggleButton, Carousel, Spinner } from "react-bootstrap";
 import "./Pedidos_escritorio.css";
 import ElementosService from "../../../api/ElementosApi";
 import { crearSolicitud } from "../../../api/solicitudesApi";
@@ -37,7 +37,6 @@ function Datos_escritorio() {
   const [categoriaFiltro, setCategoriaFiltro] = useState("computo");
   const [showModal, setShowModal] = useState(false);
   const [equiposDisponibles, setEquiposDisponibles] = useState([]);
-  // Estado para guardar la hora actual cuando se abre el modal, evitando que cambie mientras está abierto
   const [minHoraInicio, setMinHoraInicio] = useState(getMinTime());
 
   const [form, setForm] = useState({
@@ -46,15 +45,23 @@ function Datos_escritorio() {
     fecha_fn: "",
     hora_fn: "",
     ambient: "",
-    cantid:"",
-    num_ficha: "",
+    cantid: "",
+    id_elemen: "", // Almacena el ID del elemento seleccionado
     estadosoli: 1,
     id_usu: 1,
   });
 
   const handleShowModal = () => {
-    // 🔑 Acción clave: Actualiza la hora mínima solo al abrir el modal para fijar el límite (hora actual)
     setMinHoraInicio(getMinTime());
+    
+    // 🔑 AJUSTE 1: Auto-seleccionar el primer equipo al abrir el modal
+    const firstEquipoId = equiposDisponibles.length > 0 ? equiposDisponibles[0].id_elemen.toString() : "";
+
+    setForm(prevForm => ({ 
+        ...prevForm, 
+        cantid: "1", // Se establece la cantidad predeterminada a 1
+        id_elemen: firstEquipoId, // Auto-seleccionar el ID del primer equipo
+    })); 
     setShowModal(true);
   };
 
@@ -67,8 +74,8 @@ function Datos_escritorio() {
       fecha_fn: "",
       hora_fn: "",
       ambient: "",
-      cantid:"",
-      num_ficha: "",
+      cantid: "",
+      id_elemen: "", // Limpiar el elemento seleccionado
       estadosoli: 1,
       id_usu: 1,
     });
@@ -82,6 +89,17 @@ function Datos_escritorio() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    // 1. Validar la selección del elemento
+    if (!form.id_elemen) {
+        alert("Debes seleccionar un equipo específico (Número de ficha) para realizar la solicitud.");
+        return;
+    }
+    
+    // Buscar el equipo seleccionado para obtener su número de ficha
+    const equipoSeleccionado = equiposDisponibles.find(eq => eq.id_elemen.toString() === form.id_elemen);
+    const numFichaSeleccionada = equipoSeleccionado ? equipoSeleccionado.num_ficha : null;
+    
+    // 2. Validación de Fechas/Horas
     const fechaInicio = new Date(`${form.fecha_ini}T${form.hora_ini}:00`);
     const fechaFin = new Date(`${form.fecha_fn}T${form.hora_fn}:00`);
 
@@ -96,6 +114,7 @@ function Datos_escritorio() {
         return;
     }
 
+    // 3. Crear DTO (Data Transfer Object)
     const dto = {
       fecha_ini: fechaInicio.toISOString(),
       fecha_fn: fechaFin.toISOString(),
@@ -103,17 +122,20 @@ function Datos_escritorio() {
       cantid: form.cantid,
       estadosoli: form.estadosoli,
       id_usu: form.id_usu,
-      num_ficha: form.num_ficha,
-      id_elemen: [],
+      num_ficha: numFichaSeleccionada, 
+      id_elemen: [form.id_elemen], // La API espera un array de IDs, aunque solo enviemos uno.
     };
 
+    // 4. Llamada a la API
     try {
       await crearSolicitud(dto);
       alert("Solicitud realizada correctamente ✅");
       handleHideModal(); // Cierra el modal y resetea el form
     } catch (err) {
       console.error("Error al realizar la solicitud:", err);
-      alert(`Hubo un problema al enviar la solicitud: ${err.message}`);
+      // Intentar obtener un mensaje de error más legible
+      const errorMessage = err.response?.data?.message || err.message || "Error desconocido.";
+      alert(`Hubo un problema al enviar la solicitud: ${errorMessage}`);
     }
   };
 
@@ -122,7 +144,7 @@ function Datos_escritorio() {
       try {
         setIsLoading(true);
         const data = await ElementosService.obtenerElementos();
-        const subCatgFiltro = categoriaFiltro === "computo" ? "Equipo de mesa" : "Equipo de edicion";
+        const subCatgFiltro = categoriaFiltro === "computo" ? "Equipo de mesa" : "Equipo de edición";
         // Filtrar solo los elementos activos y de la subcategoría seleccionada
         const filtrados = data.filter((item) => item.sub_catg === subCatgFiltro);
         const activos = filtrados.filter((item) => item.est_elemn === 1);
@@ -148,10 +170,21 @@ function Datos_escritorio() {
     };
     fetchSubcatInfo();
   }, [categoriaFiltro]);
+  
+  if (isLoading) {
+    return (
+        <div className="main-page-container d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+            <Spinner animation="border" role="status">
+                <span className="visually-hidden">Cargando...</span>
+            </Spinner>
+        </div>
+    );
+  }
 
+  // --- COMIENZO DEL RENDERIZADO ---
   return (
     <div className="main-page-container">
-      {/* Filtro de categoría */}
+
       <div className="mb-3 d-flex justify-content-center">
         <ButtonGroup>
           <ToggleButton
@@ -179,12 +212,7 @@ function Datos_escritorio() {
         </ButtonGroup>
       </div>
 
-      {/* Ficha visual */}
-      {isLoading ? (
-        <p className="text-center">Cargando información...</p>
-      ) : error ? (
-        <p className="text-center text-danger">{error}</p>
-      ) : subcatInfo ? (
+      {subcatInfo ? (
         <Card className="ficha-visual">
           <div className="ficha-header">
             <div className="ficha-titulo">
@@ -239,16 +267,73 @@ function Datos_escritorio() {
           </div>
         </Card>
       ) : (
-        <p className="text-center mt-4">No hay datos disponibles.</p>
+        <p className="text-center mt-4">{error || "No hay datos disponibles."}</p>
       )}
 
       {/* Modal de solicitud */}
       <Modal show={showModal} onHide={handleHideModal} centered>
-        <Modal.Header className="Modal_hea" closeButton >
+        <Modal.Header className="Modal_hea" closeButton>
           <Modal.Title className="Txt_modal_header">Realizar Solicitud</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleFormSubmit}>
+
+            {/* --- DROPDOWN 1: Categoría (basado en el filtro actual) --- */}
+            <Form.Group className="mb-3">
+              <Form.Label>Categoría</Form.Label>
+              <Form.Control as="select" value={categoriaFiltro} disabled>
+                <option value="computo">Computo</option>
+                <option value="multimedia">Multimedia</option>
+              </Form.Control>
+            </Form.Group>
+
+            {/* --- DROPDOWN 2: Elemento específico (Número de ficha) --- */}
+            <Form.Group className="mb-3">
+              <Form.Label>Selecione el equipo</Form.Label>
+              <Form.Control
+                as="select"
+                name="id_elemen"
+                value={form.id_elemen}
+                onChange={handleChange}
+                required
+                // Si la lista está vacía, se deshabilita
+                disabled={equiposDisponibles.length === 0} 
+              >
+                {/* Opcion por defecto (oculta si hay elementos seleccionados automáticamente) */}
+                <option value="">Selecciona el equipo a solicitar</option>
+                
+                {/* 🔑 MODIFICACIÓN CLAVE: Muestra solo el primer equipo */}
+                {equiposDisponibles.length > 0 ? (
+                    <option 
+                        key={equiposDisponibles[0].id_elemen} 
+                        value={equiposDisponibles[0].id_elemen}
+                    >
+                        {equiposDisponibles[0].num_ficha} - {equiposDisponibles[0].sub_catg}
+                    </option>
+                ) : (
+                  <option value="" disabled>
+                    No hay equipos disponibles para esta subcategoría
+                  </option>
+                )}
+              </Form.Control>
+            </Form.Group>
+
+            {/* --- Campo: Cantidad de equipos --- */}
+            <Form.Group className="mb-3">
+                <Form.Label>Cantidad a solicitar (Máx: {equiposDisponibles.length})</Form.Label>
+                <Form.Control
+                    type="number"
+                    name="cantid"
+                    placeholder="Ej: 1"
+                    value={form.cantid}
+                    onChange={handleChange}
+                    min="1"
+                    max={equiposDisponibles.length.toString()}
+                    required
+                />
+            </Form.Group>
+            
+            {/* --- CAMPOS ORIGINALES: FECHA Y HORA DE INICIO --- */}
             <Form.Group className="mb-3">
               <Form.Label>Fecha y Hora de Inicio</Form.Label>
               <div className="row g-2">
@@ -258,8 +343,8 @@ function Datos_escritorio() {
                     name="fecha_ini"
                     value={form.fecha_ini}
                     onChange={handleChange}
-                    min={todayDate} // 🔑 Restricción: Solo hoy
-                    max={todayDate} // 🔑 Restricción: Solo hoy
+                    min={todayDate}
+                    max={todayDate}
                     required
                   />
                 </div>
@@ -269,14 +354,15 @@ function Datos_escritorio() {
                     name="hora_ini"
                     value={form.hora_ini}
                     onChange={handleChange}
-                    min={minHoraInicio} // 🔑 Desde la hora actual
-                    max="23:59" // 🔑 Hasta la medianoche
+                    min={minHoraInicio}
+                    max="23:59"
                     required
                   />
                 </div>
               </div>
             </Form.Group>
 
+            {/* --- CAMPOS ORIGINALES: FECHA Y HORA DE FIN --- */}
             <Form.Group className="mb-3">
               <Form.Label>Fecha y Hora de Fin</Form.Label>
               <div className="row g-2">
@@ -286,8 +372,8 @@ function Datos_escritorio() {
                     name="fecha_fn"
                     value={form.fecha_fn}
                     onChange={handleChange}
-                    min={form.fecha_ini || todayDate} // Debe ser igual a la fecha de inicio (hoy)
-                    max={todayDate} // Restricción: Solo hoy
+                    min={form.fecha_ini || todayDate}
+                    max={todayDate}
                     required
                   />
                 </div>
@@ -297,15 +383,15 @@ function Datos_escritorio() {
                     name="hora_fn"
                     value={form.hora_fn}
                     onChange={handleChange}
-                    // Si la fecha de fin es igual a la de inicio (hoy), la hora de fin debe ser posterior a la de inicio.
-                    min={form.fecha_fn === form.fecha_ini ? form.hora_ini : ""} 
-                    max="23:59" // También limitada a la medianoche.
+                    min={form.fecha_fn === form.fecha_ini ? form.hora_ini : ""}
+                    max="23:59"
                     required
                   />
                 </div>
               </div>
             </Form.Group>
-
+            
+            {/* --- CAMPOS AMBIENTE Y NÚMERO DE FICHA (Ficha del usuario) --- */}
             <Form.Group className="mb-3">
               <div className="row g-2">
                 <div className="col-md-6">
@@ -320,7 +406,7 @@ function Datos_escritorio() {
                   />
                 </div>
                 <div className="col-md-6">
-                  <Form.Label>Número de ficha</Form.Label>
+                  <Form.Label>Número de ficha (Usuario)</Form.Label>
                   <Form.Control
                     type="text"
                     name="num_ficha"
@@ -330,20 +416,9 @@ function Datos_escritorio() {
                     required
                   />
                 </div>
-                <div className="col-md">
-                  <Form.Label>Cantidad de equipos</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="cantidad_equipos"
-                    placeholder="max 3"
-                    value={form.cantid}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
               </div>
             </Form.Group>
-
+            
             <div className="text-center mt-4">
               <Button variant="success" type="submit">
                 Enviar Solicitud
