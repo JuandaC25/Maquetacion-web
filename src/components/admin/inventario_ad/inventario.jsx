@@ -86,16 +86,46 @@ const ListaEquipos = ({ elementos, onVerClick, loading }) => {
   );
 };
 
-const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando }) => {
+const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, onActualizarEstado }) => {
   if (!detalles) return null;
 
   const esAccesorio = detalles.tipo === 'accesorio';
+  const [editMode, setEditMode] = React.useState(false);
+  const [editedEstado, setEditedEstado] = React.useState(() => {
+    const estNum = (detalles && (detalles.est !== undefined ? detalles.est : (detalles.est_elem ?? detalles.est_elemn ?? detalles.estadosoelement ?? 1)));
+    return estNum === 1 ? 'activo' : 'inactivo';
+  });
+
+  React.useEffect(() => {
+    if (detalles) {
+      const estNum = (detalles.est !== undefined ? detalles.est : (detalles.est_elem ?? detalles.est_elemn ?? detalles.estadosoelement ?? 1));
+      setEditedEstado(estNum === 1 ? 'activo' : 'inactivo');
+      setEditMode(false);
+    }
+  }, [detalles]);
+
+  const handleSaveEstado = async () => {
+    try {
+      const payload = { id_elem: detalles.id, est_elem: editedEstado === 'activo' ? 1 : 0 };
+      if (onActualizarEstado) {
+        await onActualizarEstado(detalles.id, payload);
+      } else {
+        await ElementosService.actualizarElemento(detalles.id, payload);
+      }
+      alert('Estado del elemento actualizado');
+      setEditMode(false);
+      onHide();
+    } catch (err) {
+      console.error('Error al actualizar estado:', err);
+      alert('Error al actualizar estado: ' + (err.message || err));
+    }
+  };
 
   return (
     <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog-xd11">
       <Modal.Header closeButton className="modern-modal-header-xd12">
         <Modal.Title className="modern-modal-title-xd13">
-          Detalles del {esAccesorio ? "Accesorio" : "Equipo"}
+          {editMode ? 'Editar Elemento' : `Detalles del ${esAccesorio ? 'Accesorio' : 'Equipo'}`}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="modern-modal-body-xd14">
@@ -155,19 +185,50 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando })
             </div>
           </>
         )}
+        <div className="detail-item-xd115">
+          <label className="detail-label-xd116">Estado:</label>
+          <div className="detail-value-display-xd117">
+            {editMode ? (
+              <Form.Control
+                as="select"
+                value={editedEstado}
+                onChange={(e) => setEditedEstado(e.target.value)}
+                className={`modern-form-control-xd118 ${editedEstado === 'activo' ? 'text-success' : 'text-danger'}`}
+              >
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+              </Form.Control>
+            ) : (
+              <Form.Control
+                type="text"
+                value={(detalles.est !== undefined ? detalles.est : (detalles.est_elem ?? detalles.est_elemn ?? detalles.estadosoelement ?? detalles.est ?? 1)) === 1 ? 'Activo' : 'Inactivo'}
+                readOnly
+                className={`modern-form-control-xd118 ${(detalles.est !== undefined ? detalles.est : (detalles.est_elem ?? detalles.est_elemn ?? detalles.estadosoelement ?? detalles.est ?? 1)) === 1 ? 'text-success' : 'text-danger'}`}
+              />
+            )}
+          </div>
+        </div>
       </Modal.Body>
       <Modal.Footer className="modern-modal-footer-xd19">
-        <Button 
-          variant="danger" 
-          onClick={() => onEliminar(detalles.id, esAccesorio)} 
-          disabled={eliminando}
-          className="modal-action-button-xd20 delete-action-xd21"
-        >
-          {eliminando ? <Spinner animation="border" size="sm" /> : "Eliminar"}
-        </Button>
-        <Button variant="secondary" onClick={onHide} className="modal-action-button-xd20 close-action-xd22">
-          Cerrar
-        </Button>
+        {editMode ? (
+          <>
+            <Button variant="secondary" onClick={() => setEditMode(false)} className="modal-action-button-xd20 cancel-action-xd23">
+              Cancelar
+            </Button>
+            <Button variant="success" onClick={handleSaveEstado} className="modal-action-button-xd20 add-action-xd24">
+              Guardar Cambios
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button variant="primary" onClick={() => setEditMode(true)} className="modal-action-button-xd20">
+              Editar
+            </Button>
+            <Button variant="secondary" onClick={onHide} className="modal-action-button-xd20 close-action-xd22">
+              Cerrar
+            </Button>
+          </>
+        )}
       </Modal.Footer>
     </Modal>
   );
@@ -457,8 +518,9 @@ const Admin = () => {
           id: detallesCompletos.id_elemen,
           nombre: detallesCompletos.nom_eleme,
           marca: detallesCompletos.marc,
-          serie: detallesCompletos.num_seri?.toString() || "",
+          serie: detallesCompletos.num_ser?.toString() || "",
           categoria: detallesCompletos.tip_catg || "Accesorio",
+          est: detallesCompletos.est !== undefined ? detallesCompletos.est : (detallesCompletos.est_elem ?? detallesCompletos.est_elemn ?? detallesCompletos.estadosoelement ?? 1),
           tipo: 'accesorio'
         };
       } else {
@@ -477,6 +539,7 @@ const Admin = () => {
           serie: detallesCompletos.num_seri?.toString() || "",
           observaciones: detallesCompletos.obse,
           componentes: detallesCompletos.componen,
+          est: detallesCompletos.est !== undefined ? detallesCompletos.est : (detallesCompletos.est_elem ?? detallesCompletos.est_elemn ?? detallesCompletos.estadosoelement ?? 1),
           tipo: 'elemento'
         };
       }
@@ -838,6 +901,7 @@ const Admin = () => {
         detalles={equipoSeleccionado} 
         onEliminar={eliminarItem}
         eliminando={eliminando}
+        onActualizarEstado={async (id, payload) => { await ElementosService.actualizarElemento(id, payload); await cargarTodo(); }}
       />
       <Modal show={showUploadModal} onHide={() => { setShowUploadModal(false); setUploadFile(null); setDragActive(false); }} centered dialogClassName="modern-modal-dialog-xd111">
         <Modal.Header closeButton className="modern-modal-header-xd112">

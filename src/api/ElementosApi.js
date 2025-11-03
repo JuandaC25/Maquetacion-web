@@ -83,7 +83,7 @@ class ElementosService {
       return responseData.data || responseData;
       
     } catch (error) {
-      console.error('💥 Error en crearElemento:', error);
+      console.error('Error en crearElemento:', error);
       throw error;
     }
   }
@@ -101,6 +101,41 @@ class ElementosService {
       return true;
     } catch (error) {
       console.error('Error al eliminar elemento:', error);
+      throw error;
+    }
+  }
+
+  async actualizarElemento(id, data) {
+    try {
+      const response = await authorizedFetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      console.log('Respuesta actualización - Status:', response.status);
+
+      if (!response.ok) {
+        let errorData = {};
+        try { errorData = await response.json(); } catch (e) { console.error('No JSON in error response', e); }
+
+        if (response.status === 403) {
+          throw new Error('Acceso denegado. Solo un administrador puede realizar esta acción.');
+        } else if (response.status === 401) {
+          throw new Error('No autorizado. Por favor inicia sesión.');
+        } else if (response.status === 400) {
+          throw new Error(errorData.message || errorData.error || 'Solicitud inválida');
+        } else if (response.status === 500) {
+          throw new Error(errorData.detalle || errorData.error || 'Error interno del servidor');
+        }
+
+        throw new Error(errorData.error || errorData.message || `Error ${response.status}`);
+      }
+
+      const json = await response.json();
+      return json.data || json;
+    } catch (error) {
+      console.error('Error al actualizar elemento:', error);
       throw error;
     }
   }

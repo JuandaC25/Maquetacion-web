@@ -279,6 +279,31 @@
 }
 
 .modern-form-control-xd18::placeholder { color: var(--text-light); font-style: italic; }
+.detail-item-xd115 { margin-bottom: 20px; }
+.detail-value-display-xd117 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.modern-form-control-xd118 {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  height: 40px;
+  min-width: 120px;
+  background-color: var(--white);
+  color: var(--text);
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.modern-form-control-xd118:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 0.12rem rgba(0,123,255,0.12);
+}
 
 .modern-modal-footer-xd19 {
   padding: 20px 30px; background: var(--bg); border-top: 1px solid var(--border);
@@ -292,6 +317,24 @@
   border: 2px solid transparent;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Make the plain "Editar" modal button maintain the green color instead of switching to bootstrap blue.
+   We target the modal-action-button with bootstrap's btn and btn-primary classes for specificity. */
+.modal-action-button-xd20.btn.btn-primary {
+  background-color: var(--green) !important;
+  border-color: var(--green-dark) !important;
+  color: var(--white) !important;
+}
+.modal-action-button-xd20.btn.btn-primary:hover,
+.modal-action-button-xd20.btn.btn-primary:focus,
+.modal-action-button-xd20.btn.btn-primary:active {
+  background-color: var(--green-dark) !important;
+  border-color: var(--green-dark) !important;
+  color: #fff !important;
+  transform: translate(2px, 2px) !important;
+  box-shadow: 2px 2px 0px var(--green-dark) !important;
+  outline: none !important;
 }
 
 .modal-action-button-xd20.delete-action-xd21 {
