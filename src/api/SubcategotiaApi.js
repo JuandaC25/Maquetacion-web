@@ -101,3 +101,25 @@ export const eliminarSubcategoria = async (id) =>{
     }
     return null
 }
+
+export const actualizarEstadoSubcategoria = async (id, estado) => {
+    try {
+        const res = await authorizedFetch(`/api/subcategoria/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ estado }),
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.error || errorData.message || `Error ${res.status} al actualizar estado de la subcategoría`);
+        }
+
+        return await res.json();
+    } catch (error) {
+        if (error.message && (error.message.includes("failed to fetch") || error.message.includes("NetworkError"))) {
+            throw new Error("No se pudo conectar con el servidor");
+        }
+        throw error;
+    }
+}
