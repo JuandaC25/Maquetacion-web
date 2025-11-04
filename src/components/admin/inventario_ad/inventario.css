@@ -565,6 +565,29 @@
 
 .filters-row-xd30 .search-bar-xd34 { max-width: 260px; }
 
+.search-bar-xd34 {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar-xd34 .input-group-text {
+  background-color: var(--white);
+  border-right: none;
+  padding: 10px 15px;
+}
+
+.search-bar-xd34 .form-control {
+  border-left: none;
+  padding: 10px 15px;
+  font-size: 0.95rem;
+}
+
+.search-bar-xd34 .form-control:focus {
+  box-shadow: none;
+  border-color: var(--border);
+}
+
 @media (max-width: 768px) {
   .filters-row-xd30 { flex-wrap: wrap; gap: 8px; }
   .filters-row-xd30 .search-bar-xd34 { max-width: 100%; width: 100%; }

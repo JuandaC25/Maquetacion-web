@@ -430,6 +430,7 @@ const Admin = () => {
   const fileInputRef = useRef(null);
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("Todas las Categorías");
   const [selectedSubcategoryFilter, setSelectedSubcategoryFilter] = useState("Todas las Subcategorías");
+  const [selectedEstadoFilter, setSelectedEstadoFilter] = useState("Todos los Estados");
   const [searchTerm, setSearchTerm] = useState("");
 
   const bottomRef = useRef(null);
@@ -477,16 +478,21 @@ const Admin = () => {
       setCategorias(Array.isArray(cats) ? cats : []);
       setSubcategorias(Array.isArray(subcats) ? subcats : []);
 
-      const elementosNormalizados = elementos.map(el => ({
-        id: el.id_elemen,
-        nombre: el.nom_eleme,
-        categoria: el.tip_catg || "Sin categoría",
-        serie: el.num_seri?.toString() || "",
-        observaciones: el.obse,
-        componentes: el.componen,
-        id_subcateg: el.id_subcateg,
-        tipo: 'elemento'
-      }));
+      const elementosNormalizados = elementos.map(el => {
+        const estado = el.est !== undefined ? el.est : (el.est_elem ?? el.est_elemn ?? el.estadosoelement ?? 1);
+        console.log(`Elemento: ${el.nom_eleme}, Estado recibido:`, el.est, 'Estado final:', estado);
+        return {
+          id: el.id_elemen,
+          nombre: el.nom_eleme,
+          categoria: el.tip_catg || "Sin categoría",
+          serie: el.num_seri?.toString() || "",
+          observaciones: el.obse,
+          componentes: el.componen,
+          id_subcateg: el.id_subcateg,
+          est: estado,
+          tipo: 'elemento'
+        };
+      });
       
       const accesoriosNormalizados = accesorios.map(acc => ({
         id: acc.id_accesorio,
@@ -494,6 +500,7 @@ const Admin = () => {
         marca: acc.marc,
         serie: acc.num_ser?.toString() || "",
         categoria: "Accesorio",
+        est: acc.est !== undefined ? acc.est : (acc.est_elem ?? acc.est_elemn ?? acc.estadosoelement ?? 1),
         tipo: 'accesorio'
       }));
       
@@ -675,6 +682,7 @@ const Admin = () => {
         observaciones: nuevoEquipo.observaciones,
         componentes: nuevoEquipo.componentes,
         id_subcateg: parseInt(nuevoEquipo.id_subcateg),
+        est: 1,
         tipo: 'elemento'
       };
       
@@ -719,6 +727,7 @@ const Admin = () => {
         marca: accesorioCreado.marc,
         serie: accesorioCreado.num_seri?.toString() || "",
         categoria: "Accesorio",
+        est: 1,
         tipo: 'accesorio'
       };
       
@@ -746,6 +755,10 @@ const Admin = () => {
     setSelectedSubcategoryFilter(subcategory);
   };
 
+  const handleEstadoFilter = (estado) => {
+    setSelectedEstadoFilter(estado);
+  };
+
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -769,7 +782,11 @@ const Admin = () => {
                            elemento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            (elemento.marca && elemento.marca.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    return coincideCategoria && coincideSubcategoria && coincideBusqueda;
+    const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
+                          (selectedEstadoFilter === "Activos" && (elemento.est === 1 || elemento.est === true)) ||
+                          (selectedEstadoFilter === "Inactivos" && (elemento.est === 0 || elemento.est === 2 || elemento.est === false || (elemento.est !== 1 && elemento.est !== true)));
+    
+    return coincideCategoria && coincideSubcategoria && coincideBusqueda && coincideEstado;
   });
 
   useEffect(() => {
@@ -789,8 +806,8 @@ const Admin = () => {
       <Alert variant="info" className="inventory-header-bar-xd26">
         <div className="header-bar-content-xd27">
           <div className="header-left-section-xd28">
-            <h1 className="inventory-main-title-xd29">Inventario de Equipos y Accesorios</h1>
-            <div className="filters-row-xd30">
+            <h1 className="inventory-main-title-xd29">Inventario de Elementos</h1>
+            <div className="filters-row-xd30" style={{ marginBottom: '15px' }}>
               <Dropdown className="category-filter-dropdown-xd31">
                 <Dropdown.Toggle 
                   variant="success" 
@@ -844,8 +861,39 @@ const Admin = () => {
                   ))}
                 </Dropdown.Menu>
               </Dropdown>
-              
-              <InputGroup className="search-bar-xd34">
+
+              <Dropdown className="category-filter-dropdown-xd31">
+                <Dropdown.Toggle 
+                  variant="success" 
+                  id="dropdown-estado-xd31"
+                  className="dropdown-toggle-xd146"
+                >
+                  {selectedEstadoFilter} <span className="dropdown-arrow-xd32">▼</span>
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
+                  <Dropdown.Item 
+                    onClick={() => handleEstadoFilter("Todos los Estados")}
+                    className="dropdown-item-xd148"
+                  >
+                    Todos los Estados
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleEstadoFilter("Activos")}
+                    className="dropdown-item-xd148"
+                  >
+                    ✅ Activos
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleEstadoFilter("Inactivos")}
+                    className="dropdown-item-xd148"
+                  >
+                    ❌ Inactivos
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+            <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
+              <InputGroup className="search-bar-xd34" style={{ maxWidth: '600px' }}>
                 <InputGroup.Text>
                   <FaSearch />
                 </InputGroup.Text>

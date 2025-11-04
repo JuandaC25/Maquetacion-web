@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Alert, Modal, Form, Spinner, Tab, Tabs } from 'react-bootstrap';
+import { Button, Alert, Modal, Form, Spinner, Tab, Tabs, Dropdown } from 'react-bootstrap';
 import { FaPlus, FaEdit, FaTrash, FaFilePdf } from 'react-icons/fa';
 import './Categorias.css';
 import Footer from '../../Footer/Footer.jsx';
@@ -36,6 +36,9 @@ const Categorias = () => {
   });
   const [guardandoSubcategoria, setGuardandoSubcategoria] = useState(false);
   const [togglingSubcategoriaId, setTogglingSubcategoriaId] = useState(null);
+  
+  const [filtroEstadoCategoria, setFiltroEstadoCategoria] = useState('Todos los Estados');
+  const [filtroEstadoSubcategoria, setFiltroEstadoSubcategoria] = useState('Todos los Estados');
 
   useEffect(() => {
     cargarDatos();
@@ -200,6 +203,22 @@ const Categorias = () => {
     const categoria = categorias.find(cat => cat.id_cat === idCateg);
     return categoria ? categoria.nom_cat : 'Sin categoría';
   };
+
+  const categoriasFiltradas = categorias.filter(categoria => {
+    if (filtroEstadoCategoria === 'Todos los Estados') return true;
+    const estado = categoria.estado !== undefined ? categoria.estado : 1;
+    if (filtroEstadoCategoria === 'Activos') return estado === 1;
+    if (filtroEstadoCategoria === 'Inactivos') return estado !== 1;
+    return true;
+  });
+
+  const subcategoriasFiltradas = subcategorias.filter(subcategoria => {
+    if (filtroEstadoSubcategoria === 'Todos los Estados') return true;
+    const estado = subcategoria.estado !== undefined ? subcategoria.estado : 1;
+    if (filtroEstadoSubcategoria === 'Activos') return estado === 1;
+    if (filtroEstadoSubcategoria === 'Inactivos') return estado !== 1;
+    return true;
+  });
 
   const generarPDF = () => {
     const fecha = new Date().toLocaleDateString('es-ES', {
@@ -571,7 +590,36 @@ const Categorias = () => {
                   </h2>
                   <p className="section-subtitle-cat17">Gestiona las categorías principales de tu sistema</p>
                 </div>
-                <div style={{ display: 'flex', gap: '10px' }}>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <Dropdown className="category-filter-dropdown-xd31">
+                    <Dropdown.Toggle 
+                      variant="success" 
+                      id="dropdown-estado-categoria"
+                      className="dropdown-toggle-xd146"
+                    >
+                      {filtroEstadoCategoria} <span className="dropdown-arrow-xd32">▼</span>
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
+                      <Dropdown.Item 
+                        onClick={() => setFiltroEstadoCategoria('Todos los Estados')}
+                        className="dropdown-item-xd148"
+                      >
+                        Todos los Estados
+                      </Dropdown.Item>
+                      <Dropdown.Item 
+                        onClick={() => setFiltroEstadoCategoria('Activos')}
+                        className="dropdown-item-xd148"
+                      >
+                        ✅ Activos
+                      </Dropdown.Item>
+                      <Dropdown.Item 
+                        onClick={() => setFiltroEstadoCategoria('Inactivos')}
+                        className="dropdown-item-xd148"
+                      >
+                        ❌ Inactivos
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
                   <Button 
                     className="add-button-cat12" 
                     onClick={generarPDF}
@@ -587,14 +635,14 @@ const Categorias = () => {
               </div>
 
               <div className="cards-grid-cat14">
-                {categorias.length === 0 ? (
+                {categoriasFiltradas.length === 0 ? (
                   <div className="empty-state-cat15">
                     <i className="bi bi-folder-x empty-icon-cat16"></i>
-                    <h5>No hay categorías registradas</h5>
-                    <p>Comienza agregando una nueva categoría</p>
+                    <h5>No hay categorías {filtroEstadoCategoria !== 'Todos los Estados' ? filtroEstadoCategoria.toLowerCase() : 'registradas'}</h5>
+                    <p>{filtroEstadoCategoria !== 'Todos los Estados' ? 'Intenta cambiar el filtro' : 'Comienza agregando una nueva categoría'}</p>
                   </div>
                 ) : (
-                  categorias.map((categoria) => (
+                  categoriasFiltradas.map((categoria) => (
                     <div key={categoria.id_cat} className="category-card-cat17">
                       <div className="card-icon-wrapper-cat18">
                         <div className="card-icon-bg-cat19">
@@ -644,20 +692,51 @@ const Categorias = () => {
                   </h2>
                   <p className="section-subtitle-cat17">Organiza subcategorías dentro de cada categoría</p>
                 </div>
-                <Button className="add-button-cat12" onClick={handleOpenModalSubcategoria}>
-                  <FaPlus /> Nueva Subcategoría
-                </Button>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <Dropdown className="category-filter-dropdown-xd31">
+                    <Dropdown.Toggle 
+                      variant="success" 
+                      id="dropdown-estado-subcategoria"
+                      className="dropdown-toggle-xd146"
+                    >
+                      {filtroEstadoSubcategoria} <span className="dropdown-arrow-xd32">▼</span>
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
+                      <Dropdown.Item 
+                        onClick={() => setFiltroEstadoSubcategoria('Todos los Estados')}
+                        className="dropdown-item-xd148"
+                      >
+                        Todos los Estados
+                      </Dropdown.Item>
+                      <Dropdown.Item 
+                        onClick={() => setFiltroEstadoSubcategoria('Activos')}
+                        className="dropdown-item-xd148"
+                      >
+                        ✅ Activos
+                      </Dropdown.Item>
+                      <Dropdown.Item 
+                        onClick={() => setFiltroEstadoSubcategoria('Inactivos')}
+                        className="dropdown-item-xd148"
+                      >
+                        ❌ Inactivos
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                  <Button className="add-button-cat12" onClick={handleOpenModalSubcategoria}>
+                    <FaPlus /> Nueva Subcategoría
+                  </Button>
+                </div>
               </div>
 
               <div className="cards-grid-cat14">
-                {subcategorias.length === 0 ? (
+                {subcategoriasFiltradas.length === 0 ? (
                   <div className="empty-state-cat15">
                     <i className="bi bi-folder-x empty-icon-cat16"></i>
-                    <h5>No hay subcategorías registradas</h5>
-                    <p>Comienza agregando una nueva subcategoría</p>
+                    <h5>No hay subcategorías {filtroEstadoSubcategoria !== 'Todos los Estados' ? filtroEstadoSubcategoria.toLowerCase() : 'registradas'}</h5>
+                    <p>{filtroEstadoSubcategoria !== 'Todos los Estados' ? 'Intenta cambiar el filtro' : 'Comienza agregando una nueva subcategoría'}</p>
                   </div>
                 ) : (
-                  subcategorias.map((subcategoria) => (
+                  subcategoriasFiltradas.map((subcategoria) => (
                     <div key={subcategoria.id} className="category-card-cat17 subcategory-card-cat27">
                       <div className="card-icon-wrapper-cat18">
                         <div className="card-icon-bg-cat19 subcategory-icon-cat28">
