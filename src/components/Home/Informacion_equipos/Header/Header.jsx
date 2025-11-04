@@ -82,7 +82,7 @@ const [showMenu, setShowMenu] = useState(false);
             </Offcanvas.Body>
           </Offcanvas>
 
-          <h1 className='header-informacion_equipos__title-main'>Solicitud elementos</h1>
+          <h1 className='header-informacion_equipos__title-main'>Reporte de equipos</h1>
 
           <div className='header-informacion_equipos__icons-container'>
             <div className="header-informacion_equipos__buttons-wrapper">
