@@ -1,3 +1,34 @@
+/* Contenedor principal de información de equipos */
+.informacion-equipos-container {
+  min-height: calc(100vh - 200px);
+  padding: 20px;
+}
+
+.informacion-equipos-header {
+  text-align: center;
+  padding: 30px 20px;
+  color: white;
+}
+
+.informacion-titulo {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.informacion-subtitulo {
+  font-size: 1.1rem;
+  opacity: 0.95;
+  margin-bottom: 0;
+}
+
+.formulario-reporte-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 .Acomodamient001 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 0.3fr));   
@@ -66,7 +97,6 @@
   margin-top: 1rem;
 }
 
-/* Campo de observaciones */
 .Text2 {
   margin-top: 2rem;
   margin-left: auto;
@@ -78,7 +108,6 @@
   text-align: start;
 }
 
-/* Botón de confirmar reporte */
 .botoon {
   margin-top: 2rem;
   margin-left: 17rem;
@@ -154,7 +183,7 @@
 }
 
 .card-detalles {
-  position: relative;  /* Necesario para posicionar el .stamp */
+  position: relative; 
 }
 
 .imagen-animada-portt {

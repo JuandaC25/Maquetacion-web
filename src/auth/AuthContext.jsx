@@ -16,6 +16,10 @@ export function AuthProvider({ children }) {
       setUser(null);
       setRoles([]);
       setLoading(false);
+      // Limpiar usuario del localStorage si no hay token
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('usuario');
+      }
       return;
     }
     setLoading(true);
@@ -24,6 +28,12 @@ export function AuthProvider({ children }) {
       if (res.ok) {
         const data = await res.json();
         setUser(data);
+        
+        // Guardar usuario en localStorage para acceso en otros componentes
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('usuario', JSON.stringify(data));
+        }
+        
         const baseRoles = data?.roles || [];
         const forceAdmin = typeof window !== 'undefined' && window.localStorage.getItem('force_admin') === '1';
         const forceTecnico = typeof window !== 'undefined' && window.localStorage.getItem('force_tecnico') === '1';
@@ -41,6 +51,10 @@ export function AuthProvider({ children }) {
       } else {
         setUser(null);
         setRoles([]);
+        // Limpiar localStorage si no hay usuario
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('usuario');
+        }
       }
     } catch (error) {
       console.error('Error cargando usuario:', error);
