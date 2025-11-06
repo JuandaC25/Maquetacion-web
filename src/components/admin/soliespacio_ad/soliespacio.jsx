@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Spinner, Dropdown } from 'react-bootstrap';
+import { Alert, Spinner, Dropdown, Modal, Form, Button } from 'react-bootstrap';
 import './soliespacio.css';
 import Footer from '../../Footer/Footer.jsx';
 import HeaderSoliespacio from '../header_soliespacio/header_soliespacio.jsx';
@@ -11,6 +11,17 @@ const Soliespacio = () => {
   const [error, setError] = useState(null);
   const [selectedEstadoFilter, setSelectedEstadoFilter] = useState("Todos los Estados");
   const [selectedEspacioFilter, setSelectedEspacioFilter] = useState("Todos los Espacios");
+  const [showModal, setShowModal] = useState(false);
+  const [guardando, setGuardando] = useState(false);
+  const [nuevaSolicitud, setNuevaSolicitud] = useState({
+    id_esp: '',
+    id_usu: '',
+    ambient: '',
+    num_fich: '',
+    fecha_ini: '',
+    fecha_fn: '',
+    estadosoli: '1'
+  });
 
   useEffect(() => {
     cargarSolicitudes();
@@ -71,6 +82,44 @@ const Soliespacio = () => {
       });
     } catch (e) {
       return 'Fecha inválida';
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setNuevaSolicitud({
+      id_esp: '',
+      id_usu: '',
+      ambient: '',
+      num_fich: '',
+      fecha_ini: '',
+      fecha_fn: '',
+      estadosoli: '1'
+    });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNuevaSolicitud(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmitSolicitud = async (e) => {
+    e.preventDefault();
+    setGuardando(true);
+    try {
+      // Aquí iría la llamada a la API para crear la solicitud
+      console.log('Crear solicitud:', nuevaSolicitud);
+      alert('Solicitud creada exitosamente');
+      handleCloseModal();
+      cargarSolicitudes();
+    } catch (error) {
+      console.error('Error al crear solicitud:', error);
+      alert('Error al crear la solicitud: ' + error.message);
+    } finally {
+      setGuardando(false);
     }
   };
 
