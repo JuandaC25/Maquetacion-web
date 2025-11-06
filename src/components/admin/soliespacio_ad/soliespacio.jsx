@@ -1,190 +1,347 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Alert, Dropdown, Modal, Form, Pagination } from 'react-bootstrap';
-import { FaUserCircle, FaBars } from 'react-icons/fa';
-import "./soliespacio.css";
+import { Alert, Spinner, Dropdown } from 'react-bootstrap';
+import './soliespacio.css';
 import Footer from '../../Footer/Footer.jsx';
-import HeaderAd from '../header_soliespacio/header_soliespacio.jsx';
-import { obtenersolicitudes } from '../../../api/solicitudesApi'; 
+import HeaderSoliespacio from '../header_soliespacio/header_soliespacio.jsx';
+import { obtenersolicitudes } from '../../../api/solicitudesApi.js';
 
-const Ticketxd = ({ estado, onVerClick, detalles }) => {
-  
-  return (
-    <div className="solicitud-card-container">
-      <div className="solicitud-card">
-        <div className="solicitud-card-border-top">
-        </div>
-        <div className="solicitud-card-content">
-          <span className="solicitud-user-name">{detalles?.usuario || 'Usuario'}</span>
-          <p className="solicitud-space-type">{detalles?.espacio || 'Espacio'}</p>
-          <p className="solicitud-date-info">
-            {detalles?.fecha1 ? new Date(detalles.fecha1).toLocaleDateString() : 'Fecha'}
-          </p>
-          <p className="solicitud-status-info">{detalles?.estado || 'Estado'}</p>
-          <button className="solicitud-view-button" onClick={onVerClick}>Ver</button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Listaxd = ({ onVerClick }) => {
-  const [espacioSeleccionado, setEspacioSeleccionado] = useState('Todos');
-  const [tickets, setTickets] = useState([]);
+const Soliespacio = () => {
+  const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedEstadoFilter, setSelectedEstadoFilter] = useState("Todos los Estados");
+  const [selectedEspacioFilter, setSelectedEspacioFilter] = useState("Todos los Espacios");
 
   useEffect(() => {
-    let mounted = true;
-    setLoading(true);
-    obtenersolicitudes()
-      .then(data => {
-        if (!mounted) return;
-        const arr = Array.isArray(data) ? data : [];
-        const espacios = arr.filter(s => Boolean((s.espacio && s.espacio !== '') || (s.detalles && s.detalles.espacio)));
-        setTickets(espacios);
-      })
-      .catch(err => {
-        console.error('Error al obtener solicitudes:', err);
-        setError(err.message || 'Error al cargar solicitudes');
-      })
-      .finally(() => { if (mounted) setLoading(false); });
-    return () => { mounted = false; };
+    cargarSolicitudes();
   }, []);
 
-  const espacioFiltrado = espacioSeleccionado === 'Todos'
-    ? tickets
-    : tickets.filter(t => ((t.espacio || t.detalles?.espacio) || '').toString().toLowerCase() === espacioSeleccionado.toLowerCase());
+  const cargarSolicitudes = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await obtenersolicitudes();
+      setSolicitudes(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setError('Error al cargar las solicitudes de espacios: ' + err.message);
+      console.error('[ERROR] Error al cargar solicitudes:', err);
+      setSolicitudes([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleSelectEspacio = (espacio) => { setEspacioSeleccionado(espacio); };
+  const handleEstadoFilter = (estado) => {
+    setSelectedEstadoFilter(estado);
+  };
 
-  if (loading) return (<div className="solicitud-lista-tickets">Cargando solicitudes...</div>);
-  if (error) return (<div className="solicitud-lista-tickets">Error: {error}</div>);
+  const handleEspacioFilter = (espacio) => {
+    setSelectedEspacioFilter(espacio);
+  };
+
+  const solicitudesFiltradas = solicitudes.filter(solicitud => {
+    const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
+                          getEstadoBadge(solicitud.estadosoli).text === selectedEstadoFilter;
+    const coincideEspacio = selectedEspacioFilter === "Todos los Espacios" ||
+                           (solicitud.espacio?.nombre || 'N/A') === selectedEspacioFilter;
+    return coincideEstado && coincideEspacio;
+  });
+
+  const getEstadoBadge = (estado) => {
+    const estados = {
+      1: { text: 'PENDIENTE', variant: 'warning' },
+      2: { text: 'APROBADO', variant: 'success' },
+      3: { text: 'RECHAZADO', variant: 'danger' },
+      4: { text: 'EN_USO', variant: 'info' },
+      5: { text: 'FINALIZADO', variant: 'secondary' }
+    };
+    return estados[estado] || { text: 'DESCONOCIDO', variant: 'secondary' };
+  };
+
+
+  const formatFecha = (fecha) => {
+    if (!fecha) return 'N/A';
+    try {
+      return new Date(fecha).toLocaleString('es-ES', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (e) {
+      return 'Fecha inválida';
+    }
+  };
+
   return (
-    <div className="solicitud-lista-tickets">
-      <Alert variant="success" className="solicitud-alert">
-        <div className="d-flex justify-content-between align-items-center">
-          <div className="d-flex align-items-center gap-3">
-            <Dropdown>
-              <Dropdown.Toggle 
-                variant="success" 
-                id="dropdown-basic-espacio"
-                className="dropdown-toggle-xd146"
-              >
-                Espacio
-              </Dropdown.Toggle>
-              <Dropdown.Menu className="dropdown-menu-xd147">
-                <Dropdown.Item onClick={() => handleSelectEspacio('Todos')} className="dropdown-item-xd148">Todos</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleSelectEspacio('canchas')} className="dropdown-item-xd148">Canchas</Dropdown.Item>
-                <Dropdown.Item onClick={() => handleSelectEspacio('auditorio')} className="dropdown-item-xd148">Auditorio</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+    <div className="inventory-app-container-xd25">
+      <HeaderSoliespacio />
+      
+      {error && (
+        <Alert variant="danger" dismissible onClose={() => setError(null)} style={{ margin: '20px' }}>
+          {error}
+        </Alert>
+      )}
+
+      <Alert variant="info" className="inventory-header-bar-xd26">
+        <div className="header-bar-content-xd27">
+          <div className="header-left-section-xd28">
+            <h1 className="inventory-main-title-xd29">Solicitudes de Espacios</h1>
+            
+            <div className="filters-row-xd30" style={{ marginTop: '15px' }}>
+              <Dropdown className="category-filter-dropdown-xd31">
+                <Dropdown.Toggle 
+                  variant="success" 
+                  id="dropdown-espacio"
+                  className="dropdown-toggle-xd146"
+                >
+                  {selectedEspacioFilter} <span className="dropdown-arrow-xd32">▼</span>
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
+                  <Dropdown.Item 
+                    onClick={() => handleEspacioFilter("Todos los Espacios")}
+                    className="dropdown-item-xd148"
+                  >
+                    Todos los Espacios
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleEspacioFilter("Polideportivo")}
+                    className="dropdown-item-xd148"
+                  >
+                    Polideportivo
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleEspacioFilter("Auditorio")}
+                    className="dropdown-item-xd148"
+                  >
+                    Auditorio
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+
+              <Dropdown className="category-filter-dropdown-xd31">
+                <Dropdown.Toggle 
+                  variant="success" 
+                  id="dropdown-estado"
+                  className="dropdown-toggle-xd146"
+                >
+                  {selectedEstadoFilter} <span className="dropdown-arrow-xd32">▼</span>
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
+                  <Dropdown.Item 
+                    onClick={() => handleEstadoFilter("Todos los Estados")}
+                    className="dropdown-item-xd148"
+                  >
+                    Todos los Estados
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleEstadoFilter("PENDIENTE")}
+                    className="dropdown-item-xd148"
+                  >
+                    PENDIENTE
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleEstadoFilter("APROBADO")}
+                    className="dropdown-item-xd148"
+                  >
+                    APROBADO
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleEstadoFilter("RECHAZADO")}
+                    className="dropdown-item-xd148"
+                  >
+                    RECHAZADO
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleEstadoFilter("EN_USO")}
+                    className="dropdown-item-xd148"
+                  >
+                    EN USO
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleEstadoFilter("FINALIZADO")}
+                    className="dropdown-item-xd148"
+                  >
+                    FINALIZADO
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          </div>
+          
+          <div className="header-right-section-xd34">
+            <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.7 }}>
+              Los usuarios crean reservas desde la sección Home → Espacios
+            </p>
           </div>
         </div>
       </Alert>
 
-      {espacioFiltrado.length === 0 ? (
-        <div className="solicitud-empty-placeholder-1713">
-          <div className="solicitud-empty-inner-1714">
-            <p className="solicitud-empty-title">No hay espacios para visualizar</p>
-            <p className="solicitud-empty-text">No se encontraron solicitudes para el filtro seleccionado.</p>
-          </div>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Cargando...</span>
+          </Spinner>
+          <p style={{ marginTop: '20px' }}>Cargando solicitudes...</p>
         </div>
       ) : (
-        <div className="solicitud-tickets-grid">
-          {espacioFiltrado.map((t, i) => {
-          const detalles = t.detalles ? t.detalles : {
-            fecha1: t.fecha1,
-            fecha2: t.fecha2,
-            espacio: t.espacio,
-            usuario: t.usuario,
-            estado: t.estado
-          };
-          const estado = t.estado || detalles.estado || '';
-          return (<Ticketxd key={i} estado={estado} detalles={detalles} onVerClick={() => onVerClick(detalles)} />);
-          })}
+        <div className="equipment-list-grid-xd09">
+          {solicitudesFiltradas.length > 0 ? (
+            solicitudesFiltradas.map((solicitud) => {
+              const estadoInfo = getEstadoBadge(solicitud.estadosoli);
+              return (
+                <div key={solicitud.id} className="modern-equipment-card-xd01">
+                  <div className="card-top-section-xd02">
+                    <span className="equipment-category-xd06" style={{
+                      backgroundColor: estadoInfo.variant === 'warning' ? '#ffc107' :
+                                      estadoInfo.variant === 'success' ? '#28a745' :
+                                      estadoInfo.variant === 'danger' ? '#dc3545' :
+                                      estadoInfo.variant === 'info' ? '#17a2b8' : '#6c757d'
+                    }}>
+                      {estadoInfo.text}
+                    </span>
+                  </div>
+                  <div className="card-bottom-section-xd04">
+                    <h5 className="equipment-title-xd05">
+                      {solicitud.espacio?.nombre || 'Espacio N/A'}
+                    </h5>
+                    <p className="equipment-serie-xd07">
+                      <strong>Usuario:</strong> {solicitud.usuario?.nombre || 'N/A'}
+                    </p>
+                    <p className="equipment-serie-xd07">
+                      <strong>Ambiente:</strong> {solicitud.ambient || 'N/A'}
+                    </p>
+                    <p className="equipment-serie-xd07">
+                      <strong>Ficha:</strong> {solicitud.num_fich || 'N/A'}
+                    </p>
+                    <p className="equipment-serie-xd07">
+                      <strong>Inicio:</strong> {formatFecha(solicitud.fecha_ini)}
+                    </p>
+                    <p className="equipment-serie-xd07">
+                      <strong>Fin:</strong> {formatFecha(solicitud.fecha_fn)}
+                    </p>
+                  </div>
+                  <button className="view-details-button-xd08">
+                    Ver Detalles
+                  </button>
+                </div>
+              );
+            })
+          ) : (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '50px', color: '#666' }}>
+              <p>No hay solicitudes de espacios registradas</p>
+            </div>
+          )}
         </div>
       )}
-    </div>
-  );
-};
 
-const Soliespacio = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [modalDetalles, setModalDetalles] = useState(null);
-
-  const handleVerClick = (detalles) => {
-    setModalDetalles(detalles);
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setModalDetalles(null);
-  };
-
-  return (
-  <div className="page-with-footer-1712">
-      <HeaderAd />
-      <Listaxd onVerClick={handleVerClick} />
-      <div className='solicitud-pagination'>
-        <div className='solicitud-pagination-inner'>
-          <label>
-            <input value="1" name="value-radio" id="value-1" type="radio" defaultChecked />
-            <span>1</span>
-          </label>
-          <label>
-            <input value="2" name="value-radio" id="value-2" type="radio" />
-            <span>2</span>
-          </label>
-          <label>
-            <input value="3" name="value-radio" id="value-3" type="radio"/>
-            <span>3</span>
-          </label>
-          <span className="solicitud-selection"></span>
-        </div>
-      </div>
-      <Modal show={showModal} onHide={handleCloseModal} centered dialogClassName="modern-modal-dialog-1700">
-        <Modal.Header closeButton className="modern-modal-header-1701">
-          <Modal.Title className="modern-modal-title-1702">Detalles de la solicitud</Modal.Title>
+      <Modal show={showModal} onHide={handleCloseModal} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Añadir Nueva Reserva de Espacio</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="modern-modal-body-1703">
-          <div className="detail-item-1704">
-            <label className="detail-label-1705">Fecha y hora de inicio:</label>
-            <div className="detail-value-display-1706">
-              <Form.Control type="text" value={modalDetalles?.fecha1 || ''} readOnly />
+        <Modal.Body>
+          <Form onSubmit={handleSubmitSolicitud}>
+            <Form.Group className="mb-3">
+              <Form.Label>Espacio *</Form.Label>
+              <Form.Select
+                name="id_esp"
+                value={nuevaSolicitud.id_esp}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Seleccione un espacio</option>
+                <option value="1">Polideportivo</option>
+                <option value="2">Auditorio</option>
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>ID del Usuario *</Form.Label>
+              <Form.Control
+                type="number"
+                name="id_usu"
+                value={nuevaSolicitud.id_usu}
+                onChange={handleInputChange}
+                placeholder="Ingrese el ID del usuario"
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Ambiente *</Form.Label>
+              <Form.Control
+                type="text"
+                name="ambient"
+                value={nuevaSolicitud.ambient}
+                onChange={handleInputChange}
+                placeholder="Ej: Ambiente301"
+                maxLength={30}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Número de Ficha *</Form.Label>
+              <Form.Control
+                type="text"
+                name="num_fich"
+                value={nuevaSolicitud.num_fich}
+                onChange={handleInputChange}
+                placeholder="Ej: 2560014"
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Fecha y Hora de Inicio *</Form.Label>
+              <Form.Control
+                type="datetime-local"
+                name="fecha_ini"
+                value={nuevaSolicitud.fecha_ini}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Fecha y Hora de Fin *</Form.Label>
+              <Form.Control
+                type="datetime-local"
+                name="fecha_fn"
+                value={nuevaSolicitud.fecha_fn}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Estado</Form.Label>
+              <Form.Select
+                name="estadosoli"
+                value={nuevaSolicitud.estadosoli}
+                onChange={handleInputChange}
+              >
+                <option value="1">PENDIENTE</option>
+                <option value="2">APROBADO</option>
+                <option value="3">RECHAZADO</option>
+                <option value="4">EN USO</option>
+                <option value="5">FINALIZADO</option>
+              </Form.Select>
+            </Form.Group>
+
+            <div className="d-flex justify-content-end gap-2">
+              <Button variant="secondary" onClick={handleCloseModal}>
+                Cancelar
+              </Button>
+              <Button variant="success" type="submit" disabled={guardando}>
+                {guardando ? 'Guardando...' : 'Guardar Reserva'}
+              </Button>
             </div>
-          </div>
-          <div className="detail-item-1704">
-            <label className="detail-label-1705">Fecha y hora de fin:</label>
-            <div className="detail-value-display-1706">
-              <Form.Control type="text" value={modalDetalles?.fecha2 || ''} readOnly />
-            </div>
-          </div>
-          <div className="detail-item-1704">
-            <label className="detail-label-1705">Espacio:</label>
-            <div className="detail-value-display-1706">
-              <Form.Control type="text" value={modalDetalles?.espacio || ''} readOnly />
-            </div>
-          </div>
-          <div className="detail-item-1704">
-            <label className="detail-label-1705">Nombre del Usuario:</label>
-            <div className="detail-value-display-1706">
-              <Form.Control type="text" value={modalDetalles?.usuario || ''} readOnly />
-            </div>
-          </div>
-          <div className="detail-item-1704">
-            <label className="detail-label-1705">Estado:</label>
-            <div className="detail-value-display-1706">
-              <Form.Control type="text" value={modalDetalles?.estado || ''} readOnly />
-            </div>
-          </div>
+          </Form>
         </Modal.Body>
-        <Modal.Footer className="modern-modal-footer-1707">
-          <Button variant="secondary" onClick={handleCloseModal} className="modal-action-button-1708 cancel-action-1709">
-            Cerrar
-          </Button>
-        </Modal.Footer>
       </Modal>
+
       <Footer />
     </div>
   );

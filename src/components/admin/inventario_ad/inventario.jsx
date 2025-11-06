@@ -95,29 +95,38 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
     const estNum = (detalles && (detalles.est !== undefined ? detalles.est : (detalles.est_elem ?? detalles.est_elemn ?? detalles.estadosoelement ?? 1)));
     return estNum === 1 ? 'activo' : 'inactivo';
   });
+  const [editedObservaciones, setEditedObservaciones] = React.useState("");
+  const [editedComponentes, setEditedComponentes] = React.useState("");
 
   React.useEffect(() => {
     if (detalles) {
       const estNum = (detalles.est !== undefined ? detalles.est : (detalles.est_elem ?? detalles.est_elemn ?? detalles.estadosoelement ?? 1));
       setEditedEstado(estNum === 1 ? 'activo' : 'inactivo');
+      setEditedObservaciones(detalles.observaciones || "");
+      setEditedComponentes(detalles.componentes || "");
       setEditMode(false);
     }
   }, [detalles]);
 
   const handleSaveEstado = async () => {
     try {
-  const payload = { id_elem: detalles.id, est: editedEstado === 'activo' ? 1 : 0 };
+      const payload = {
+        id_elem: detalles.id,
+        est: editedEstado === 'activo' ? 1 : 0,
+        obser: editedObservaciones,
+        componentes: editedComponentes
+      };
       if (onActualizarEstado) {
         await onActualizarEstado(detalles.id, payload);
       } else {
         await ElementosService.actualizarElemento(detalles.id, payload);
       }
-      alert('Estado del elemento actualizado');
+      alert('Elemento actualizado');
       setEditMode(false);
       onHide();
     } catch (err) {
-      console.error('Error al actualizar estado:', err);
-      alert('Error al actualizar estado: ' + (err.message || err));
+      console.error('Error al actualizar elemento:', err);
+      alert('Error al actualizar elemento: ' + (err.message || err));
     }
   };
 
@@ -174,13 +183,21 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
             <div className="detail-item-xd15">
               <label className="detail-label-xd16">Observaciones:</label>
               <div className="detail-value-display-xd17">
-                <Form.Control as="textarea" rows={3} value={detalles.observaciones || "N/A"} readOnly className="modern-form-control-xd18" />
+                {editMode ? (
+                  <Form.Control as="textarea" rows={3} value={editedObservaciones} onChange={e => setEditedObservaciones(e.target.value)} className="modern-form-control-xd18" />
+                ) : (
+                  <Form.Control as="textarea" rows={3} value={detalles.observaciones || "N/A"} readOnly className="modern-form-control-xd18" />
+                )}
               </div>
             </div>
             <div className="detail-item-xd15">
               <label className="detail-label-xd16">Componentes:</label>
               <div className="detail-value-display-xd17">
-                <Form.Control as="textarea" rows={3} value={detalles.componentes || "N/A"} readOnly className="modern-form-control-xd18" />
+                {editMode ? (
+                  <Form.Control as="textarea" rows={3} value={editedComponentes} onChange={e => setEditedComponentes(e.target.value)} className="modern-form-control-xd18" />
+                ) : (
+                  <Form.Control as="textarea" rows={3} value={detalles.componentes || "N/A"} readOnly className="modern-form-control-xd18" />
+                )}
               </div>
             </div>
           </>

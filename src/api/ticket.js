@@ -1,60 +1,126 @@
-import { getJson, authorizedFetch } from './http';
+import { authorizedFetch } from './http';
 
-export const obtenerticketsActivos = async () => {
-  try{
-    return await getJson(`/api/tickets/activos`);
-  }catch(error){
-    if(error.message?.toLowerCase().includes("failed to fetch") || error.message?.includes("NetworkError")){
-      throw new Error("No se pudo conectar con el servidor");
-    }
-    throw error;
-  }
-};
-export const obtenertickets = async () => {
-  try{
-    return await getJson(`/api/tickets`);
-  }catch(error){
-    if(error.message?.toLowerCase().includes("failed to fetch") || error.message?.includes("NetworkError")){
-      throw new Error("No se pudo conectar con el servidor");
-    }
-    throw error;
-  }
-};
-export const crearTicket = async (data) => {
+const API_URL = '/api/tickets';
+
+/**
+ * Crea un nuevo ticket de reporte de equipo
+ * @param {Object} ticketData - Datos del ticket
+ * @param {number} ticketData.id_elem - ID del elemento
+ * @param {number} ticketData.id_problem - ID del problema
+ * @param {string} ticketData.ambient - Ambiente/ubicación
+ * @param {string} ticketData.obser - Observaciones
+ * @param {number} ticketData.id_usu - ID del usuario
+ * @param {string} ticketData.fecha_in - Fecha de inicio en formato ISO
+ * @returns {Promise<Object>} Ticket creado
+ */
+export const crearTicket = async (ticketData) => {
   try {
-    const res = await authorizedFetch(`/api/tickets`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+    console.log("[TICKET] Creando ticket:", ticketData);
+    const res = await authorizedFetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify(ticketData),
     });
 
     if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`Error al crear el ticket: ${text}`);
+      const errorText = await res.text();
+      console.error("[TICKET] Error response:", errorText);
+      throw new Error(`Error al crear ticket: ${res.status}`);
     }
-    return await res.json();
+
+    const data = await res.json();
+    console.log("[TICKET] Ticket creado exitosamente:", data);
+    return data;
   } catch (error) {
-    console.error("❌ Error en crearTicket:", error);
+    console.error("[TICKET] Error al crear ticket:", error);
     throw error;
   }
 };
 
-export const obtenerTicketsPorid = async (id) =>{
-  const res = await authorizedFetch(`/api/tickets/${id}`,{
-    method:"GET",
-  });
-  if(!res.ok) throw new Error("Ticket no encontrado");
-  return res.json();
-}
+/**
+ * Obtiene todos los tickets
+ * @returns {Promise<Array>} Lista de tickets
+ */
+export const obtenerTickets = async () => {
+  try {
+    const res = await authorizedFetch(API_URL, {
+      method: 'GET',
+    });
 
+    if (!res.ok) {
+      throw new Error(`Error al obtener tickets: ${res.status}`);
+    }
 
-export const eliminarTickets = async (id) =>{
-  const res = await authorizedFetch(`/api/tickets/${id}`,{
-    method: "DELETE",
-  });
-  if(res.status !== 204) {
-    return res.json();
+    return await res.json();
+  } catch (error) {
+    console.error("[TICKET] Error al obtener tickets:", error);
+    throw error;
   }
+};
 
-  return null
-}
+/**
+ * Obtiene un ticket por ID
+ * @param {number} id - ID del ticket
+ * @returns {Promise<Object>} Ticket encontrado
+ */
+export const obtenerTicketPorId = async (id) => {
+  try {
+    const res = await authorizedFetch(`${API_URL}/${id}`, {
+      method: 'GET',
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error al obtener ticket: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("[TICKET] Error al obtener ticket por ID:", error);
+    throw error;
+  }
+};
+
+/**
+ * Actualiza un ticket
+ * @param {number} id - ID del ticket
+ * @param {Object} ticketData - Datos actualizados del ticket
+ * @returns {Promise<Object>} Ticket actualizado
+ */
+export const actualizarTicket = async (id, ticketData) => {
+  try {
+    const res = await authorizedFetch(`${API_URL}/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(ticketData),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error al actualizar ticket: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("[TICKET] Error al actualizar ticket:", error);
+    throw error;
+  }
+};
+
+/**
+ * Elimina un ticket
+ * @param {number} id - ID del ticket
+ * @returns {Promise<void>}
+ */
+export const eliminarTicket = async (id) => {
+  try {
+    const res = await authorizedFetch(`${API_URL}/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (res.status !== 204 && !res.ok) {
+      throw new Error(`Error al eliminar ticket: ${res.status}`);
+    }
+
+    return null;
+  } catch (error) {
+    console.error("[TICKET] Error al eliminar ticket:", error);
+    throw error;
+  }
+};
