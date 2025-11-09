@@ -19,14 +19,22 @@ const Soliespacio = () => {
     num_fich: '',
     fecha_ini: '',
     fecha_fn: '',
-    estadosoli: 1
+    estadosoli: 1,
+    ids_elem: ''
   });
   const [guardando, setGuardando] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [updatingIds, setUpdatingIds] = useState(new Set());
 
-  const handleOpenModal = () => setShowModal(true);
+  const handleOpenModal = () => {
+    setEditingId(null);
+    setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1, ids_elem: '' });
+    setShowModal(true);
+  };
   const handleCloseModal = () => {
     setShowModal(false);
-    setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1 });
+    setEditingId(null);
+    setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1, ids_elem: '' });
   };
 
   const handleInputChange = (e) => {
@@ -50,19 +58,45 @@ const Soliespacio = () => {
         }
       };
 
-      const dto = {
-        fecha_ini: toIsoLocalNoTZ(nuevaSolicitud.fecha_ini),
-        fecha_fn: toIsoLocalNoTZ(nuevaSolicitud.fecha_fn),
-        ambient: nuevaSolicitud.ambient,
-        estadosoli: Number(nuevaSolicitud.estadosoli),
-        id_usu: Number(nuevaSolicitud.id_usu) || null,
-        num_fich: nuevaSolicitud.num_fich,
-        id_esp: Number(nuevaSolicitud.id_esp) || null
-      };
-      const creado = await crearSolicitud(dto);
-      const nuevaData = creado?.data || creado;
-      setSolicitudes(prev => [nuevaData, ...prev]);
-      handleCloseModal();
+      if (editingId) {
+        const payload = {};
+        if (nuevaSolicitud.estadosoli != null) payload.id_est_soli = Number(nuevaSolicitud.estadosoli);
+        if (payload.id_est_soli != null && !AVAILABLE_ESTADOS.some(x => x.id === payload.id_est_soli)) {
+          setError('Estado seleccionado no existe en la base de datos. Valores permitidos: ' + AVAILABLE_ESTADOS.map(x => x.id + ':' + x.label).join(', '));
+          setGuardando(false);
+          return;
+        }
+        if (nuevaSolicitud.fecha_ini) payload.fecha_ini = toIsoLocalNoTZ(nuevaSolicitud.fecha_ini);
+        if (nuevaSolicitud.fecha_fn) payload.fecha_fn = toIsoLocalNoTZ(nuevaSolicitud.fecha_fn);
+        if (nuevaSolicitud.ambient != null) payload.ambient = nuevaSolicitud.ambient;
+        if (nuevaSolicitud.num_fich != null) payload.num_fich = nuevaSolicitud.num_fich;
+        if (nuevaSolicitud.id_esp != null && nuevaSolicitud.id_esp !== '') payload.id_esp = Number(nuevaSolicitud.id_esp);
+        if (nuevaSolicitud.id_usu != null && nuevaSolicitud.id_usu !== '') payload.id_usu = Number(nuevaSolicitud.id_usu);
+        if (nuevaSolicitud.ids_elem) {
+          const parsed = nuevaSolicitud.ids_elem.split(',').map(s => s.trim()).filter(Boolean).map(s => Number(s));
+          payload.ids_elem = parsed;
+        }
+  console.log('[DEBUG] PUT payload (editar):', payload, 'editingId=', editingId);
+  const resp = await actualizarSolicitud(editingId, payload);
+        const actualizado = resp?.data || resp;
+        setSolicitudes(prev => prev.map(s => ((s.id_soli === editingId || s.id === editingId) ? actualizado : s)));
+        setEditingId(null);
+        handleCloseModal();
+      } else {
+        const dto = {
+          fecha_ini: toIsoLocalNoTZ(nuevaSolicitud.fecha_ini),
+          fecha_fn: toIsoLocalNoTZ(nuevaSolicitud.fecha_fn),
+          ambient: nuevaSolicitud.ambient,
+          estadosoli: Number(nuevaSolicitud.estadosoli),
+          id_usu: Number(nuevaSolicitud.id_usu) || null,
+          num_fich: nuevaSolicitud.num_fich,
+          id_esp: Number(nuevaSolicitud.id_esp) || null
+        };
+        const creado = await crearSolicitud(dto);
+        const nuevaData = creado?.data || creado;
+        setSolicitudes(prev => [nuevaData, ...prev]);
+        handleCloseModal();
+      }
     } catch (err) {
       console.error(err);
       setError('Error al guardar la solicitud: ' + (err?.message || err));
@@ -132,6 +166,14 @@ const Soliespacio = () => {
     return mapText[texto] || { text: texto, variant: 'secondary' };
   };
 
+  const AVAILABLE_ESTADOS = [
+    { id: 1, label: 'PENDIENTE' },
+    { id: 2, label: 'APROBADO' },
+    { id: 3, label: 'RECHAZADO' },
+    { id: 4, label: 'EN USO' },
+    { id: 5, label: 'FINALIZADO' }
+  ];
+
 
   const formatFecha = (fecha) => {
     if (!fecha) return 'N/A';
@@ -148,6 +190,15 @@ const Soliespacio = () => {
     }
   };
 
+  const getImageForSpace = (nomEspa) => {
+    if (!nomEspa) return '/imagenes/imagenes_espacios/espacio1.jpeg';
+    const key = nomEspa.toString().toLowerCase();
+    if (key.includes('polideportivo')) return '/imagenes/Polideportivo.jpg';
+    if (key.includes('auditorio')) return '/imagenes/imagenes_espacios/Auditorio1.jpeg';
+    if (key.includes('espacio1') || key.includes('espacio')) return '/imagenes/imagenes_espacios/espacio1.jpeg';
+    return '/imagenes/imagenes_espacios/espacio1.jpeg';
+  };
+
   const handleEliminar = async (id) => {
     if (!window.confirm('¿Eliminar esta solicitud?')) return;
     try {
@@ -159,18 +210,63 @@ const Soliespacio = () => {
     }
   };
 
+  const handleEditar = (solicitud) => {
+    const id = solicitud.id_soli || solicitud.id;
+    setEditingId(id);
+    const toInputLocal = (fecha) => {
+      if (!fecha) return '';
+      try {
+        const d = new Date(fecha);
+        if (isNaN(d.getTime())) return '';
+        const pad = (n) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      } catch {
+        return '';
+      }
+    };
+    setNuevaSolicitud({
+      id_esp: solicitud.id_espa ?? solicitud.id_esp ?? '',
+      id_usu: solicitud.id_usu ?? '',
+      ambient: solicitud.ambient ?? '',
+      num_fich: solicitud.num_fich ?? '',
+      fecha_ini: toInputLocal(solicitud.fecha_ini),
+      fecha_fn: toInputLocal(solicitud.fecha_fn),
+      estadosoli: solicitud.estadosoli ?? (solicitud.est_soli ? (
+        solicitud.est_soli.toUpperCase() === 'PENDIENTE' ? 1 :
+        solicitud.est_soli.toUpperCase() === 'APROBADO' ? 2 :
+        solicitud.est_soli.toUpperCase() === 'RECHAZADO' ? 3 :
+        solicitud.est_soli.toUpperCase() === 'EN USO' ? 4 :
+        solicitud.est_soli.toUpperCase() === 'FINALIZADO' ? 5 :
+        ''
+      ) : 1),
+      ids_elem: solicitud.id_elem || ''
+    });
+    setShowModal(true);
+  };
+
   const handleCambiarEstado = async (id, nuevoEstado) => {
+    const numericEstado = Number(nuevoEstado);
+    if (!AVAILABLE_ESTADOS.some(x => x.id === numericEstado)) {
+      setError('No es posible cambiar al estado seleccionado: id no existe en la base de datos. Valores permitidos: ' + AVAILABLE_ESTADOS.map(x => x.id + ':' + x.label).join(', '));
+      return;
+    }
+    const sid = id;
     try {
-      setLoading(true);
-      const payload = { id_est_soli: Number(nuevoEstado) };
+      setUpdatingIds(prev => new Set(prev).add(sid));
+      const payload = { id_est_soli: numericEstado };
+      console.log('[DEBUG] PUT payload (cambiar estado):', payload, 'id=', id);
       const resp = await actualizarSolicitud(id, payload);
       const actualizada = resp?.data || resp;
-      setSolicitudes(prev => prev.map(s => (s.id_soli === id || s.id === id ? actualizada : s)));
+      setSolicitudes(prev => prev.map(s => (s.id_soli === sid || s.id === sid ? actualizada : s)));
     } catch (err) {
       console.error('Error actualizando estado:', err);
       setError('Error al actualizar estado: ' + (err?.message || err));
     } finally {
-      setLoading(false);
+      setUpdatingIds(prev => {
+        const copy = new Set(prev);
+        copy.delete(sid);
+        return copy;
+      });
     }
   };
 
@@ -308,15 +404,59 @@ const Soliespacio = () => {
               );
               return (
                 <div key={solicitud.id_soli || solicitud.id} className="modern-equipment-card-xd01">
-                  <div className="card-top-section-xd02">
+                  <div className="card-top-section-xd02" style={{ position: 'relative', padding: 0 }}>
+                    <img
+                      src={getImageForSpace(solicitud.nom_espa)}
+                      alt={solicitud.nom_espa || 'Espacio'}
+                      style={{ width: '100%', height: '160px', objectFit: 'cover', display: 'block', borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }}
+                    />
                     <span className="equipment-category-xd06" style={{
+                      position: 'absolute',
+                      top: 10,
+                      left: 10,
                       backgroundColor: estadoInfo.variant === 'warning' ? '#ffc107' :
                                       estadoInfo.variant === 'success' ? '#28a745' :
                                       estadoInfo.variant === 'danger' ? '#dc3545' :
-                                      estadoInfo.variant === 'info' ? '#17a2b8' : '#6c757d'
+                                      estadoInfo.variant === 'info' ? '#17a2b8' : '#6c757d',
+                      color: '#fff',
+                      padding: '6px 10px',
+                      borderRadius: 6,
+                      fontWeight: 700
                     }}>
                       {estadoInfo.text}
                     </span>
+                    <div style={{ position: 'absolute', top: 10, right: 10, display: 'flex', gap: '8px', zIndex: 5 }}>
+                      {estadoNum !== 2 && (() => {
+                        const sid = solicitud.id_soli || solicitud.id;
+                        const isUpdating = updatingIds.has(sid);
+                        return (
+                          <button
+                            key={"aprob-top-" + sid}
+                            className="card-top-action"
+                            onClick={() => handleCambiarEstado(sid, 2)}
+                            disabled={isUpdating}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 8px', fontSize: '0.85rem' }}
+                          >
+                            {isUpdating ? <Spinner animation="border" size="sm" /> : 'Aprobar'}
+                          </button>
+                        );
+                      })()}
+                      {estadoNum !== 3 && (() => {
+                        const sid = solicitud.id_soli || solicitud.id;
+                        const isUpdating = updatingIds.has(sid);
+                        return (
+                          <button
+                            key={"rech-top-" + sid}
+                            className="card-top-action card-top-action--danger"
+                            onClick={() => handleCambiarEstado(sid, 3)}
+                            disabled={isUpdating}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 8px', fontSize: '0.85rem' }}
+                          >
+                            {isUpdating ? <Spinner animation="border" size="sm" /> : 'Rechazar'}
+                          </button>
+                        );
+                      })()}
+                    </div>
                   </div>
                   <div className="card-bottom-section-xd04">
                     <h5 className="equipment-title-xd05">
@@ -347,18 +487,8 @@ const Soliespacio = () => {
                     Ver Detalles
                   </button>
                   <div style={{ display: 'flex', gap: '8px', marginTop: '12px', justifyContent: 'center' }}>
-                    {estadoNum !== 2 && (
-                      <button className="view-details-button-xd08" onClick={() => handleCambiarEstado(solicitud.id_soli || solicitud.id, 2)}>
-                        Aprobar
-                      </button>
-                    )}
-                    {estadoNum !== 3 && (
-                      <button className="view-details-button-xd08" onClick={() => handleCambiarEstado(solicitud.id_soli || solicitud.id, 3)}>
-                        Rechazar
-                      </button>
-                    )}
-                    <button className="view-details-button-xd08" onClick={() => handleEliminar(solicitud.id_soli || solicitud.id)}>
-                      Eliminar
+                    <button className="view-details-button-xd08" onClick={() => handleEditar(solicitud)}>
+                      Editar
                     </button>
                   </div>
                 </div>
@@ -374,7 +504,7 @@ const Soliespacio = () => {
 
       <Modal show={showModal} onHide={handleCloseModal} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Añadir Nueva Reserva de Espacio</Modal.Title>
+          <Modal.Title>{editingId ? 'Editar Reserva de Espacio' : 'Añadir Nueva Reserva de Espacio'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmitSolicitud}>
@@ -430,6 +560,17 @@ const Soliespacio = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
+              <Form.Label>IDs de elementos (separados por coma)</Form.Label>
+              <Form.Control
+                type="text"
+                name="ids_elem"
+                value={nuevaSolicitud.ids_elem}
+                onChange={handleInputChange}
+                placeholder="Ej: 12,34,56"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
               <Form.Label>Fecha y Hora de Inicio *</Form.Label>
               <Form.Control
                 type="datetime-local"
@@ -458,11 +599,9 @@ const Soliespacio = () => {
                 value={nuevaSolicitud.estadosoli}
                 onChange={handleInputChange}
               >
-                <option value="1">PENDIENTE</option>
-                <option value="2">APROBADO</option>
-                <option value="3">RECHAZADO</option>
-                <option value="4">EN USO</option>
-                <option value="5">FINALIZADO</option>
+                {AVAILABLE_ESTADOS.map(e => (
+                  <option key={e.id} value={e.id}>{e.label}</option>
+                ))}
               </Form.Select>
             </Form.Group>
 
@@ -471,7 +610,7 @@ const Soliespacio = () => {
                 Cancelar
               </Button>
               <Button variant="success" type="submit" disabled={guardando}>
-                {guardando ? 'Guardando...' : 'Guardar Reserva'}
+                {guardando ? 'Guardando...' : (editingId ? 'Actualizar Reserva' : 'Guardar Reserva')}
               </Button>
             </div>
           </Form>
