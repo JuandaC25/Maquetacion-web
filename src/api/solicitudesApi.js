@@ -62,3 +62,7 @@ export const actualizarSolicitud = async (id, data) => {
     const text = await res.text();
     try { return text ? JSON.parse(text) : {}; } catch { return text; }
 };
+
+export const actualizarEstadoSolicitud = async (id, estado) => {
+    return await actualizarSolicitud(id, { estado: estado });
+};

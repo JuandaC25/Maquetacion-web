@@ -547,3 +547,44 @@ background-color: #ffffff00;
   margin: 0;
   color: #556670;
 }
+
+.solicitud-action-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.solicitud-toggle-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+.solicitud-toggle-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+.solicitud-toggle-btn.will-activate { background: var(--green); }
+.solicitud-toggle-btn.will-inactivate { background: #dc3545; }
+
+.solicitud-toggle-btn { min-width: 160px; color: #fff; }
+
+@media (max-width: 576px) {
+  .solicitud-action-group { flex-direction: column-reverse; align-items: stretch; }
+  .solicitud-active-badge { align-self: flex-end; }
+}
+
+
+.modal .modal-content { border-radius: 10px; overflow: hidden; }
+.modal .modal-header { background: linear-gradient(90deg,#28a745,#218838); color: #fff; }
+.modal .modal-footer .btn { min-width: 120px; }
+
+.modern-equipment-card-xd01 {
+  padding-bottom: 14px;
+}
+
+@media (max-width: 576px) {
+  .modern-equipment-card-xd01 { padding-bottom: 18px; }
+}

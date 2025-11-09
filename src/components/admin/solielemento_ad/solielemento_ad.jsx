@@ -40,7 +40,13 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
             </div>
           </div>
         </div>
-        <button className="request-1612" type="button" onClick={onVerClick}>
+        <button
+          className="request-1612"
+          type="button"
+          onClick={onVerClick}
+          aria-label="Ver solicitud"
+          title="Ver detalles de la solicitud"
+        >
           Ver
         </button>
       </div>
