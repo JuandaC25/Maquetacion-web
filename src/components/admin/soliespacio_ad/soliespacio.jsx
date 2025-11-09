@@ -38,20 +38,21 @@ const Soliespacio = () => {
     e.preventDefault();
     try {
       setGuardando(true);
-      const toIso = (v) => {
+      const toIsoLocalNoTZ = (v) => {
         if (!v) return null;
         try {
           const d = new Date(v);
-          if (isNaN(d.getTime())) return v; 
-          return d.toISOString();
+          if (isNaN(d.getTime())) return v;
+          const pad = (n) => String(n).padStart(2, '0');
+          return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
         } catch {
           return v;
         }
       };
 
       const dto = {
-        fecha_ini: toIso(nuevaSolicitud.fecha_ini),
-        fecha_fn: toIso(nuevaSolicitud.fecha_fn),
+        fecha_ini: toIsoLocalNoTZ(nuevaSolicitud.fecha_ini),
+        fecha_fn: toIsoLocalNoTZ(nuevaSolicitud.fecha_fn),
         ambient: nuevaSolicitud.ambient,
         estadosoli: Number(nuevaSolicitud.estadosoli),
         id_usu: Number(nuevaSolicitud.id_usu) || null,
@@ -99,22 +100,36 @@ const Soliespacio = () => {
   };
 
   const solicitudesFiltradas = solicitudes.filter(solicitud => {
-    const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
-                          getEstadoBadge(solicitud.estadosoli).text === selectedEstadoFilter;
-    const coincideEspacio = selectedEspacioFilter === "Todos los Espacios" ||
-                           (solicitud.espacio?.nombre || 'N/A') === selectedEspacioFilter;
+  const estadoTxt = (solicitud.est_soli || (solicitud.estadosoli != null ? String(solicitud.estadosoli) : 'DESCONOCIDO')).toString();
+  const coincideEstado = selectedEstadoFilter === "Todos los Estados" || estadoTxt.toUpperCase() === String(selectedEstadoFilter).toUpperCase();
+  const coincideEspacio = selectedEspacioFilter === "Todos los Espacios" || ( (solicitud.nom_espa || 'N/A').toString().toUpperCase() === String(selectedEspacioFilter).toUpperCase() );
     return coincideEstado && coincideEspacio;
   });
 
   const getEstadoBadge = (estado) => {
-    const estados = {
-      1: { text: 'PENDIENTE', variant: 'warning' },
-      2: { text: 'APROBADO', variant: 'success' },
-      3: { text: 'RECHAZADO', variant: 'danger' },
-    4: { text: 'EN USO', variant: 'info' },
-      5: { text: 'FINALIZADO', variant: 'secondary' }
+    if (estado == null) return { text: 'DESCONOCIDO', variant: 'secondary' };
+    const asNumber = Number(estado);
+    if (!isNaN(asNumber)) {
+      const estadosNum = {
+        1: { text: 'PENDIENTE', variant: 'warning' },
+        2: { text: 'APROBADO', variant: 'success' },
+        3: { text: 'RECHAZADO', variant: 'danger' },
+        4: { text: 'EN USO', variant: 'info' },
+        5: { text: 'FINALIZADO', variant: 'secondary' }
+      };
+      return estadosNum[asNumber] || { text: String(estado).toUpperCase(), variant: 'secondary' };
+    }
+    const texto = String(estado).toUpperCase();
+    const mapText = {
+      'PENDIENTE': { text: 'PENDIENTE', variant: 'warning' },
+      'APROBADO': { text: 'APROBADO', variant: 'success' },
+      'RECHAZADO': { text: 'RECHAZADO', variant: 'danger' },
+      'EN USO': { text: 'EN USO', variant: 'info' },
+      'FINALIZADO': { text: 'FINALIZADO', variant: 'secondary' },
+      'ACTIVO': { text: 'ACTIVO', variant: 'success' },
+      'INACTIVO': { text: 'INACTIVO', variant: 'secondary' }
     };
-    return estados[estado] || { text: 'DESCONOCIDO', variant: 'secondary' };
+    return mapText[texto] || { text: texto, variant: 'secondary' };
   };
 
 
@@ -137,7 +152,7 @@ const Soliespacio = () => {
     if (!window.confirm('¿Eliminar esta solicitud?')) return;
     try {
       await eliminarSolicitud(id);
-      setSolicitudes(prev => prev.filter(s => s.id !== id));
+      setSolicitudes(prev => prev.filter(s => (s.id_soli || s.id) !== id));
     } catch (err) {
       console.error('Error eliminando:', err);
       setError('Error al eliminar la solicitud: ' + (err?.message || err));
@@ -147,10 +162,10 @@ const Soliespacio = () => {
   const handleCambiarEstado = async (id, nuevoEstado) => {
     try {
       setLoading(true);
-      const payload = { estadosoli: Number(nuevoEstado) };
+      const payload = { id_est_soli: Number(nuevoEstado) };
       const resp = await actualizarSolicitud(id, payload);
       const actualizada = resp?.data || resp;
-      setSolicitudes(prev => prev.map(s => (s.id === id ? actualizada : s)));
+      setSolicitudes(prev => prev.map(s => (s.id_soli === id || s.id === id ? actualizada : s)));
     } catch (err) {
       console.error('Error actualizando estado:', err);
       setError('Error al actualizar estado: ' + (err?.message || err));
@@ -279,9 +294,20 @@ const Soliespacio = () => {
         <div className="equipment-list-grid-xd09">
           {solicitudesFiltradas.length > 0 ? (
             solicitudesFiltradas.map((solicitud) => {
-              const estadoInfo = getEstadoBadge(solicitud.estadosoli);
+              const estadoInfo = getEstadoBadge(solicitud.est_soli || solicitud.estadosoli);
+              const estadoNum = (solicitud.estadosoli != null) ? Number(solicitud.estadosoli) : (
+                (solicitud.est_soli && {
+                  'PENDIENTE': 1,
+                  'APROBADO': 2,
+                  'RECHAZADO': 3,
+                  'EN USO': 4,
+                  'FINALIZADO': 5,
+                  'ACTIVO': 2,
+                  'INACTIVO': 5
+                }[solicitud.est_soli.toUpperCase()]) || null
+              );
               return (
-                <div key={solicitud.id} className="modern-equipment-card-xd01">
+                <div key={solicitud.id_soli || solicitud.id} className="modern-equipment-card-xd01">
                   <div className="card-top-section-xd02">
                     <span className="equipment-category-xd06" style={{
                       backgroundColor: estadoInfo.variant === 'warning' ? '#ffc107' :
@@ -294,10 +320,10 @@ const Soliespacio = () => {
                   </div>
                   <div className="card-bottom-section-xd04">
                     <h5 className="equipment-title-xd05">
-                      {solicitud.espacio?.nombre || 'Espacio N/A'}
+                      {solicitud.nom_espa || 'Espacio N/A'}
                     </h5>
                     <p className="equipment-serie-xd07">
-                      <strong>Usuario:</strong> {solicitud.usuario?.nombre || 'N/A'}
+                      <strong>Usuario:</strong> {solicitud.nom_usu || 'N/A'}
                     </p>
                     <p className="equipment-serie-xd07">
                       <strong>Ambiente:</strong> {solicitud.ambient || 'N/A'}
@@ -305,6 +331,11 @@ const Soliespacio = () => {
                     <p className="equipment-serie-xd07">
                       <strong>Ficha:</strong> {solicitud.num_fich || 'N/A'}
                     </p>
+                    {solicitud.nom_elem && (
+                      <p className="equipment-serie-xd07">
+                        <strong>Elementos:</strong> {solicitud.nom_elem}
+                      </p>
+                    )}
                     <p className="equipment-serie-xd07">
                       <strong>Inicio:</strong> {formatFecha(solicitud.fecha_ini)}
                     </p>
@@ -316,17 +347,17 @@ const Soliespacio = () => {
                     Ver Detalles
                   </button>
                   <div style={{ display: 'flex', gap: '8px', marginTop: '12px', justifyContent: 'center' }}>
-                    {solicitud.estadosoli !== 2 && (
-                      <button className="view-details-button-xd08" onClick={() => handleCambiarEstado(solicitud.id, 2)}>
+                    {estadoNum !== 2 && (
+                      <button className="view-details-button-xd08" onClick={() => handleCambiarEstado(solicitud.id_soli || solicitud.id, 2)}>
                         Aprobar
                       </button>
                     )}
-                    {solicitud.estadosoli !== 3 && (
-                      <button className="view-details-button-xd08" onClick={() => handleCambiarEstado(solicitud.id, 3)}>
+                    {estadoNum !== 3 && (
+                      <button className="view-details-button-xd08" onClick={() => handleCambiarEstado(solicitud.id_soli || solicitud.id, 3)}>
                         Rechazar
                       </button>
                     )}
-                    <button className="view-details-button-xd08" onClick={() => handleEliminar(solicitud.id)}>
+                    <button className="view-details-button-xd08" onClick={() => handleEliminar(solicitud.id_soli || solicitud.id)}>
                       Eliminar
                     </button>
                   </div>
