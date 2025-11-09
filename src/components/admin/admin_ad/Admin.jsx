@@ -407,7 +407,11 @@ const Admin = () => {
             <div className="form-control-wrap-1225">
               <Form.Control 
                 type="text" 
-                value={modalDetalles?.nom_problem || 'No disponible'} 
+                value={
+                  modalDetalles?.nom_problm || 
+                  modalDetalles?.nom_problem || 
+                  'No disponible'
+                } 
                 readOnly 
               />
             </div>
@@ -418,7 +422,11 @@ const Admin = () => {
             <div className="form-control-wrap-1225">
               <Form.Control 
                 type="text" 
-                value={modalDetalles?.problem_id || 'No disponible'} 
+                value={
+                  modalDetalles?.probloem_id || 
+                  modalDetalles?.problem_id || 
+                  'No disponible'
+                } 
                 readOnly 
               />
             </div>
@@ -429,7 +437,11 @@ const Admin = () => {
             <div className="form-control-wrap-1225">
               <Form.Control 
                 type="text" 
-                value={modalDetalles?.nom_usu || 'No disponible'} 
+                value={
+                  modalDetalles?.nom_usu || 
+                  modalDetalles?.usuario?.nombre || 
+                  'No disponible'
+                } 
                 readOnly 
               />
             </div>
@@ -440,7 +452,11 @@ const Admin = () => {
             <div className="form-control-wrap-1225">
               <Form.Control 
                 type="text" 
-                value={modalDetalles?.id_usuario || 'No disponible'} 
+                value={
+                  modalDetalles?.id_usuario || 
+                  modalDetalles?.id_usu || 
+                  'No disponible'
+                } 
                 readOnly 
               />
             </div>
@@ -451,7 +467,11 @@ const Admin = () => {
             <div className="form-control-wrap-1225">
               <Form.Control 
                 type="text" 
-                value={modalDetalles?.id_eleme || 'No disponible'} 
+                value={
+                  modalDetalles?.id_eleme || 
+                  modalDetalles?.id_elem || 
+                  'No disponible'
+                } 
                 readOnly 
               />
             </div>
