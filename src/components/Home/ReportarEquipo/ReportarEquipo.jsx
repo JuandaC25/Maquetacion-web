@@ -131,7 +131,7 @@ function ReportarEquipo() {
           obser: formData.observaciones || '',
           id_usu: idUsuario,
           fecha_in: new Date().toISOString(),
-          est_tick: 2
+          id_est_tick: 2
         })
       );
 
