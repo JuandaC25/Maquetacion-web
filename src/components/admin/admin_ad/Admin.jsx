@@ -63,12 +63,10 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
   };
 
   const ticketsArray = Array.isArray(tickets) ? tickets : [];
-  
-  // Filtrar tickets por estado
+
   const ticketsFiltrados = ticketsArray.filter(ticket => {
     if (selectedStatusFilter === "Todos los Estados") return true;
     
-    // Usar id_est_tick si existe, si no usar estado
     const estadoTicket = Number(ticket?.id_est_tick || ticket?.estado);
     console.log(`🔍 Filtrando ticket ${ticket?.id_tickets}: estado=${ticket?.estado}, id_est_tick=${ticket?.id_est_tick}, estadoTicket=${estadoTicket}, filtro=${selectedStatusFilter}`);
     
@@ -318,7 +316,6 @@ const Admin = () => {
 
   const handleEditarEstado = () => {
     setEditandoEstado(true);
-    // Usar id_est_tick si existe, si no usar estado como fallback
     const estadoActual = modalDetalles?.id_est_tick || modalDetalles?.estado || '';
     console.log('🔧 Editando estado. Estado actual:', estadoActual, 'Datos completos:', modalDetalles);
     setNuevoEstado(String(estadoActual));
@@ -345,8 +342,7 @@ const Admin = () => {
         id: ticketId, 
         id_est_tick: estadoNumero 
       });
-      
-      // El backend espera id_est_tick como Long según TicketsUpdateDtos
+
       const resultado = await actualizarTicket(ticketId, {
         id_est_tick: estadoNumero
       });
