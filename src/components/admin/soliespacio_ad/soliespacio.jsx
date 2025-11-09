@@ -3,7 +3,7 @@ import { Alert, Spinner, Dropdown, Modal, Form, Button } from 'react-bootstrap';
 import './soliespacio.css';
 import Footer from '../../Footer/Footer.jsx';
 import HeaderSoliespacio from '../header_soliespacio/header_soliespacio.jsx';
-import { obtenersolicitudes, crearSolicitud, eliminarSolicitud, actualizarSolicitud } from '../../../api/solicitudesApi.js';
+import { obtenersolicitudes, crearSolicitud, eliminarSolicitud, actualizarSolicitud, actualizarEstadoSolicitud } from '../../../api/solicitudesApi.js';
 
 const Soliespacio = () => {
   const [solicitudes, setSolicitudes] = useState([]);
@@ -20,21 +20,25 @@ const Soliespacio = () => {
     fecha_ini: '',
     fecha_fn: '',
     estadosoli: 1,
-    ids_elem: ''
+    nom_usu: ''
   });
   const [guardando, setGuardando] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [modalIsTerminado, setModalIsTerminado] = useState(false);
   const [updatingIds, setUpdatingIds] = useState(new Set());
+  const [confirmToggle, setConfirmToggle] = useState({ show: false, sid: null, nuevo: null, nombre: '' });
 
   const handleOpenModal = () => {
     setEditingId(null);
-    setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1, ids_elem: '' });
+    setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1, nom_usu: '' });
+    setModalIsTerminado(false);
     setShowModal(true);
   };
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingId(null);
-    setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1, ids_elem: '' });
+    setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1, nom_usu: '' });
+    setModalIsTerminado(false);
   };
 
   const handleInputChange = (e) => {
@@ -72,10 +76,7 @@ const Soliespacio = () => {
         if (nuevaSolicitud.num_fich != null) payload.num_fich = nuevaSolicitud.num_fich;
         if (nuevaSolicitud.id_esp != null && nuevaSolicitud.id_esp !== '') payload.id_esp = Number(nuevaSolicitud.id_esp);
         if (nuevaSolicitud.id_usu != null && nuevaSolicitud.id_usu !== '') payload.id_usu = Number(nuevaSolicitud.id_usu);
-        if (nuevaSolicitud.ids_elem) {
-          const parsed = nuevaSolicitud.ids_elem.split(',').map(s => s.trim()).filter(Boolean).map(s => Number(s));
-          payload.ids_elem = parsed;
-        }
+        
   console.log('[DEBUG] PUT payload (editar):', payload, 'editingId=', editingId);
   const resp = await actualizarSolicitud(editingId, payload);
         const actualizado = resp?.data || resp;
@@ -134,8 +135,19 @@ const Soliespacio = () => {
   };
 
   const solicitudesFiltradas = solicitudes.filter(solicitud => {
-  const estadoTxt = (solicitud.est_soli || (solicitud.estadosoli != null ? String(solicitud.estadosoli) : 'DESCONOCIDO')).toString();
-  const coincideEstado = selectedEstadoFilter === "Todos los Estados" || estadoTxt.toUpperCase() === String(selectedEstadoFilter).toUpperCase();
+  const effectiveEstadoText = (() => {
+    try {
+      const fn = solicitud.fecha_fn ? new Date(solicitud.fecha_fn) : null;
+      if (fn && !isNaN(fn.getTime()) && fn.getTime() < Date.now()) return 'TERMINADO';
+    } catch { }
+    const estadoTxt = (solicitud.est_soli || (solicitud.estadosoli != null ? String(solicitud.estadosoli) : 'DESCONOCIDO')).toString();
+    return estadoTxt.toUpperCase();
+  })();
+  const sel = String(selectedEstadoFilter || '').toUpperCase();
+  const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
+    effectiveEstadoText.toUpperCase() === sel ||
+    (sel === 'FINALIZADO' && effectiveEstadoText.toUpperCase() === 'TERMINADO') ||
+    (sel === 'TERMINADO' && effectiveEstadoText.toUpperCase() === 'FINALIZADO');
   const coincideEspacio = selectedEspacioFilter === "Todos los Espacios" || ( (solicitud.nom_espa || 'N/A').toString().toUpperCase() === String(selectedEspacioFilter).toUpperCase() );
     return coincideEstado && coincideEspacio;
   });
@@ -239,10 +251,46 @@ const Soliespacio = () => {
         solicitud.est_soli.toUpperCase() === 'FINALIZADO' ? 5 :
         ''
       ) : 1),
-      ids_elem: solicitud.id_elem || ''
+      nom_usu: solicitud.nom_usu ?? ''
     });
+    let terminado = false;
+    try {
+      const fnDate = solicitud.fecha_fn ? new Date(solicitud.fecha_fn) : null;
+      if (fnDate && !isNaN(fnDate.getTime()) && fnDate.getTime() < Date.now()) terminado = true;
+    } catch {}
+    setModalIsTerminado(terminado);
     setShowModal(true);
   };
+
+  const handleOpenConfirmToggle = (solicitud) => {
+    const sid = solicitud.id_soli || solicitud.id;
+    const current = (solicitud.estado != null) ? Number(solicitud.estado) : 1;
+    const nuevo = current === 1 ? 0 : 1;
+    const nombre = solicitud.nom_espa || solicitud.nom_usu || (`Solicitud ${sid}`);
+    setConfirmToggle({ show: true, sid, nuevo, nombre });
+  };
+
+  const handleConfirmToggle = async () => {
+    const { sid, nuevo } = confirmToggle;
+    try {
+      setUpdatingIds(prev => new Set(prev).add(sid));
+      const resp = await actualizarEstadoSolicitud(sid, nuevo);
+      const actualizada = resp?.data || resp;
+      setSolicitudes(prev => prev.map(s => (s.id_soli === sid || s.id === sid ? actualizada : s)));
+      setConfirmToggle({ show: false, sid: null, nuevo: null, nombre: '' });
+    } catch (err) {
+      console.error('Error cambiando activo/inactivo:', err);
+      setError('Error al cambiar estado activo/inactivo: ' + (err?.message || err));
+    } finally {
+      setUpdatingIds(prev => {
+        const copy = new Set(prev);
+        copy.delete(sid);
+        return copy;
+      });
+    }
+  };
+
+  const handleCancelToggle = () => setConfirmToggle({ show: false, sid: null, nuevo: null, nombre: '' });
 
   const handleCambiarEstado = async (id, nuevoEstado) => {
     const numericEstado = Number(nuevoEstado);
@@ -388,9 +436,17 @@ const Soliespacio = () => {
         </div>
       ) : (
         <div className="equipment-list-grid-xd09">
-          {solicitudesFiltradas.length > 0 ? (
+              {solicitudesFiltradas.length > 0 ? (
             solicitudesFiltradas.map((solicitud) => {
-              const estadoInfo = getEstadoBadge(solicitud.est_soli || solicitud.estadosoli);
+              const now = Date.now();
+              let isTerminado = false;
+              try {
+                const fn = solicitud.fecha_fn ? new Date(solicitud.fecha_fn) : null;
+                if (fn && !isNaN(fn.getTime()) && fn.getTime() < now) isTerminado = true;
+              } catch {}
+
+              const rawEstado = solicitud.est_soli || solicitud.estadosoli;
+              const estadoInfo = isTerminado ? { text: 'TERMINADO', variant: 'secondary' } : getEstadoBadge(rawEstado);
               const estadoNum = (solicitud.estadosoli != null) ? Number(solicitud.estadosoli) : (
                 (solicitud.est_soli && {
                   'PENDIENTE': 1,
@@ -426,7 +482,7 @@ const Soliespacio = () => {
                       {estadoInfo.text}
                     </span>
                     <div style={{ position: 'absolute', top: 10, right: 10, display: 'flex', gap: '8px', zIndex: 5 }}>
-                      {estadoNum !== 2 && (() => {
+                      {(!isTerminado && estadoNum !== 2) && (() => {
                         const sid = solicitud.id_soli || solicitud.id;
                         const isUpdating = updatingIds.has(sid);
                         return (
@@ -441,7 +497,7 @@ const Soliespacio = () => {
                           </button>
                         );
                       })()}
-                      {estadoNum !== 3 && (() => {
+                      {(!isTerminado && estadoNum !== 3) && (() => {
                         const sid = solicitud.id_soli || solicitud.id;
                         const isUpdating = updatingIds.has(sid);
                         return (
@@ -482,14 +538,38 @@ const Soliespacio = () => {
                     <p className="equipment-serie-xd07">
                       <strong>Fin:</strong> {formatFecha(solicitud.fecha_fn)}
                     </p>
+                    <p className="equipment-serie-xd07">
+                      <strong>Estado:</strong> {estadoInfo.text}
+                    </p>
                   </div>
                   <button className="view-details-button-xd08">
                     Ver Detalles
                   </button>
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '12px', justifyContent: 'center' }}>
-                    <button className="view-details-button-xd08" onClick={() => handleEditar(solicitud)}>
-                      Editar
-                    </button>
+                  <div className="solicitud-action-group">
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <button className="view-details-button-xd08" onClick={() => handleEditar(solicitud)}>
+                        Editar
+                      </button>
+                      
+                      {(() => {
+                        const current = (solicitud.estado != null) ? Number(solicitud.estado) : 1;
+                        const willInactivate = current === 1; // if currently active, the action is to inactivate
+                        const btnClass = willInactivate ? 'will-inactivate' : 'will-activate';
+                        const label = willInactivate ? 'Inactivar solicitud' : 'Activar solicitud';
+                        const sid = solicitud.id_soli || solicitud.id;
+                        const isLoading = updatingIds.has(sid);
+                        return (
+                          <button
+                            className={`solicitud-toggle-btn ${btnClass}`}
+                            onClick={() => handleOpenConfirmToggle(solicitud)}
+                            disabled={isLoading}
+                            aria-label={label}
+                          >
+                            {isLoading ? '...' : label}
+                          </button>
+                        );
+                      })()}
+                    </div>
                   </div>
                 </div>
               );
@@ -523,14 +603,13 @@ const Soliespacio = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>ID del Usuario *</Form.Label>
+              <Form.Label>Usuario</Form.Label>
               <Form.Control
-                type="number"
-                name="id_usu"
-                value={nuevaSolicitud.id_usu}
-                onChange={handleInputChange}
-                placeholder="Ingrese el ID del usuario"
-                required
+                type="text"
+                name="nom_usu"
+                value={nuevaSolicitud.nom_usu || ''}
+                readOnly
+                plaintext
               />
             </Form.Group>
 
@@ -559,16 +638,7 @@ const Soliespacio = () => {
               />
             </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>IDs de elementos (separados por coma)</Form.Label>
-              <Form.Control
-                type="text"
-                name="ids_elem"
-                value={nuevaSolicitud.ids_elem}
-                onChange={handleInputChange}
-                placeholder="Ej: 12,34,56"
-              />
-            </Form.Group>
+            
 
             <Form.Group className="mb-3">
               <Form.Label>Fecha y Hora de Inicio *</Form.Label>
@@ -594,15 +664,19 @@ const Soliespacio = () => {
 
             <Form.Group className="mb-3">
               <Form.Label>Estado</Form.Label>
-              <Form.Select
-                name="estadosoli"
-                value={nuevaSolicitud.estadosoli}
-                onChange={handleInputChange}
-              >
-                {AVAILABLE_ESTADOS.map(e => (
-                  <option key={e.id} value={e.id}>{e.label}</option>
-                ))}
-              </Form.Select>
+              {modalIsTerminado ? (
+                <Form.Control type="text" readOnly plaintext defaultValue={'TERMINADO'} />
+              ) : (
+                <Form.Select
+                  name="estadosoli"
+                  value={nuevaSolicitud.estadosoli}
+                  onChange={handleInputChange}
+                >
+                  {AVAILABLE_ESTADOS.map(e => (
+                    <option key={e.id} value={e.id}>{e.label}</option>
+                  ))}
+                </Form.Select>
+              )}
             </Form.Group>
 
             <div className="d-flex justify-content-end gap-2">
@@ -615,6 +689,23 @@ const Soliespacio = () => {
             </div>
           </Form>
         </Modal.Body>
+      </Modal>
+
+      
+      <Modal show={confirmToggle.show} onHide={handleCancelToggle} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{confirmToggle.nuevo === 0 ? 'Inactivar solicitud' : 'Activar solicitud'}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>¿Deseas {confirmToggle.nuevo === 0 ? 'inactivar' : 'activar'} la solicitud <strong>{confirmToggle.nombre}</strong>?</p>
+          <p className="text-muted">Esta acción puede deshabilitar la visibilidad o el uso de la reserva. Puedes revertirla posteriormente.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCancelToggle}>Cancelar</Button>
+          <Button variant={confirmToggle.nuevo === 0 ? 'danger' : 'success'} onClick={handleConfirmToggle} disabled={confirmToggle.sid == null}>
+            {confirmToggle.nuevo === 0 ? 'Inactivar' : 'Activar'}
+          </Button>
+        </Modal.Footer>
       </Modal>
 
       <Footer />

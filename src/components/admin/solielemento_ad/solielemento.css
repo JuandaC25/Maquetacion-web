@@ -7,6 +7,12 @@
   transition: all 0.3s ease !important;
 }
 
+:root {
+  --green: #28a745;
+  --green-dark: #218838;
+  --text: #111827;
+}
+
 .dropdown-toggle-xd146:hover,
 .dropdown-toggle-xd146:focus,
 .dropdown-toggle-xd146:active {
@@ -64,8 +70,11 @@
   border-radius: 1rem;
   background-color: rgba(31, 41, 55, 1);
   padding: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 8px 20px rgba(2,6,23,0.25);
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .page-with-footer-1639 {
@@ -149,24 +158,38 @@
 }
 
 .request-1612 {
-  margin-top: 1.5rem;
-  width: 100%;
-  border: 1px solid transparent;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  transition: all .3s ease;
-  background-color: rgb(9, 180, 26);
-  color: white;
+  margin: 0;
+  min-width: 120px;
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.975rem;
+  line-height: 1.2rem;
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+  background: linear-gradient(180deg, var(--green), var(--green-dark));
+  color: #fff;
   border: none;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(33, 136, 56, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .request-1612:hover {
-  background-color: rgb(7, 160, 22);
-  transform: translateY(-1px);
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 12px 30px rgba(33, 136, 56, 0.16);
+}
+
+.request-1612:active {
+  transform: translateY(0) scale(0.995);
+  opacity: .98;
+}
+
+.request-1612:focus-visible {
+  outline: 3px solid rgba(40,167,69,0.18);
+  outline-offset: 3px;
 }
 
 .alert-1614 {
@@ -343,8 +366,69 @@ textarea.form-control {
 .detail-label-1632 { min-width:220px; font-weight:700; color:#333; }
 .detail-value-display-1633 { flex:1; }
 .modern-modal-footer-1634 { background:var(--bg, #f5f7fa); padding:16px 24px; display:flex; justify-content:flex-end; gap:12px; }
-.modal-action-button-1635 { padding:8px 18px; border-radius:8px; font-weight:600; }
-.cancel-action-1636 { background:#f8f9fa; border:1px solid #ced4da; color:#333; }
+.modal-action-button-1635 { padding:8px 18px; border-radius:8px; font-weight:700; background: linear-gradient(90deg, #28a745, #218838); color: #fff; border: none; box-shadow: 0 6px 16px rgba(33,136,56,0.16); }
+.modal-action-button-1635:hover { transform: translateY(-2px); }
+.cancel-action-1636 { background:#fff; border:1px solid #e6e9ee; color:#333; box-shadow: 0 2px 8px rgba(15,23,42,0.04); }
+.card-1602 .infos-1603 { flex: 1 1 auto; }
+
+.card-1602 .request-1612 {
+   flex: 0 0 auto;
+   }
+.card-top-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: 0.95rem;
+  border-radius: 999px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(180deg, var(--green), var(--green-dark));
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(33,136,56,0.12);
+  transition: transform .14s ease, box-shadow .14s ease, opacity .12s ease;
+}
+
+.card-top-action:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 36px rgba(33,136,56,0.12);
+}
+
+.card-top-action:active {
+  transform: translateY(0) scale(0.995);
+}
+
+.card-top-action:focus-visible {
+  outline: 3px solid rgba(40,167,69,0.14);
+  outline-offset: 3px;
+}
+
+.card-top-action.card-top-action--danger {
+  background: linear-gradient(180deg, #ff6b6b, #e64545);
+  box-shadow: 0 10px 20px rgba(230,69,69,0.12);
+}
+
+.card-top-action.card-top-action--danger:hover {
+  box-shadow: 0 18px 36px rgba(230,69,69,0.14);
+  transform: translateY(-3px);
+}
+
+
+.card-top-action .action-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.98;
+}
+
+.card-top-action.card-top-action--small {
+  padding: 4px 8px;
+  font-size: 0.82rem;
+  gap: 6px;
+}
 
 @media (max-width: 576px) {
   .detail-label-1632 { min-width: 140px; font-size: 0.9rem; }
