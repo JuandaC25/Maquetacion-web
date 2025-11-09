@@ -126,42 +126,73 @@ function SoliciAudioVideo() {
           </div>
 
           <div className="audio-video-ficha-body">
-            <div className="audio-video-ficha-descripcion">
-              <h4>Descripción general</h4>
-              <p>{audioVideoInfo.observacion || "Sin observaciones disponibles."}</p>
-              <div className="audio-video-carrusel">
-                <Carousel interval={2500} controls={true} indicators={true} fade>
-                  {[1, 2, 3].map((num) => (
-                    <Carousel.Item key={num}>
-                      <img
-                        className="d-block w-100 audio-video-carrusel-imagen"
-                        src={`/imagenes/imagenes_audio_video/AudioVideo${num}.png`}
-                        alt={`Equipo audio/video ${num}`}
-                      />
-                    </Carousel.Item>
-                  ))}
-                </Carousel>
-              </div>
-            </div>
 
-            <div className="audio-video-ficha-especificaciones">
-              <h4>Componentes principales</h4>
-              <ul>
-                {audioVideoInfo.especificaciones.map((esp, i) => (
-                  <li key={i}>{esp}</li>
-                ))}
-              </ul>
-            </div>
+  {/* DESCRIPCIÓN GENERAL */}
+  <div className="audio-video-ficha-descripcion">
+    <h4>Zona de Producción Audiovisual</h4>
+    <p>
+      En este apartado encontraras los accesorios y elementos esenciales para la creación
+      de proyectos o trabajos de multimedia dentro del Centro. Equipos como micrófonos, pantallas 
+      verdes, audífonos, iluminación entre otros están disponibles para 
+      actividades de grabación, ensayo, diseño de escenas y producción audiovisual 
+      en general.
+    </p>
 
-            <div className="audio-video-equipos-disponibles mt-4">
-              <h4>Elementos de audio/video disponibles:</h4>
-              <div className="audio-video-contador-equipos">
-                <span className="audio-video-numero">{equiposDisponibles.length}</span>
-                <p>Elementos actualmente disponibles</p>
-              </div>
-            </div>
-          </div>
+    <div className="audio-video-carrusel">
+      <Carousel interval={2500} controls={true} indicators={true} fade>
+        <Carousel.Item>
+          <img
+            className="d-block w-100 audio-video-carrusel-imagen"
+            src="/imagenes/Audiovideo/Audifonos.png"
+            alt="Audífonos"
+          />
+        </Carousel.Item>
+        <Carousel.Item>
+          <img
+            className="d-block w-100 audio-video-carrusel-imagen"
+            src="/imagenes/Audiovideo/Camara.png"
+            alt="Cámara"
+          />
+        </Carousel.Item>
 
+        <Carousel.Item>
+          <img
+            className="d-block w-100 audio-video-carrusel-imagen"
+            src="/imagenes/Audiovideo/Reflector.png"
+            alt="Reflector"
+          />
+        </Carousel.Item>
+
+        <Carousel.Item>
+          <img
+            className="d-block w-100 audio-video-carrusel-imagen"
+            src="/imagenes/Audiovideo/tabletaGrafica.png"
+            alt="Tableta Gráfica"
+          />
+        </Carousel.Item>
+
+        <Carousel.Item>
+          <img
+            className="d-block w-100 audio-video-carrusel-imagen"
+            src="/imagenes/Audiovideo/Trajedecroma.png"
+            alt="Traje de Croma"
+          />
+        </Carousel.Item>
+
+      </Carousel>
+    </div>
+  </div>
+    <div className="audio-video-ficha-especificaciones">
+      <h4>¿Qué encontrarás en esta categoría?</h4>
+      <ul>
+        <li>Equipos para captura de audio</li>
+        <li>Herramientas para composición visual y chromas </li>
+        <li>Accesorios de ambientación multimedia</li>
+        <li>Elementos para monitorización y control de sonido</li>
+        <li>Recursos para actividades de grabación y producción</li>
+      </ul>
+    </div>
+  </div>
           <div className="audio-video-ficha-footer">
             <Button className="audio-video-boton-solicitar" onClick={() => setShowModal(true)}>
               <span>Realizar solicitud</span>
