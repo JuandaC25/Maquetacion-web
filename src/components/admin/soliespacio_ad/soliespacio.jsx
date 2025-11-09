@@ -4,6 +4,7 @@ import './soliespacio.css';
 import Footer from '../../Footer/Footer.jsx';
 import HeaderSoliespacio from '../header_soliespacio/header_soliespacio.jsx';
 import { obtenersolicitudes, crearSolicitud, eliminarSolicitud, actualizarSolicitud, actualizarEstadoSolicitud } from '../../../api/solicitudesApi.js';
+import { obtenerUsuarioPorId } from '../../../api/UsuariosApi.js';
 
 const Soliespacio = () => {
   const [solicitudes, setSolicitudes] = useState([]);
@@ -24,6 +25,8 @@ const Soliespacio = () => {
   });
   const [guardando, setGuardando] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [lookupError, setLookupError] = useState(null);
   const [modalIsTerminado, setModalIsTerminado] = useState(false);
   const [updatingIds, setUpdatingIds] = useState(new Set());
   const [confirmToggle, setConfirmToggle] = useState({ show: false, sid: null, nuevo: null, nombre: '' });
@@ -32,6 +35,7 @@ const Soliespacio = () => {
     setEditingId(null);
     setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1, nom_usu: '' });
     setModalIsTerminado(false);
+    setLookupError(null);
     setShowModal(true);
   };
   const handleCloseModal = () => {
@@ -74,8 +78,7 @@ const Soliespacio = () => {
         if (nuevaSolicitud.fecha_fn) payload.fecha_fn = toIsoLocalNoTZ(nuevaSolicitud.fecha_fn);
         if (nuevaSolicitud.ambient != null) payload.ambient = nuevaSolicitud.ambient;
         if (nuevaSolicitud.num_fich != null) payload.num_fich = nuevaSolicitud.num_fich;
-        if (nuevaSolicitud.id_esp != null && nuevaSolicitud.id_esp !== '') payload.id_esp = Number(nuevaSolicitud.id_esp);
-        if (nuevaSolicitud.id_usu != null && nuevaSolicitud.id_usu !== '') payload.id_usu = Number(nuevaSolicitud.id_usu);
+  if (nuevaSolicitud.id_esp != null && nuevaSolicitud.id_esp !== '') payload.id_esp = Number(nuevaSolicitud.id_esp);
         
   console.log('[DEBUG] PUT payload (editar):', payload, 'editingId=', editingId);
   const resp = await actualizarSolicitud(editingId, payload);
@@ -260,6 +263,33 @@ const Soliespacio = () => {
     } catch {}
     setModalIsTerminado(terminado);
     setShowModal(true);
+  };
+
+  const lookupUserById = async (maybeId) => {
+    const id = Number(maybeId || nuevaSolicitud.id_usu);
+    if (!id || isNaN(id)) {
+      setLookupError('ID de usuario inválido');
+      setNuevaSolicitud(prev => ({ ...prev, nom_usu: '' }));
+      return;
+    }
+    try {
+      setLookupError(null);
+      setLookupLoading(true);
+      const u = await obtenerUsuarioPorId(id);
+      const user = u?.data || u;
+      if (!user) throw new Error('Usuario no encontrado');
+      const first = user.nom_usu || user.nombre || user.firstName || user.fullName || '';
+      const last = user.ape_usu || user.apellido || user.lastName || '';
+      const email = user.correo || user.email || '';
+      const label = [first, last].filter(Boolean).join(' ') || (email ? email : `Usuario ${id}`);
+      setNuevaSolicitud(prev => ({ ...prev, id_usu: id, nom_usu: label }));
+    } catch (err) {
+      console.error('lookup user error', err);
+      setLookupError('Usuario no encontrado');
+      setNuevaSolicitud(prev => ({ ...prev, nom_usu: '' }));
+    } finally {
+      setLookupLoading(false);
+    }
   };
 
   const handleOpenConfirmToggle = (solicitud) => {
@@ -553,7 +583,7 @@ const Soliespacio = () => {
                       
                       {(() => {
                         const current = (solicitud.estado != null) ? Number(solicitud.estado) : 1;
-                        const willInactivate = current === 1; // if currently active, the action is to inactivate
+                        const willInactivate = current === 1; 
                         const btnClass = willInactivate ? 'will-inactivate' : 'will-activate';
                         const label = willInactivate ? 'Inactivar solicitud' : 'Activar solicitud';
                         const sid = solicitud.id_soli || solicitud.id;
@@ -603,14 +633,30 @@ const Soliespacio = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Usuario</Form.Label>
-              <Form.Control
-                type="text"
-                name="nom_usu"
-                value={nuevaSolicitud.nom_usu || ''}
-                readOnly
-                plaintext
-              />
+              <Form.Label>Usuario (ID)</Form.Label>
+              {editingId ? (
+                <Form.Control
+                  type="text"
+                  name="nom_usu"
+                  value={nuevaSolicitud.nom_usu || ''}
+                  readOnly
+                  plaintext
+                />
+              ) : (
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <Form.Control
+                    type="number"
+                    name="id_usu"
+                    value={nuevaSolicitud.id_usu || ''}
+                    onChange={handleInputChange}
+                    placeholder="Ingrese ID de usuario"
+                  />
+                  <Button variant="outline-secondary" onClick={() => lookupUserById()} disabled={lookupLoading}>
+                    {lookupLoading ? 'Buscando...' : 'Buscar'}
+                  </Button>
+                </div>
+              )}
+              {lookupError && <div style={{ color: '#dc3545', marginTop: 6 }}>{lookupError}</div>}
             </Form.Group>
 
             <Form.Group className="mb-3">
