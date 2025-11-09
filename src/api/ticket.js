@@ -87,16 +87,25 @@ export const obtenerTicketPorId = async (id) => {
  */
 export const actualizarTicket = async (id, ticketData) => {
   try {
+    console.log("[TICKET] Actualizando ticket ID:", id);
+    console.log("[TICKET] Datos a enviar:", JSON.stringify(ticketData, null, 2));
+    
     const res = await authorizedFetch(`${API_URL}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(ticketData),
     });
 
+    console.log("[TICKET] Respuesta del servidor - Status:", res.status);
+
     if (!res.ok) {
-      throw new Error(`Error al actualizar ticket: ${res.status}`);
+      const errorText = await res.text();
+      console.error("[TICKET] Error response:", errorText);
+      throw new Error(`Error al actualizar ticket: ${res.status} - ${errorText}`);
     }
 
-    return await res.json();
+    const resultado = await res.json();
+    console.log("[TICKET] Ticket actualizado exitosamente:", resultado);
+    return resultado;
   } catch (error) {
     console.error("[TICKET] Error al actualizar ticket:", error);
     throw error;

@@ -25,6 +25,15 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
       setLoading(true);
       setError(null);
       const datosTickets = await obtenerTickets();
+      console.log('🎫 Tickets cargados:', datosTickets);
+      if (datosTickets && datosTickets.length > 0) {
+        console.log('📊 Primer ticket ejemplo:', datosTickets[0]);
+        console.log('📊 Estados de todos los tickets:', datosTickets.map(t => ({
+          id: t.id_tickets,
+          estado: t.estado,
+          id_est_tick: t.id_est_tick
+        })));
+      }
       setTickets(Array.isArray(datosTickets) ? datosTickets : []);
     } catch (err) {
       setError(err.message);
@@ -59,7 +68,10 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
   const ticketsFiltrados = ticketsArray.filter(ticket => {
     if (selectedStatusFilter === "Todos los Estados") return true;
     
-    const estadoTicket = ticket?.estado;
+    // Usar id_est_tick si existe, si no usar estado
+    const estadoTicket = Number(ticket?.id_est_tick || ticket?.estado);
+    console.log(`🔍 Filtrando ticket ${ticket?.id_tickets}: estado=${ticket?.estado}, id_est_tick=${ticket?.id_est_tick}, estadoTicket=${estadoTicket}, filtro=${selectedStatusFilter}`);
+    
     if (selectedStatusFilter === "Activo" && estadoTicket === 1) return true;
     if (selectedStatusFilter === "Pendiente" && estadoTicket === 2) return true;
     if (selectedStatusFilter === "Inactivo" && estadoTicket === 3) return true;
@@ -238,9 +250,15 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
               <div className="header-card-1210"></div>
               <div className="info-card-1211">
                 <p className="title-card-1212">{t?.ticket || `Ticket ${i + 1}`}</p>
-                <p className="elemento-card-1213">{t?.elemento || 'Sin elemento'}</p>
-                <span className={`status-card-1214 ${(t?.estado ? String(t.estado).toLowerCase().replace(' ', '-') : 'pendiente')}`}>
-                  {t?.estado || 'Pendiente'}
+                <p className="elemento-card-1213">{t?.nom_elem || t?.elemento || 'Sin elemento'}</p>
+                <span className={`status-card-1214 ${(() => {
+                  const estado = Number(t?.id_est_tick || t?.estado);
+                  return estado === 1 ? 'activo' : estado === 2 ? 'pendiente' : estado === 3 ? 'inactivo' : 'pendiente';
+                })()}`}>
+                  {(() => {
+                    const estado = Number(t?.id_est_tick || t?.estado);
+                    return estado === 1 ? '🟢 Activo' : estado === 2 ? '🟡 Pendiente' : estado === 3 ? '🔴 Inactivo' : 'Pendiente';
+                  })()}
                 </span>
               </div>
               <div className="footer-card-1215">
@@ -300,7 +318,10 @@ const Admin = () => {
 
   const handleEditarEstado = () => {
     setEditandoEstado(true);
-    setNuevoEstado(modalDetalles?.estado || '');
+    // Usar id_est_tick si existe, si no usar estado como fallback
+    const estadoActual = modalDetalles?.id_est_tick || modalDetalles?.estado || '';
+    console.log('🔧 Editando estado. Estado actual:', estadoActual, 'Datos completos:', modalDetalles);
+    setNuevoEstado(String(estadoActual));
   };
 
   const handleGuardarEstado = async () => {
@@ -312,19 +333,22 @@ const Admin = () => {
       return;
     }
     
+    if (!nuevoEstado) {
+      alert('❌ Por favor seleccione un estado');
+      return;
+    }
+    
     setGuardando(true);
     try {
       const estadoNumero = parseInt(nuevoEstado);
       console.log('💾 Guardando estado:', { 
         id: ticketId, 
-        estado: estadoNumero,
         id_est_tick: estadoNumero 
       });
       
-      // El backend espera estos campos según TicketsUpdateDtos
+      // El backend espera id_est_tick como Long según TicketsUpdateDtos
       const resultado = await actualizarTicket(ticketId, {
-        estado: estadoNumero,
-        id_est_tick: estadoNumero  // Este es el campo que el backend usa para actualizar
+        id_est_tick: estadoNumero
       });
       
       console.log('✅ Resultado:', resultado);
@@ -492,12 +516,10 @@ const Admin = () => {
               ) : (
                 <Form.Control 
                   type="text" 
-                  value={
-                    modalDetalles?.estado === 1 ? '🟢 Activo' :
-                    modalDetalles?.estado === 2 ? '🟡 Pendiente' :
-                    modalDetalles?.estado === 3 ? '🔴 Inactivo' :
-                    'No disponible'
-                  } 
+                  value={(() => {
+                    const estado = Number(modalDetalles?.id_est_tick || modalDetalles?.estado);
+                    return estado === 1 ? '🟢 Activo' : estado === 2 ? '🟡 Pendiente' : estado === 3 ? '🔴 Inactivo' : 'No disponible';
+                  })()} 
                   readOnly 
                 />
               )}
