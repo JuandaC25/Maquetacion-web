@@ -1,41 +1,55 @@
+import { getJson, authorizedFetch } from './http';
+
 export const obtenersolicitudes = async () => {
-    try{
-        const res = await fetch(`http://localhost:8081/api/solicitudes`);
-        if(!res.ok){
-            throw new Error ("Error al obtener las solicitudes");
+    try {
+        return await getJson('/api/solicitudes');
+    } catch (error) {
+        if ((error.message || '').toLowerCase().includes('failed to fetch') || error.message.includes('No se pudo conectar')) {
+            throw new Error('No se pudo conectar con el servidor');
         }
-        return await res.json();
-    }catch(error){
-        if(error.message.includes("failed to fetch") || error.message.includes("NetworkError")){
-            throw new Error("No se pudo conectar con el servidor");
-        }
+        throw error;
     }
 };
-export const obtenerSolicitudesPorid = async (id) =>{
-    const res = await fetch (`http://localhost:8081/api/solicitudes/${id}`,{
-        method:"GET",
-    });
-    if(!res.ok) throw new Error("Solicitud no encontrada");
-    return res.json();
+
+export const obtenerSolicitudesPorid = async (id) => {
+    try {
+        return await getJson(`/api/solicitudes/${id}`);
+    } catch (error) {
+        throw new Error('Solicitud no encontrada: ' + (error?.message || ''));
+    }
 }
 
-export const crearSolicitud = async (data) =>{
-    const res = await fetch (`http://localhost:8081/api/solicitudes`, {
-        method: "POST",
-        headers:{ "Content-Type": "application/json" },
+export const crearSolicitud = async (data) => {
+    const res = await authorizedFetch('/api/solicitudes', {
+        method: 'POST',
         body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error("Error al crear la solicitud");
-    return res.json();
-}
-
-export const eliminarSolicitud = async (id) =>{
-    const res = await fetch(`http://localhost:8081/api/solicitudes/${id}`,{
-        method: "DELETE",
-    });
-    if(res.status !== 204) {
-        return res.json();
+    if (!res.ok) {
+        const text = await res.text().catch(() => null);
+        throw new Error(text || 'Error al crear la solicitud');
     }
-
-    return null
+    const text = await res.text();
+    try { return text ? JSON.parse(text) : {}; } catch { return text; }
 }
+
+export const eliminarSolicitud = async (id) => {
+    const res = await authorizedFetch(`/api/solicitudes/${id}`, {
+        method: 'DELETE',
+    });
+    if (res.status === 204) return null;
+    const text = await res.text();
+    try { return text ? JSON.parse(text) : {}; } catch { return text; }
+}
+
+export const actualizarSolicitud = async (id, data) => {
+    const res = await authorizedFetch(`/api/solicitudes/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+        const text = await res.text().catch(() => null);
+        throw new Error(text || 'Error al actualizar la solicitud');
+    }
+    const text = await res.text();
+    try { return text ? JSON.parse(text) : {}; } catch { return text; }
+};

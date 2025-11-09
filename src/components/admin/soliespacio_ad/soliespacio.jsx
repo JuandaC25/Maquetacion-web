@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Spinner, Dropdown } from 'react-bootstrap';
+import { Alert, Spinner, Dropdown, Modal, Form, Button } from 'react-bootstrap';
 import './soliespacio.css';
 import Footer from '../../Footer/Footer.jsx';
 import HeaderSoliespacio from '../header_soliespacio/header_soliespacio.jsx';
-import { obtenersolicitudes } from '../../../api/solicitudesApi.js';
+import { obtenersolicitudes, crearSolicitud, eliminarSolicitud, actualizarSolicitud } from '../../../api/solicitudesApi.js';
 
 const Soliespacio = () => {
   const [solicitudes, setSolicitudes] = useState([]);
@@ -11,6 +11,64 @@ const Soliespacio = () => {
   const [error, setError] = useState(null);
   const [selectedEstadoFilter, setSelectedEstadoFilter] = useState("Todos los Estados");
   const [selectedEspacioFilter, setSelectedEspacioFilter] = useState("Todos los Espacios");
+  const [showModal, setShowModal] = useState(false);
+  const [nuevaSolicitud, setNuevaSolicitud] = useState({
+    id_esp: '',
+    id_usu: '',
+    ambient: '',
+    num_fich: '',
+    fecha_ini: '',
+    fecha_fn: '',
+    estadosoli: 1
+  });
+  const [guardando, setGuardando] = useState(false);
+
+  const handleOpenModal = () => setShowModal(true);
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1 });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNuevaSolicitud(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmitSolicitud = async (e) => {
+    e.preventDefault();
+    try {
+      setGuardando(true);
+      const toIso = (v) => {
+        if (!v) return null;
+        try {
+          const d = new Date(v);
+          if (isNaN(d.getTime())) return v; 
+          return d.toISOString();
+        } catch {
+          return v;
+        }
+      };
+
+      const dto = {
+        fecha_ini: toIso(nuevaSolicitud.fecha_ini),
+        fecha_fn: toIso(nuevaSolicitud.fecha_fn),
+        ambient: nuevaSolicitud.ambient,
+        estadosoli: Number(nuevaSolicitud.estadosoli),
+        id_usu: Number(nuevaSolicitud.id_usu) || null,
+        num_fich: nuevaSolicitud.num_fich,
+        id_esp: Number(nuevaSolicitud.id_esp) || null
+      };
+      const creado = await crearSolicitud(dto);
+      const nuevaData = creado?.data || creado;
+      setSolicitudes(prev => [nuevaData, ...prev]);
+      handleCloseModal();
+    } catch (err) {
+      console.error(err);
+      setError('Error al guardar la solicitud: ' + (err?.message || err));
+    } finally {
+      setGuardando(false);
+    }
+  };
 
   useEffect(() => {
     cargarSolicitudes();
@@ -52,7 +110,7 @@ const Soliespacio = () => {
       1: { text: 'PENDIENTE', variant: 'warning' },
       2: { text: 'APROBADO', variant: 'success' },
       3: { text: 'RECHAZADO', variant: 'danger' },
-      4: { text: 'EN_USO', variant: 'info' },
+    4: { text: 'EN USO', variant: 'info' },
       5: { text: 'FINALIZADO', variant: 'secondary' }
     };
     return estados[estado] || { text: 'DESCONOCIDO', variant: 'secondary' };
@@ -69,8 +127,34 @@ const Soliespacio = () => {
         hour: '2-digit',
         minute: '2-digit'
       });
-    } catch (e) {
+    } catch {
       return 'Fecha inválida';
+    }
+  };
+
+  const handleEliminar = async (id) => {
+    if (!window.confirm('¿Eliminar esta solicitud?')) return;
+    try {
+      await eliminarSolicitud(id);
+      setSolicitudes(prev => prev.filter(s => s.id !== id));
+    } catch (err) {
+      console.error('Error eliminando:', err);
+      setError('Error al eliminar la solicitud: ' + (err?.message || err));
+    }
+  };
+
+  const handleCambiarEstado = async (id, nuevoEstado) => {
+    try {
+      setLoading(true);
+      const payload = { estadosoli: Number(nuevoEstado) };
+      const resp = await actualizarSolicitud(id, payload);
+      const actualizada = resp?.data || resp;
+      setSolicitudes(prev => prev.map(s => (s.id === id ? actualizada : s)));
+    } catch (err) {
+      console.error('Error actualizando estado:', err);
+      setError('Error al actualizar estado: ' + (err?.message || err));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -154,7 +238,7 @@ const Soliespacio = () => {
                     RECHAZADO
                   </Dropdown.Item>
                   <Dropdown.Item 
-                    onClick={() => handleEstadoFilter("EN_USO")}
+                    onClick={() => handleEstadoFilter("EN USO")}
                     className="dropdown-item-xd148"
                   >
                     EN USO
@@ -171,9 +255,14 @@ const Soliespacio = () => {
           </div>
           
           <div className="header-right-section-xd34">
-            <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.7 }}>
-              Los usuarios crean reservas desde la sección Home → Espacios
-            </p>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.7 }}>
+                Los usuarios crean reservas desde la sección Home → Espacios
+              </p>
+              <Button variant="success" size="sm" onClick={handleOpenModal}>
+                Nueva Reserva
+              </Button>
+            </div>
           </div>
         </div>
       </Alert>
@@ -225,6 +314,21 @@ const Soliespacio = () => {
                   <button className="view-details-button-xd08">
                     Ver Detalles
                   </button>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '12px', justifyContent: 'center' }}>
+                    {solicitud.estadosoli !== 2 && (
+                      <button className="view-details-button-xd08" onClick={() => handleCambiarEstado(solicitud.id, 2)}>
+                        Aprobar
+                      </button>
+                    )}
+                    {solicitud.estadosoli !== 3 && (
+                      <button className="view-details-button-xd08" onClick={() => handleCambiarEstado(solicitud.id, 3)}>
+                        Rechazar
+                      </button>
+                    )}
+                    <button className="view-details-button-xd08" onClick={() => handleEliminar(solicitud.id)}>
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
               );
             })
