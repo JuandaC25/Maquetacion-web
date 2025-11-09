@@ -251,12 +251,11 @@ function Datos_escritorio() {
               </ul>
             </div>
 
-            <div className="equipos-disponibles mt-4">
-              <h4>Equipos disponibles:</h4>
-              <div className="contador-equipos">
-                <span className="numero">{equiposDisponibles.length}</span>
-                <p>Equipos actualmente disponibles</p>
-              </div>
+            {/* Contador de equipos disponibles como texto pequeño arriba a la derecha */}
+            <div className="equipos-disponibles-notif">
+              <span>
+                Equipos actualmente disponibles: {equiposDisponibles.length}
+              </span>
             </div>
           </div>
 

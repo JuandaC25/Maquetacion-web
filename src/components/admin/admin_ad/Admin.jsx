@@ -13,6 +13,7 @@ import { obtenersolicitudes } from '../../../api/SubcategotiaApi.js';
 const Listaxd = ({ onVerClick, onCrearClick }) => {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("Todas las Categorías");
   const [selectedSubcategoryFilter, setSelectedSubcategoryFilter] = useState("Todas las Subcategorías");
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState("Todos los Estados");
   const [tickets, setTickets] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [subcategorias, setSubcategorias] = useState([]);
@@ -53,7 +54,18 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
   };
 
   const ticketsArray = Array.isArray(tickets) ? tickets : [];
-  const ticketsFiltrados = ticketsArray;
+  
+  // Filtrar tickets por estado
+  const ticketsFiltrados = ticketsArray.filter(ticket => {
+    if (selectedStatusFilter === "Todos los Estados") return true;
+    
+    const estadoTicket = ticket?.estado;
+    if (selectedStatusFilter === "Activo" && estadoTicket === 1) return true;
+    if (selectedStatusFilter === "Pendiente" && estadoTicket === 2) return true;
+    if (selectedStatusFilter === "Inactivo" && estadoTicket === 3) return true;
+    
+    return false;
+  });
   
   const handleCategoryFilter = (category) => {
     setSelectedCategoryFilter(category);
@@ -62,6 +74,10 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
 
   const handleSubcategoryFilter = (subcategory) => {
     setSelectedSubcategoryFilter(subcategory);
+  };
+
+  const handleStatusFilter = (status) => {
+    setSelectedStatusFilter(status);
   };
 
   const subcategoriasFiltradas = selectedCategoryFilter === "Todas las Categorías" 
@@ -155,6 +171,42 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
                       {subcategoria.nom_subcateg}
                     </Dropdown.Item>
                   ))}
+                </Dropdown.Menu>
+              </Dropdown>
+
+              <Dropdown className="category-filter-dropdown-xd31">
+                <Dropdown.Toggle 
+                  variant="success" 
+                  id="dropdown-status-xd31"
+                  className="dropdown-toggle-xd146"
+                >
+                  {selectedStatusFilter} <span className="dropdown-arrow-xd32">▼</span>
+                </Dropdown.Toggle>
+                <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
+                  <Dropdown.Item 
+                    onClick={() => handleStatusFilter("Todos los Estados")}
+                    className="dropdown-item-xd148"
+                  >
+                    Todos los Estados
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleStatusFilter("Activo")}
+                    className="dropdown-item-xd148"
+                  >
+                    🟢 Activo
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleStatusFilter("Pendiente")}
+                    className="dropdown-item-xd148"
+                  >
+                    🟡 Pendiente
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    onClick={() => handleStatusFilter("Inactivo")}
+                    className="dropdown-item-xd148"
+                  >
+                    🔴 Inactivo
+                  </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>

@@ -257,4 +257,25 @@
     max-width: 250px;
     left: 30px;
   }
+
+  .label-con-boton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-agregar-imagen {
+  background: #28a745;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: 0.2s ease;
+}
+
+.btn-agregar-imagen:hover {
+  background: #1e7e34;
+}
+
 }
