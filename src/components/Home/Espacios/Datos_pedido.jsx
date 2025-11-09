@@ -39,17 +39,21 @@ function Datos_pedido() {
       return;
     }
 
-    const fechaInicio = new Date(`${form.fecha_ini}T${form.hora_ini}:00`);
-    const fechaFin = new Date(`${form.fecha_fn}T${form.hora_fn}:00`);
+  const fechaInicio = new Date(`${form.fecha_ini}T${form.hora_ini}:00`);
+  const fechaFin = new Date(`${form.fecha_fn}T${form.hora_fn}:00`);
 
     if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
       alert("El formato de fecha u hora es inválido.");
       return;
     }
+    const pad = (n) => String(n).padStart(2, '0');
+    const formatLocal = (d) => {
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    };
 
     const dto = {
-      fecha_ini: fechaInicio.toISOString(),
-      fecha_fn: fechaFin.toISOString(),
+      fecha_ini: formatLocal(fechaInicio),
+      fecha_fn: formatLocal(fechaFin),
       ambient: form.ambient,
       estadosoli: form.estadosoli,
       id_usu: form.id_usu,
@@ -58,6 +62,7 @@ function Datos_pedido() {
     };
 
     try {
+      console.log('[SOLICITUD] DTO enviado:', dto);
       await crearSolicitud(dto);
       alert("✅ Solicitud enviada correctamente");
       handleClose();
@@ -73,7 +78,7 @@ function Datos_pedido() {
       });
     } catch (err) {
       console.error("Error en la solicitud:", err);
-      alert("❌ Error al enviar la solicitud");
+      alert("❌ Error al enviar la solicitud: " + (err?.message || err));
     }
   };
 

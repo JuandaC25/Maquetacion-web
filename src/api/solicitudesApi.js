@@ -20,16 +20,25 @@ export const obtenerSolicitudesPorid = async (id) => {
 }
 
 export const crearSolicitud = async (data) => {
-    const res = await authorizedFetch('/api/solicitudes', {
-        method: 'POST',
-        body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-        const text = await res.text().catch(() => null);
-        throw new Error(text || 'Error al crear la solicitud');
+    try {
+        const res = await authorizedFetch('/api/solicitudes', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+            const text = await res.text().catch(() => null);
+            throw new Error(text || `Error al crear la solicitud (status ${res.status})`);
+        }
+
+        const text = await res.text();
+        try { return text ? JSON.parse(text) : {}; } catch { return text; }
+    } catch (error) {
+        if ((error.message || '').toLowerCase().includes('failed to fetch') || error.message.includes('No se pudo conectar')) {
+            throw new Error('No se pudo conectar con el servidor');
+        }
+        throw error;
     }
-    const text = await res.text();
-    try { return text ? JSON.parse(text) : {}; } catch { return text; }
 }
 
 export const eliminarSolicitud = async (id) => {
