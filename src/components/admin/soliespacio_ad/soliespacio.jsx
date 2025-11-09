@@ -3,7 +3,7 @@ import { Alert, Spinner, Dropdown, Modal, Form, Button } from 'react-bootstrap';
 import './soliespacio.css';
 import Footer from '../../Footer/Footer.jsx';
 import HeaderSoliespacio from '../header_soliespacio/header_soliespacio.jsx';
-import { obtenersolicitudes, crearSolicitud, eliminarSolicitud, actualizarSolicitud, actualizarEstadoSolicitud } from '../../../api/solicitudesApi.js';
+import { obtenersolicitudes, crearSolicitud, eliminarSolicitud, actualizarSolicitud } from '../../../api/solicitudesApi.js';
 import { obtenerUsuarioPorId } from '../../../api/UsuariosApi.js';
 
 const Soliespacio = () => {
@@ -29,7 +29,7 @@ const Soliespacio = () => {
   const [lookupError, setLookupError] = useState(null);
   const [modalIsTerminado, setModalIsTerminado] = useState(false);
   const [updatingIds, setUpdatingIds] = useState(new Set());
-  const [confirmToggle, setConfirmToggle] = useState({ show: false, sid: null, nuevo: null, nombre: '' });
+  
 
   const handleOpenModal = () => {
     setEditingId(null);
@@ -292,35 +292,7 @@ const Soliespacio = () => {
     }
   };
 
-  const handleOpenConfirmToggle = (solicitud) => {
-    const sid = solicitud.id_soli || solicitud.id;
-    const current = (solicitud.estado != null) ? Number(solicitud.estado) : 1;
-    const nuevo = current === 1 ? 0 : 1;
-    const nombre = solicitud.nom_espa || solicitud.nom_usu || (`Solicitud ${sid}`);
-    setConfirmToggle({ show: true, sid, nuevo, nombre });
-  };
-
-  const handleConfirmToggle = async () => {
-    const { sid, nuevo } = confirmToggle;
-    try {
-      setUpdatingIds(prev => new Set(prev).add(sid));
-      const resp = await actualizarEstadoSolicitud(sid, nuevo);
-      const actualizada = resp?.data || resp;
-      setSolicitudes(prev => prev.map(s => (s.id_soli === sid || s.id === sid ? actualizada : s)));
-      setConfirmToggle({ show: false, sid: null, nuevo: null, nombre: '' });
-    } catch (err) {
-      console.error('Error cambiando activo/inactivo:', err);
-      setError('Error al cambiar estado activo/inactivo: ' + (err?.message || err));
-    } finally {
-      setUpdatingIds(prev => {
-        const copy = new Set(prev);
-        copy.delete(sid);
-        return copy;
-      });
-    }
-  };
-
-  const handleCancelToggle = () => setConfirmToggle({ show: false, sid: null, nuevo: null, nombre: '' });
+  
 
   const handleCambiarEstado = async (id, nuevoEstado) => {
     const numericEstado = Number(nuevoEstado);
@@ -581,24 +553,7 @@ const Soliespacio = () => {
                         Editar
                       </button>
                       
-                      {(() => {
-                        const current = (solicitud.estado != null) ? Number(solicitud.estado) : 1;
-                        const willInactivate = current === 1; 
-                        const btnClass = willInactivate ? 'will-inactivate' : 'will-activate';
-                        const label = willInactivate ? 'Inactivar solicitud' : 'Activar solicitud';
-                        const sid = solicitud.id_soli || solicitud.id;
-                        const isLoading = updatingIds.has(sid);
-                        return (
-                          <button
-                            className={`solicitud-toggle-btn ${btnClass}`}
-                            onClick={() => handleOpenConfirmToggle(solicitud)}
-                            disabled={isLoading}
-                            aria-label={label}
-                          >
-                            {isLoading ? '...' : label}
-                          </button>
-                        );
-                      })()}
+                      {/* activate/inactivate button removed (estado field deprecated) */}
                     </div>
                   </div>
                 </div>
@@ -738,21 +693,7 @@ const Soliespacio = () => {
       </Modal>
 
       
-      <Modal show={confirmToggle.show} onHide={handleCancelToggle} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>{confirmToggle.nuevo === 0 ? 'Inactivar solicitud' : 'Activar solicitud'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>¿Deseas {confirmToggle.nuevo === 0 ? 'inactivar' : 'activar'} la solicitud <strong>{confirmToggle.nombre}</strong>?</p>
-          <p className="text-muted">Esta acción puede deshabilitar la visibilidad o el uso de la reserva. Puedes revertirla posteriormente.</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCancelToggle}>Cancelar</Button>
-          <Button variant={confirmToggle.nuevo === 0 ? 'danger' : 'success'} onClick={handleConfirmToggle} disabled={confirmToggle.sid == null}>
-            {confirmToggle.nuevo === 0 ? 'Inactivar' : 'Activar'}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {/* Activate/Inactivate confirmation modal removed (estado deprecated) */}
 
       <Footer />
     </div>
