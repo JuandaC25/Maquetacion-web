@@ -3,6 +3,9 @@ import { Card, Button, Modal, Form, ButtonGroup, ToggleButton, Carousel, Spinner
 import "./Pedidos_escritorio.css";
 import ElementosService from "../../../api/ElementosApi";
 import { crearSolicitud } from "../../../api/solicitudesApi";
+import CategoriaService from "../../../api/CategoriaApi";
+import SubCategoriaService from "../../../api/SubcategotiaApi";
+import EspacioService from "../../../api";
 
 // --- FUNCIONES GLOBALES DE FECHA/HORA ---
 
@@ -12,20 +15,22 @@ import { crearSolicitud } from "../../../api/solicitudesApi";
 const getMinMaxDate = () => {
   const today = new Date();
   const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, "0"); // Meses empiezan en 0
+  const mm = String(today.getMonth() + 1).padStart(2, "0"); 
   const dd = String(today.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
 };
 
 /**
- * Obtiene la hora actual en formato HH:mm.
- * @returns {string} Hora actual.
+ * Obtiene la hora actual más un minuto en formato HH:mm.
+ * @returns {string} Hora actual ajustada.
  */
 const getMinTime = () => {
   const now = new Date();
-  const hh = String(now.getHours()).padStart(2, "0");
-  const mm = String(now.getMinutes()).padStart(2, "0");
-  return `${hh}:${mm}`;
+  // Ajuste para la hora actual: la solicitud debe ser para el siguiente minuto
+  const adjustedTime = new Date(now.getTime() + 60000); 
+  const adjustedHh = String(adjustedTime.getHours()).padStart(2, "0");
+  const adjustedMm = String(adjustedTime.getMinutes()).padStart(2, "0");
+  return `${adjustedHh}:${adjustedMm}`;
 };
 
 const todayDate = getMinMaxDate();
@@ -38,6 +43,9 @@ function Datos_escritorio() {
   const [showModal, setShowModal] = useState(false);
   const [equiposDisponibles, setEquiposDisponibles] = useState([]);
   const [minHoraInicio, setMinHoraInicio] = useState(getMinTime());
+  const [categorias, setCategorias] = useState([]);
+  const [subcategorias, setSubcategorias] = useState([]);
+  const [espacios, setEspacios] = useState([]);
 
   const [form, setForm] = useState({
     fecha_ini: "",
@@ -45,40 +53,46 @@ function Datos_escritorio() {
     fecha_fn: "",
     hora_fn: "",
     ambient: "",
-    cantid: "",
-    id_elemen: "", // Almacena el ID del elemento seleccionado
+    cantid: "1", 
+    id_elemen: "", 
     estadosoli: 1,
-    id_usu: 1,
+    id_usu: 4, 
+    num_ficha: "", 
+    mensaj: "",
+    // IDs de contexto (inicialmente vacíos)
+    id_categoria: "", 
+    id_subcategoria: "", 
+    id_esp: "", 
   });
 
   const handleShowModal = () => {
     setMinHoraInicio(getMinTime());
     
-    // 🔑 AJUSTE 1: Auto-seleccionar el primer equipo al abrir el modal
     const firstEquipoId = equiposDisponibles.length > 0 ? equiposDisponibles[0].id_elemen.toString() : "";
 
     setForm(prevForm => ({ 
         ...prevForm, 
-        cantid: "1", // Se establece la cantidad predeterminada a 1
-        id_elemen: firstEquipoId, // Auto-seleccionar el ID del primer equipo
+        cantid: "1", 
+        id_elemen: firstEquipoId, 
     })); 
     setShowModal(true);
   };
 
   const handleHideModal = () => {
     setShowModal(false);
-    // Limpia el formulario al cerrarse
-    setForm({
+    // Limpia solo los campos de la solicitud
+    setForm(prevForm => ({
+      ...prevForm,
       fecha_ini: "",
       hora_ini: "",
       fecha_fn: "",
       hora_fn: "",
       ambient: "",
-      cantid: "",
-      id_elemen: "", // Limpiar el elemento seleccionado
-      estadosoli: 1,
-      id_usu: 1,
-    });
+      cantid: "1",
+      id_elemen: "", 
+      num_ficha: "",
+      mensaj: "",
+    }));
   };
 
   const handleChange = (e) => {
@@ -89,17 +103,12 @@ function Datos_escritorio() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. Validar la selección del elemento
     if (!form.id_elemen) {
         alert("Debes seleccionar un equipo específico (Número de ficha) para realizar la solicitud.");
         return;
     }
     
-    // Buscar el equipo seleccionado para obtener su número de ficha
-    const equipoSeleccionado = equiposDisponibles.find(eq => eq.id_elemen.toString() === form.id_elemen);
-    const numFichaSeleccionada = equipoSeleccionado ? equipoSeleccionado.num_ficha : null;
-    
-    // 2. Validación de Fechas/Horas
+    // 2. Validación y Formato de Fechas/Horas
     const fechaInicio = new Date(`${form.fecha_ini}T${form.hora_ini}:00`);
     const fechaFin = new Date(`${form.fecha_fn}T${form.hora_fn}:00`);
 
@@ -108,34 +117,49 @@ function Datos_escritorio() {
       return;
     }
     
-    // Validación de coherencia: La fecha/hora de fin debe ser estrictamente posterior a la de inicio.
     if (fechaFin <= fechaInicio) {
         alert("La fecha y hora de fin debe ser posterior a la de inicio.");
         return;
     }
 
+    // 🔑 CORRECCIÓN CRÍTICA DE FECHA: Formato limpio para Java LocalDateTime (sin milisegundos ni 'Z')
+    const isoInicio = fechaInicio.toISOString().replace(/\.\d{3}Z$/, '');
+    const isoFin = fechaFin.toISOString().replace(/\.\d{3}Z$/, '');
+
     // 3. Crear DTO (Data Transfer Object)
     const dto = {
-      fecha_ini: fechaInicio.toISOString(),
-      fecha_fn: fechaFin.toISOString(),
+      fecha_ini: isoInicio, // ¡Usando el formato corregido!
+      fecha_fn: isoFin,      // ¡Usando el formato corregido!
       ambient: form.ambient,
-      cantid: form.cantid,
-      estadosoli: form.estadosoli,
+      
+      // 🔑 CONVERSIÓN CRÍTICA: Asegurar que se envíen como números
+      num_fich: parseInt(form.num_ficha, 10), 
+      cantid: parseInt(form.cantid, 10),
+      id_estado_soli: form.estadosoli, 
+      mensaj: form.mensaj || "", 
+      
+      // IDs a Long o null (si el campo estaba vacío)
+      id_categoria: form.id_categoria ? parseInt(form.id_categoria, 10) : null,
+      id_subcategoria: form.id_subcategoria ? parseInt(form.id_subcategoria, 10) : null,
       id_usu: form.id_usu,
-      num_ficha: numFichaSeleccionada, 
-      id_elemen: [form.id_elemen], // La API espera un array de IDs, aunque solo enviemos uno.
+      id_esp: form.id_esp ? parseInt(form.id_esp, 10) : null, 
+      
+      // ids_elem como array de números (Longs)
+      ids_elem: form.id_elemen ? [parseInt(form.id_elemen, 10)] : [], 
     };
+    
+    // **DEBUG**: Imprimir el JSON enviado. Descomenta para verificar con Postman
+    // console.log("JSON enviado al servidor:", JSON.stringify(dto, null, 2));
 
     // 4. Llamada a la API
     try {
       await crearSolicitud(dto);
       alert("Solicitud realizada correctamente ✅");
-      handleHideModal(); // Cierra el modal y resetea el form
+      handleHideModal(); 
     } catch (err) {
       console.error("Error al realizar la solicitud:", err);
-      // Intentar obtener un mensaje de error más legible
-      const errorMessage = err.response?.data?.message || err.message || "Error desconocido.";
-      alert(`Hubo un problema al enviar la solicitud: ${errorMessage}`);
+      // Muestra el mensaje de error mejorado de solicitudesApi.js
+      alert(`Hubo un problema al enviar la solicitud: ${err.message}`);
     }
   };
 
@@ -144,23 +168,41 @@ function Datos_escritorio() {
       try {
         setIsLoading(true);
         const data = await ElementosService.obtenerElementos();
-        const subCatgFiltro = categoriaFiltro === "computo" ? "Equipo de mesa" : "Equipo de edición";
-        // Filtrar solo los elementos activos y de la subcategoría seleccionada
-        const filtrados = data.filter((item) => item.sub_catg === subCatgFiltro);
-  const activos = filtrados.filter((item) => item.est === 1);
+        const subCatgFiltroNombre = categoriaFiltro === "computo" ? "Equipo de mesa" : "Equipo de edición";
+        
+        const filtrados = data.filter((item) => item.sub_catg === subCatgFiltroNombre);
+        const activos = filtrados.filter((item) => item.est === 1);
         setEquiposDisponibles(activos);
 
         if (filtrados.length > 0) {
+          const primerElemento = filtrados[0];
+
           setSubcatInfo({
-            nombre: subCatgFiltro,
-            observacion: filtrados[0].obse || "",
-            especificaciones: (filtrados[0].componen || "")
+            nombre: subCatgFiltroNombre,
+            observacion: primerElemento.obse || "",
+            especificaciones: (primerElemento.componen || "")
               .split(",")
               .map((s) => s.trim())
               .filter((s) => s.length > 0),
           });
+          
+          // 🔑 CRÍTICO: Sincronizar los IDs de contexto (categoría, subcategoría, espacio)
+          setForm(prevForm => ({
+              ...prevForm,
+              id_categoria: primerElemento.id_catg?.toString() ?? "", 
+              id_subcategoria: primerElemento.id_sub_catg?.toString() ?? "",
+              id_esp: primerElemento.id_esp?.toString() ?? "", 
+          }));
+
         } else {
           setSubcatInfo(null);
+          // Limpiar IDs si no hay elementos
+          setForm(prevForm => ({
+              ...prevForm,
+              id_categoria: "",
+              id_subcategoria: "",
+              id_esp: "",
+          }));
         }
       } catch (err) {
         setError(err.message);
@@ -170,7 +212,22 @@ function Datos_escritorio() {
     };
     fetchSubcatInfo();
   }, [categoriaFiltro]);
-  
+
+  useEffect(() => {
+    // Cargar categorías y espacios al montar
+    CategoriaService.obtenerCategorias().then(setCategorias);
+    EspacioService.obtenerEspacios().then(setEspacios);
+  }, []);
+
+  useEffect(() => {
+    // Cargar subcategorías cuando cambia la categoría seleccionada
+    if (form.id_categoria) {
+      SubCategoriaService.obtenerSubcategoriasPorCategoria(form.id_categoria).then(setSubcategorias);
+    } else {
+      setSubcategorias([]);
+    }
+  }, [form.id_categoria]);
+
   if (isLoading) {
     return (
         <div className="main-page-container d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
@@ -276,13 +333,53 @@ function Datos_escritorio() {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleFormSubmit}>
-
-            {/* --- DROPDOWN 1: Categoría (basado en el filtro actual) --- */}
+            {/* Dropdown Categoría */}
             <Form.Group className="mb-3">
               <Form.Label>Categoría</Form.Label>
-              <Form.Control as="select" value={categoriaFiltro} disabled>
-                <option value="computo">Computo</option>
-                <option value="multimedia">Multimedia</option>
+              <Form.Control
+                as="select"
+                name="id_categoria"
+                value={form.id_categoria}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecciona una categoría</option>
+                {categorias.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.nom_categoria}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            {/* Dropdown Subcategoría */}
+            <Form.Group className="mb-3">
+              <Form.Label>Subcategoría</Form.Label>
+              <Form.Control
+                as="select"
+                name="id_subcategoria"
+                value={form.id_subcategoria}
+                onChange={handleChange}
+                required
+                disabled={!form.id_categoria}
+              >
+                <option value="">Selecciona una subcategoría</option>
+                {subcategorias.map(sub => (
+                  <option key={sub.id} value={sub.id}>{sub.nom_subcategoria}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            {/* Dropdown Espacio */}
+            <Form.Group className="mb-3">
+              <Form.Label>Espacio</Form.Label>
+              <Form.Control
+                as="select"
+                name="id_esp"
+                value={form.id_esp}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecciona un espacio</option>
+                {espacios.map(esp => (
+                  <option key={esp.id} value={esp.id}>{esp.nom_espa}</option>
+                ))}
               </Form.Control>
             </Form.Group>
 
@@ -295,21 +392,20 @@ function Datos_escritorio() {
                 value={form.id_elemen}
                 onChange={handleChange}
                 required
-                // Si la lista está vacía, se deshabilita
-                disabled={equiposDisponibles.length === 0} 
+                disabled={equiposDisponibles.length === 0}
               >
-                {/* Opcion por defecto (oculta si hay elementos seleccionados automáticamente) */}
                 <option value="">Selecciona el equipo a solicitar</option>
                 
-                {/* 🔑 MODIFICACIÓN CLAVE: Muestra solo el primer equipo */}
-                {equiposDisponibles.length > 0 ? (
+                {equiposDisponibles.map((equipo) => (
                     <option 
-                        key={equiposDisponibles[0].id_elemen} 
-                        value={equiposDisponibles[0].id_elemen}
+                        key={equipo.id_elemen} 
+                        value={equipo.id_elemen}
                     >
-                        {equiposDisponibles[0].num_ficha} - {equiposDisponibles[0].sub_catg}
+                        {equipo.num_ficha} - {equipo.sub_catg}
                     </option>
-                ) : (
+                ))}
+                
+                {equiposDisponibles.length === 0 && (
                   <option value="" disabled>
                     No hay equipos disponibles para esta subcategoría
                   </option>
@@ -332,7 +428,7 @@ function Datos_escritorio() {
                 />
             </Form.Group>
             
-            {/* --- CAMPOS ORIGINALES: FECHA Y HORA DE INICIO --- */}
+            {/* --- FECHA Y HORA DE INICIO --- */}
             <Form.Group className="mb-3">
               <Form.Label>Fecha y Hora de Inicio</Form.Label>
               <div className="row g-2">
@@ -343,7 +439,7 @@ function Datos_escritorio() {
                     value={form.fecha_ini}
                     onChange={handleChange}
                     min={todayDate}
-                    max={todayDate}
+                    max={todayDate} // Solo hoy
                     required
                   />
                 </div>
@@ -361,7 +457,7 @@ function Datos_escritorio() {
               </div>
             </Form.Group>
 
-            {/* --- CAMPOS ORIGINALES: FECHA Y HORA DE FIN --- */}
+            {/* --- FECHA Y HORA DE FIN --- */}
             <Form.Group className="mb-3">
               <Form.Label>Fecha y Hora de Fin</Form.Label>
               <div className="row g-2">
@@ -372,7 +468,7 @@ function Datos_escritorio() {
                     value={form.fecha_fn}
                     onChange={handleChange}
                     min={form.fecha_ini || todayDate}
-                    max={todayDate}
+                    max={todayDate} // Solo hoy
                     required
                   />
                 </div>
@@ -382,7 +478,8 @@ function Datos_escritorio() {
                     name="hora_fn"
                     value={form.hora_fn}
                     onChange={handleChange}
-                    min={form.fecha_fn === form.fecha_ini ? form.hora_ini : ""}
+                    // Min hora: Si es la misma fecha de inicio, debe ser después de hora_ini
+                    min={form.fecha_fn === form.fecha_ini ? form.hora_ini : "00:00"} 
                     max="23:59"
                     required
                   />
@@ -416,6 +513,19 @@ function Datos_escritorio() {
                   />
                 </div>
               </div>
+            </Form.Group>
+
+            {/* --- CAMPO MENSAJE (opcional) --- */}
+            <Form.Group className="mb-3">
+              <Form.Label>Mensaje (opcional)</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="mensaj"
+                placeholder="Escribe aquí un mensaje adicional (opcional)"
+                value={form.mensaj}
+                onChange={handleChange}
+                rows={3}
+              />
             </Form.Group>
             
             <div className="text-center mt-4">
