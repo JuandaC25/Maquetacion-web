@@ -27,7 +27,10 @@ export async function authorizedFetch(path, options = {}) {
   if (res.status === 401 || res.status === 403) {
     console.error("[AUTH] Error de autenticacion/autorizacion - Status:", res.status);
     console.error("[AUTH] Path:", path);
-    const errorText = await res.text();
+    
+    // Clonar la respuesta antes de leer el body
+    const resClone = res.clone();
+    const errorText = await resClone.text();
     console.error("[AUTH] Error response:", errorText);
     
     // Solo redirigir si es 401 (no autenticado), no en 403 (no autorizado)
