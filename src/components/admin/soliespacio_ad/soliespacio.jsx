@@ -3,7 +3,8 @@ import { Alert, Spinner, Dropdown, Modal, Form, Button } from 'react-bootstrap';
 import './soliespacio.css';
 import Footer from '../../Footer/Footer.jsx';
 import HeaderSoliespacio from '../header_soliespacio/header_soliespacio.jsx';
-import { obtenersolicitudes } from '../../../api/solicitudesApi.js';
+import { obtenersolicitudes, crearSolicitud, eliminarSolicitud, actualizarSolicitud } from '../../../api/solicitudesApi.js';
+import { obtenerUsuarioPorId } from '../../../api/UsuariosApi.js';
 
 const Soliespacio = () => {
   const [solicitudes, setSolicitudes] = useState([]);
@@ -12,7 +13,6 @@ const Soliespacio = () => {
   const [selectedEstadoFilter, setSelectedEstadoFilter] = useState("Todos los Estados");
   const [selectedEspacioFilter, setSelectedEspacioFilter] = useState("Todos los Espacios");
   const [showModal, setShowModal] = useState(false);
-  const [guardando, setGuardando] = useState(false);
   const [nuevaSolicitud, setNuevaSolicitud] = useState({
     id_esp: '',
     id_usu: '',
@@ -20,8 +20,95 @@ const Soliespacio = () => {
     num_fich: '',
     fecha_ini: '',
     fecha_fn: '',
-    estadosoli: '1'
+    estadosoli: 1,
+    nom_usu: ''
   });
+  const [guardando, setGuardando] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [lookupError, setLookupError] = useState(null);
+  const [modalIsTerminado, setModalIsTerminado] = useState(false);
+  const [updatingIds, setUpdatingIds] = useState(new Set());
+  
+
+  const handleOpenModal = () => {
+    setEditingId(null);
+    setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1, nom_usu: '' });
+    setModalIsTerminado(false);
+    setLookupError(null);
+    setShowModal(true);
+  };
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingId(null);
+    setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1, nom_usu: '' });
+    setModalIsTerminado(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNuevaSolicitud(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmitSolicitud = async (e) => {
+    e.preventDefault();
+    try {
+      setGuardando(true);
+      const toIsoLocalNoTZ = (v) => {
+        if (!v) return null;
+        try {
+          const d = new Date(v);
+          if (isNaN(d.getTime())) return v;
+          const pad = (n) => String(n).padStart(2, '0');
+          return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        } catch {
+          return v;
+        }
+      };
+
+      if (editingId) {
+        const payload = {};
+        if (nuevaSolicitud.estadosoli != null) payload.id_est_soli = Number(nuevaSolicitud.estadosoli);
+        if (payload.id_est_soli != null && !AVAILABLE_ESTADOS.some(x => x.id === payload.id_est_soli)) {
+          setError('Estado seleccionado no existe en la base de datos. Valores permitidos: ' + AVAILABLE_ESTADOS.map(x => x.id + ':' + x.label).join(', '));
+          setGuardando(false);
+          return;
+        }
+        if (nuevaSolicitud.fecha_ini) payload.fecha_ini = toIsoLocalNoTZ(nuevaSolicitud.fecha_ini);
+        if (nuevaSolicitud.fecha_fn) payload.fecha_fn = toIsoLocalNoTZ(nuevaSolicitud.fecha_fn);
+        if (nuevaSolicitud.ambient != null) payload.ambient = nuevaSolicitud.ambient;
+        if (nuevaSolicitud.num_fich != null) payload.num_fich = nuevaSolicitud.num_fich;
+  if (nuevaSolicitud.id_esp != null && nuevaSolicitud.id_esp !== '') payload.id_esp = Number(nuevaSolicitud.id_esp);
+        
+  console.log('[DEBUG] PUT payload (editar):', payload, 'editingId=', editingId);
+  const resp = await actualizarSolicitud(editingId, payload);
+        const actualizado = resp?.data || resp;
+        setSolicitudes(prev => prev.map(s => ((s.id_soli === editingId || s.id === editingId) ? actualizado : s)));
+        setEditingId(null);
+        handleCloseModal();
+      } else {
+        const dto = {
+          fecha_ini: toIsoLocalNoTZ(nuevaSolicitud.fecha_ini),
+          fecha_fn: toIsoLocalNoTZ(nuevaSolicitud.fecha_fn),
+          ambient: nuevaSolicitud.ambient,
+          estadosoli: Number(nuevaSolicitud.estadosoli),
+          id_usu: Number(nuevaSolicitud.id_usu) || null,
+          num_fich: nuevaSolicitud.num_fich,
+          id_esp: Number(nuevaSolicitud.id_esp) || null
+        };
+        const creado = await crearSolicitud(dto);
+        const nuevaData = creado?.data || creado;
+        setSolicitudes(prev => [nuevaData, ...prev]);
+        handleCloseModal();
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Error al guardar la solicitud: ' + (err?.message || err));
+    } finally {
+      setGuardando(false);
+    }
+  };
+
 
   useEffect(() => {
     cargarSolicitudes();
@@ -51,23 +138,56 @@ const Soliespacio = () => {
   };
 
   const solicitudesFiltradas = solicitudes.filter(solicitud => {
-    const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
-                          getEstadoBadge(solicitud.estadosoli).text === selectedEstadoFilter;
-    const coincideEspacio = selectedEspacioFilter === "Todos los Espacios" ||
-                           (solicitud.espacio?.nombre || 'N/A') === selectedEspacioFilter;
+  const effectiveEstadoText = (() => {
+    try {
+      const fn = solicitud.fecha_fn ? new Date(solicitud.fecha_fn) : null;
+      if (fn && !isNaN(fn.getTime()) && fn.getTime() < Date.now()) return 'TERMINADO';
+    } catch { }
+    const estadoTxt = (solicitud.est_soli || (solicitud.estadosoli != null ? String(solicitud.estadosoli) : 'DESCONOCIDO')).toString();
+    return estadoTxt.toUpperCase();
+  })();
+  const sel = String(selectedEstadoFilter || '').toUpperCase();
+  const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
+    effectiveEstadoText.toUpperCase() === sel ||
+    (sel === 'FINALIZADO' && effectiveEstadoText.toUpperCase() === 'TERMINADO') ||
+    (sel === 'TERMINADO' && effectiveEstadoText.toUpperCase() === 'FINALIZADO');
+  const coincideEspacio = selectedEspacioFilter === "Todos los Espacios" || ( (solicitud.nom_espa || 'N/A').toString().toUpperCase() === String(selectedEspacioFilter).toUpperCase() );
     return coincideEstado && coincideEspacio;
   });
 
   const getEstadoBadge = (estado) => {
-    const estados = {
-      1: { text: 'PENDIENTE', variant: 'warning' },
-      2: { text: 'APROBADO', variant: 'success' },
-      3: { text: 'RECHAZADO', variant: 'danger' },
-      4: { text: 'EN_USO', variant: 'info' },
-      5: { text: 'FINALIZADO', variant: 'secondary' }
+    if (estado == null) return { text: 'DESCONOCIDO', variant: 'secondary' };
+    const asNumber = Number(estado);
+    if (!isNaN(asNumber)) {
+      const estadosNum = {
+        1: { text: 'PENDIENTE', variant: 'warning' },
+        2: { text: 'APROBADO', variant: 'success' },
+        3: { text: 'RECHAZADO', variant: 'danger' },
+        4: { text: 'EN USO', variant: 'info' },
+        5: { text: 'FINALIZADO', variant: 'secondary' }
+      };
+      return estadosNum[asNumber] || { text: String(estado).toUpperCase(), variant: 'secondary' };
+    }
+    const texto = String(estado).toUpperCase();
+    const mapText = {
+      'PENDIENTE': { text: 'PENDIENTE', variant: 'warning' },
+      'APROBADO': { text: 'APROBADO', variant: 'success' },
+      'RECHAZADO': { text: 'RECHAZADO', variant: 'danger' },
+      'EN USO': { text: 'EN USO', variant: 'info' },
+      'FINALIZADO': { text: 'FINALIZADO', variant: 'secondary' },
+      'ACTIVO': { text: 'ACTIVO', variant: 'success' },
+      'INACTIVO': { text: 'INACTIVO', variant: 'secondary' }
     };
-    return estados[estado] || { text: 'DESCONOCIDO', variant: 'secondary' };
+    return mapText[texto] || { text: texto, variant: 'secondary' };
   };
+
+  const AVAILABLE_ESTADOS = [
+    { id: 1, label: 'PENDIENTE' },
+    { id: 2, label: 'APROBADO' },
+    { id: 3, label: 'RECHAZADO' },
+    { id: 4, label: 'EN USO' },
+    { id: 5, label: 'FINALIZADO' }
+  ];
 
 
   const formatFecha = (fecha) => {
@@ -80,46 +200,123 @@ const Soliespacio = () => {
         hour: '2-digit',
         minute: '2-digit'
       });
-    } catch (e) {
+    } catch {
       return 'Fecha inválida';
     }
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setNuevaSolicitud({
-      id_esp: '',
-      id_usu: '',
-      ambient: '',
-      num_fich: '',
-      fecha_ini: '',
-      fecha_fn: '',
-      estadosoli: '1'
-    });
+  const getImageForSpace = (nomEspa) => {
+    if (!nomEspa) return '/imagenes/imagenes_espacios/espacio1.jpeg';
+    const key = nomEspa.toString().toLowerCase();
+    if (key.includes('polideportivo')) return '/imagenes/Polideportivo.jpg';
+    if (key.includes('auditorio')) return '/imagenes/imagenes_espacios/Auditorio1.jpeg';
+    if (key.includes('espacio1') || key.includes('espacio')) return '/imagenes/imagenes_espacios/espacio1.jpeg';
+    return '/imagenes/imagenes_espacios/espacio1.jpeg';
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNuevaSolicitud(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmitSolicitud = async (e) => {
-    e.preventDefault();
-    setGuardando(true);
+  const handleEliminar = async (id) => {
+    if (!window.confirm('¿Eliminar esta solicitud?')) return;
     try {
-      // Aquí iría la llamada a la API para crear la solicitud
-      console.log('Crear solicitud:', nuevaSolicitud);
-      alert('Solicitud creada exitosamente');
-      handleCloseModal();
-      cargarSolicitudes();
-    } catch (error) {
-      console.error('Error al crear solicitud:', error);
-      alert('Error al crear la solicitud: ' + error.message);
+      await eliminarSolicitud(id);
+      setSolicitudes(prev => prev.filter(s => (s.id_soli || s.id) !== id));
+    } catch (err) {
+      console.error('Error eliminando:', err);
+      setError('Error al eliminar la solicitud: ' + (err?.message || err));
+    }
+  };
+
+  const handleEditar = (solicitud) => {
+    const id = solicitud.id_soli || solicitud.id;
+    setEditingId(id);
+    const toInputLocal = (fecha) => {
+      if (!fecha) return '';
+      try {
+        const d = new Date(fecha);
+        if (isNaN(d.getTime())) return '';
+        const pad = (n) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      } catch {
+        return '';
+      }
+    };
+    setNuevaSolicitud({
+      id_esp: solicitud.id_espa ?? solicitud.id_esp ?? '',
+      id_usu: solicitud.id_usu ?? '',
+      ambient: solicitud.ambient ?? '',
+      num_fich: solicitud.num_fich ?? '',
+      fecha_ini: toInputLocal(solicitud.fecha_ini),
+      fecha_fn: toInputLocal(solicitud.fecha_fn),
+      estadosoli: solicitud.estadosoli ?? (solicitud.est_soli ? (
+        solicitud.est_soli.toUpperCase() === 'PENDIENTE' ? 1 :
+        solicitud.est_soli.toUpperCase() === 'APROBADO' ? 2 :
+        solicitud.est_soli.toUpperCase() === 'RECHAZADO' ? 3 :
+        solicitud.est_soli.toUpperCase() === 'EN USO' ? 4 :
+        solicitud.est_soli.toUpperCase() === 'FINALIZADO' ? 5 :
+        ''
+      ) : 1),
+      nom_usu: solicitud.nom_usu ?? ''
+    });
+    let terminado = false;
+    try {
+      const fnDate = solicitud.fecha_fn ? new Date(solicitud.fecha_fn) : null;
+      if (fnDate && !isNaN(fnDate.getTime()) && fnDate.getTime() < Date.now()) terminado = true;
+    } catch {}
+    setModalIsTerminado(terminado);
+    setShowModal(true);
+  };
+
+  const lookupUserById = async (maybeId) => {
+    const id = Number(maybeId || nuevaSolicitud.id_usu);
+    if (!id || isNaN(id)) {
+      setLookupError('ID de usuario inválido');
+      setNuevaSolicitud(prev => ({ ...prev, nom_usu: '' }));
+      return;
+    }
+    try {
+      setLookupError(null);
+      setLookupLoading(true);
+      const u = await obtenerUsuarioPorId(id);
+      const user = u?.data || u;
+      if (!user) throw new Error('Usuario no encontrado');
+      const first = user.nom_usu || user.nombre || user.firstName || user.fullName || '';
+      const last = user.ape_usu || user.apellido || user.lastName || '';
+      const email = user.correo || user.email || '';
+      const label = [first, last].filter(Boolean).join(' ') || (email ? email : `Usuario ${id}`);
+      setNuevaSolicitud(prev => ({ ...prev, id_usu: id, nom_usu: label }));
+    } catch (err) {
+      console.error('lookup user error', err);
+      setLookupError('Usuario no encontrado');
+      setNuevaSolicitud(prev => ({ ...prev, nom_usu: '' }));
     } finally {
-      setGuardando(false);
+      setLookupLoading(false);
+    }
+  };
+
+  
+
+  const handleCambiarEstado = async (id, nuevoEstado) => {
+    const numericEstado = Number(nuevoEstado);
+    if (!AVAILABLE_ESTADOS.some(x => x.id === numericEstado)) {
+      setError('No es posible cambiar al estado seleccionado: id no existe en la base de datos. Valores permitidos: ' + AVAILABLE_ESTADOS.map(x => x.id + ':' + x.label).join(', '));
+      return;
+    }
+    const sid = id;
+    try {
+      setUpdatingIds(prev => new Set(prev).add(sid));
+      const payload = { id_est_soli: numericEstado };
+      console.log('[DEBUG] PUT payload (cambiar estado):', payload, 'id=', id);
+      const resp = await actualizarSolicitud(id, payload);
+      const actualizada = resp?.data || resp;
+      setSolicitudes(prev => prev.map(s => (s.id_soli === sid || s.id === sid ? actualizada : s)));
+    } catch (err) {
+      console.error('Error actualizando estado:', err);
+      setError('Error al actualizar estado: ' + (err?.message || err));
+    } finally {
+      setUpdatingIds(prev => {
+        const copy = new Set(prev);
+        copy.delete(sid);
+        return copy;
+      });
     }
   };
 
@@ -203,7 +400,7 @@ const Soliespacio = () => {
                     RECHAZADO
                   </Dropdown.Item>
                   <Dropdown.Item 
-                    onClick={() => handleEstadoFilter("EN_USO")}
+                    onClick={() => handleEstadoFilter("EN USO")}
                     className="dropdown-item-xd148"
                   >
                     EN USO
@@ -220,9 +417,14 @@ const Soliespacio = () => {
           </div>
           
           <div className="header-right-section-xd34">
-            <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.7 }}>
-              Los usuarios crean reservas desde la sección Home → Espacios
-            </p>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.7 }}>
+                Los usuarios crean reservas desde la sección Home → Espacios
+              </p>
+              <Button variant="success" size="sm" onClick={handleOpenModal}>
+                Nueva Reserva
+              </Button>
+            </div>
           </div>
         </div>
       </Alert>
@@ -236,27 +438,90 @@ const Soliespacio = () => {
         </div>
       ) : (
         <div className="equipment-list-grid-xd09">
-          {solicitudesFiltradas.length > 0 ? (
+              {solicitudesFiltradas.length > 0 ? (
             solicitudesFiltradas.map((solicitud) => {
-              const estadoInfo = getEstadoBadge(solicitud.estadosoli);
+              const now = Date.now();
+              let isTerminado = false;
+              try {
+                const fn = solicitud.fecha_fn ? new Date(solicitud.fecha_fn) : null;
+                if (fn && !isNaN(fn.getTime()) && fn.getTime() < now) isTerminado = true;
+              } catch {}
+
+              const rawEstado = solicitud.est_soli || solicitud.estadosoli;
+              const estadoInfo = isTerminado ? { text: 'TERMINADO', variant: 'secondary' } : getEstadoBadge(rawEstado);
+              const estadoNum = (solicitud.estadosoli != null) ? Number(solicitud.estadosoli) : (
+                (solicitud.est_soli && {
+                  'PENDIENTE': 1,
+                  'APROBADO': 2,
+                  'RECHAZADO': 3,
+                  'EN USO': 4,
+                  'FINALIZADO': 5,
+                  'ACTIVO': 2,
+                  'INACTIVO': 5
+                }[solicitud.est_soli.toUpperCase()]) || null
+              );
               return (
-                <div key={solicitud.id} className="modern-equipment-card-xd01">
-                  <div className="card-top-section-xd02">
+                <div key={solicitud.id_soli || solicitud.id} className="modern-equipment-card-xd01">
+                  <div className="card-top-section-xd02" style={{ position: 'relative', padding: 0 }}>
+                    <img
+                      src={getImageForSpace(solicitud.nom_espa)}
+                      alt={solicitud.nom_espa || 'Espacio'}
+                      style={{ width: '100%', height: '160px', objectFit: 'cover', display: 'block', borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }}
+                    />
                     <span className="equipment-category-xd06" style={{
+                      position: 'absolute',
+                      top: 10,
+                      left: 10,
                       backgroundColor: estadoInfo.variant === 'warning' ? '#ffc107' :
                                       estadoInfo.variant === 'success' ? '#28a745' :
                                       estadoInfo.variant === 'danger' ? '#dc3545' :
-                                      estadoInfo.variant === 'info' ? '#17a2b8' : '#6c757d'
+                                      estadoInfo.variant === 'info' ? '#17a2b8' : '#6c757d',
+                      color: '#fff',
+                      padding: '6px 10px',
+                      borderRadius: 6,
+                      fontWeight: 700
                     }}>
                       {estadoInfo.text}
                     </span>
+                    <div style={{ position: 'absolute', top: 10, right: 10, display: 'flex', gap: '8px', zIndex: 5 }}>
+                      {(!isTerminado && estadoNum !== 2) && (() => {
+                        const sid = solicitud.id_soli || solicitud.id;
+                        const isUpdating = updatingIds.has(sid);
+                        return (
+                          <button
+                            key={"aprob-top-" + sid}
+                            className="card-top-action"
+                            onClick={() => handleCambiarEstado(sid, 2)}
+                            disabled={isUpdating}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 8px', fontSize: '0.85rem' }}
+                          >
+                            {isUpdating ? <Spinner animation="border" size="sm" /> : 'Aprobar'}
+                          </button>
+                        );
+                      })()}
+                      {(!isTerminado && estadoNum !== 3) && (() => {
+                        const sid = solicitud.id_soli || solicitud.id;
+                        const isUpdating = updatingIds.has(sid);
+                        return (
+                          <button
+                            key={"rech-top-" + sid}
+                            className="card-top-action card-top-action--danger"
+                            onClick={() => handleCambiarEstado(sid, 3)}
+                            disabled={isUpdating}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 8px', fontSize: '0.85rem' }}
+                          >
+                            {isUpdating ? <Spinner animation="border" size="sm" /> : 'Rechazar'}
+                          </button>
+                        );
+                      })()}
+                    </div>
                   </div>
                   <div className="card-bottom-section-xd04">
                     <h5 className="equipment-title-xd05">
-                      {solicitud.espacio?.nombre || 'Espacio N/A'}
+                      {solicitud.nom_espa || 'Espacio N/A'}
                     </h5>
                     <p className="equipment-serie-xd07">
-                      <strong>Usuario:</strong> {solicitud.usuario?.nombre || 'N/A'}
+                      <strong>Usuario:</strong> {solicitud.nom_usu || 'N/A'}
                     </p>
                     <p className="equipment-serie-xd07">
                       <strong>Ambiente:</strong> {solicitud.ambient || 'N/A'}
@@ -264,16 +529,33 @@ const Soliespacio = () => {
                     <p className="equipment-serie-xd07">
                       <strong>Ficha:</strong> {solicitud.num_fich || 'N/A'}
                     </p>
+                    {solicitud.nom_elem && (
+                      <p className="equipment-serie-xd07">
+                        <strong>Elementos:</strong> {solicitud.nom_elem}
+                      </p>
+                    )}
                     <p className="equipment-serie-xd07">
                       <strong>Inicio:</strong> {formatFecha(solicitud.fecha_ini)}
                     </p>
                     <p className="equipment-serie-xd07">
                       <strong>Fin:</strong> {formatFecha(solicitud.fecha_fn)}
                     </p>
+                    <p className="equipment-serie-xd07">
+                      <strong>Estado:</strong> {estadoInfo.text}
+                    </p>
                   </div>
                   <button className="view-details-button-xd08">
                     Ver Detalles
                   </button>
+                  <div className="solicitud-action-group">
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <button className="view-details-button-xd08" onClick={() => handleEditar(solicitud)}>
+                        Editar
+                      </button>
+                      
+                      {/* activate/inactivate button removed (estado field deprecated) */}
+                    </div>
+                  </div>
                 </div>
               );
             })
@@ -287,7 +569,7 @@ const Soliespacio = () => {
 
       <Modal show={showModal} onHide={handleCloseModal} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Añadir Nueva Reserva de Espacio</Modal.Title>
+          <Modal.Title>{editingId ? 'Editar Reserva de Espacio' : 'Añadir Nueva Reserva de Espacio'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmitSolicitud}>
@@ -306,15 +588,30 @@ const Soliespacio = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>ID del Usuario *</Form.Label>
-              <Form.Control
-                type="number"
-                name="id_usu"
-                value={nuevaSolicitud.id_usu}
-                onChange={handleInputChange}
-                placeholder="Ingrese el ID del usuario"
-                required
-              />
+              <Form.Label>Usuario (ID)</Form.Label>
+              {editingId ? (
+                <Form.Control
+                  type="text"
+                  name="nom_usu"
+                  value={nuevaSolicitud.nom_usu || ''}
+                  readOnly
+                  plaintext
+                />
+              ) : (
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <Form.Control
+                    type="number"
+                    name="id_usu"
+                    value={nuevaSolicitud.id_usu || ''}
+                    onChange={handleInputChange}
+                    placeholder="Ingrese ID de usuario"
+                  />
+                  <Button variant="outline-secondary" onClick={() => lookupUserById()} disabled={lookupLoading}>
+                    {lookupLoading ? 'Buscando...' : 'Buscar'}
+                  </Button>
+                </div>
+              )}
+              {lookupError && <div style={{ color: '#dc3545', marginTop: 6 }}>{lookupError}</div>}
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -342,6 +639,8 @@ const Soliespacio = () => {
               />
             </Form.Group>
 
+            
+
             <Form.Group className="mb-3">
               <Form.Label>Fecha y Hora de Inicio *</Form.Label>
               <Form.Control
@@ -366,17 +665,19 @@ const Soliespacio = () => {
 
             <Form.Group className="mb-3">
               <Form.Label>Estado</Form.Label>
-              <Form.Select
-                name="estadosoli"
-                value={nuevaSolicitud.estadosoli}
-                onChange={handleInputChange}
-              >
-                <option value="1">PENDIENTE</option>
-                <option value="2">APROBADO</option>
-                <option value="3">RECHAZADO</option>
-                <option value="4">EN USO</option>
-                <option value="5">FINALIZADO</option>
-              </Form.Select>
+              {modalIsTerminado ? (
+                <Form.Control type="text" readOnly plaintext defaultValue={'TERMINADO'} />
+              ) : (
+                <Form.Select
+                  name="estadosoli"
+                  value={nuevaSolicitud.estadosoli}
+                  onChange={handleInputChange}
+                >
+                  {AVAILABLE_ESTADOS.map(e => (
+                    <option key={e.id} value={e.id}>{e.label}</option>
+                  ))}
+                </Form.Select>
+              )}
             </Form.Group>
 
             <div className="d-flex justify-content-end gap-2">
@@ -384,12 +685,15 @@ const Soliespacio = () => {
                 Cancelar
               </Button>
               <Button variant="success" type="submit" disabled={guardando}>
-                {guardando ? 'Guardando...' : 'Guardar Reserva'}
+                {guardando ? 'Guardando...' : (editingId ? 'Actualizar Reserva' : 'Guardar Reserva')}
               </Button>
             </div>
           </Form>
         </Modal.Body>
       </Modal>
+
+      
+      {/* Activate/Inactivate confirmation modal removed (estado deprecated) */}
 
       <Footer />
     </div>

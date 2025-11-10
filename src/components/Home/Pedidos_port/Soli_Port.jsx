@@ -1,256 +1,147 @@
-import { useState, useEffect } from 'react';
-import './Soli_port.css';
+import React, { useState, useEffect } from "react";
+import { Card,Button,Carousel,Spinner,ButtonGroup,ToggleButton} from "react-bootstrap";
+import "./Soli_port.css";
+import ElementosService from "../../../api/ElementosApi";
 import Footer from '../../Footer/Footer.jsx';
 import Header_port from './Header soli/Header.jsx';
-import Modal_com_port from './Modal_comp_port.jsx';
-import ElementosService from "../../../api/ElementosApi";
-import { Modal, Button, Carousel, Pagination } from 'react-bootstrap';
-import RealizarSolicitudModal from '../Pedidos_port/Modal_solicitud.jsx'; 
 
-const ConsultaItem = ({ onAddClick, equipoDetalles, equipoAnadido }) => {
-const handleAddClick = () => {
-if (onAddClick) {
-  onAddClick(equipoDetalles);
-}
-};
 
-const Imagenes_portatiles = equipoDetalles.imagen || [
-  '/imagenes/imagenes_port/portatil1.png',
-  '/imagenes/imagenes_port/portatil2.png',
-  '/imagenes/imagenes_port/portatil3.png',
-  '/imagenes/imagenes_port/portatil4.png',
-  '/imagenes/imagenes_port/portatil5.png',
-  '/imagenes/imagenes_port/portatil6.png'
-];
-
-return (
-<div className={`card_port ${equipoAnadido ? 'Card_agregado' : ''}`}>
-  <div className='Cua_port'>
-    <div>
-      <Carousel indicators={false} controls={false} interval={3000}>
-          {Imagenes_portatiles.map((imagen, index) => (
-              <Carousel.Item key={index}>
-                  <img
-                    className="d-block w-100 carrusel_img_port"
-                    src={typeof imagen === 'string' ? imagen : '/imagenes/imagenes_port/portatil1.png'}
-                    alt={`${equipoDetalles.nombre || 'Portátil'} - Diapositiva ${index + 1}`}
-                  />
-              </Carousel.Item>
-          ))}
-      </Carousel>
-  </div>
-  <div className='espa_text_port'>
-  <span className="title">{equipoDetalles.nombre || equipoDetalles.name}</span>
-  <Modal_com_port />
-  <Button variant="primary" className='Btn_añadir_port' onClick={handleAddClick} disabled={equipoAnadido}>
-    {equipoAnadido ? 'Añadido' : 'Añadir equipo'}
-  </Button>
-  </div>
-</div>
-</div>
-);
-};
-const id_usuario = 1;
 
 function Soli_Port() {
+  const [equiposDisponibles, setEquiposDisponibles] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [categoriaFiltro, setCategoriaFiltro] = useState("computo");
 
-const [equiposApi, setEquiposApi] = useState([]);
-const [filteredEquipos, setFilteredEquipos] = useState([]);
-const [isLoading, setIsLoading] = useState(true);
-const [error, setError] = useState(null);
-const [searchTerm, setSearchTerm] = useState("");
-const [currentPage, setCurrentPage] = useState(1);
-const [equiposPerPage] = useState(5);
+  useEffect(() => {
+    const fetchElementos = async () => {
+      try {
+        setIsLoading(true);
+        const data = await ElementosService.obtenerElementos();
+        let portatiles = [];
+        if (categoriaFiltro === "computo") {
+          portatiles = data.filter((item) =>
+            (item.sub_catg === "Portatil" || item.nom_eleme === "Portátil") && item.est === 1
+          );
+        } else {
+          portatiles = data.filter((item) =>
+            (item.sub_catg === "Portatil de edición" || item.nom_eleme === "Portátil de edición") && item.est === 1
+          );
+        }
+        setEquiposDisponibles(portatiles);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchElementos();
+  }, [categoriaFiltro]);
 
-const [showModal, setShowModal] = useState(false);
-const [showLimitModal, setShowLimitModal] = useState(false);
-const [showSolicitudModal, setShowSolicitudModal] = useState(false);
-const [equiposAnadidos, setequiposAnadidos] = useState([]);
-useEffect(() => {
-const fetchElementos = async () => {
-  try {
-    setIsLoading(true);
-    const data = await ElementosService.obtenerElementos();
-    const equiposDePortatil = data.filter(item => item.id_categ === 1); 
-    const transformedData = equiposDePortatil.map(item => ({
-      id: item.id_elemen,
-      nombre: item.nom_eleme,
-      descripcion: item.obse,
-      imagen: [
-        '/imagenes/imagenes_port/portatil1.png',
-        '/imagenes/imagenes_port/portatil2.png',
-      ],
-      especificaciones: (item.componen || "").split(',').map(s => s.trim()), 
-    }));
-    setEquiposApi(transformedData);
-    setFilteredEquipos(transformedData);
-  } catch (err) {
-  setError(err.message);
-  } finally {
-  setIsLoading(false);
-  }
-};
-fetchElementos();
-}, []);
-useEffect(() => {
-const results = equiposApi.filter((equipo) => {
-  const lowerSearchTerm = searchTerm.toLowerCase();
-  return (
-    (equipo.nombre || "").toLowerCase().includes(lowerSearchTerm) ||
-    (equipo.descripcion || "").toLowerCase().includes(lowerSearchTerm) ||
-    (equipo.especificaciones || []).some((esp) => (esp || "").toLowerCase().includes(lowerSearchTerm)));
-  });
-  setFilteredEquipos(results);
-  setCurrentPage(1); 
-}, [searchTerm, equiposApi]);
-
-const handleShow = () => setShowModal(true);
-const handleClose = () => setShowModal(false);
-const handleCloseLimitModal = () => setShowLimitModal(false);
-
-const handleShowSolicitudModal = () => {
-  handleClose();
-  setShowSolicitudModal(true);
-}
-const handleCloseSolicitudModal = () => setShowSolicitudModal(false);
-const handleSolicitudEnviada = () => {
-  setequiposAnadidos([]);
-  setShowSolicitudModal(false);
-};
-
-const equiposPortAdd = (detallesEquipo) => {
-if (equiposAnadidos.length >= 3) {
-  setShowLimitModal(true);
-  return;
-}
-
-const equipoYaAnadido = equiposAnadidos.some(team => team.id === detallesEquipo.id);
-if (!equipoYaAnadido) {
-  setequiposAnadidos(prevTeams => [...prevTeams, detallesEquipo]);
-}
-};
-
-const handleRemoveTeam = (teamId) => {
-  setequiposAnadidos(prevTeams => prevTeams.filter(team => team.id !== teamId));
-};
-const indexOfLastEquipo = currentPage * equiposPerPage;
-const indexOfFirstEquipo = indexOfLastEquipo - equiposPerPage;
-const currentEquipos = filteredEquipos.slice(indexOfFirstEquipo, indexOfLastEquipo);
-const totalPages = Math.ceil(filteredEquipos.length / equiposPerPage);
-const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-const renderPaginationItems = () => {
-const items = [];
-  for (let number = 1; number <= totalPages; number++) {
-    items.push(
-      <Pagination.Item key={number} active={number === currentPage} id="font" onClick={() => paginate(number)}>
-        {number}
-      </Pagination.Item>
+  if (isLoading) {
+    return (
+      <div className="main-page-container d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </Spinner>
+      </div>
     );
   }
-return items;
-};
-return (
-<div className="Usu-container1">
-  <Header_port />
-  <div className='cuer-inve'>
-    <div className='Elementos_arriba'>
-      <div className="Grupo_buscador">
-        <input type="text" className="Cuadro_busc_port" placeholder="Buscar..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-          <svg className="btn_buscar" aria-hidden="true" viewBox="0 0 24 24">
-            <g>
-              <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path>
-            </g>
-          </svg>
-        </div>
-<div className='Boton_campana'>
-  <button className="Boton_campanita" onClick={handleShow}>
-    <svg viewBox="0 0 448 512" className="Campanita"><path d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z"></path></svg>
-      {equiposAnadidos.length > 0 && (
-        <span className="Noti_agregado">{equiposAnadidos.length}</span> )}
-  </button>
-    </div>
-</div>
-{/* Lista de Equipos */}
-<div className="lista-inventario1">
-{isLoading ? (
-    <p>Cargando portátiles...</p>
-      ) : error ? (
-        <p className="text-danger">Error al cargar: {error}</p>
-      ) : currentEquipos.length > 0 ? (
-      currentEquipos.map((equipo) => (
-        <ConsultaItem key={equipo.id} equipoDetalles={equipo} onAddClick={equiposPortAdd} equipoAnadido={equiposAnadidos.some(team => team.id === equipo.id)} />   
-        ))
-      ) : (
-    <p>No se encontraron portátiles que coincidan con la búsqueda.</p>
-  )}
-</div>
-{/* Paginación */}
-{totalPages > 1 && (
-<div className="d-flex justify-content-center mt-4">
-  <Pagination>
-    <Pagination.Prev onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} />
-    {renderPaginationItems()}
-    <Pagination.Next onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} />
-  </Pagination>
-</div>
-)}
-</div>
-<div className='fotaj'>
-  <div className='contenido_fotaj'></div>
-    <Footer />
+
+  const datosGenerales = equiposDisponibles[0] || {};
+
+  return (
+    <div className="port-main-page-container">
+      <Header_port />
+      <div className="mb-3 d-flex justify-content-center">
+        <ButtonGroup>
+          <ToggleButton
+            id="filtro-computo"
+            type="radio"
+            variant={categoriaFiltro === "computo" ? "success" : "outline-success"}
+            name="categoriaFiltro"
+            value="computo"
+            checked={categoriaFiltro === "computo"}
+            onChange={() => setCategoriaFiltro("computo")}
+          >
+            Computo
+          </ToggleButton>
+          <ToggleButton
+            id="filtro-multimedia"
+            type="radio"
+            variant={categoriaFiltro === "multimedia" ? "success" : "outline-success"}
+            name="categoriaFiltro"
+            value="multimedia"
+            checked={categoriaFiltro === "multimedia"}
+            onChange={() => setCategoriaFiltro("multimedia")}
+          >
+            Multimedia
+          </ToggleButton>
+        </ButtonGroup>
       </div>
-  <Modal show={showModal} onHide={handleClose}>
-    <Modal.Header closeButton className='Btn_cerrar_mdl_add'>
-      <Modal.Title>Equipos agregados</Modal.Title>
-    </Modal.Header>
-<Modal.Body>
-  {equiposAnadidos.length > 0 ? (
-    <ul className='equipos-seleccionados-list'>
-      {equiposAnadidos.map(team => (
-        <li key={team.id} className="list-group-item Lista_equipos_add">
-          <span>{team.nombre || team.name}</span>
-          <Button className='Eliminar_equipos_add' variant="danger" size="sm" onClick={() => handleRemoveTeam(team.id)}>
-            Eliminar
-          </Button>
-        </li>
-      ))}
-    </ul>
-) : (
-  <p>No hay equipos agregados en tu lista.</p>
-)}
-</Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleClose}>
-        Cerrar
-    </Button>
-    <Button variant="success" onClick={handleShowSolicitudModal} disabled={equiposAnadidos.length === 0}>
-      Confirmar Solicitud
-    </Button>
-  </Modal.Footer>
-</Modal>
-<Modal show={showLimitModal} onHide={handleCloseLimitModal}>
-  <Modal.Header closeButton>
-    <Modal.Title>Límite de equipos alcanzado</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <p>Has alcanzado el límite máximo de 3 equipos añadidos. Debes eliminar uno para añadir otro.</p>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleCloseLimitModal}>
-       Entendido
-    </Button>
-  </Modal.Footer>
-</Modal>
-<RealizarSolicitudModal
-  show={showSolicitudModal}
-    handleClose={handleCloseSolicitudModal}
-    equiposSeleccionados={equiposAnadidos}
-    onSolicitudEnviada={handleSolicitudEnviada} 
-    idUsuario={id_usuario}
-/>
-  </div>
-);
+      {equiposDisponibles.length > 0 ? (
+        <Card className="port-ficha-visual">
+          <div className="port-ficha-header">
+            <div className="port-ficha-titulo">
+              <h2>{categoriaFiltro === "computo" ? "Portátiles" : "Portátil de edición"}</h2>
+              <p className="port-ficha-subtitulo">
+                Visualiza aquí los detalles generales de los portátiles disponibles
+              </p>
+            </div>
+          </div>
+
+          <div className="port-ficha-body">
+            <div className="port-ficha-descripcion">
+              <h4>Descripción general</h4>
+              <p>{datosGenerales.obse || "Sin observaciones disponibles."}</p>
+              <div className="port-carrusel">
+                <Carousel interval={2500} controls={true} indicators={true} fade>
+                  {[1, 2, 3].map((num) => (
+                    <Carousel.Item key={num}>
+                      <img
+                        className="d-block w-100 port-carrusel-imagen"
+                        src={`/imagenes/imagenes_port/portatil${num}.png`}
+                        alt={`Portátil ${num}`}
+                      />
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              </div>
+            </div>
+
+            <div className="port-ficha-especificaciones">
+              <h4>Componentes principales</h4>
+              <ul>
+                {(datosGenerales.componen || "")
+                  .split(",")
+                  .map((esp, i) => esp.trim())
+                  .filter((esp) => esp.length > 0)
+                  .map((esp, i) => (
+                    <li key={i}>{esp}</li>
+                  ))}
+              </ul>
+            </div>
+
+            {/* Contador de equipos disponibles como texto pequeño arriba a la derecha */}
+            <div className="port-equipos-disponibles-notif">
+              <span>
+                Equipos actualmente disponibles: {equiposDisponibles.length}
+              </span>
+            </div>
+          </div>
+
+          <div className="port-ficha-footer">
+            <Button className="port-boton-solicitar" disabled>
+              <span>Realizar solicitud</span>
+            </Button>
+          </div>
+        </Card>
+      ) : (
+        <p className="text-center mt-4">No hay equipos disponibles.</p>
+      )}
+      <Footer />
+    </div>
+  );
 }
 
 export default Soli_Port;

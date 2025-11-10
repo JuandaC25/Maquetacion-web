@@ -10,6 +10,7 @@ function ReportarEquipo() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [imagenCargando, setImagenCargando] = useState(false);
 
   const [formData, setFormData] = useState({
     numeroSerie: '',
@@ -42,11 +43,9 @@ function ReportarEquipo() {
       const problemas = prev.problemasSeleccionados.includes(problemaId)
         ? prev.problemasSeleccionados.filter(id => id !== problemaId)
         : [...prev.problemasSeleccionados, problemaId];
-      
       return { ...prev, problemasSeleccionados: problemas };
     });
   };
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -69,6 +68,40 @@ function ReportarEquipo() {
     return true;
   };
 
+  // ✅ Convertir imagen a Base64
+  const convertirImagenABase64 = (archivo) => {
+    return new Promise((resolve, reject) => {
+      const lector = new FileReader();
+      lector.readAsDataURL(archivo);
+      lector.onload = () => resolve(lector.result);
+      lector.onerror = (error) => reject(error);
+    });
+  };
+
+  // ✅ Agregar imagen a observaciones en Base64
+  const handleAgregarImagen = async (e) => {
+    const archivo = e.target.files[0];
+    if (!archivo) return;
+
+    setImagenCargando(true);
+
+    try {
+      const base64 = await convertirImagenABase64(archivo);
+
+      setFormData(prev => ({
+        ...prev,
+        observaciones:
+          prev.observaciones +
+          `\n[IMAGEN_ADJUNTA]: ${base64}\n\n`
+      }));
+    } catch (err) {
+      console.error("Error al procesar la imagen", err);
+      setError("No se pudo cargar la imagen.");
+    }
+
+    setImagenCargando(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -86,21 +119,19 @@ function ReportarEquipo() {
         throw new Error('No se pudo obtener el ID del usuario. Por favor, inicie sesión nuevamente.');
       }
 
-      // Obtener nombres de problemas seleccionados para el mensaje
       const problemasNombres = problemas
         .filter(p => formData.problemasSeleccionados.includes(p.id))
         .map(p => p.descr_problem);
 
-      // Crear un ticket por cada problema seleccionado
-      // Nota: La BD tiene relación ManyToOne, por lo que cada ticket solo puede tener 1 problema
-      const promesas = formData.problemasSeleccionados.map(idProblema => 
+      const promesas = formData.problemasSeleccionados.map(idProblema =>
         crearTicket({
           id_elem: parseInt(formData.idElemento),
           id_problem: idProblema,
           ambient: formData.ambiente,
           obser: formData.observaciones || '',
           id_usu: idUsuario,
-          fecha_in: new Date().toISOString()
+          fecha_in: new Date().toISOString(),
+          id_est_tick: 2
         })
       );
 
@@ -111,7 +142,6 @@ function ReportarEquipo() {
         `• ${problemasNombres.join('\n• ')}`
       );
 
-      // Limpiar formulario
       setFormData({
         numeroSerie: '',
         idElemento: '',
@@ -128,7 +158,6 @@ function ReportarEquipo() {
     }
   };
 
-  // Limpiar formulario
   const handleLimpiar = () => {
     setFormData({
       numeroSerie: '',
@@ -158,7 +187,7 @@ function ReportarEquipo() {
         )}
 
         <Form onSubmit={handleSubmit}>
-          {/* Número de Serie (opcional, para referencia) */}
+
           <Form.Group className="mb-3">
             <Form.Label>Número de Serie (Opcional)</Form.Label>
             <Form.Control
@@ -168,12 +197,8 @@ function ReportarEquipo() {
               value={formData.numeroSerie}
               onChange={handleInputChange}
             />
-            <Form.Text className="text-muted">
-              Este campo es solo para referenciar el equipo a reportar 
-            </Form.Text>
           </Form.Group>
 
-          {/* ID del Elemento (obligatorio) */}
           <Form.Group className="mb-3">
             <Form.Label>ID del Equipo *</Form.Label>
             <Form.Control
@@ -186,7 +211,6 @@ function ReportarEquipo() {
             />
           </Form.Group>
 
-          {/* Ambiente */}
           <Form.Group className="mb-3">
             <Form.Label>Ambiente/Ubicación *</Form.Label>
             <Form.Control
@@ -195,20 +219,12 @@ function ReportarEquipo() {
               placeholder="Ej: Ambiente 301"
               value={formData.ambiente}
               onChange={handleInputChange}
-              maxLength={30}
               required
             />
           </Form.Group>
 
-          
           <Form.Group className="mb-3">
-            <div className="label-con-info">
-              <Form.Label>Seleccione los problemas que presento el equipo *</Form.Label>
-              <div className="info-badge" title="Cada problema genera un ticket individual que el técnico podrá gestionar por separado">
-                <span className="info-icon">ℹ️</span>
-                <span className="info-text">Cada problema genera un ticket individual que el técnico podrá gestionar por separado.</span>
-              </div>
-            </div>
+            <Form.Label>Seleccione los problemas *</Form.Label>
             {loading ? (
               <div className="text-center py-3">
                 <Spinner animation="border" size="sm" />
@@ -231,29 +247,46 @@ function ReportarEquipo() {
             )}
           </Form.Group>
 
-          {/* Observaciones */}
+          {/* ✅ Observaciones + botón para añadir imágenes */}
           <Form.Group className="mb-3">
-            <Form.Label>Observaciones (Opcional)</Form.Label>
+
+            <div className="label-con-boton" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Form.Label>Observaciones (Opcional)</Form.Label>
+              <Button  variant="secondary" size="sm" as="label">
+                Añadir Imagen
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleAgregarImagen}
+                />
+              </Button>
+            </div>
+
             <Form.Control
               as="textarea"
               name="observaciones"
               rows={3}
-              placeholder="Describa detalles adicionales sobre el problema..."
+              placeholder="Detalles adicionales... Las imágenes se adjuntarán aquí en texto Base64."
               value={formData.observaciones}
               onChange={handleInputChange}
               maxLength={255}
             />
+
+            {imagenCargando && (
+              <div className="text-muted small mt-1">Procesando imagen...</div>
+            )}
+
             <Form.Text className="text-muted">
               {formData.observaciones.length}/255 caracteres
             </Form.Text>
           </Form.Group>
 
-          {/* Botones */}
           <div className="botones-accion">
             <Button 
-              variant="danger" 
-              type="submit" 
-              disabled={submitting || loading}
+              variant="danger"
+              type="submit"
+              disabled={submitting}
               className="btn-reportar"
             >
               {submitting ? (
@@ -267,7 +300,7 @@ function ReportarEquipo() {
             </Button>
 
             <Button 
-              variant="secondary" 
+              variant="secondary"
               onClick={handleLimpiar}
               disabled={submitting}
               className="btn-limpiar"
@@ -275,10 +308,10 @@ function ReportarEquipo() {
               🔄 Limpiar Formulario
             </Button>
           </div>
+
         </Form>
       </div>
     </div>
   );
 }
-
 export default ReportarEquipo;

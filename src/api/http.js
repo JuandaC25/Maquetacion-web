@@ -11,7 +11,8 @@ export async function authorizedFetch(path, options = {}) {
   
   const headers = new Headers(options.headers || {});
   if (token) {
-    headers.set('Authorization', token); // token incluye 'Bearer '
+    const authValue = /^Bearer\s+/i.test(token) ? token : `Bearer ${token}`;
+    headers.set('Authorization', authValue);
   } else {
     console.warn("[AUTH] No hay token - la peticion fallara si requiere autenticacion");
   }
