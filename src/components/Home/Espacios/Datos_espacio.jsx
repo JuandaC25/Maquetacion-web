@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Solicitud_espacios.css";
 import Card from "react-bootstrap/Card";
-import { Carousel, Modal, Button, Form } from "react-bootstrap";
+import { Carousel, Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
 import { crearSolicitud } from "../../../api/solicitudesApi";
+import { listarEspacios } from "../../../api/EspaciosApi";
 
-function Datos_pedido() {
+function Datos_espacio() {
+  const [espacios, setEspacios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [espacioSeleccionado, setEspacioSeleccionado] = useState(null);
 
@@ -19,8 +23,29 @@ function Datos_pedido() {
     id_usu: 1,
   });
 
-  const handleOpen = (idEsp) => {
-    setEspacioSeleccionado(idEsp);
+  // Cargar espacios al montar el componente
+  useEffect(() => {
+    cargarEspacios();
+  }, []);
+
+  const cargarEspacios = async () => {
+    try {
+      setLoading(true);
+      const data = await listarEspacios();
+      // Filtrar solo espacios activos (estadoespacio = 1)
+      const espaciosActivos = data.filter(esp => esp.estadoespacio === 1);
+      setEspacios(espaciosActivos);
+      setError(null);
+    } catch (err) {
+      console.error("Error al cargar espacios:", err);
+      setError("No se pudieron cargar los espacios disponibles");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOpen = (espacio) => {
+    setEspacioSeleccionado(espacio);
     setShowModal(true);
   };
 
@@ -34,7 +59,7 @@ function Datos_pedido() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    if (!espacioSeleccionado) {
+    if (!espacioSeleccionado || !espacioSeleccionado.id) {
       alert("Error: no se seleccionó ningún espacio.");
       return;
     }
@@ -58,7 +83,7 @@ function Datos_pedido() {
       estadosoli: form.estadosoli,
       id_usu: form.id_usu,
       num_fich: form.num_ficha,
-      id_esp: espacioSeleccionado,
+      id_esp: espacioSeleccionado.id, // Usar el ID del espacio seleccionado
     };
 
     try {
@@ -84,77 +109,103 @@ function Datos_pedido() {
 
   return (
     <>
-      <div className="ACMC-Cua">
-        {/* POLIDEPORTIVO */}
-        <Card className="Cuadroparaespacio">
-          <Carousel className="carrusel-espacios">
-            <Carousel.Item>
-              <img src="/imagenes/Polideportivo.jpg" alt="Polideportivo" className="ImagenPolideportivo" />
-            </Carousel.Item>
-            <Carousel.Item>
-              <img src="/imagenes/imagenes_espacios/espacio1.jpeg" alt="Espacio 1" className="ImagenPolideportivo" />
-            </Carousel.Item>
-            <Carousel.Item>
-              <img src="/imagenes/imagenes_espacios/espacio2.jpeg" alt="Espacio 2" className="ImagenPolideportivo" />
-            </Carousel.Item>
-          </Carousel>
+      {/* Mensaje de carga */}
+      {loading && (
+        <div className="text-center mt-5">
+          <Spinner animation="border" variant="success" />
+          <p className="mt-3">Cargando espacios disponibles...</p>
+        </div>
+      )}
 
-          <div className="product-details">
-            <h1 className="solicitud-titulo001">Solicitar Polideportivo</h1>
-            <p>
-              Espacio amplio y multifuncional destinado a actividades deportivas y recreativas.
-Ideal para la práctica de fútbol, baloncesto, voleibol y eventos institucionales.
-              <br />
-              <br />
-              <strong>Especificaciones:</strong> <br />
-              - Malla de voleibol. <br />- Arcos para fútbol y tableros de baloncesto <br />- Equipos de sonido.<br />- Iluminación adecuada para actividades diurnas y nocturnas
-            </p>
+      {/* Mensaje de error */}
+      {error && (
+        <div className="container mt-4">
+          <Alert variant="danger">{error}</Alert>
+        </div>
+      )}
 
-            {/* 🔹 Tu botón original restaurado */}
-            <button className="button-Espacio" onClick={() => handleOpen(1)}>
-              <div className="front">
-                <span>Apartar espacio</span>
-              </div>
-            </button>
-          </div>
-        </Card>
+      {/* Lista de espacios */}
+      {!loading && !error && (
+        <div className="ACMC-Cua">
+          {espacios.length === 0 ? (
+            <div className="text-center mt-5">
+              <Alert variant="info">No hay espacios disponibles en este momento</Alert>
+            </div>
+          ) : (
+            espacios.map((espacio, index) => {
+              // Parsear las imágenes (vienen como JSON string)
+              let imagenes = [];
+              console.log('Espacio:', espacio.nom_espa);
+              console.log('Imagenes raw:', espacio.imagenes);
+              
+              try {
+                imagenes = espacio.imagenes ? JSON.parse(espacio.imagenes) : [];
+                console.log('Imagenes parseadas:', imagenes);
+              } catch (e) {
+                console.error("Error al parsear imágenes:", e);
+                imagenes = [];
+              }
 
-        <Card className="Cuadroparaauditorio">
-          <Carousel className="carrusel-Auditorio">
-            <Carousel.Item>
-              <img src="/imagenes/imagenes_espacios/Auditorio1.jpeg" alt="Auditorio 1" className="Imagenes-auditorio1" />
-            </Carousel.Item>
-            <Carousel.Item>
-              <img src="/imagenes/imagenes_espacios/Auditorio2.jpeg" alt="Auditorio 2" className="Imagenes-auditorio1" />
-            </Carousel.Item>
-          </Carousel>
+              // Si no hay imágenes, usar una por defecto
+              if (imagenes.length === 0) {
+                imagenes = ["/imagenes/imagenes_espacios/default.jpg"];
+                console.log('Usando imagen por defecto');
+              }
 
-          <div className="product-details">
-            <h1 className="solicitud-titulo">Solicitar Auditorio</h1>
-            <p>
-              Espacio diseñado para conferencias, presentaciones, proyecciones y eventos académicos.
-Ofrece comodidad, buena acústica y equipamiento audiovisual de alta calidad.
-              <br />
-              <br />
-              <strong>Especificaciones:</strong> <br />
-              - Pantalla grande para presentaciones o proyección de videos.. <br />- Capacidad para 150 personas. <br />- Sistema de sonido profesional.<br />-Iluminacion adecuada para todo el lugar
-            </p>
+              // Alternar clases para efecto hover
+              const cardClass = index % 2 === 0 ? "Cuadroparaespacio" : "Cuadroparaauditorio";
 
-            {/* 🔹 Botón original también aquí */}
-            <button className="button-Espacio" onClick={() => handleOpen(2)}>
-              <div className="front">
-                <span>Apartar espacio</span>
-              </div>
-            </button>
-          </div>
-        </Card>
-      </div>
+              return (
+                <Card key={espacio.id} className={cardClass}>
+                  <Carousel className="carrusel-espacios" interval={3000}>
+                    {imagenes.map((imgUrl, imgIndex) => {
+                      // Construir la URL completa
+                      const fullUrl = imgUrl.startsWith('http') 
+                        ? imgUrl 
+                        : `http://localhost:8081${imgUrl}`;
+                      
+                      console.log(`Imagen ${imgIndex + 1} URL:`, fullUrl);
+                      
+                      return (
+                        <Carousel.Item key={imgIndex}>
+                          <img
+                            src={fullUrl}
+                            alt={`${espacio.nom_espa} - Imagen ${imgIndex + 1}`}
+                            className="ImagenPolideportivo"
+                            style={{ width: '100%', height: '490px', objectFit: 'cover' }}
+                            onError={(e) => {
+                              console.error('Error al cargar imagen:', fullUrl);
+                              e.target.src = "/imagenes/imagenes_espacios/default.jpg";
+                            }}
+                            onLoad={() => console.log('Imagen cargada exitosamente:', fullUrl)}
+                          />
+                        </Carousel.Item>
+                      );
+                    })}
+                  </Carousel>
+
+                  <div className="product-details">
+                    <h1 className="solicitud-titulo001">{espacio.nom_espa}</h1>
+                    <p>{espacio.descripcion}</p>
+
+                    <button className="button-Espacio" onClick={() => handleOpen(espacio)}>
+                      <div className="front">
+                        <span>Apartar espacio</span>
+                      </div>
+                    </button>
+                  </div>
+                </Card>
+              );
+            })
+          )}
+        </div>
+      )}
 
       {/* 🔹 MODAL FORMULARIO */}
       <Modal show={showModal} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            Reservar {espacioSeleccionado === 1 ? "Polideportivo" : "Auditorio"}
+            Reservar {espacioSeleccionado?.nom_espa || "Espacio"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -243,6 +294,4 @@ Ofrece comodidad, buena acústica y equipamiento audiovisual de alta calidad.
   );
 }
 
-export default Datos_pedido;
-
-
+export default Datos_espacio;
