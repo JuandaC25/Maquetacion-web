@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Spinner, Dropdown, Modal, Form, Button } from 'react-bootstrap';
+import { Alert, Spinner, Dropdown, Modal, Form, Button, Carousel } from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
 import './soliespacio.css';
+import '../../Home/Espacios/Solicitud_espacios.css';
 import Footer from '../../Footer/Footer.jsx';
 import HeaderSoliespacio from '../header_soliespacio/header_soliespacio.jsx';
 import { obtenersolicitudes, crearSolicitud, eliminarSolicitud, actualizarSolicitud } from '../../../api/solicitudesApi.js';
 import { obtenerUsuarioPorId } from '../../../api/UsuariosApi.js';
+import CrearEspacio from '../../Home/Espacios/Crear_espacio/Crear_espacio.jsx';
+import { listarEspacios, actualizarEspacio, eliminarEspacio, subirImagenesEspacio } from '../../../api/EspaciosApi.js';
 
 const Soliespacio = () => {
   const [solicitudes, setSolicitudes] = useState([]);
@@ -29,7 +33,10 @@ const Soliespacio = () => {
   const [lookupError, setLookupError] = useState(null);
   const [modalIsTerminado, setModalIsTerminado] = useState(false);
   const [updatingIds, setUpdatingIds] = useState(new Set());
-  
+  const [espacios, setEspacios] = useState([]);
+  const [loadingEsp, setLoadingEsp] = useState(true);
+  const [editEspacio, setEditEspacio] = useState(null);
+  const [savingEsp, setSavingEsp] = useState(false);
 
   const handleOpenModal = () => {
     setEditingId(null);
@@ -38,6 +45,128 @@ const Soliespacio = () => {
     setLookupError(null);
     setShowModal(true);
   };
+
+  const cargarEspacios = async () => {
+    try {
+      setLoadingEsp(true);
+      const data = await listarEspacios();
+      setEspacios(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Error al cargar espacios:', err);
+    } finally {
+      setLoadingEsp(false);
+    }
+  };
+
+  const parseImagenes = (imagenesRaw) => {
+    try {
+      const arr = imagenesRaw ? JSON.parse(imagenesRaw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const toFullUrl = (u) => {
+    if (!u) return '/imagenes/imagenes_espacios/default.jpg';
+    return u.startsWith('http') ? u : `http://localhost:8081${u}`;
+  };
+
+  const handleEditEsp = (esp) => {
+    const imgsRaw = parseImagenes(esp.imagenes);
+    setEditEspacio({
+      id: esp.id,
+      nom_espa: esp.nom_espa || '',
+      descripcion: esp.descripcion || '',
+      estadoespacio: Number(esp.estadoespacio) || 1,
+      imagenesRaw: Array.isArray(imgsRaw) ? imgsRaw : [],
+      nuevasImagenesBase64: [],
+      removedRawIdxs: new Set()
+    });
+  };
+
+  const convertirImagenABase64 = (archivo) => {
+    return new Promise((resolve, reject) => {
+      const lector = new FileReader();
+      lector.readAsDataURL(archivo);
+      lector.onload = () => resolve(lector.result);
+      lector.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleAgregarImagenesEdit = async (e) => {
+    const archivos = Array.from(e.target.files || []);
+    if (archivos.length === 0) return;
+    const bases = await Promise.all(archivos.map(convertirImagenABase64));
+    setEditEspacio(prev => ({
+      ...prev,
+      nuevasImagenesBase64: [...(prev?.nuevasImagenesBase64 || []), ...bases]
+    }));
+  };
+
+  const handleEliminarImagenExistente = (idx) => {
+    setEditEspacio(prev => {
+      const next = { ...prev };
+      const setR = new Set(next.removedRawIdxs || []);
+      setR.add(idx);
+      next.removedRawIdxs = setR;
+      return next;
+    });
+  };
+
+  const handleEliminarImagenNueva = (idx) => {
+    setEditEspacio(prev => ({
+      ...prev,
+      nuevasImagenesBase64: (prev?.nuevasImagenesBase64 || []).filter((_, i) => i !== idx)
+    }));
+  };
+
+  const handleSaveEsp = async (e) => {
+    e.preventDefault();
+    try {
+      setSavingEsp(true);
+      let finalUrls = (editEspacio.imagenesRaw || []).filter((_, i) => !(editEspacio.removedRawIdxs || new Set()).has(i));
+      if (editEspacio.nuevasImagenesBase64 && editEspacio.nuevasImagenesBase64.length > 0) {
+        const uploadRes = await subirImagenesEspacio(editEspacio.nuevasImagenesBase64);
+        const urls = uploadRes?.urls || [];
+        finalUrls = [...finalUrls, ...urls];
+      }
+      await actualizarEspacio(editEspacio.id, {
+        nom_espa: editEspacio.nom_espa,
+        descripcion: editEspacio.descripcion,
+        estadoespacio: Number(editEspacio.estadoespacio),
+        imagenes: JSON.stringify(finalUrls)
+      });
+      setEditEspacio(null);
+      await cargarEspacios();
+    } catch (err) {
+      setError('Error al actualizar el espacio: ' + (err?.message || err));
+    } finally {
+      setSavingEsp(false);
+    }
+  };
+
+  const handleDeleteEsp = async (id) => {
+    if (!window.confirm('¿Eliminar este espacio?')) return;
+    try {
+      await eliminarEspacio(id);
+      await cargarEspacios();
+    } catch (err) {
+      setError('Error al eliminar el espacio: ' + (err?.message || err));
+    }
+  };
+
+  const handleOpenReservaDesdeCard = (espacio) => {
+    const espId = espacio?.id ?? espacio?.id_esp ?? '';
+    setNuevaSolicitud(prev => ({
+      ...prev,
+      id_esp: espId
+    }));
+    setEditingId(null);
+    setModalIsTerminado(false);
+    setShowModal(true);
+  };
+
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingId(null);
@@ -78,10 +207,10 @@ const Soliespacio = () => {
         if (nuevaSolicitud.fecha_fn) payload.fecha_fn = toIsoLocalNoTZ(nuevaSolicitud.fecha_fn);
         if (nuevaSolicitud.ambient != null) payload.ambient = nuevaSolicitud.ambient;
         if (nuevaSolicitud.num_fich != null) payload.num_fich = nuevaSolicitud.num_fich;
-  if (nuevaSolicitud.id_esp != null && nuevaSolicitud.id_esp !== '') payload.id_esp = Number(nuevaSolicitud.id_esp);
-        
-  console.log('[DEBUG] PUT payload (editar):', payload, 'editingId=', editingId);
-  const resp = await actualizarSolicitud(editingId, payload);
+        if (nuevaSolicitud.id_esp != null && nuevaSolicitud.id_esp !== '') payload.id_esp = Number(nuevaSolicitud.id_esp);
+
+        console.log('[DEBUG] PUT payload (editar):', payload, 'editingId=', editingId);
+        const resp = await actualizarSolicitud(editingId, payload);
         const actualizado = resp?.data || resp;
         setSolicitudes(prev => prev.map(s => ((s.id_soli === editingId || s.id === editingId) ? actualizado : s)));
         setEditingId(null);
@@ -109,9 +238,9 @@ const Soliespacio = () => {
     }
   };
 
-
   useEffect(() => {
     cargarSolicitudes();
+    cargarEspacios();
   }, []);
 
   const cargarSolicitudes = async () => {
@@ -138,20 +267,20 @@ const Soliespacio = () => {
   };
 
   const solicitudesFiltradas = solicitudes.filter(solicitud => {
-  const effectiveEstadoText = (() => {
-    try {
-      const fn = solicitud.fecha_fn ? new Date(solicitud.fecha_fn) : null;
-      if (fn && !isNaN(fn.getTime()) && fn.getTime() < Date.now()) return 'TERMINADO';
-    } catch { }
-    const estadoTxt = (solicitud.est_soli || (solicitud.estadosoli != null ? String(solicitud.estadosoli) : 'DESCONOCIDO')).toString();
-    return estadoTxt.toUpperCase();
-  })();
-  const sel = String(selectedEstadoFilter || '').toUpperCase();
-  const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
-    effectiveEstadoText.toUpperCase() === sel ||
-    (sel === 'FINALIZADO' && effectiveEstadoText.toUpperCase() === 'TERMINADO') ||
-    (sel === 'TERMINADO' && effectiveEstadoText.toUpperCase() === 'FINALIZADO');
-  const coincideEspacio = selectedEspacioFilter === "Todos los Espacios" || ( (solicitud.nom_espa || 'N/A').toString().toUpperCase() === String(selectedEspacioFilter).toUpperCase() );
+    const effectiveEstadoText = (() => {
+      try {
+        const fn = solicitud.fecha_fn ? new Date(solicitud.fecha_fn) : null;
+        if (fn && !isNaN(fn.getTime()) && fn.getTime() < Date.now()) return 'TERMINADO';
+      } catch { }
+      const estadoTxt = (solicitud.est_soli || (solicitud.estadosoli != null ? String(solicitud.estadosoli) : 'DESCONOCIDO')).toString();
+      return estadoTxt.toUpperCase();
+    })();
+    const sel = String(selectedEstadoFilter || '').toUpperCase();
+    const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
+      effectiveEstadoText.toUpperCase() === sel ||
+      (sel === 'FINALIZADO' && effectiveEstadoText.toUpperCase() === 'TERMINADO') ||
+      (sel === 'TERMINADO' && effectiveEstadoText.toUpperCase() === 'FINALIZADO');
+    const coincideEspacio = selectedEspacioFilter === "Todos los Espacios" || ((solicitud.nom_espa || 'N/A').toString().toUpperCase() === String(selectedEspacioFilter).toUpperCase());
     return coincideEstado && coincideEspacio;
   });
 
@@ -188,7 +317,6 @@ const Soliespacio = () => {
     { id: 4, label: 'EN USO' },
     { id: 5, label: 'FINALIZADO' }
   ];
-
 
   const formatFecha = (fecha) => {
     if (!fecha) return 'N/A';
@@ -234,11 +362,12 @@ const Soliespacio = () => {
         const d = new Date(fecha);
         if (isNaN(d.getTime())) return '';
         const pad = (n) => String(n).padStart(2, '0');
-        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
       } catch {
         return '';
       }
     };
+
     setNuevaSolicitud({
       id_esp: solicitud.id_espa ?? solicitud.id_esp ?? '',
       id_usu: solicitud.id_usu ?? '',
@@ -260,7 +389,7 @@ const Soliespacio = () => {
     try {
       const fnDate = solicitud.fecha_fn ? new Date(solicitud.fecha_fn) : null;
       if (fnDate && !isNaN(fnDate.getTime()) && fnDate.getTime() < Date.now()) terminado = true;
-    } catch {}
+    } catch { }
     setModalIsTerminado(terminado);
     setShowModal(true);
   };
@@ -292,8 +421,6 @@ const Soliespacio = () => {
     }
   };
 
-  
-
   const handleCambiarEstado = async (id, nuevoEstado) => {
     const numericEstado = Number(nuevoEstado);
     if (!AVAILABLE_ESTADOS.some(x => x.id === numericEstado)) {
@@ -320,10 +447,12 @@ const Soliespacio = () => {
     }
   };
 
+  
+
   return (
     <div className="inventory-app-container-xd25">
       <HeaderSoliespacio />
-      
+
       {error && (
         <Alert variant="danger" dismissible onClose={() => setError(null)} style={{ margin: '20px' }}>
           {error}
@@ -334,30 +463,30 @@ const Soliespacio = () => {
         <div className="header-bar-content-xd27">
           <div className="header-left-section-xd28">
             <h1 className="inventory-main-title-xd29">Solicitudes de Espacios</h1>
-            
+
             <div className="filters-row-xd30" style={{ marginTop: '15px' }}>
               <Dropdown className="category-filter-dropdown-xd31">
-                <Dropdown.Toggle 
-                  variant="success" 
+                <Dropdown.Toggle
+                  variant="success"
                   id="dropdown-espacio"
                   className="dropdown-toggle-xd146"
                 >
                   {selectedEspacioFilter} <span className="dropdown-arrow-xd32">▼</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
-                  <Dropdown.Item 
+                  <Dropdown.Item
                     onClick={() => handleEspacioFilter("Todos los Espacios")}
                     className="dropdown-item-xd148"
                   >
                     Todos los Espacios
                   </Dropdown.Item>
-                  <Dropdown.Item 
+                  <Dropdown.Item
                     onClick={() => handleEspacioFilter("Polideportivo")}
                     className="dropdown-item-xd148"
                   >
                     Polideportivo
                   </Dropdown.Item>
-                  <Dropdown.Item 
+                  <Dropdown.Item
                     onClick={() => handleEspacioFilter("Auditorio")}
                     className="dropdown-item-xd148"
                   >
@@ -367,45 +496,45 @@ const Soliespacio = () => {
               </Dropdown>
 
               <Dropdown className="category-filter-dropdown-xd31">
-                <Dropdown.Toggle 
-                  variant="success" 
+                <Dropdown.Toggle
+                  variant="success"
                   id="dropdown-estado"
                   className="dropdown-toggle-xd146"
                 >
                   {selectedEstadoFilter} <span className="dropdown-arrow-xd32">▼</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
-                  <Dropdown.Item 
+                  <Dropdown.Item
                     onClick={() => handleEstadoFilter("Todos los Estados")}
                     className="dropdown-item-xd148"
                   >
                     Todos los Estados
                   </Dropdown.Item>
-                  <Dropdown.Item 
+                  <Dropdown.Item
                     onClick={() => handleEstadoFilter("PENDIENTE")}
                     className="dropdown-item-xd148"
                   >
                     PENDIENTE
                   </Dropdown.Item>
-                  <Dropdown.Item 
+                  <Dropdown.Item
                     onClick={() => handleEstadoFilter("APROBADO")}
                     className="dropdown-item-xd148"
                   >
                     APROBADO
                   </Dropdown.Item>
-                  <Dropdown.Item 
+                  <Dropdown.Item
                     onClick={() => handleEstadoFilter("RECHAZADO")}
                     className="dropdown-item-xd148"
                   >
                     RECHAZADO
                   </Dropdown.Item>
-                  <Dropdown.Item 
+                  <Dropdown.Item
                     onClick={() => handleEstadoFilter("EN USO")}
                     className="dropdown-item-xd148"
                   >
                     EN USO
                   </Dropdown.Item>
-                  <Dropdown.Item 
+                  <Dropdown.Item
                     onClick={() => handleEstadoFilter("FINALIZADO")}
                     className="dropdown-item-xd148"
                   >
@@ -415,7 +544,7 @@ const Soliespacio = () => {
               </Dropdown>
             </div>
           </div>
-          
+
           <div className="header-right-section-xd34">
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'flex-end' }}>
               <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.7 }}>
@@ -429,6 +558,59 @@ const Soliespacio = () => {
         </div>
       </Alert>
 
+      <div style={{ padding: '0 20px 20px' }}>
+        {loadingEsp ? (
+          <div style={{ textAlign: 'center', padding: '30px' }}>
+            <Spinner animation="border" />
+          </div>
+        ) : (
+          <div className="ACMC-Cua">
+            {espacios.length === 0 ? (
+              <div className="text-center mt-3">
+                <Alert variant="info">No hay espacios disponibles</Alert>
+              </div>
+            ) : (
+              espacios.map((espacio, index) => {
+                const imagenes = parseImagenes(espacio.imagenes);
+                const finalImgs = (imagenes.length > 0 ? imagenes : ['/imagenes/imagenes_espacios/default.jpg']).map(toFullUrl);
+                const cardClass = index % 2 === 0 ? 'Cuadroparaespacio' : 'Cuadroparaauditorio';
+                return (
+                  <Card key={espacio.id} className={cardClass}>
+                    <Carousel className="carrusel-espacios" interval={3000}>
+                      {finalImgs.map((img, i) => (
+                        <Carousel.Item key={i}>
+                          <img src={img} alt={`${espacio.nom_espa} - ${i + 1}`} className="ImagenPolideportivo" style={{ width: '100%', height: '490px', objectFit: 'cover' }} />
+                        </Carousel.Item>
+                      ))}
+                    </Carousel>
+                    <div className="product-details">
+                      <h1 className="solicitud-titulo001">{espacio.nom_espa}</h1>
+                      <p>{espacio.descripcion}</p>
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
+                        <button className="button-Espacio" onClick={() => handleOpenReservaDesdeCard(espacio)}>
+                          <div className="front">
+                            <span>Apartar espacio</span>
+                          </div>
+                        </button>
+                        <button className="button-Espacio" onClick={() => handleEditEsp(espacio)}>
+                          <div className="front">
+                            <span>Administrar</span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })
+            )}
+          </div>
+        )}
+      </div>
+
+      <div style={{ padding: '20px' }}>
+        <CrearEspacio />
+      </div>
+
       {loading ? (
         <div style={{ textAlign: 'center', padding: '50px' }}>
           <Spinner animation="border" role="status">
@@ -438,14 +620,14 @@ const Soliespacio = () => {
         </div>
       ) : (
         <div className="equipment-list-grid-xd09">
-              {solicitudesFiltradas.length > 0 ? (
+          {solicitudesFiltradas.length > 0 ? (
             solicitudesFiltradas.map((solicitud) => {
               const now = Date.now();
               let isTerminado = false;
               try {
                 const fn = solicitud.fecha_fn ? new Date(solicitud.fecha_fn) : null;
                 if (fn && !isNaN(fn.getTime()) && fn.getTime() < now) isTerminado = true;
-              } catch {}
+              } catch { }
 
               const rawEstado = solicitud.est_soli || solicitud.estadosoli;
               const estadoInfo = isTerminado ? { text: 'TERMINADO', variant: 'secondary' } : getEstadoBadge(rawEstado);
@@ -473,9 +655,9 @@ const Soliespacio = () => {
                       top: 10,
                       left: 10,
                       backgroundColor: estadoInfo.variant === 'warning' ? '#ffc107' :
-                                      estadoInfo.variant === 'success' ? '#28a745' :
-                                      estadoInfo.variant === 'danger' ? '#dc3545' :
-                                      estadoInfo.variant === 'info' ? '#17a2b8' : '#6c757d',
+                        estadoInfo.variant === 'success' ? '#28a745' :
+                        estadoInfo.variant === 'danger' ? '#dc3545' :
+                        estadoInfo.variant === 'info' ? '#17a2b8' : '#6c757d',
                       color: '#fff',
                       padding: '6px 10px',
                       borderRadius: 6,
@@ -552,7 +734,7 @@ const Soliespacio = () => {
                       <button className="view-details-button-xd08" onClick={() => handleEditar(solicitud)}>
                         Editar
                       </button>
-                      
+
                       {/* activate/inactivate button removed (estado field deprecated) */}
                     </div>
                   </div>
@@ -639,8 +821,6 @@ const Soliespacio = () => {
               />
             </Form.Group>
 
-            
-
             <Form.Group className="mb-3">
               <Form.Label>Fecha y Hora de Inicio *</Form.Label>
               <Form.Control
@@ -692,8 +872,97 @@ const Soliespacio = () => {
         </Modal.Body>
       </Modal>
 
-      
-      {/* Activate/Inactivate confirmation modal removed (estado deprecated) */}
+      <Modal show={!!editEspacio} onHide={() => setEditEspacio(null)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Editar Espacio</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleSaveEsp}>
+          <Modal.Body>
+            <Form.Group className="mb-3">
+              <Form.Label>Nombre</Form.Label>
+              <Form.Control
+                type="text"
+                value={editEspacio?.nom_espa || ''}
+                onChange={(e) => setEditEspacio(prev => ({ ...prev, nom_espa: e.target.value }))}
+                maxLength={25}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Descripción</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={4}
+                value={editEspacio?.descripcion || ''}
+                onChange={(e) => setEditEspacio(prev => ({ ...prev, descripcion: e.target.value }))}
+                maxLength={900}
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Estado</Form.Label>
+              <Form.Select
+                value={editEspacio?.estadoespacio || 1}
+                onChange={(e) => setEditEspacio(prev => ({ ...prev, estadoespacio: Number(e.target.value) }))}
+              >
+                <option value={1}>Activo</option>
+                <option value={2}>Inactivo</option>
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Imágenes</Form.Label>
+              <div className="d-flex align-items-center gap-2 mb-2">
+                <Button variant="outline-primary" as="label">
+                  Agregar imágenes
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleAgregarImagenesEdit}
+                    style={{ display: 'none' }}
+                  />
+                </Button>
+              </div>
+              {editEspacio && (editEspacio.imagenesRaw?.length > 0) && (
+                <div className="mb-3">
+                  <div className="d-flex flex-wrap gap-2">
+                    {editEspacio.imagenesRaw.map((u, i) => {
+                      const removed = (editEspacio.removedRawIdxs || new Set()).has(i);
+                      if (removed) return null;
+                      const src = toFullUrl(u);
+                      return (
+                        <div key={i} style={{ width: 120 }}>
+                          <img src={src} alt={`img-${i}`} style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 6 }} />
+                          <Button variant="danger" size="sm" className="w-100 mt-1" onClick={() => handleEliminarImagenExistente(i)}>Eliminar</Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              {editEspacio && (editEspacio.nuevasImagenesBase64?.length > 0) && (
+                <div>
+                  <div className="d-flex flex-wrap gap-2">
+                    {editEspacio.nuevasImagenesBase64.map((b64, i) => (
+                      <div key={i} style={{ width: 120 }}>
+                        <img src={b64} alt={`new-${i}`} style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 6 }} />
+                        <Button variant="outline-danger" size="sm" className="w-100 mt-1" onClick={() => handleEliminarImagenNueva(i)}>Quitar</Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="danger" onClick={async () => { await handleDeleteEsp(editEspacio.id); setEditEspacio(null); }}>Eliminar</Button>
+            <Button variant="secondary" onClick={() => setEditEspacio(null)}>Cancelar</Button>
+            <Button variant="primary" type="submit" disabled={savingEsp}>{savingEsp ? 'Guardando...' : 'Guardar cambios'}</Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+
+
 
       <Footer />
     </div>
