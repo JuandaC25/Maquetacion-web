@@ -10,7 +10,7 @@ import {
   obtenerAccesorios
 } from "../../../api/AccesoriosApi.js";
 import { obtenerCategoria } from "../../../api/CategoriaApi.js";
-import { obtenersolicitudes } from "../../../api/SubcategotiaApi.js";
+import { obtenersolicitudes } from "../../../api/solicitudesApi.js";
 
 const EquipoItem = ({ elemento, onVerClick }) => (
   <div className="modern-equipment-card-xd01">

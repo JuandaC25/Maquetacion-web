@@ -20,46 +20,24 @@ export const obtenerSolicitudesPorid = async (id) => {
 }
 
 export const crearSolicitud = async (data) => {
-    const res = await fetch(`http://localhost:8081/api/solicitudes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    });
-
-    if (!res.ok) {
-        let errorMessage = `Error ${res.status}: Fallo al crear la solicitud.`;
-        
-        // 🔑 CORRECCIÓN CRÍTICA: Intenta leer el cuerpo JSON del error
-        try {
-            // Clona la respuesta antes de intentar leer el JSON, por si el fetch es estricto
-            const errorResponse = await res.clone().json(); 
-            
-            // Busca el mensaje de error en campos comunes de Spring Boot (message, error, errors)
-            errorMessage = errorResponse.message
-                            || errorResponse.error
-                            || JSON.stringify(errorResponse); // Si no encuentra campo, muestra todo el JSON
-
-        } catch (e) {
-            console.error("Error al leer el cuerpo de la respuesta:", e);
-            // Si falla al leer el JSON, simplemente usamos el estado y texto de la respuesta
-            errorMessage = `${res.statusText}: No se pudo leer el mensaje detallado del servidor.`;
-        }
-        
-        // Lanza el error capturado
-        throw new Error(errorMessage);
-    }
-    
-    // Si la respuesta es exitosa (res.ok es true), devuelve el JSON
-    return res.json();
     try {
         const res = await authorizedFetch('/api/solicitudes', {
             method: 'POST',
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
         });
 
         if (!res.ok) {
-            const text = await res.text().catch(() => null);
-            throw new Error(text || `Error al crear la solicitud (status ${res.status})`);
+            let errorMessage = `Error ${res.status}: Fallo al crear la solicitud.`;
+            try {
+                const errorResponse = await res.clone().json();
+                errorMessage = errorResponse.message
+                    || errorResponse.error
+                    || JSON.stringify(errorResponse);
+            } catch (e) {
+                errorMessage = `${res.statusText}: No se pudo leer el mensaje detallado del servidor.`;
+            }
+            throw new Error(errorMessage);
         }
 
         const text = await res.text();

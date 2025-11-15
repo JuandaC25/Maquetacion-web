@@ -11,7 +11,7 @@ import {
   actualizarEstadoCategoria,
 } from '../../../api/CategoriaApi.js';
 import { 
-  obtenersolicitudes, 
+  obtenerSubcategorias, 
   crearSubcategoria, 
   eliminarSubcategoria,
 } from '../../../api/SubcategotiaApi.js';
@@ -50,7 +50,7 @@ const Categorias = () => {
       setError(null);
       const [categoriasData, subcategoriasData] = await Promise.all([
         obtenerCategoria(),
-        obtenersolicitudes()
+        obtenerSubcategorias()
       ]);
       setCategorias(Array.isArray(categoriasData) ? categoriasData : []);
       setSubcategorias(Array.isArray(subcategoriasData) ? subcategoriasData : []);
