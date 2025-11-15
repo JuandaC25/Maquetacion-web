@@ -3,9 +3,9 @@ import { Card, Button, Modal, Form, ButtonGroup, ToggleButton, Carousel, Spinner
 import "./Pedidos_escritorio.css";
 import ElementosService from "../../../api/ElementosApi";
 import { crearSolicitud } from "../../../api/solicitudesApi";
-import CategoriaService from "../../../api/CategoriaApi";
-import SubCategoriaService from "../../../api/SubcategotiaApi";
-import EspacioService from "../../../api";
+import {obtenerCategoria} from "../../../api/CategoriaApi";
+import {obtenerSubcategorias} from "../../../api/SubcategotiaApi";
+import {obtenerEspacio} from "../../../api/EspaciosApi";
 
 // --- FUNCIONES GLOBALES DE FECHA/HORA ---
 
@@ -215,14 +215,14 @@ function Datos_escritorio() {
 
   useEffect(() => {
     // Cargar categorías y espacios al montar
-    CategoriaService.obtenerCategorias().then(setCategorias);
-    EspacioService.obtenerEspacios().then(setEspacios);
+    obtenerCategoria().then(setCategorias);
+    obtenerEspacio().then(setEspacios);
   }, []);
 
   useEffect(() => {
     // Cargar subcategorías cuando cambia la categoría seleccionada
     if (form.id_categoria) {
-      SubCategoriaService.obtenerSubcategoriasPorCategoria(form.id_categoria).then(setSubcategorias);
+      obtenerSubcategorias(form.id_categoria).then(setSubcategorias);
     } else {
       setSubcategorias([]);
     }

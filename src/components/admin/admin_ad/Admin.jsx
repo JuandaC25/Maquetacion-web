@@ -8,7 +8,7 @@ import { Ticket } from 'react-bootstrap-icons';
 import { obtenerTickets, actualizarTicket } from '../../../api/ticket.js';
 import ReportarEquipo from '../../Home/ReportarEquipo/ReportarEquipo.jsx';
 import { obtenerCategoria } from '../../../api/CategoriaApi.js';
-import { obtenersolicitudes } from '../../../api/SubcategotiaApi.js';
+import { obtenersolicitudes } from '../../../api/solicitudesApi.js';
 
 const Listaxd = ({ onVerClick, onCrearClick }) => {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("Todas las Categorías");
