@@ -11,6 +11,7 @@ import {
 } from "../../../api/AccesoriosApi.js";
 import { obtenerCategoria } from "../../../api/CategoriaApi.js";
 import { obtenersolicitudes } from "../../../api/solicitudesApi.js";
+import { obtenerSubcategorias } from "../../../api/SubcategotiaApi.js";
 
 const EquipoItem = ({ elemento, onVerClick }) => (
   <div className="modern-equipment-card-xd01">
@@ -113,10 +114,11 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
       const payload = {
         id_elem: detalles.id,
         est: editedEstado === 'activo' ? 1 : 0,
-        obser: editedObservaciones,
-        componentes: editedComponentes
+        obse: editedObservaciones,
+        componen: editedComponentes
       };
       if (onActualizarEstado) {
+        // Asumiendo que onActualizarEstado maneja la lógica de actualizar y recargar todo
         await onActualizarEstado(detalles.id, payload);
       } else {
         await ElementosService.actualizarElemento(detalles.id, payload);
@@ -280,6 +282,7 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit, guard
             className="modern-form-control-xd18"
           >
             <option value="">Seleccionar subcategoría...</option>
+            {/* Aquí se itera sobre las subcategorías */}
             {subcategorias.map((subcat) => {
               const categoria = categorias.find(cat => cat.id_cat === subcat.id_cat);
               return (
@@ -472,17 +475,21 @@ const Admin = () => {
       setError(null);
       
       const resultados = await Promise.allSettled([
-        ElementosService.obtenerElementos(),
-        obtenerAccesorios(),
-        obtenerCategoria(),
-        obtenersolicitudes()
+        ElementosService.obtenerElementos(),  // [0]
+        obtenerAccesorios(),                  // [1]
+        obtenerCategoria(),                   // [2]
+        obtenersolicitudes(),                 // [3]
+        obtenerSubcategorias()                // [4] <- ¡Este es el índice correcto!
       ]);
 
       const elementosResult = resultados[0];
       const accesoriosResult = resultados[1];
       const categoriasResult = resultados[2];
-      const subcategoriasResult = resultados[3];
-
+      const solicitudesResult = resultados[3]; // Variable no utilizada directamente aquí, pero mantiene el orden
+      
+      // La corrección clave está aquí: Se usa el índice [4]
+      const subcategoriasResult = resultados[4]; 
+      
       if (elementosResult.status !== 'fulfilled') {
         throw elementosResult.reason || new Error('Error al obtener elementos');
       }
@@ -490,7 +497,7 @@ const Admin = () => {
       const elementos = elementosResult.value;
       const accesorios = accesoriosResult.status === 'fulfilled' ? accesoriosResult.value : [];
       const cats = categoriasResult.status === 'fulfilled' ? categoriasResult.value : [];
-      const subcats = subcategoriasResult.status === 'fulfilled' ? subcategoriasResult.value : [];
+      const subcats = subcategoriasResult.status === 'fulfilled' ? subcategoriasResult.value : []; // Ahora contiene los datos de subcategorías
 
       setCategorias(Array.isArray(cats) ? cats : []);
       setSubcategorias(Array.isArray(subcats) ? subcats : []);
@@ -694,7 +701,8 @@ const Admin = () => {
       const elementoNormalizado = {
         id: elementoCreado.id_elemen,
         nombre: elementoCreado.nom_eleme,
-        categoria: subcategoriaSeleccionada ? subcategoriaSeleccionada.nom_subcateg : "Sin categoría",
+        // Usamos la categoría del padre o un placeholder para la visualización en la tarjeta
+        categoria: categoriaPadre ? categoriaPadre.nom_cat : "Sin categoría", 
         serie: nuevoEquipo.serie,
         observaciones: nuevoEquipo.observaciones,
         componentes: nuevoEquipo.componentes,
@@ -708,10 +716,11 @@ const Admin = () => {
       alert('Equipo añadido correctamente');
       
     } catch (error) {
-      if (error.message.includes('el elemento ya existe') || error.message.includes('Conflicto')) {
+      const errorMessage = error.response?.data?.message || error.message;
+      if (errorMessage.includes('el elemento ya existe') || errorMessage.includes('Conflicto')) {
         alert('Error: Ya existe un equipo con ese número de serie');
       } else {
-        alert('Error al crear el equipo: ' + error.message);
+        alert('Error al crear el equipo: ' + errorMessage);
       }
     } finally {
       setGuardando(false);
@@ -753,18 +762,28 @@ const Admin = () => {
       alert('Accesorio añadido correctamente');
       
     } catch (error) {
-      if (error.message.includes('Conflicto')) {
+       const errorMessage = error.response?.data?.message || error.message;
+      if (errorMessage.includes('Conflicto')) {
         alert('Error: Ya existe un accesorio con ese número de serie');
       } else {
-        alert('Error al crear el accesorio: ' + error.message);
+        alert('Error al crear el accesorio: ' + errorMessage);
       }
     } finally {
       setGuardandoAccesorio(false);
     }
   };
+  
+  // Función para manejar la actualización de estado desde el modal
+  const handleUpdateItemState = async (id, payload) => {
+    // Aquí puedes llamar al servicio de actualización
+    await ElementosService.actualizarElemento(id, payload);
+    // Y luego recargar todos los datos para reflejar los cambios
+    await cargarTodo();
+  };
 
   const handleCategoryFilter = (category) => {
     setSelectedCategoryFilter(category);
+    // Reiniciar filtro de subcategoría al cambiar la categoría principal
     setSelectedSubcategoryFilter("Todas las Subcategorías");
   };
 
@@ -780,6 +799,7 @@ const Admin = () => {
     setSearchTerm(e.target.value);
   };
 
+  // Se filtran las subcategorías según la categoría principal seleccionada
   const subcategoriasFiltradas = selectedCategoryFilter === "Todas las Categorías" 
     ? subcategorias 
     : subcategorias.filter(sub => {
@@ -787,21 +807,49 @@ const Admin = () => {
         return categoria && categoria.nom_cat === selectedCategoryFilter;
       });
 
+  // Se filtran los elementos del inventario
   const elementosFiltrados = elementosInventario.filter(elemento => {
+    
+    // 1. Filtrado por Categoría (Incluyendo "Accesorio")
     const coincideCategoria = selectedCategoryFilter === "Todas las Categorías" || 
-                             elemento.categoria === selectedCategoryFilter;
+                              elemento.categoria === selectedCategoryFilter;
     
-    const coincideSubcategoria = selectedSubcategoryFilter === "Todas las Subcategorías" ||
-                                elemento.subcategoria === selectedSubcategoryFilter;
+    // 2. Filtrado por Subcategoría (Solo aplica a elementos que no son accesorios)
+    let coincideSubcategoria = true;
+    if (elemento.tipo === 'elemento') {
+      let subcatNombre = "";
+      if (elemento.id_subcateg) {
+        const subcat = subcategorias.find(s => s.id === elemento.id_subcateg);
+        if (subcat) {
+          subcatNombre = subcat.nom_subcateg;
+        }
+      }
+      // Si se seleccionó una subcategoría específica, el elemento debe coincidir con ella.
+      coincideSubcategoria = selectedSubcategoryFilter === "Todas las Subcategorías" ||
+                              subcatNombre === selectedSubcategoryFilter;
+    }
+    // Si la categoría seleccionada es "Accesorio", solo deben mostrarse accesorios
+    if (selectedCategoryFilter === "Accesorio" && elemento.tipo !== 'accesorio') {
+        return false;
+    }
+    // Si la categoría seleccionada NO es "Accesorio", y el elemento SÍ es un accesorio, se filtra.
+    if (selectedCategoryFilter !== "Accesorio" && elemento.tipo === 'accesorio') {
+        // Excepción: Si el filtro de categoría es "Todas las Categorías", incluimos los accesorios.
+        if (selectedCategoryFilter !== "Todas las Categorías") {
+            return false;
+        }
+    }
     
+    // 3. Filtrado por Búsqueda (Serie, Nombre, Marca)
     const coincideBusqueda = searchTerm === "" || 
-                           elemento.serie.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           elemento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           (elemento.marca && elemento.marca.toLowerCase().includes(searchTerm.toLowerCase()));
+                              elemento.serie.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              elemento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              (elemento.marca && elemento.marca.toLowerCase().includes(searchTerm.toLowerCase()));
     
+    // 4. Filtrado por Estado
     const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
-                          (selectedEstadoFilter === "Activos" && (elemento.est === 1 || elemento.est === true)) ||
-                          (selectedEstadoFilter === "Inactivos" && (elemento.est === 0 || elemento.est === 2 || elemento.est === false || (elemento.est !== 1 && elemento.est !== true)));
+                           (selectedEstadoFilter === "Activos" && (elemento.est === 1 || elemento.est === true)) ||
+                           (selectedEstadoFilter === "Inactivos" && (elemento.est === 0 || elemento.est === 2 || elemento.est === false || (elemento.est !== 1 && elemento.est !== true)));
     
     return coincideCategoria && coincideSubcategoria && coincideBusqueda && coincideEstado;
   });
@@ -867,6 +915,7 @@ const Admin = () => {
                   >
                     Todas las Subcategorías
                   </Dropdown.Item>
+                  {/* Aquí se itera sobre las subcategorías filtradas */}
                   {subcategoriasFiltradas.map((subcategoria) => (
                     <Dropdown.Item 
                       key={subcategoria.id} 
@@ -927,6 +976,9 @@ const Admin = () => {
             <Button className="add-new-equipment-button-xd35" onClick={openNuevo}>
               <span role="img" aria-label="añadir">➕</span> Añadir Equipo
             </Button>
+            <Button variant="primary" className="add-new-equipment-button-xd35" onClick={openNuevoAccesorio} style={{marginLeft: '8px'}}>
+              <span role="img" aria-label="añadir">🔌</span> Añadir Accesorio
+            </Button>
             <Button variant="outline-primary" onClick={() => setShowUploadModal(true)} className="modal-action-button-xd120" style={{ marginLeft: 8 }}>
               Importar elementos (.xlsx)
             </Button>
@@ -966,7 +1018,7 @@ const Admin = () => {
         detalles={equipoSeleccionado} 
         onEliminar={eliminarItem}
         eliminando={eliminando}
-        onActualizarEstado={async (id, payload) => { await ElementosService.actualizarElemento(id, payload); await cargarTodo(); }}
+        onActualizarEstado={handleUpdateItemState}
       />
       <Modal show={showUploadModal} onHide={() => { setShowUploadModal(false); setUploadFile(null); setDragActive(false); }} centered dialogClassName="modern-modal-dialog-xd111">
         <Modal.Header closeButton className="modern-modal-header-xd112">
