@@ -4,17 +4,8 @@ import { FaPlus, FaEdit, FaTrash, FaFilePdf } from 'react-icons/fa';
 import './Categorias.css';
 import Footer from '../../Footer/Footer.jsx';
 import HeaderCategorias from '../header_categorias/header_categorias.jsx';
-import { 
-  obtenerCategoria, 
-  crearCategoria, 
-  eliminarCategoria,
-  actualizarEstadoCategoria,
-} from '../../../api/CategoriaApi.js';
-import { 
-  obtenerSubcategorias, 
-  crearSubcategoria, 
-  eliminarSubcategoria,
-} from '../../../api/SubcategotiaApi.js';
+import { obtenerCategoria, crearCategoria, eliminarCategoria, actualizarEstadoCategoria,} from '../../../api/CategoriaApi.js';
+import { obtenerSubcategorias, crearSubcategoria, eliminarSubcategoria,} from '../../../api/SubcategotiaApi.js';
 import { actualizarEstadoSubcategoria } from '../../../api/SubcategotiaApi.js';
 
 const Categorias = () => {
@@ -23,7 +14,6 @@ const Categorias = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('categorias');
-
   const [showModalCategoria, setShowModalCategoria] = useState(false);
   const [nuevaCategoria, setNuevaCategoria] = useState({ nom_cat: '' });
   const [guardandoCategoria, setGuardandoCategoria] = useState(false);
