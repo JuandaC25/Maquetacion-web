@@ -3,15 +3,41 @@ import { authorizedFetch } from './http';
 const API_URL = '/api/tickets';
 
 /**
- * Crea un nuevo ticket de reporte de equipo
- * @param {Object} ticketData - Datos del ticket
- * @param {number} ticketData.id_elem - ID del elemento
- * @param {number} ticketData.id_problem - ID del problema
- * @param {string} ticketData.ambient - Ambiente/ubicación
- * @param {string} ticketData.obser - Observaciones
- * @param {number} ticketData.id_usu - ID del usuario
- * @param {string} ticketData.fecha_in - Fecha de inicio en formato ISO
- * @returns {Promise<Object>} Ticket creado
+ * @param {Array<string>} base64Images 
+ * @returns {Promise<Object>} 
+ */
+export const subirImagenesTicket = async (base64Images) => {
+  try {
+    console.log("[TICKET] Subiendo imágenes al servidor...");
+    const res = await authorizedFetch(`${API_URL}/upload-images`, {
+      method: 'POST',
+      body: JSON.stringify({ images: base64Images })
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("[TICKET] Error al subir imágenes:", errorText);
+      throw new Error(`Error ${res.status}: ${errorText}`);
+    }
+
+    const data = await res.json();
+    console.log("[TICKET] Imágenes subidas exitosamente:", data);
+    return data;
+  } catch (error) {
+    console.error("[TICKET] Error al subir imágenes:", error);
+    throw error;
+  }
+};
+
+/**
+ * @param {Object} ticketData 
+ * @param {number} ticketData.id_elem 
+ * @param {number} ticketData.id_problem 
+ * @param {string} ticketData.ambient 
+ * @param {string} ticketData.obser 
+ * @param {number} ticketData.id_usu 
+ * @param {string} ticketData.fecha_in 
+ * @returns {Promise<Object>} 
  */
 export const crearTicket = async (ticketData) => {
   try {

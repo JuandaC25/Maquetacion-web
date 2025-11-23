@@ -4,8 +4,9 @@ import Header_his from './Header_histo/Header_his.jsx';
 import './Histo_pedi.css';
 import Stack from 'react-bootstrap/Stack';
 import Footer from '../../Footer/Footer.jsx';
-import { Pagination, Button, Badge } from 'react-bootstrap'; 
+import { Pagination, Button, Badge, Tabs, Tab } from 'react-bootstrap'; 
 import { obtenersolicitudes, eliminarSolicitud } from '../../../api/solicitudesApi.js'; 
+import { obtenerTickets, eliminarTicket } from '../../../api/ticket.js';
 import Modal_ver from '../Histo_pedi/Modal_ver/Modal_ver.jsx'; 
 
 const formatFecha = (fechaString) => {
@@ -57,10 +58,12 @@ const getStatusDetails = (estadoValor) => {
 
 function Historial_ped() {
     const [solicitudes, setSolicitudes] = useState([]);
+    const [tickets, setTickets] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [solicitudesPerPage] = useState(5); 
+    const [solicitudesPerPage] = useState(5);
+    const [activeTab, setActiveTab] = useState('solicitudes'); 
 
     const cargarSolicitudes = async () => {
         try {
@@ -92,13 +95,43 @@ function Historial_ped() {
         }
     };
 
+    const cargarTickets = async () => {
+        try {
+            setIsLoading(true);
+            const data = await obtenerTickets();
+            
+            console.log('Tickets recibidos:', data); // Debug
+            
+            // Filtrar solo los tickets del usuario actual
+            const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+            const ticketsDelUsuario = Array.isArray(data) 
+                ? data.filter(ticket => ticket.id_usuario === usuario.id)
+                : [];
+            
+            console.log('Tickets filtrados del usuario:', ticketsDelUsuario); // Debug
+            
+            setTickets(ticketsDelUsuario);
+            setError(null);
+        } catch (err) {
+            console.error("Fallo al obtener tickets:", err);
+            setError(err.message || "Error al cargar los tickets reportados.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
-        cargarSolicitudes();
-    }, []);
+        if (activeTab === 'solicitudes') {
+            cargarSolicitudes();
+        } else {
+            cargarTickets();
+        }
+    }, [activeTab]);
     
+    const currentItems = activeTab === 'solicitudes' ? solicitudes : tickets;
     const indexOfLastSolicitud = currentPage * solicitudesPerPage;
     const indexOfFirstSolicitud = indexOfLastSolicitud - solicitudesPerPage;
-    const currentSolicitudes = solicitudes.slice(indexOfFirstSolicitud, indexOfLastSolicitud); 
+    const currentSolicitudes = currentItems.slice(indexOfFirstSolicitud, indexOfLastSolicitud); 
 
     const handleDelete = async (id_solicitud) => {
         if (!window.confirm(`¿Estás seguro de que deseas eliminar la solicitud ${id_solicitud}?`)) {
@@ -120,7 +153,27 @@ function Historial_ped() {
         }
     };
 
-    const totalPages = Math.ceil(solicitudes.length / solicitudesPerPage);
+    const handleDeleteTicket = async (id_ticket) => {
+        if (!window.confirm(`¿Estás seguro de que deseas eliminar el ticket ${id_ticket}?`)) {
+            return;
+        }
+
+        try {
+            await eliminarTicket(id_ticket);
+            setTickets(prev => prev.filter(ticket => ticket.id !== id_ticket));
+            
+            if (currentSolicitudes.length === 1 && currentPage > 1) {
+                setCurrentPage(currentPage - 1);
+            }
+            alert(`Ticket ${id_ticket} eliminado correctamente.`);
+            
+        } catch (err) {
+            console.error("Error al eliminar el ticket:", err);
+            alert(`Error al eliminar el ticket ${id_ticket}: ${err.message}`);
+        }
+    };
+
+    const totalPages = Math.ceil(currentItems.length / solicitudesPerPage);
     const paginate = (pageNumber) => {
         if (pageNumber >= 1 && pageNumber <= totalPages) {
             setCurrentPage(pageNumber);
@@ -177,77 +230,151 @@ function Historial_ped() {
         historialContent = <div className="p-3">Cargando historial... ⏳</div>;
     } else if (error) {
         historialContent = <div className="p-3 text-danger">Error: {error}</div>;
-    } else if (solicitudes.length === 0) {
-        historialContent = <div className="p-3">No hay solicitudes en el historial.</div>;
-    } else if (currentSolicitudes.length === 0 && solicitudes.length > 0) {
-        historialContent = <div className="p-3">No hay solicitudes en esta página.</div>;
-    } else {
+    } else if (currentItems.length === 0) {
         historialContent = (
-            <Stack gap={1}>
-                {currentSolicitudes.map((sol) => {
-                    // 🚨 USAMOS sol.est_soli para obtener el estado
-                    const status = getStatusDetails(sol.est_soli); 
-                    
-                    return (
-                        <div className="p-3 item_historial" key={sol.id_soli}>
-                            <span className='emoji_historial'>📝</span>
-                            
-                            {/* Badge para mostrar el estado con color */}
-                            <Badge 
-                                className='let_histo' 
-                                bg={status.variant} 
-                            >
-                                {status.text}
-                            </Badge>
-                            
-                            <span className='texto_pedido'>
-                                ID Solicitud: **{sol.id_soli || 'N/A'}** | Usuario: {sol.nom_usu || 'N/A'} <br/>
-                                Ambiente: {sol.ambient || 'N/A'} <br/>
-                                {/* Mostramos solo la fecha en la vista principal */}
-                                Inicio: {formatFecha(sol.fecha_ini || 'N/A')} | Fin: {formatFecha(sol.fecha_fn || 'N/A')}
-                                <div style={{ marginTop: '5px', fontSize: '0.9em', color: '#555' }}>
-                                    Equipos: {sol.equipos_detalles && sol.equipos_detalles.length > 0
-                                        ? sol.equipos_detalles.map(eq => (
-                                            <span key={eq.id}>
-                                                [{eq.id}] **{eq.nombre}**
-                                            </span>
-                                        )).reduce((prev, curr) => [prev, ', ', curr])
-                                        : 'N/A'
-                                    }
-                                </div>
-                            </span>
-                            <div className='Cont_botones_histo'>
-                                <div className='Btn_ver'>
-                                    {/* 🚨 Cambiamos el texto del botón a "Detalles 🔍" y pasamos la solicitud completa */}
-                                    <Modal_ver 
-                                        solicitud={sol} 
-                                        buttonText="Detalles 🔍" 
-                                    /> 
-                                </div>
-                                <Button 
-                                    variant="danger" 
-                                    size="sm" 
-                                    onClick={() => handleDelete(sol.id_soli)}
-                                    className='Btn_eliminar_histo'
-                                >
-                                    Eliminar 🗑️
-                                </Button>
-                            </div>
-                        </div>
-                    );
-                })}
-            </Stack>
+            <div className="p-3">
+                {activeTab === 'solicitudes' 
+                    ? 'No hay solicitudes en el historial.' 
+                    : 'No has reportado ningún equipo aún.'}
+            </div>
         );
+    } else if (currentSolicitudes.length === 0 && currentItems.length > 0) {
+        historialContent = <div className="p-3">No hay {activeTab === 'solicitudes' ? 'solicitudes' : 'tickets'} en esta página.</div>;
+    } else {
+        if (activeTab === 'solicitudes') {
+            historialContent = (
+                <Stack gap={1}>
+                    {currentSolicitudes.map((sol) => {
+                        const status = getStatusDetails(sol.est_soli); 
+                        
+                        return (
+                            <div className="p-3 item_historial" key={sol.id_soli}>
+                                <span className='emoji_historial'>📝</span>
+                                
+                                <Badge 
+                                    className='let_histo' 
+                                    bg={status.variant} 
+                                >
+                                    {status.text}
+                                </Badge>
+                                
+                                <span className='texto_pedido'>
+                                    ID Solicitud: **{sol.id_soli || 'N/A'}** | Usuario: {sol.nom_usu || 'N/A'} <br/>
+                                    Ambiente: {sol.ambient || 'N/A'} <br/>
+                                    Inicio: {formatFecha(sol.fecha_ini || 'N/A')} | Fin: {formatFecha(sol.fecha_fn || 'N/A')}
+                                    <div style={{ marginTop: '5px', fontSize: '0.9em', color: '#555' }}>
+                                        Equipos: {sol.equipos_detalles && sol.equipos_detalles.length > 0
+                                            ? sol.equipos_detalles.map(eq => (
+                                                <span key={eq.id}>
+                                                    [{eq.id}] **{eq.nombre}**
+                                                </span>
+                                            )).reduce((prev, curr) => [prev, ', ', curr])
+                                            : 'N/A'
+                                        }
+                                    </div>
+                                </span>
+                                <div className='Cont_botones_histo'>
+                                    <div className='Btn_ver'>
+                                        <Modal_ver 
+                                            solicitud={sol} 
+                                            buttonText="Detalles 🔍" 
+                                        /> 
+                                    </div>
+                                    <Button 
+                                        variant="danger" 
+                                        size="sm" 
+                                        onClick={() => handleDelete(sol.id_soli)}
+                                        className='Btn_eliminar_histo'
+                                    >
+                                        Eliminar 🗑️
+                                    </Button>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </Stack>
+            );
+        } else {
+            // Renderizado de tickets
+            historialContent = (
+                <Stack gap={1}>
+                    {currentSolicitudes.map((ticket) => {
+                        const statusTicket = ticket.id_est_tick === 2 ? 
+                            { text: 'Activo', variant: 'danger' } : 
+                            { text: 'Resuelto', variant: 'success' };
+                        
+                        return (
+                            <div className="p-3 item_historial" key={ticket.id_tickets}>
+                                <span className='emoji_historial'>🔧</span>
+                                
+                                <Badge 
+                                    className='let_histo' 
+                                    bg={statusTicket.variant} 
+                                >
+                                    {statusTicket.text}
+                                </Badge>
+                                
+                                <span className='texto_pedido'>
+                                    ID Ticket: **{ticket.id_tickets || 'N/A'}** | Equipo: {ticket.nom_elem || `ID ${ticket.id_eleme}`} <br/>
+                                    Problema: {ticket.nom_problm || 'N/A'} <br/>
+                                    Ambiente: {ticket.ambient || 'N/A'} <br/>
+                                    Fecha: {formatFecha(ticket.fecha_in || 'N/A')}
+                                    {ticket.Obser && (
+                                        <div style={{ marginTop: '5px', fontSize: '0.9em', color: '#555' }}>
+                                            Observaciones: {ticket.Obser}
+                                        </div>
+                                    )}
+                                    {ticket.imageness && ticket.imageness !== 'null' && (
+                                        <div style={{ marginTop: '5px', fontSize: '0.85em', color: '#667eea' }}>
+                                            📷 Tiene imágenes adjuntas
+                                        </div>
+                                    )}
+                                </span>
+                                <div className='Cont_botones_histo'>
+                                    <Button 
+                                        variant="danger" 
+                                        size="sm" 
+                                        onClick={() => handleDeleteTicket(ticket.id_tickets)}
+                                        className='Btn_eliminar_histo'
+                                    >
+                                        Eliminar 🗑️
+                                    </Button>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </Stack>
+            );
+        }
     }
 
     return (
         <div className='Cont_historial'>
             <Header_his/>
-            <div className='Container_historial'>
-                {historialContent}
-            </div>
+            
+            <Tabs
+                activeKey={activeTab}
+                onSelect={(k) => {
+                    setActiveTab(k);
+                    setCurrentPage(1);
+                }}
+                className="mb-3 custom-tabs"
+                justify
+            >
+                <Tab eventKey="solicitudes" title="📝 Mis Solicitudes">
+                    <div className='Container_historial'>
+                        {historialContent}
+                    </div>
+                </Tab>
+                
+                <Tab eventKey="tickets" title="🔧 Equipos Reportados">
+                    <div className='Container_historial'>
+                        {historialContent}
+                    </div>
+                </Tab>
+            </Tabs>
 
-            {/* Ccomp para la paginacion */}
+            {/* Componente para la paginacion */}
             {totalPages > 1 && (
                 <div className='Pag_histo'>
                     <Pagination>
