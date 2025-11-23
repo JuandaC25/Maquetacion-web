@@ -204,18 +204,6 @@ function Datos_escritorio() {
                             .map((s) => s.trim())
                             .filter((s) => s.length > 0),
                     });
-                    
-                    // CRÍTICO: Sincronizar los IDs de contexto para el filtro (no para el formulario del modal)
-                    // Eliminado: El modal debe usar la selección manual.
-                    // Si el modal **DEBE** prellenarse con estos IDs, descomenta lo siguiente:
-                    /*
-                    setForm(prevForm => ({
-                        ...prevForm,
-                        id_categoria: primerElemento.id_catg?.toString() ?? "", 
-                        id_subcategoria: primerElemento.id_sub_catg?.toString() ?? "",
-                        id_esp: primerElemento.id_esp?.toString() ?? "", 
-                    }));
-                    */
 
                 } else {
                     setSubcatInfo(null);

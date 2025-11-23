@@ -6,6 +6,32 @@
     border-color: black;
 }
 
+/* Estilos para las Tabs */
+.custom-tabs {
+    margin: 1.5rem 1rem 0 1rem;
+    border-bottom: 2px solid #667eea;
+}
+
+.custom-tabs .nav-link {
+    color: #4a5568;
+    font-weight: 600;
+    padding: 12px 24px;
+    transition: all 0.3s ease;
+    border: none;
+    border-bottom: 3px solid transparent;
+}
+
+.custom-tabs .nav-link:hover {
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.custom-tabs .nav-link.active {
+    color: #667eea;
+    background: transparent;
+    border-bottom: 3px solid #667eea;
+}
+
 .p-3 {
     margin-top: 1rem;
     display: flex;

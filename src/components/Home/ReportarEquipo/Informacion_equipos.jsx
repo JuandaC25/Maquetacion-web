@@ -1,7 +1,7 @@
-import './informacion_equipos.css';
+import './ReportarEquipo.css';
 import Headerpedidosescritorio from './Header/Header';
 import Footer from '../../Footer/Footer';
-import ReportarEquipo from '../ReportarEquipo/ReportarEquipo';
+import ReportarEquipo from './ReportarEquipo';
 
 function Información_equipos() {
   return (
@@ -9,9 +9,7 @@ function Información_equipos() {
       <Headerpedidosescritorio />
       
       <div className="informacion-equipos-container">
-        <div className="formulario-reporte-wrapper">
           <ReportarEquipo />
-        </div>
       </div>
 
       <div className="Ajustfooter">

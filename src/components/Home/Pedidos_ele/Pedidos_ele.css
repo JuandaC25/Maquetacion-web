@@ -1,243 +1,228 @@
-.page_container {
-padding: 30px;
-max-width: 1200px;
-margin: 40px auto;
-font-family: Arial, sans-serif;
-background-color: #f9f9f9;
-border-radius: 8px;
-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+/* Estilos para Pedidos de Elementos Generales */
+
+.multimedia-main-container {
+  background-color: #f9fbfd;
+  min-height: 100vh;
 }
 
-.contenedor_paginacion {
-display: flex;
-justify-content: center;
-align-items: center;
-margin-top: 30px;
-gap: 10px;
-padding: 10px 0;
+.multimedia-ficha-visual {
+  max-width: 1100px;
+  margin: 3rem auto;
+  background: linear-gradient(135deg, #f5f5f5 0%, #f6fff9 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.boton_pagina {
-background-color: #f0f0f0;
-color: #333;
-border: 1px solid #ccc;
-padding: 8px 15px;
-border-radius: 5px;
-cursor: pointer;
-transition: all 0.2s ease;
-font-size: 1em;
-min-width: 40px;
-text-align: center;
+.multimedia-ficha-visual:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(46, 204, 113, 0.4);
+  transition: all 0.5s ease;
 }
 
-.boton_pagina:hover:not(:disabled) {
-background-color: #007bff;
-color: white;
-border-color: #007bff;
+.multimedia-ficha-header {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f7fcf7;
+  border-bottom: 2px solid #e0f2e0;
 }
 
-.boton_pagina.activo {
-background-color: #28a745;
-color: white;
-border-color: #28a745;
-font-weight: bold;
+.multimedia-ficha-titulo h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2ecc71;
 }
 
-.boton_pagina:disabled {
-cursor: not-allowed;
-background-color: #e9ecef;
-opacity: 0.6;
+.multimedia-ficha-subtitulo {
+  color: #555;
+  font-size: 1rem;
+  margin-top: 0.3rem;
 }
 
-.page_title {
-text-align: center;
-color: #333;
-margin-bottom: 25px;
-border-bottom: 2px solid #007bff;
-padding-bottom: 10px;
+.multimedia-ficha-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 2rem;
 }
 
-.loading_message {
-text-align: center;
-padding: 20px;
-color: #007bff;
+/* ----------- TARJETA DESCRIPTIVA ----------- */
+
+.multimedia-ficha-descripcion {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease;
 }
 
-.error_message {
-text-align: center;
-padding: 20px;
-color: #dc3545;
-border: 1px solid #dc3545;
-background-color: #f8d7da;
-border-radius: 4px;
+.multimedia-ficha-descripcion:hover {
+  transform: translateY(-3px);
+  box-shadow: 15px 15px 10px rgba(8, 219, 96, 0.349);
 }
 
-.empty_message {
-text-align: center;
-padding: 20px;
-color: #6c757d;
+.multimedia-ficha-descripcion h4 {
+  color: #27ae60;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-
-/*organizador de tarjetas */
-.accesorios_cards_container {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-gap: 30px; 
-margin-top: 20px;
+.multimedia-ficha-descripcion p {
+  color: #444;
+  line-height: 1.6;
+  font-size: 0.97rem;
 }
 
+/* ----------- CARRUSEL ----------- */
 
-/* Tarjeta Individual de los acc*/
-.accesorio_card {
-background-color: white;
-border: 1px solid #e0e0e0;
-border-radius: 8px;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-overflow: hidden;
-display: flex;
-flex-direction: column;
-transition: transform 0.3s ease, box-shadow 0.3s ease;
+.multimedia-carrusel {
+  margin-top: 1.5rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-/*Efecto de sobre salir cuando se pasa el mouse*/
-.accesorio_card:hover {
-transform: translateY(-5px);
-box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+.multimedia-carrusel-imagen {
+  width: 100%;
+  height: 280px;
+  object-fit: contain;
+  background: #f8fdf8;
+  transition: transform 0.5s ease;
 }
 
-/*Estilo para ajustar la img al card*/
-.card_image_placeholder {
-height: 150px;
-background-color: #e9ecef;
-display: flex;
-justify-content: center;
-align-items: center;
-font-size: 4em;
-color: #adb5bd;
-border-bottom: 1px solid #e0e0e0;
+.multimedia-carrusel-imagen:hover {
+  transform: scale(1.03);
 }
 
-.card_image_placeholder img {
-max-width: 100%;
-max-height: 100%;
-width: auto;
-height: auto;
-object-fit: contain; 
+/* ----------- LISTA GENERAL ----------- */
+
+.multimedia-ficha-especificaciones {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease;
 }
 
-.card_details {
-padding: 15px;
-flex-grow: 1;
-display: flex;
-flex-direction: column;
+.multimedia-ficha-especificaciones:hover {
+  transform: translateY(-3px);
+  box-shadow: 15px 15px 10px rgba(8, 219, 96, 0.349);
+  transition: all 0.60s ease;
 }
 
-.card_title {
-font-size: 1.25em;
-color: #333;
-margin-top: 0;
-margin-bottom: 10px;
+.multimedia-ficha-especificaciones h4 {
+  color: #27ae60;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-.card_info {
-font-size: 0.95em;
-color: #6c757d;
-margin-bottom: 5px;
+.multimedia-ficha-especificaciones ul {
+  list-style: none;
+  padding: 0;
 }
 
-.card_info strong {
-color: #333;
+.multimedia-ficha-especificaciones li {
+  padding: 8px 0;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+  padding-left: 25px;
+  font-size: 0.95rem;
 }
 
-.card_actions {
-display: flex;
-justify-content: space-between;
-gap: 10px;
-margin-top: 15px;
-padding-top: 10px;
-border-top: 1px dashed #e9ecef;
+.multimedia-ficha-especificaciones li::before {
+  content: "●";
+  color: #2ecc71;
+  font-size: 1.2rem;
+  position: absolute;
+  left: 0;
+  top: 7px;
 }
 
-.card_actions button {
-background-color: #28a745;
-color: white;
-border: none;
-padding: 8px 10px;
-text-align: center;
-font-size: 14px;
-border-radius: 4px;
-cursor: pointer;
-transition: background-color 0.3s ease;
-flex-grow: 1;
-margin: 0;
+.multimedia-ficha-especificaciones li:last-child {
+  border-bottom: none;
 }
 
-.card_actions button:hover {
-background-color: #218838;
+/* ----------- FOOTER ----------- */
+
+.multimedia-ficha-footer {
+  text-align: center;
+  padding: 2rem;
 }
 
-.card_actions .delete_btn {
-background-color: #dc3545;
+.multimedia-boton-solicitar {
+  outline: none;
+  cursor: pointer;
+  border: none;
+  padding: 1rem 2.8rem;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 50px;
+  position: relative;
+  display: inline-block;
+  color: #fff;
+  letter-spacing: 0.03rem;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  box-shadow: 0 6px 18px rgba(46, 204, 113, 0.35);
+  overflow: hidden;
+  transition: all 0.4s ease;
 }
 
-.card_actions .delete_btn:hover {
-background-color: #c82333;
+.multimedia-boton-solicitar span {
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease;
 }
 
-.Boton_campana {
-position: relative;
-cursor: pointer;
+.multimedia-boton-solicitar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent
+  );
+  transition: all 0.6s ease;
 }
 
-.contador_campana {
-position: absolute;
-top: -5px;
-right: -5px;
-background-color: #dc3545;
-color: white;
-border-radius: 50%;
-padding: 3px 8px;
-font-size: 0.75em;
-font-weight: bold;
-line-height: 1;
-z-index: 10;
+.multimedia-boton-solicitar:hover::before {
+  left: 100%;
 }
 
-.modal_header_Acce{
-background-color: #28a745;
-color: white;
+.multimedia-boton-solicitar:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(46, 204, 113, 0.45);
 }
 
-.lista_seleccionados {
-list-style: none;
-padding: 0;
+.multimedia-boton-solicitar:active {
+  transform: scale(0.98);
 }
 
-.lista_seleccionados li {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 10px 0;
-border-bottom: 1px solid #eee;
+.multimedia-boton-solicitar:hover span {
+  color: #f8fff9;
 }
 
-.lista_seleccionados li:last-child {
-border-bottom: none;
-}
+/* ----------- RESPONSIVE ----------- */
 
-.lista_seleccionados li span {
-font-weight: 500;
-}
+@media (max-width: 900px) {
+  .multimedia-ficha-body {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
 
-.btn_cerrar_mdl_ele{
-background-color: #28a745;
-}
+  .multimedia-ficha-titulo h2 {
+    font-size: 1.6rem;
+  }
 
-.Btn_add_acce_modal{
-background-color:#28a745;
-}
-
-.modal_title_Acce{
-color: white;
+  .multimedia-carrusel-imagen {
+    height: 220px;
+  }
 }
