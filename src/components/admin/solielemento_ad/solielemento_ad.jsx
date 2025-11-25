@@ -67,7 +67,28 @@ const Listaxd = ({ onVerClick }) => {
       .then((data) => {
         if (!mounted) return;
         const arr = Array.isArray(data) ? data : [];
-        const elementos = arr.filter(s => Boolean((s.elemento && s.elemento !== '') || (s.detalles && s.detalles.elemento)));
+        const elementos = arr.map(s => {
+          const detalles = s.detalles ? s.detalles : {
+            fecha1: s.fecha1 || s.fecha_ini || '',
+            fecha2: s.fecha2 || s.fecha_fn || '',
+            elemento: s.elemento || s.nom_elem || (s.id_elemen && (Array.isArray(s.id_elemen) ? s.id_elemen.join(', ') : s.id_elemen)) || 'Solicitud',
+            elementoserie: s.elementoserie || s.elemento_serie || s.num_serie || '',
+            accesorios: s.accesorios || s.accessorios || '',
+            accesoriosserie: s.accesoriosserie || s.accesorios_serie || '',
+            usuario: s.usuario || s.nombre_usuario || s.nom_usu || s.nom_usuario || '',
+            tecnico: s.tecnico || '',
+            ambiente: s.ambiente || s.ambient || '',
+            estado: s.estado || s.estadosoli || s.est_soli || '',
+            id_prestamo: s.id_prestamo || s.id_prest || null,
+            fecha_entrega_prestamo: s.fecha_entrega_prestamo || s.fecha_entreg || s.fecha_entrega || null,
+            fecha_recepcion_prestamo: s.fecha_recepcion_prestamo || s.fecha_repc || s.fecha_recepcion || null,
+            tipo_prestamo: s.tipo_prestamo || s.tipo_pres || '',
+            estado_prestamo: s.estado_prestamo || s.estado_pres || null,
+            id_elem_prestamo: s.id_elem_prestamo || s.id_elem || s.id_elem_prest || '',
+            nom_elem_prestamo: s.nom_elem_prestamo || s.nom_elem || s.nom_elem_prest || ''
+          };
+          return { ...s, detalles };
+        });
         setTickets(elementos);
       })
       .catch(err => {
@@ -211,7 +232,7 @@ const Solielemento = () => {
           <div className="detail-item-1631">
             <label className="detail-label-1632">Número de serie del elemento:</label>
             <div className="detail-value-display-1633">
-              <Form.Control type="text" value={modalDetalles?.elementoserie || ''} readOnly />
+              <Form.Control type="text" value={modalDetalles?.elementoserie || modalDetalles?.nom_elem_prestamo || ''} readOnly />
             </div>
           </div>
 
@@ -232,7 +253,7 @@ const Solielemento = () => {
           <div className="detail-item-1631">
             <label className="detail-label-1632">Nombre del Usuario:</label>
             <div className="detail-value-display-1633">
-              <Form.Control type="text" value={modalDetalles?.usuario || ''} readOnly />
+              <Form.Control type="text" value={modalDetalles?.usuario || modalDetalles?.nom_usu || ''} readOnly />
             </div>
           </div>
 
@@ -256,6 +277,38 @@ const Solielemento = () => {
               <Form.Control type="text" value={modalDetalles?.estado || ''} readOnly />
             </div>
           </div>
+          {modalDetalles?.id_prestamo || modalDetalles?.id_prestamo === 0 ? (
+            <>
+              <hr />
+              <div className="detail-item-1631">
+                <label className="detail-label-1632">ID Préstamo:</label>
+                <div className="detail-value-display-1633">
+                  <Form.Control type="text" value={modalDetalles?.id_prestamo || ''} readOnly />
+                </div>
+              </div>
+
+              <div className="detail-item-1631">
+                <label className="detail-label-1632">Fecha entrega (préstamo):</label>
+                <div className="detail-value-display-1633">
+                  <Form.Control type="text" value={modalDetalles?.fecha_entrega_prestamo ? modalDetalles.fecha_entrega_prestamo : ''} readOnly />
+                </div>
+              </div>
+
+              <div className="detail-item-1631">
+                <label className="detail-label-1632">Tipo de préstamo:</label>
+                <div className="detail-value-display-1633">
+                  <Form.Control type="text" value={modalDetalles?.tipo_prestamo || ''} readOnly />
+                </div>
+              </div>
+
+              <div className="detail-item-1631">
+                <label className="detail-label-1632">Elementos prestados:</label>
+                <div className="detail-value-display-1633">
+                  <Form.Control type="text" value={modalDetalles?.nom_elem_prestamo || modalDetalles?.id_elem_prestamo || ''} readOnly />
+                </div>
+              </div>
+            </>
+          ) : null}
         </Modal.Body>
         <Modal.Footer className="modern-modal-footer-1634">
           <Button variant="secondary" onClick={handleCloseModal} className="modal-action-button-1635 cancel-action-1636">

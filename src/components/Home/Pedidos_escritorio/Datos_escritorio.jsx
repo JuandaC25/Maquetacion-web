@@ -140,9 +140,8 @@ function Datos_escritorio() {
             return;
         }
 
-        // Formato limpio para Java LocalDateTime
-        const isoInicio = fechaInicio.toISOString().replace(/\.\d{3}Z$/, '');
-        const isoFin = fechaFin.toISOString().replace(/\.\d{3}Z$/, '');
+        const isoInicio = `${form.fecha_ini}T${form.hora_ini}:00`;
+        const isoFin = `${form.fecha_fn}T${form.hora_fn}:00`;
 
         // 3. Crear DTO (Data Transfer Object)
         const dto = {

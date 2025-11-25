@@ -42,8 +42,8 @@ function SoliciAudioVideo() {
     }
 
     const dto = {
-      fecha_ini: fechaInicio.toISOString(),
-      fecha_fn: fechaFin.toISOString(),
+      fecha_ini: `${form.fecha_ini}T${form.hora_ini}:00`,
+      fecha_fn: `${form.fecha_fn}T${form.hora_fn}:00`,
       ambient: form.ambient,
       estadosoli: form.estadosoli,
       id_usu: form.id_usu,
