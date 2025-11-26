@@ -55,11 +55,9 @@ function Datos_escritorio() {
         ambient: "",
         cantid: "1", 
         id_elemen: "", 
-        estadosoli: 2,
+        estadosoli: 1,
         id_usu: 1, 
-        num_ficha: "", 
-        mensaj: "",
-        // IDs de contexto (inicialmente vacíos)
+        num_ficha: "",
         id_categoria: "", 
         id_subcategoria: "", 
         id_esp: "", 
@@ -78,7 +76,6 @@ function Datos_escritorio() {
             id_categoria: "",
             id_subcategoria: "",
             id_esp: "",
-            mensaj: "", // Aseguramos que el mensaje esté limpio al abrir
         })); 
         setShowModal(true);
     };
@@ -96,7 +93,6 @@ function Datos_escritorio() {
             cantid: "1",
             id_elemen: "", 
             num_ficha: "",
-            mensaj: "",
             id_categoria: "", 
             id_subcategoria: "", 
             id_esp: "", 
@@ -152,10 +148,7 @@ function Datos_escritorio() {
             // CONVERSIONES CRÍTICAS A NÚMEROS (Longs)
             num_fich: parseInt(form.num_ficha, 10), 
             cantid: parsedCantid, // Usamos la cantidad ya parseada y validada
-            id_estado_soli: form.estadosoli, 
-            
-            // CORRECCIÓN MENSAJE: Si está vacío o solo espacios, enviar null
-            mensaj: form.mensaj && form.mensaj.trim() !== "" ? form.mensaj.trim() : null,
+            id_estado_soli: form.estadosoli,
             
             // IDs a Long o null 
             id_categoria: form.id_categoria ? parseInt(form.id_categoria, 10) : null,
@@ -521,19 +514,6 @@ function Datos_escritorio() {
                                     />
                                 </div>
                             </div>
-                        </Form.Group>
-
-                        {/* --- CAMPO MENSAJE (opcional) --- */}
-                        <Form.Group className="mb-3">
-                            <Form.Label>Mensaje (opcional)</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                name="mensaj"
-                                placeholder="Escribe aquí un mensaje adicional (opcional)"
-                                value={form.mensaj}
-                                onChange={handleChange}
-                                rows={3}
-                            />
                         </Form.Group>
                         
                         <div className="text-center mt-4">
