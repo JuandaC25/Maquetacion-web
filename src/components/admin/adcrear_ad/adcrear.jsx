@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Alert, Modal, Form, Dropdown, Pagination, InputGroup } from 'react-bootstrap';
+import { Button, Alert, Modal, Form, Dropdown, InputGroup } from 'react-bootstrap';
 import { FaUserCircle, FaSearch } from 'react-icons/fa';
 import "./adcrear_ad.css"; 
 import Footer from '../../Footer/Footer.jsx';
@@ -284,6 +284,8 @@ const UserManagementList = () => {
     const [selectedRole, setSelectedRole] = useState('todos');
     const [selectedEstado, setSelectedEstado] = useState('activos');
     const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
 
     useEffect(() => {
         cargarUsuarios();
@@ -452,7 +454,6 @@ const UserManagementList = () => {
         }
         try {
             const res = await uploadUsuariosMasivos(uploadFile);
-            const creados = res.creados ?? res.creados ?? res.creados;
             alert(`Subida completa. Creados: ${res.creados || 0}. Errores: ${ (res.errores || []).length }`);
             await cargarUsuarios();
             setUploadFile(null);
@@ -480,6 +481,11 @@ const UserManagementList = () => {
         const idMatch = searchTerm === '' || user.num_docu.toString().includes(searchTerm);
         return roleMatch && estadoMatch && idMatch;
     });
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedRole, selectedEstado, searchTerm, users]);
+
+    const paginatedUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     const rolesUnicos = obtenerRolesUnicos();
 
@@ -589,8 +595,8 @@ const UserManagementList = () => {
             </div>
 
             <div className="equipment-list-grid-xd109">
-                {filteredUsers.length > 0 ? (
-                    filteredUsers.map(user => (
+                {paginatedUsers.length > 0 ? (
+                    paginatedUsers.map(user => (
                         <UserCard key={user.id_usuari} user={user} onVerClick={handleViewUserDetails} />
                     ))
                 ) : (
@@ -599,19 +605,19 @@ const UserManagementList = () => {
                     </p>
                 )}
             </div>
-            
+
             <div className="pagination-1215-xd136">
                 <div className="pagination-inner-1216-xd137">
                     <label>
-                        <input value="1" name="value-radio" id="value-1" type="radio" defaultChecked />
+                        <input value="1" name="value-radio" id="value-1" type="radio" checked={currentPage === 1} onChange={() => setCurrentPage(1)} />
                         <span>1</span>
                     </label>
                     <label>
-                        <input value="2" name="value-radio" id="value-2" type="radio" />
+                        <input value="2" name="value-radio" id="value-2" type="radio" checked={currentPage === 2} onChange={() => setCurrentPage(2)} />
                         <span>2</span>
                     </label>
                     <label>
-                        <input value="3" name="value-radio" id="value-3" type="radio" />
+                        <input value="3" name="value-radio" id="value-3" type="radio" checked={currentPage === 3} onChange={() => setCurrentPage(3)} />
                         <span>3</span>
                     </label>
                     <span className="selection-1217-xd138"></span>

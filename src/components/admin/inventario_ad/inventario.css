@@ -71,23 +71,28 @@
 
 .inventory-header-bar-xd26 {
   background: var(--white);
-  padding: 20px 40px;
-  box-shadow: 0 4px 15px var(--shadow);
+  padding: 18px 40px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   border-bottom: 1px solid var(--border);
   position: sticky; top: 0; z-index: 1000;
+  border-radius: 8px;
+  margin: 8px 0 0 0;
 }
 
 .header-bar-content-xd27 {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
+  gap: 16px;
 }
 
 .header-left-section-xd28 {
   display: flex;
   align-items: center;
   gap: 20px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .inventory-main-title-xd29 {
@@ -319,8 +324,6 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Make the plain "Editar" modal button maintain the green color instead of switching to bootstrap blue.
-   We target the modal-action-button with bootstrap's btn and btn-primary classes for specificity. */
 .modal-action-button-xd20.btn.btn-primary {
   background-color: var(--green) !important;
   border-color: var(--green-dark) !important;
@@ -396,7 +399,9 @@
 .filters-row-xd30 {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 16px;
+  flex-wrap: nowrap;
+  width: 100%;
 }
 .pagination-1215-xd36 {
   display: flex;
@@ -490,22 +495,38 @@
 }
 .header-buttons-section {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
 }
 
-/* Make header buttons consistent in size, not too large, and aligned */
 .header-buttons-section .add-new-equipment-button-xd35,
 .header-buttons-section .btn,
 .header-buttons-section .modal-action-button-xd120 {
-  height: 40px;
-  padding: 8px 14px;
-  font-size: 0.95rem;
-  border-radius: 8px;
-  min-width: 140px;
+  height: 44px;
+  padding: 10px 18px;
+  font-size: 0.98rem;
+  border-radius: 10px;
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.06);
+  flex: 1 1 0; 
+}
+
+@media (max-width: 768px) {
+  .header-buttons-section .add-new-equipment-button-xd35,
+  .header-buttons-section .btn,
+  .header-buttons-section .modal-action-button-xd120 {
+    min-width: auto;
+    width: 100%;
+    flex: none;
+    justify-content: center;
+  }
+  .inventory-actions-bar-xd41 { justify-content: center; }
 }
 
 .modern-modal-footer-xd119 {
@@ -550,25 +571,49 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: nowrap;
+  width: 100%;
 }
 
-.filters-row-xd30 .category-filter-dropdown-xd31 .dropdown-toggle {
-  padding: 6px 10px; 
-  font-size: 0.9rem;
-  min-width: 110px;
-  height: 36px;
-  display: inline-flex;
+.inventory-actions-bar-xd41 {
+  width: 100%;
+  background: var(--white);
+  padding: 14px 40px;
+  box-sizing: border-box;
+  margin: 12px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px var(--shadow);
+  border: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-start;
   align-items: center;
 }
 
-.filters-row-xd30 .category-filter-dropdown-xd31 { display: inline-flex; }
+@media (max-width: 768px) {
+  .inventory-actions-bar-xd41 { padding: 10px 20px; justify-content: flex-start; }
+  .inventory-actions-bar-xd41 .header-buttons-section { flex-wrap: wrap; gap: 8px; }
+}
 
-.filters-row-xd30 .search-bar-xd34 { max-width: 260px; }
+.filters-row-xd30 .category-filter-dropdown-xd31 .dropdown-toggle {
+  padding: 8px 12px; 
+  font-size: 0.95rem;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 180px;
+}
+
+.filters-row-xd30 .category-filter-dropdown-xd31 { display: inline-flex; width: auto; }
+
+.filters-row-xd30 .search-bar-xd34 { max-width: 520px; width: 100%; flex: 1 1 auto; }
 
 .search-bar-xd34 {
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 520px;
 }
 
 .search-bar-xd34 .input-group-text {
@@ -589,7 +634,31 @@
 }
 
 @media (max-width: 768px) {
-  .filters-row-xd30 { flex-wrap: wrap; gap: 8px; }
+  .filters-row-xd30 { flex-direction: column; gap: 8px; align-items: stretch; }
   .filters-row-xd30 .search-bar-xd34 { max-width: 100%; width: 100%; }
-  .filters-row-xd30 .category-filter-dropdown-xd31 .dropdown-toggle { min-width: 100%; }
+  .filters-row-xd30 .category-filter-dropdown-xd31 { display: block; width: 100%; }
+  .filters-row-xd30 .category-filter-dropdown-xd31 .dropdown-toggle { width: 100%; min-width: 0; }
+}
+
+.upload-modal-dropzone-xd150 {
+  border: 2px dashed rgba(0,0,0,0.08);
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--white);
+  border-radius: 8px;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.upload-modal-dropzone-xd150 p { margin: 0; color: var(--text-light); }
+.drag-active-xd151 { background: rgba(0,123,255,0.03); border-color: rgba(0,123,255,0.5); box-shadow: 0 6px 18px rgba(0,123,255,0.06); }
+.upload-modal-content-xd152 { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+.selected-file-info-xd153 { font-size: 0.95rem; color: var(--text); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.selected-file-name-xd154 { font-weight: 600; color: var(--green); word-break: break-all; }
+
+@media (max-width: 480px) {
+  .upload-modal-dropzone-xd150 { padding: 18px; }
+  .selected-file-info-xd153 { font-size: 0.9rem; }
 }

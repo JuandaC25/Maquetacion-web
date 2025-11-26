@@ -453,6 +453,9 @@ const Admin = () => {
   const [selectedEstadoFilter, setSelectedEstadoFilter] = useState("Todos los Estados");
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
   const bottomRef = useRef(null);
 
   const obtenerIdCategoria = (categoria) => {
@@ -475,19 +478,17 @@ const Admin = () => {
       setError(null);
       
       const resultados = await Promise.allSettled([
-        ElementosService.obtenerElementos(),  // [0]
-        obtenerAccesorios(),                  // [1]
-        obtenerCategoria(),                   // [2]
-        obtenersolicitudes(),                 // [3]
-        obtenerSubcategorias()                // [4] <- ¡Este es el índice correcto!
+        ElementosService.obtenerElementos(),
+        obtenerAccesorios(),
+        obtenerCategoria(), 
+        obtenersolicitudes(),
+        obtenerSubcategorias()
       ]);
 
       const elementosResult = resultados[0];
       const accesoriosResult = resultados[1];
       const categoriasResult = resultados[2];
-      const solicitudesResult = resultados[3]; // Variable no utilizada directamente aquí, pero mantiene el orden
-      
-      // La corrección clave está aquí: Se usa el índice [4]
+      const solicitudesResult = resultados[3]; 
       const subcategoriasResult = resultados[4]; 
       
       if (elementosResult.status !== 'fulfilled') {
@@ -799,7 +800,6 @@ const Admin = () => {
     setSearchTerm(e.target.value);
   };
 
-  // Se filtran las subcategorías según la categoría principal seleccionada
   const subcategoriasFiltradas = selectedCategoryFilter === "Todas las Categorías" 
     ? subcategorias 
     : subcategorias.filter(sub => {
@@ -807,14 +807,9 @@ const Admin = () => {
         return categoria && categoria.nom_cat === selectedCategoryFilter;
       });
 
-  // Se filtran los elementos del inventario
   const elementosFiltrados = elementosInventario.filter(elemento => {
-    
-    // 1. Filtrado por Categoría (Incluyendo "Accesorio")
     const coincideCategoria = selectedCategoryFilter === "Todas las Categorías" || 
                               elemento.categoria === selectedCategoryFilter;
-    
-    // 2. Filtrado por Subcategoría (Solo aplica a elementos que no son accesorios)
     let coincideSubcategoria = true;
     if (elemento.tipo === 'elemento') {
       let subcatNombre = "";
@@ -824,29 +819,22 @@ const Admin = () => {
           subcatNombre = subcat.nom_subcateg;
         }
       }
-      // Si se seleccionó una subcategoría específica, el elemento debe coincidir con ella.
       coincideSubcategoria = selectedSubcategoryFilter === "Todas las Subcategorías" ||
                               subcatNombre === selectedSubcategoryFilter;
     }
-    // Si la categoría seleccionada es "Accesorio", solo deben mostrarse accesorios
     if (selectedCategoryFilter === "Accesorio" && elemento.tipo !== 'accesorio') {
         return false;
     }
-    // Si la categoría seleccionada NO es "Accesorio", y el elemento SÍ es un accesorio, se filtra.
     if (selectedCategoryFilter !== "Accesorio" && elemento.tipo === 'accesorio') {
-        // Excepción: Si el filtro de categoría es "Todas las Categorías", incluimos los accesorios.
         if (selectedCategoryFilter !== "Todas las Categorías") {
             return false;
         }
     }
     
-    // 3. Filtrado por Búsqueda (Serie, Nombre, Marca)
     const coincideBusqueda = searchTerm === "" || 
                               elemento.serie.toLowerCase().includes(searchTerm.toLowerCase()) ||
                               elemento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
                               (elemento.marca && elemento.marca.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    // 4. Filtrado por Estado
     const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
                            (selectedEstadoFilter === "Activos" && (elemento.est === 1 || elemento.est === true)) ||
                            (selectedEstadoFilter === "Inactivos" && (elemento.est === 0 || elemento.est === 2 || elemento.est === false || (elemento.est !== 1 && elemento.est !== true)));
@@ -857,6 +845,12 @@ const Admin = () => {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [elementosInventario]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategoryFilter, selectedSubcategoryFilter, selectedEstadoFilter, searchTerm, elementosInventario]);
+  const totalPages = Math.max(1, Math.ceil(elementosFiltrados.length / itemsPerPage));
+  const paginatedElements = elementosFiltrados.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div className="inventory-app-container-xd25">
@@ -947,13 +941,13 @@ const Admin = () => {
                     onClick={() => handleEstadoFilter("Activos")}
                     className="dropdown-item-xd148"
                   >
-                    ✅ Activos
+                    Activos
                   </Dropdown.Item>
                   <Dropdown.Item 
                     onClick={() => handleEstadoFilter("Inactivos")}
                     className="dropdown-item-xd148"
                   >
-                    ❌ Inactivos
+                   Inactivos
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
@@ -972,22 +966,25 @@ const Admin = () => {
               </InputGroup>
             </div>
           </div>
-          <div className="header-buttons-section">
-            <Button className="add-new-equipment-button-xd35" onClick={openNuevo}>
-              <span role="img" aria-label="añadir">➕</span> Añadir Equipo
-            </Button>
-            <Button variant="primary" className="add-new-equipment-button-xd35" onClick={openNuevoAccesorio} style={{marginLeft: '8px'}}>
-              <span role="img" aria-label="añadir">🔌</span> Añadir Accesorio
-            </Button>
-            <Button variant="outline-primary" onClick={() => setShowUploadModal(true)} className="modal-action-button-xd120" style={{ marginLeft: 8 }}>
-              Importar elementos (.xlsx)
-            </Button>
-          </div>
+        </div>
+      </Alert>
+
+      <Alert variant="light" className="inventory-actions-bar-xd41">
+        <div className="header-buttons-section">
+          <Button className="add-new-equipment-button-xd35" onClick={openNuevo}>
+            <span role="img" aria-label="añadir">➕</span> Añadir Equipo
+          </Button>
+          <Button variant="primary" className="add-new-equipment-button-xd35" onClick={openNuevoAccesorio}>
+            <span role="img" aria-label="añadir">🔌</span> Añadir Accesorio
+          </Button>
+          <Button variant="outline-primary" onClick={() => setShowUploadModal(true)} className="modal-action-button-xd120">
+            Importar elementos (.xlsx)
+          </Button>
         </div>
       </Alert>
       
       <ListaEquipos 
-        elementos={elementosFiltrados} 
+        elementos={paginatedElements} 
         onVerClick={openDetalles} 
         loading={loading}
       />
@@ -997,15 +994,15 @@ const Admin = () => {
       <div className="pagination-1215-xd36">
         <div className="pagination-inner-1216-xd37">
           <label>
-            <input value="1" name="value-radio" id="value-1" type="radio" defaultChecked />
+            <input value="1" name="value-radio" id="value-1" type="radio" checked={currentPage === 1} onChange={() => setCurrentPage(1)} disabled={1 > totalPages} />
             <span>1</span>
           </label>
           <label>
-            <input value="2" name="value-radio" id="value-2" type="radio" />
+            <input value="2" name="value-radio" id="value-2" type="radio" checked={currentPage === 2} onChange={() => setCurrentPage(2)} disabled={2 > totalPages} />
             <span>2</span>
           </label>
           <label>
-            <input value="3" name="value-radio" id="value-3" type="radio" />
+            <input value="3" name="value-radio" id="value-3" type="radio" checked={currentPage === 3} onChange={() => setCurrentPage(3)} disabled={3 > totalPages} />
             <span>3</span>
           </label>
           <span className="selection-1217-xd38"></span>
@@ -1020,11 +1017,11 @@ const Admin = () => {
         eliminando={eliminando}
         onActualizarEstado={handleUpdateItemState}
       />
-      <Modal show={showUploadModal} onHide={() => { setShowUploadModal(false); setUploadFile(null); setDragActive(false); }} centered dialogClassName="modern-modal-dialog-xd111">
-        <Modal.Header closeButton className="modern-modal-header-xd112">
-          <Modal.Title className="modern-modal-title-xd113">Importar elementos (.xlsx)</Modal.Title>
+      <Modal show={showUploadModal} onHide={() => { setShowUploadModal(false); setUploadFile(null); setDragActive(false); }} centered dialogClassName="modern-modal-dialog-xd11">
+        <Modal.Header closeButton className="modern-modal-header-xd12">
+          <Modal.Title className="modern-modal-title-xd13">Importar elementos (.xlsx)</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="modern-modal-body-xd114">
+        <Modal.Body className="modern-modal-body-xd14">
           <div
             className={`upload-modal-dropzone-xd150 ${dragActive ? 'drag-active-xd151' : ''}`}
             onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
