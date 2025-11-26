@@ -17,7 +17,7 @@ import './components/App.css';
 import Pedidos_escritorio from './components/Home/Pedidos_escritorio/Pedidos_escritorio.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './auth/ProtectedRoute';
-import Informacion_equipos from './components/Home/Informacion_equipos/Informacion_equipos.jsx';
+import Informacion_equipos from './components/Home/ReportarEquipo/Informacion_equipos.jsx';
 import Desplegable from './components/desplegable/desplegable.jsx';
 import HistorialTec from './components/Tecnico/Historial/HistorialTec.jsx';
 import Historial_ptec from './components/Tecnico/Historial/Historial_ptec/Historial_ptec.jsx';

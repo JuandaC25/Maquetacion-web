@@ -257,6 +257,7 @@ function Historial_ped() {
                                 
                                 <span className='texto_pedido'>
                                     ID Solicitud: {sol.id_soli || 'N/A'} | Usuario: {sol.nom_usu || 'N/A'} <br/>
+                                    ID Solicitud: **{sol.id_soli || 'N/A'}** | Usuario: {sol.nom_usu || 'N/A'} <br/>
                                     Ambiente: {sol.ambient || 'N/A'} <br/>
                                     Inicio: {formatFecha(sol.fecha_ini || 'N/A')} | Fin: {formatFecha(sol.fecha_fn || 'N/A')}
                                     <div style={{ marginTop: '5px', fontSize: '0.9em', color: '#555' }}>
@@ -271,6 +272,13 @@ function Historial_ped() {
                                     </div>
                                 </span>
                                 <div className='Cont_botones_histo'>
+                <div className='Btn_ver'>
+                                        <Modal_ver 
+                                            solicitud={sol} 
+                                            buttonText="Detalles 🔍" 
+                                        /> 
+                                    </div>
+
                                     <Button 
                                         variant="danger" 
                                         size="sm" 
@@ -280,6 +288,9 @@ function Historial_ped() {
                                         Desactivar <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
   <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
 </svg>
+                                        className='Btn_eliminar_histo'
+                                    >
+                                        Eliminar 🗑️
                                     </Button>
                                 </div>
                             </div>
@@ -329,6 +340,7 @@ function Historial_ped() {
                                         size="sm" 
                                         onClick={() => handleDeleteTicket(ticket.id_tickets)}
                                         className='Btn_desactivar_histo'
+                                        className='Btn_eliminar_histo'
                                     >
                                         Eliminar 🗑️
                                     </Button>
