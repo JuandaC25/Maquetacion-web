@@ -55,11 +55,9 @@ function Datos_escritorio() {
         ambient: "",
         cantid: "1", 
         id_elemen: "", 
-        estadosoli: 2,
+        estadosoli: 1,
         id_usu: 1, 
-        num_ficha: "", 
-        mensaj: "",
-        // IDs de contexto (inicialmente vacíos)
+        num_ficha: "",
         id_categoria: "", 
         id_subcategoria: "", 
         id_esp: "", 
@@ -78,7 +76,6 @@ function Datos_escritorio() {
             id_categoria: "",
             id_subcategoria: "",
             id_esp: "",
-            mensaj: "", // Aseguramos que el mensaje esté limpio al abrir
         })); 
         setShowModal(true);
     };
@@ -96,7 +93,6 @@ function Datos_escritorio() {
             cantid: "1",
             id_elemen: "", 
             num_ficha: "",
-            mensaj: "",
             id_categoria: "", 
             id_subcategoria: "", 
             id_esp: "", 
@@ -140,9 +136,8 @@ function Datos_escritorio() {
             return;
         }
 
-        // Formato limpio para Java LocalDateTime
-        const isoInicio = fechaInicio.toISOString().replace(/\.\d{3}Z$/, '');
-        const isoFin = fechaFin.toISOString().replace(/\.\d{3}Z$/, '');
+        const isoInicio = `${form.fecha_ini}T${form.hora_ini}:00`;
+        const isoFin = `${form.fecha_fn}T${form.hora_fn}:00`;
 
         // 3. Crear DTO (Data Transfer Object)
         const dto = {
@@ -153,10 +148,7 @@ function Datos_escritorio() {
             // CONVERSIONES CRÍTICAS A NÚMEROS (Longs)
             num_fich: parseInt(form.num_ficha, 10), 
             cantid: parsedCantid, // Usamos la cantidad ya parseada y validada
-            id_estado_soli: form.estadosoli, 
-            
-            // CORRECCIÓN MENSAJE: Si está vacío o solo espacios, enviar null
-            mensaj: form.mensaj && form.mensaj.trim() !== "" ? form.mensaj.trim() : null,
+            id_estado_soli: form.estadosoli,
             
             // IDs a Long o null 
             id_categoria: form.id_categoria ? parseInt(form.id_categoria, 10) : null,
@@ -204,18 +196,6 @@ function Datos_escritorio() {
                             .map((s) => s.trim())
                             .filter((s) => s.length > 0),
                     });
-                    
-                    // CRÍTICO: Sincronizar los IDs de contexto para el filtro (no para el formulario del modal)
-                    // Eliminado: El modal debe usar la selección manual.
-                    // Si el modal **DEBE** prellenarse con estos IDs, descomenta lo siguiente:
-                    /*
-                    setForm(prevForm => ({
-                        ...prevForm,
-                        id_categoria: primerElemento.id_catg?.toString() ?? "", 
-                        id_subcategoria: primerElemento.id_sub_catg?.toString() ?? "",
-                        id_esp: primerElemento.id_esp?.toString() ?? "", 
-                    }));
-                    */
 
                 } else {
                     setSubcatInfo(null);
@@ -534,19 +514,6 @@ function Datos_escritorio() {
                                     />
                                 </div>
                             </div>
-                        </Form.Group>
-
-                        {/* --- CAMPO MENSAJE (opcional) --- */}
-                        <Form.Group className="mb-3">
-                            <Form.Label>Mensaje (opcional)</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                name="mensaj"
-                                placeholder="Escribe aquí un mensaje adicional (opcional)"
-                                value={form.mensaj}
-                                onChange={handleChange}
-                                rows={3}
-                            />
                         </Form.Group>
                         
                         <div className="text-center mt-4">
