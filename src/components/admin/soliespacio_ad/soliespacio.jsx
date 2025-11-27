@@ -1,3 +1,26 @@
+  // Efecto para reactivar espacios automáticamente si la hora de fin ya pasó
+  useEffect(() => {
+    const reactivarEspacios = async () => {
+      const now = new Date();
+      let reactivado = false;
+      for (const esp of espacios) {
+        if (esp.estadoespacio === 2 && esp.fecha_fn) {
+          const fin = new Date(esp.fecha_fn);
+          if (!isNaN(fin.getTime()) && fin < now) {
+            await actualizarEspacio(esp.id, { ...esp, estadoespacio: 1 });
+            reactivado = true;
+          }
+        }
+      }
+      if (reactivado) {
+        await cargarEspacios();
+      }
+    };
+    if (espacios && espacios.length > 0) {
+      reactivarEspacios();
+    }
+    // eslint-disable-next-line
+  }, [espacios.length]);
 import React, { useState, useEffect } from 'react';
 import { Alert, Spinner, Dropdown, Modal, Form, Button, Carousel } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
@@ -19,7 +42,6 @@ const Soliespacio = () => {
   const [showModal, setShowModal] = useState(false);
   const [nuevaSolicitud, setNuevaSolicitud] = useState({
     id_esp: '',
-    id_usu: '',
     ambient: '',
     num_fich: '',
     fecha_ini: '',
@@ -37,10 +59,22 @@ const Soliespacio = () => {
   const [loadingEsp, setLoadingEsp] = useState(true);
   const [editEspacio, setEditEspacio] = useState(null);
   const [savingEsp, setSavingEsp] = useState(false);
+  const [showApartarModal, setShowApartarModal] = useState(false);
+  const [espacioApartar, setEspacioApartar] = useState(null);
+  const [reservaForm, setReservaForm] = useState({
+    fecha_ini: '',
+    hora_ini: '',
+    fecha_fn: '',
+    hora_fn: '',
+    ambient: '',
+    num_ficha: '',
+    estadosoli: 1,
+    id_usu: 1
+  });
 
   const handleOpenModal = () => {
     setEditingId(null);
-    setNuevaSolicitud({ id_esp: '', id_usu: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1, nom_usu: '' });
+    setNuevaSolicitud({ id_esp: '', ambient: '', num_fich: '', fecha_ini: '', fecha_fn: '', estadosoli: 1, nom_usu: '' });
     setModalIsTerminado(false);
     setLookupError(null);
     setShowModal(true);
@@ -156,16 +190,73 @@ const Soliespacio = () => {
     }
   };
 
+
   const handleOpenReservaDesdeCard = (espacio) => {
-    const espId = espacio?.id ?? espacio?.id_esp ?? '';
-    setNuevaSolicitud(prev => ({
-      ...prev,
-      id_esp: espId
-    }));
-    setEditingId(null);
-    setModalIsTerminado(false);
-    setShowModal(true);
+    // Solo permitir abrir el modal si el espacio está activo
+    if (espacio.estadoespacio !== 1) return;
+    setEspacioApartar(espacio);
+    setReservaForm({
+      fecha_ini: '',
+      hora_ini: '',
+      fecha_fn: '',
+      hora_fn: '',
+      ambient: '',
+      num_ficha: '',
+      estadosoli: 1,
+      id_usu: 1
+    });
+    setShowApartarModal(true);
   };
+
+  const handleReservaFormChange = (e) => {
+    const { name, value } = e.target;
+    setReservaForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleConfirmApartar = async (e) => {
+    e.preventDefault();
+    if (!espacioApartar) return;
+    try {
+      setSavingEsp(true);
+      const pad = (n) => String(n).padStart(2, '0');
+      const formatLocal = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+      const fechaInicio = new Date(`${reservaForm.fecha_ini}T${reservaForm.hora_ini}:00`);
+      const fechaFin = new Date(`${reservaForm.fecha_fn}T${reservaForm.hora_fn}:00`);
+      const dto = {
+        fecha_ini: formatLocal(fechaInicio),
+        fecha_fn: formatLocal(fechaFin),
+        ambient: reservaForm.ambient,
+        estadosoli: reservaForm.estadosoli,
+        id_usu: reservaForm.id_usu,
+        num_fich: reservaForm.num_ficha,
+        id_esp: espacioApartar.id
+      };
+      await crearSolicitud(dto);
+      // Cambiar el estado del espacio a inactivo (2)
+      await actualizarEspacio(espacioApartar.id, { ...espacioApartar, estadoespacio: 2 });
+      setShowApartarModal(false);
+      setEspacioApartar(null);
+      setReservaForm({
+        fecha_ini: '',
+        hora_ini: '',
+        fecha_fn: '',
+        hora_fn: '',
+        ambient: '',
+        num_ficha: '',
+        estadosoli: 1,
+        id_usu: 1
+      });
+      await cargarSolicitudes();
+      await cargarEspacios();
+    } catch (err) {
+      setError('Error al apartar el espacio: ' + (err?.message || err));
+    } finally {
+      setSavingEsp(false);
+    }
+  };
+
+
+
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -221,10 +312,10 @@ const Soliespacio = () => {
           fecha_fn: toIsoLocalNoTZ(nuevaSolicitud.fecha_fn),
           ambient: nuevaSolicitud.ambient,
           estadosoli: Number(nuevaSolicitud.estadosoli),
-          id_usu: Number(nuevaSolicitud.id_usu) || null,
           num_fich: nuevaSolicitud.num_fich,
           id_esp: Number(nuevaSolicitud.id_esp) || null
         };
+        const { id_usu, ...solicitudSinIdUsu } = dto; // Exclude id_usu
         const creado = await crearSolicitud(dto);
         const nuevaData = creado?.data || creado;
         setSolicitudes(prev => [nuevaData, ...prev]);
@@ -550,8 +641,8 @@ const Soliespacio = () => {
               <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.7 }}>
                 Los usuarios crean reservas desde la sección Home → Espacios
               </p>
-              <Button variant="success" size="sm" onClick={handleOpenModal}>
-                Nueva Reserva
+              <Button className="add-new-equipment-button-xd135" onClick={handleOpenModal}>
+                <span role="img" aria-label="añadir">➕</span> Nuevo Espacio
               </Button>
             </div>
           </div>
@@ -587,11 +678,70 @@ const Soliespacio = () => {
                       <h1 className="solicitud-titulo001">{espacio.nom_espa}</h1>
                       <p>{espacio.descripcion}</p>
                       <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
-                        <button className="button-Espacio" onClick={() => handleOpenReservaDesdeCard(espacio)}>
+                        <button
+                          className="button-Espacio"
+                          onClick={() => handleOpenReservaDesdeCard(espacio)}
+                          disabled={espacio.estadoespacio !== 1}
+                          style={espacio.estadoespacio !== 1 ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                        >
                           <div className="front">
                             <span>Apartar espacio</span>
                           </div>
                         </button>
+                              {/* Modal Apartar Espacio */}
+                              <Modal show={showApartarModal} onHide={() => { setShowApartarModal(false); setEspacioApartar(null); }} centered size="md" backdrop="static">
+                                <div style={{ borderRadius: 10, overflow: 'hidden' }}>
+                                  <div style={{ background: '#219653', color: 'white', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <h2 style={{ fontWeight: 700, fontSize: 30, margin: 0 }}>
+                                      Reservar {espacioApartar?.nom_espa || ''}
+                                    </h2>
+                                    <Button variant="link" onClick={() => { setShowApartarModal(false); setEspacioApartar(null); }} style={{ color: 'white', fontSize: 28, fontWeight: 700, textDecoration: 'none', lineHeight: 1, padding: 0, border: 'none', background: 'none' }}>×</Button>
+                                  </div>
+                                  <div style={{ padding: 32, background: 'white' }}>
+                                    <Form onSubmit={handleConfirmApartar}>
+                                      <Form.Group className="mb-3">
+                                        <Form.Label>Fecha y Hora de Inicio</Form.Label>
+                                        <div className="row g-2">
+                                          <div className="col-md-6">
+                                            <Form.Control type="date" name="fecha_ini" value={reservaForm.fecha_ini} onChange={handleReservaFormChange} required />
+                                          </div>
+                                          <div className="col-md-6">
+                                            <Form.Control type="time" name="hora_ini" value={reservaForm.hora_ini} onChange={handleReservaFormChange} required />
+                                          </div>
+                                        </div>
+                                      </Form.Group>
+                                      <Form.Group className="mb-3">
+                                        <Form.Label>Fecha y Hora de Fin</Form.Label>
+                                        <div className="row g-2">
+                                          <div className="col-md-6">
+                                            <Form.Control type="date" name="fecha_fn" value={reservaForm.fecha_fn} onChange={handleReservaFormChange} required />
+                                          </div>
+                                          <div className="col-md-6">
+                                            <Form.Control type="time" name="hora_fn" value={reservaForm.hora_fn} onChange={handleReservaFormChange} required />
+                                          </div>
+                                        </div>
+                                      </Form.Group>
+                                      <Form.Group className="mb-3">
+                                        <Form.Label>Ambiente</Form.Label>
+                                        <Form.Control type="text" name="ambient" placeholder="Ej: Ambiente301" value={reservaForm.ambient} onChange={handleReservaFormChange} required />
+                                      </Form.Group>
+                                      <Form.Group className="mb-3">
+                                        <Form.Label>Número de ficha</Form.Label>
+                                        <Form.Control type="text" name="num_ficha" placeholder="Ej: 2560014" value={reservaForm.num_ficha} onChange={handleReservaFormChange} required />
+                                      </Form.Group>
+                                      <div className="text-center mt-3">
+                                        <Button
+                                          style={{ minWidth: 220, fontWeight: 600, fontSize: 20, background: '#219653', border: 'none', borderRadius: 8, padding: '12px 0' }}
+                                          type="submit"
+                                          disabled={savingEsp}
+                                        >
+                                          {savingEsp ? 'Reservando...' : 'Confirmar Reserva'}
+                                        </Button>
+                                      </div>
+                                    </Form>
+                                  </div>
+                                </div>
+                              </Modal>
                         <button className="button-Espacio" onClick={() => handleEditEsp(espacio)}>
                           <div className="front">
                             <span>Administrar</span>
@@ -607,9 +757,7 @@ const Soliespacio = () => {
         )}
       </div>
 
-      <div style={{ padding: '20px' }}>
-        <CrearEspacio />
-      </div>
+
 
       {loading ? (
         <div style={{ textAlign: 'center', padding: '50px' }}>
@@ -749,127 +897,17 @@ const Soliespacio = () => {
         </div>
       )}
 
-      <Modal show={showModal} onHide={handleCloseModal} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>{editingId ? 'Editar Reserva de Espacio' : 'Añadir Nueva Reserva de Espacio'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSubmitSolicitud}>
-            <Form.Group className="mb-3">
-              <Form.Label>Espacio *</Form.Label>
-              <Form.Select
-                name="id_esp"
-                value={nuevaSolicitud.id_esp}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Seleccione un espacio</option>
-                <option value="1">Polideportivo</option>
-                <option value="2">Auditorio</option>
-              </Form.Select>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Usuario (ID)</Form.Label>
-              {editingId ? (
-                <Form.Control
-                  type="text"
-                  name="nom_usu"
-                  value={nuevaSolicitud.nom_usu || ''}
-                  readOnly
-                  plaintext
-                />
-              ) : (
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <Form.Control
-                    type="number"
-                    name="id_usu"
-                    value={nuevaSolicitud.id_usu || ''}
-                    onChange={handleInputChange}
-                    placeholder="Ingrese ID de usuario"
-                  />
-                  <Button variant="outline-secondary" onClick={() => lookupUserById()} disabled={lookupLoading}>
-                    {lookupLoading ? 'Buscando...' : 'Buscar'}
-                  </Button>
-                </div>
-              )}
-              {lookupError && <div style={{ color: '#dc3545', marginTop: 6 }}>{lookupError}</div>}
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Ambiente *</Form.Label>
-              <Form.Control
-                type="text"
-                name="ambient"
-                value={nuevaSolicitud.ambient}
-                onChange={handleInputChange}
-                placeholder="Ej: Ambiente301"
-                maxLength={30}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Número de Ficha *</Form.Label>
-              <Form.Control
-                type="text"
-                name="num_fich"
-                value={nuevaSolicitud.num_fich}
-                onChange={handleInputChange}
-                placeholder="Ej: 2560014"
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Fecha y Hora de Inicio *</Form.Label>
-              <Form.Control
-                type="datetime-local"
-                name="fecha_ini"
-                value={nuevaSolicitud.fecha_ini}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Fecha y Hora de Fin *</Form.Label>
-              <Form.Control
-                type="datetime-local"
-                name="fecha_fn"
-                value={nuevaSolicitud.fecha_fn}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Estado</Form.Label>
-              {modalIsTerminado ? (
-                <Form.Control type="text" readOnly plaintext defaultValue={'TERMINADO'} />
-              ) : (
-                <Form.Select
-                  name="estadosoli"
-                  value={nuevaSolicitud.estadosoli}
-                  onChange={handleInputChange}
-                >
-                  {AVAILABLE_ESTADOS.map(e => (
-                    <option key={e.id} value={e.id}>{e.label}</option>
-                  ))}
-                </Form.Select>
-              )}
-            </Form.Group>
-
-            <div className="d-flex justify-content-end gap-2">
-              <Button variant="secondary" onClick={handleCloseModal}>
-                Cancelar
-              </Button>
-              <Button variant="success" type="submit" disabled={guardando}>
-                {guardando ? 'Guardando...' : (editingId ? 'Actualizar Reserva' : 'Guardar Reserva')}
-              </Button>
-            </div>
-          </Form>
-        </Modal.Body>
+      <Modal show={showModal} onHide={handleCloseModal} centered size="lg" backdrop="static">
+        <div style={{ padding: 0, background: '#f9fafd', borderRadius: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '24px 32px 0 32px' }}>
+            <Button variant="light" onClick={handleCloseModal} style={{ fontSize: 28, fontWeight: 700, color: '#888', border: 'none', background: 'none', lineHeight: 1, padding: 0 }}>
+              ×
+            </Button>
+          </div>
+          <div style={{ padding: '0 32px 32px 32px' }}>
+            <CrearEspacio />
+          </div>
+        </div>
       </Modal>
 
       <Modal show={!!editEspacio} onHide={() => setEditEspacio(null)}>
