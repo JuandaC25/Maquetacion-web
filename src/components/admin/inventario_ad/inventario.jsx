@@ -6,9 +6,6 @@ import "../adcrear_ad/adcrear_ad.css";
 import Footer from "../../Footer/Footer.jsx";
 import HeaderInv from "../header_inv/header_inv.jsx";
 import ElementosService from "../../../api/ElementosApi.js";
-import { 
-  obtenerAccesorios
-} from "../../../api/AccesoriosApi.js";
 import { obtenerCategoria } from "../../../api/CategoriaApi.js";
 import { obtenersolicitudes } from "../../../api/solicitudesApi.js";
 import { obtenerSubcategorias } from "../../../api/SubcategotiaApi.js";
@@ -69,7 +66,7 @@ const ListaEquipos = ({ elementos, onVerClick, loading }) => {
         <Spinner animation="border" role="status">
           <span className="visually-hidden">Cargando...</span>
         </Spinner>
-        <p>Cargando equipos y accesorios...</p>
+        <p>Cargando inventario...</p>
       </div>
     );
   }
@@ -81,7 +78,7 @@ const ListaEquipos = ({ elementos, onVerClick, loading }) => {
           <EquipoItem key={index} elemento={el} onVerClick={onVerClick} />
         ))
       ) : (
-        <p className="empty-list-message-xd10">No se encontraron equipos ni accesorios.</p>
+        <p className="empty-list-message-xd10">No se encontraron elementos.</p>
       )}
     </div>
   );
@@ -118,7 +115,6 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
         componen: editedComponentes
       };
       if (onActualizarEstado) {
-        // Asumiendo que onActualizarEstado maneja la lógica de actualizar y recargar todo
         await onActualizarEstado(detalles.id, payload);
       } else {
         await ElementosService.actualizarElemento(detalles.id, payload);
@@ -282,7 +278,6 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit, guard
             className="modern-form-control-xd18"
           >
             <option value="">Seleccionar subcategoría...</option>
-            {/* Aquí se itera sobre las subcategorías */}
             {subcategorias.map((subcat) => {
               const categoria = categorias.find(cat => cat.id_cat === subcat.id_cat);
               return (
@@ -352,67 +347,6 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit, guard
   </Modal>
 );
 
-const NuevoAccesorioModal = ({ show, onHide, nuevoAccesorio, onChange, onSubmit, guardando }) => (
-  <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog-xd11">
-    <Modal.Header closeButton className="modern-modal-header-xd12">
-      <Modal.Title className="modern-modal-title-xd13">Añadir Nuevo Accesorio</Modal.Title>
-    </Modal.Header>
-    <Modal.Body className="modern-modal-body-xd14">
-      <div className="detail-item-xd15">
-        <label className="detail-label-xd16">Nombre del accesorio:</label>
-        <div className="detail-value-display-xd17">
-          <Form.Control
-            type="text"
-            id="nombre"
-            value={nuevoAccesorio.nombre}
-            onChange={onChange}
-            placeholder="Ej. Mouse inalámbrico, Cargador, Teclado"
-            className="modern-form-control-xd18"
-          />
-        </div>
-      </div>
-      <div className="detail-item-xd15">
-        <label className="detail-label-xd16">Marca:</label>
-        <div className="detail-value-display-xd17">
-          <Form.Control
-            type="text"
-            id="marca"
-            value={nuevoAccesorio.marca}
-            onChange={onChange}
-            placeholder="Ej. Logitech, Dell, HP"
-            className="modern-form-control-xd18"
-          />
-        </div>
-      </div>
-      <div className="detail-item-xd15">
-        <label className="detail-label-xd16">Número de serie:</label>
-        <div className="detail-value-display-xd17">
-          <Form.Control
-            type="text"
-            id="serie"
-            value={nuevoAccesorio.serie}
-            onChange={onChange}
-            placeholder="Ej. ABC123XYZ789"
-            className="modern-form-control-xd18"
-          />
-        </div>
-      </div>
-    </Modal.Body>
-    <Modal.Footer className="modern-modal-footer-xd19">
-      <Button variant="secondary" onClick={onHide} className="modal-action-button-xd20 cancel-action-xd23">
-        Cancelar
-      </Button>
-      <Button 
-        variant="success" 
-        onClick={onSubmit} 
-        disabled={guardando}
-        className="modal-action-button-xd20 add-action-xd24"
-      >
-        {guardando ? <Spinner animation="border" size="sm" /> : "Añadir Accesorio"}
-      </Button>
-    </Modal.Footer>
-  </Modal>
-);
 
 const Admin = () => {
   const [elementosInventario, setElementosInventario] = useState([]);
@@ -420,14 +354,12 @@ const Admin = () => {
   const [subcategorias, setSubcategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [guardando, setGuardando] = useState(false);
-  const [guardandoAccesorio, setGuardandoAccesorio] = useState(false);
   const [eliminando, setEliminando] = useState(false);
   const [error, setError] = useState(null);
 
   const [showDetalles, setShowDetalles] = useState(false);
   const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
   const [showNuevo, setShowNuevo] = useState(false);
-  const [showNuevoAccesorio, setShowNuevoAccesorio] = useState(false);
   const [nuevoEquipo, setNuevoEquipo] = useState({
     nombre: "", 
     id_subcateg: "", 
@@ -435,12 +367,6 @@ const Admin = () => {
     observaciones: "",
     componentes: ""
   });
-  const [nuevoAccesorio, setNuevoAccesorio] = useState({
-    nombre: "",
-    marca: "",
-    serie: ""
-  });
-  const [excelFile, setExcelFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState(null);
   const [downloadingTemplate, setDownloadingTemplate] = useState(false);
@@ -458,15 +384,6 @@ const Admin = () => {
 
   const bottomRef = useRef(null);
 
-  const obtenerIdCategoria = (categoria) => {
-    const categorias = {
-      "Portátil": 1,
-      "Equipo de Escritorio": 2,
-      "Televisor": 3,
-      "Accesorio": 4
-    };
-    return categorias[categoria] || 1;
-  };
 
   useEffect(() => {
     cargarTodo();
@@ -479,26 +396,21 @@ const Admin = () => {
       
       const resultados = await Promise.allSettled([
         ElementosService.obtenerElementos(),
-        obtenerAccesorios(),
         obtenerCategoria(), 
         obtenersolicitudes(),
         obtenerSubcategorias()
       ]);
-
       const elementosResult = resultados[0];
-      const accesoriosResult = resultados[1];
-      const categoriasResult = resultados[2];
-      const solicitudesResult = resultados[3]; 
-      const subcategoriasResult = resultados[4]; 
-      
+      const categoriasResult = resultados[1];
+      const subcategoriasResult = resultados[3];
+
       if (elementosResult.status !== 'fulfilled') {
         throw elementosResult.reason || new Error('Error al obtener elementos');
       }
 
       const elementos = elementosResult.value;
-      const accesorios = accesoriosResult.status === 'fulfilled' ? accesoriosResult.value : [];
       const cats = categoriasResult.status === 'fulfilled' ? categoriasResult.value : [];
-      const subcats = subcategoriasResult.status === 'fulfilled' ? subcategoriasResult.value : []; // Ahora contiene los datos de subcategorías
+      const subcats = subcategoriasResult && subcategoriasResult.status === 'fulfilled' ? subcategoriasResult.value : [];
 
       setCategorias(Array.isArray(cats) ? cats : []);
       setSubcategorias(Array.isArray(subcats) ? subcats : []);
@@ -513,24 +425,13 @@ const Admin = () => {
           serie: el.num_seri?.toString() || "",
           observaciones: el.obse,
           componentes: el.componen,
-          id_subcateg: el.id_subcateg,
+          id_subcateg: el.id_subcat || el.id_subcateg,
           est: estado,
           tipo: 'elemento'
         };
       });
-      
-      const accesoriosNormalizados = accesorios.map(acc => ({
-        id: acc.id_accesorio,
-        nombre: acc.nom_acces,
-        marca: acc.marc,
-        serie: acc.num_ser?.toString() || "",
-        categoria: "Accesorio",
-        est: acc.est !== undefined ? acc.est : (acc.est_elem ?? acc.est_elemn ?? acc.estadosoelement ?? 1),
-        tipo: 'accesorio'
-      }));
-      
-      const todosLosItems = [...elementosNormalizados, ...accesoriosNormalizados];
-      setElementosInventario(todosLosItems);
+
+      setElementosInventario(elementosNormalizados);
       
     } catch (error) {
       setError('Error al cargar los datos del inventario: ' + error.message);
@@ -615,7 +516,6 @@ const Admin = () => {
   };
 
   const openNuevo = () => setShowNuevo(true);
-  const openNuevoAccesorio = () => setShowNuevoAccesorio(true);
   
   const closeNuevo = () => {
     setShowNuevo(false);
@@ -628,24 +528,12 @@ const Admin = () => {
     });
   };
 
-  const closeNuevoAccesorio = () => {
-    setShowNuevoAccesorio(false);
-    setNuevoAccesorio({
-      nombre: "",
-      marca: "",
-      serie: ""
-    });
-  };
 
   const handleNuevoChange = (e) => {
     const { id, value } = e.target;
     setNuevoEquipo((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleNuevoAccesorioChange = (e) => {
-    const { id, value } = e.target;
-    setNuevoAccesorio((prev) => ({ ...prev, [id]: value }));
-  };
 
   const handleFileChange = (e) => {
     const f = e.target.files && e.target.files[0];
@@ -702,7 +590,6 @@ const Admin = () => {
       const elementoNormalizado = {
         id: elementoCreado.id_elemen,
         nombre: elementoCreado.nom_eleme,
-        // Usamos la categoría del padre o un placeholder para la visualización en la tarjeta
         categoria: categoriaPadre ? categoriaPadre.nom_cat : "Sin categoría", 
         serie: nuevoEquipo.serie,
         observaciones: nuevoEquipo.observaciones,
@@ -728,63 +615,14 @@ const Admin = () => {
     }
   };
 
-  const submitNuevoAccesorio = async () => {
-    if (!nuevoAccesorio.nombre || !nuevoAccesorio.marca || !nuevoAccesorio.serie) {
-      alert("Por favor, completa los campos obligatorios: Nombre del accesorio, Marca y Número de serie.");
-      return;
-    }
-
-    try {
-      setGuardandoAccesorio(true);
-      const accesorioParaBackend = {
-        nom_eleme: nuevoAccesorio.nombre,
-        marc: nuevoAccesorio.marca,
-        num_seri: nuevoAccesorio.serie,
-        est: 1,
-        obse: "",
-        componen: "",
-        id_categ: obtenerIdCategoria("Accesorio")
-      };
-
-      const accesorioCreado = await ElementosService.crearElemento(accesorioParaBackend);
-
-      const accesorioNormalizado = {
-        id: accesorioCreado.id_elemen,
-        nombre: accesorioCreado.nom_eleme,
-        marca: accesorioCreado.marc,
-        serie: accesorioCreado.num_seri?.toString() || "",
-        categoria: "Accesorio",
-        est: 1,
-        tipo: 'accesorio'
-      };
-      
-      setElementosInventario(prev => [...prev, accesorioNormalizado]);
-      closeNuevoAccesorio();
-      alert('Accesorio añadido correctamente');
-      
-    } catch (error) {
-       const errorMessage = error.response?.data?.message || error.message;
-      if (errorMessage.includes('Conflicto')) {
-        alert('Error: Ya existe un accesorio con ese número de serie');
-      } else {
-        alert('Error al crear el accesorio: ' + errorMessage);
-      }
-    } finally {
-      setGuardandoAccesorio(false);
-    }
-  };
   
-  // Función para manejar la actualización de estado desde el modal
   const handleUpdateItemState = async (id, payload) => {
-    // Aquí puedes llamar al servicio de actualización
     await ElementosService.actualizarElemento(id, payload);
-    // Y luego recargar todos los datos para reflejar los cambios
     await cargarTodo();
   };
 
   const handleCategoryFilter = (category) => {
     setSelectedCategoryFilter(category);
-    // Reiniciar filtro de subcategoría al cambiar la categoría principal
     setSelectedSubcategoryFilter("Todas las Subcategorías");
   };
 
@@ -972,10 +810,7 @@ const Admin = () => {
       <Alert variant="light" className="inventory-actions-bar-xd41">
         <div className="header-buttons-section">
           <Button className="add-new-equipment-button-xd35" onClick={openNuevo}>
-            <span role="img" aria-label="añadir">➕</span> Añadir Equipo
-          </Button>
-          <Button variant="primary" className="add-new-equipment-button-xd35" onClick={openNuevoAccesorio}>
-            <span role="img" aria-label="añadir">🔌</span> Añadir Accesorio
+            <span role="img" aria-label="añadir">➕</span> Añadir Elemento
           </Button>
           <Button variant="outline-primary" onClick={() => setShowUploadModal(true)} className="modal-action-button-xd120">
             Importar elementos (.xlsx)
@@ -1116,17 +951,7 @@ const Admin = () => {
         guardando={guardando}
         subcategorias={subcategorias}
         categorias={categorias}
-      />
-
-      <NuevoAccesorioModal 
-        show={showNuevoAccesorio} 
-        onHide={closeNuevoAccesorio} 
-        nuevoAccesorio={nuevoAccesorio} 
-        onChange={handleNuevoAccesorioChange} 
-        onSubmit={submitNuevoAccesorio}
-        guardando={guardandoAccesorio}
-      />
-      
+      />      
       <Footer />
     </div>
   );
