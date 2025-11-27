@@ -1,26 +1,3 @@
-  // Efecto para reactivar espacios automáticamente si la hora de fin ya pasó
-  useEffect(() => {
-    const reactivarEspacios = async () => {
-      const now = new Date();
-      let reactivado = false;
-      for (const esp of espacios) {
-        if (esp.estadoespacio === 2 && esp.fecha_fn) {
-          const fin = new Date(esp.fecha_fn);
-          if (!isNaN(fin.getTime()) && fin < now) {
-            await actualizarEspacio(esp.id, { ...esp, estadoespacio: 1 });
-            reactivado = true;
-          }
-        }
-      }
-      if (reactivado) {
-        await cargarEspacios();
-      }
-    };
-    if (espacios && espacios.length > 0) {
-      reactivarEspacios();
-    }
-    // eslint-disable-next-line
-  }, [espacios.length]);
 import React, { useState, useEffect } from 'react';
 import { Alert, Spinner, Dropdown, Modal, Form, Button, Carousel } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
@@ -191,9 +168,8 @@ const Soliespacio = () => {
   };
 
 
+  // Permitir abrir el modal siempre, pero validar fechas al reservar
   const handleOpenReservaDesdeCard = (espacio) => {
-    // Solo permitir abrir el modal si el espacio está activo
-    if (espacio.estadoespacio !== 1) return;
     setEspacioApartar(espacio);
     setReservaForm({
       fecha_ini: '',
@@ -222,6 +198,20 @@ const Soliespacio = () => {
       const formatLocal = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
       const fechaInicio = new Date(`${reservaForm.fecha_ini}T${reservaForm.hora_ini}:00`);
       const fechaFin = new Date(`${reservaForm.fecha_fn}T${reservaForm.hora_fn}:00`);
+      // Validar que no haya cruce de fechas con reservas existentes para este espacio
+      const reservasEspacio = solicitudes.filter(s => (s.id_espa === espacioApartar.id || s.id_esp === espacioApartar.id));
+      const hayCruce = reservasEspacio.some(s => {
+        const ini = new Date(s.fecha_ini);
+        const fin = new Date(s.fecha_fn);
+        // Si la reserva existente termina antes de que empiece la nueva, o empieza después de que termina la nueva, no hay cruce
+        if (isNaN(ini.getTime()) || isNaN(fin.getTime())) return false;
+        return (fechaInicio < fin && fechaFin > ini);
+      });
+      if (hayCruce) {
+        setError('Ya existe una reserva para este espacio en el rango de fechas/horas seleccionado.');
+        setSavingEsp(false);
+        return;
+      }
       const dto = {
         fecha_ini: formatLocal(fechaInicio),
         fecha_fn: formatLocal(fechaFin),
@@ -232,8 +222,6 @@ const Soliespacio = () => {
         id_esp: espacioApartar.id
       };
       await crearSolicitud(dto);
-      // Cambiar el estado del espacio a inactivo (2)
-      await actualizarEspacio(espacioApartar.id, { ...espacioApartar, estadoespacio: 2 });
       setShowApartarModal(false);
       setEspacioApartar(null);
       setReservaForm({
@@ -688,6 +676,59 @@ const Soliespacio = () => {
                             <span>Apartar espacio</span>
                           </div>
                         </button>
+
+                                    {/* Modal Editar Reserva */}
+                                    <Modal show={showModal} onHide={handleCloseModal} centered size="lg" backdrop="static">
+                                      <div style={{ borderRadius: 10, overflow: 'hidden' }}>
+                                        <div style={{ background: '#219653', color: 'white', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                          <h2 style={{ fontWeight: 700, fontSize: 30, margin: 0 }}>
+                                            Editar Reserva de Espacio
+                                          </h2>
+                                          <Button variant="link" onClick={handleCloseModal} style={{ color: 'white', fontSize: 28, fontWeight: 700, textDecoration: 'none', lineHeight: 1, padding: 0, border: 'none', background: 'none' }}>×</Button>
+                                        </div>
+                                        <div style={{ padding: 32, background: 'white' }}>
+                                          <Form onSubmit={handleSubmitSolicitud}>
+                                            <Form.Group className="mb-3">
+                                              <Form.Label>Espacio *</Form.Label>
+                                              <Form.Control as="select" name="id_esp" value={nuevaSolicitud.id_esp} onChange={handleInputChange} required>
+                                                <option value="">Seleccione un espacio</option>
+                                                {espacios.map(e => (
+                                                  <option key={e.id} value={e.id}>{e.nom_espa}</option>
+                                                ))}
+                                              </Form.Control>
+                                            </Form.Group>
+                                            <Form.Group className="mb-3">
+                                              <Form.Label>Usuario (ID)</Form.Label>
+                                              <Form.Control type="text" name="id_usu" value={nuevaSolicitud.nom_usu || ''} readOnly />
+                                            </Form.Group>
+                                            <Form.Group className="mb-3">
+                                              <Form.Label>Ambiente *</Form.Label>
+                                              <Form.Control type="text" name="ambient" value={nuevaSolicitud.ambient} onChange={handleInputChange} required />
+                                            </Form.Group>
+                                            <Form.Group className="mb-3">
+                                              <Form.Label>Número de Ficha *</Form.Label>
+                                              <Form.Control type="text" name="num_fich" value={nuevaSolicitud.num_fich} onChange={handleInputChange} required />
+                                            </Form.Group>
+                                            <Form.Group className="mb-3">
+                                              <Form.Label>Fecha y Hora de Inicio *</Form.Label>
+                                              <Form.Control type="datetime-local" name="fecha_ini" value={nuevaSolicitud.fecha_ini} onChange={handleInputChange} required />
+                                            </Form.Group>
+                                            <Form.Group className="mb-3">
+                                              <Form.Label>Fecha y Hora de Fin *</Form.Label>
+                                              <Form.Control type="datetime-local" name="fecha_fn" value={nuevaSolicitud.fecha_fn} onChange={handleInputChange} required />
+                                            </Form.Group>
+                                            <Form.Group className="mb-3">
+                                              <Form.Label>Estado</Form.Label>
+                                              <Form.Control type="text" value={modalIsTerminado ? 'TERMINADO' : (nuevaSolicitud.estadosoli === 1 ? 'PENDIENTE' : nuevaSolicitud.estadosoli === 2 ? 'APROBADO' : nuevaSolicitud.estadosoli === 3 ? 'RECHAZADO' : nuevaSolicitud.estadosoli === 4 ? 'EN USO' : 'FINALIZADO')} readOnly />
+                                            </Form.Group>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+                                              <Button variant="secondary" onClick={handleCloseModal}>Cancelar</Button>
+                                              <Button variant="success" type="submit">Actualizar Reserva</Button>
+                                            </div>
+                                          </Form>
+                                        </div>
+                                      </div>
+                                    </Modal>
                               {/* Modal Apartar Espacio */}
                               <Modal show={showApartarModal} onHide={() => { setShowApartarModal(false); setEspacioApartar(null); }} centered size="md" backdrop="static">
                                 <div style={{ borderRadius: 10, overflow: 'hidden' }}>
@@ -882,10 +923,61 @@ const Soliespacio = () => {
                       <button className="view-details-button-xd08" onClick={() => handleEditar(solicitud)}>
                         Editar
                       </button>
-
-                      {/* activate/inactivate button removed (estado field deprecated) */}
                     </div>
                   </div>
+
+      {/* Modal Editar Reserva */}
+      <Modal show={editingId !== null} onHide={handleCloseModal} centered size="lg" backdrop="static">
+        <div style={{ borderRadius: 10, overflow: 'hidden' }}>
+          <div style={{ background: 'linear-gradient(90deg, #219653 0%, #43b97f 100%)', color: 'white', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h2 style={{ fontWeight: 700, fontSize: 28, margin: 0 }}>Editar Reserva de Espacio</h2>
+            <Button variant="link" onClick={handleCloseModal} style={{ color: 'white', fontSize: 28, fontWeight: 700, textDecoration: 'none', lineHeight: 1, padding: 0, border: 'none', background: 'none' }}>×</Button>
+          </div>
+          <div style={{ padding: 32, background: 'white' }}>
+            <Form onSubmit={handleSubmitSolicitud}>
+              <Form.Group className="mb-3">
+                <Form.Label>Espacio *</Form.Label>
+                <Form.Control as="select" name="id_esp" value={nuevaSolicitud.id_esp} onChange={handleInputChange} required>
+                  <option value="">Seleccione un espacio</option>
+                  {espacios.map(e => (
+                    <option key={e.id} value={e.id}>{e.nom_espa}</option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Usuario (ID)</Form.Label>
+                <div style={{ padding: '8px 12px', background: '#f5f5f5', borderRadius: 4 }}>{nuevaSolicitud.nom_usu || ''}</div>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Ambiente *</Form.Label>
+                <Form.Control type="text" name="ambient" value={nuevaSolicitud.ambient} onChange={handleInputChange} required />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Número de Ficha *</Form.Label>
+                <Form.Control type="text" name="num_fich" value={nuevaSolicitud.num_fich} onChange={handleInputChange} required />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Fecha y Hora de Inicio *</Form.Label>
+                <Form.Control type="datetime-local" name="fecha_ini" value={nuevaSolicitud.fecha_ini} onChange={handleInputChange} required />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Fecha y Hora de Fin *</Form.Label>
+                <Form.Control type="datetime-local" name="fecha_fn" value={nuevaSolicitud.fecha_fn} onChange={handleInputChange} required />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Estado</Form.Label>
+                <div style={{ padding: '8px 12px', background: '#f5f5f5', borderRadius: 4 }}>
+                  {modalIsTerminado ? 'TERMINADO' : (nuevaSolicitud.estadosoli === 1 ? 'PENDIENTE' : nuevaSolicitud.estadosoli === 2 ? 'APROBADO' : nuevaSolicitud.estadosoli === 3 ? 'RECHAZADO' : nuevaSolicitud.estadosoli === 4 ? 'EN USO' : 'FINALIZADO')}
+                </div>
+              </Form.Group>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+                <Button variant="secondary" onClick={handleCloseModal}>Cancelar</Button>
+                <Button variant="success" type="submit">Actualizar Reserva</Button>
+              </div>
+            </Form>
+          </div>
+        </div>
+      </Modal>
                 </div>
               );
             })
@@ -897,7 +989,8 @@ const Soliespacio = () => {
         </div>
       )}
 
-      <Modal show={showModal} onHide={handleCloseModal} centered size="lg" backdrop="static">
+      {/* Modal Crear Nuevo Espacio, solo para el botón de nuevo espacio */}
+      <Modal show={showModal && editingId === null} onHide={handleCloseModal} centered size="lg" backdrop="static">
         <div style={{ padding: 0, background: '#f9fafd', borderRadius: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '24px 32px 0 32px' }}>
             <Button variant="light" onClick={handleCloseModal} style={{ fontSize: 28, fontWeight: 700, color: '#888', border: 'none', background: 'none', lineHeight: 1, padding: 0 }}>
@@ -910,95 +1003,7 @@ const Soliespacio = () => {
         </div>
       </Modal>
 
-      <Modal show={!!editEspacio} onHide={() => setEditEspacio(null)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Editar Espacio</Modal.Title>
-        </Modal.Header>
-        <Form onSubmit={handleSaveEsp}>
-          <Modal.Body>
-            <Form.Group className="mb-3">
-              <Form.Label>Nombre</Form.Label>
-              <Form.Control
-                type="text"
-                value={editEspacio?.nom_espa || ''}
-                onChange={(e) => setEditEspacio(prev => ({ ...prev, nom_espa: e.target.value }))}
-                maxLength={25}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Descripción</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={4}
-                value={editEspacio?.descripcion || ''}
-                onChange={(e) => setEditEspacio(prev => ({ ...prev, descripcion: e.target.value }))}
-                maxLength={900}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Estado</Form.Label>
-              <Form.Select
-                value={editEspacio?.estadoespacio || 1}
-                onChange={(e) => setEditEspacio(prev => ({ ...prev, estadoespacio: Number(e.target.value) }))}
-              >
-                <option value={1}>Activo</option>
-                <option value={2}>Inactivo</option>
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Imágenes</Form.Label>
-              <div className="d-flex align-items-center gap-2 mb-2">
-                <Button variant="outline-primary" as="label">
-                  Agregar imágenes
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleAgregarImagenesEdit}
-                    style={{ display: 'none' }}
-                  />
-                </Button>
-              </div>
-              {editEspacio && (editEspacio.imagenesRaw?.length > 0) && (
-                <div className="mb-3">
-                  <div className="d-flex flex-wrap gap-2">
-                    {editEspacio.imagenesRaw.map((u, i) => {
-                      const removed = (editEspacio.removedRawIdxs || new Set()).has(i);
-                      if (removed) return null;
-                      const src = toFullUrl(u);
-                      return (
-                        <div key={i} style={{ width: 120 }}>
-                          <img src={src} alt={`img-${i}`} style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 6 }} />
-                          <Button variant="danger" size="sm" className="w-100 mt-1" onClick={() => handleEliminarImagenExistente(i)}>Eliminar</Button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-              {editEspacio && (editEspacio.nuevasImagenesBase64?.length > 0) && (
-                <div>
-                  <div className="d-flex flex-wrap gap-2">
-                    {editEspacio.nuevasImagenesBase64.map((b64, i) => (
-                      <div key={i} style={{ width: 120 }}>
-                        <img src={b64} alt={`new-${i}`} style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 6 }} />
-                        <Button variant="outline-danger" size="sm" className="w-100 mt-1" onClick={() => handleEliminarImagenNueva(i)}>Quitar</Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </Form.Group>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="danger" onClick={async () => { await handleDeleteEsp(editEspacio.id); setEditEspacio(null); }}>Eliminar</Button>
-            <Button variant="secondary" onClick={() => setEditEspacio(null)}>Cancelar</Button>
-            <Button variant="primary" type="submit" disabled={savingEsp}>{savingEsp ? 'Guardando...' : 'Guardar cambios'}</Button>
-          </Modal.Footer>
-        </Form>
-      </Modal>
+
 
 
 
