@@ -62,6 +62,12 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
     }
   };
 
+  // PAGINACIÓN: 3 columnas x 4 filas = 12 tarjetas por página
+  const CARDS_PER_ROW = 3;
+  const ROWS_PER_PAGE = 4;
+  const CARDS_PER_PAGE = CARDS_PER_ROW * ROWS_PER_PAGE;
+  const [currentPage, setCurrentPage] = useState(1);
+
   const ticketsArray = Array.isArray(tickets) ? tickets : [];
 
   const ticketsFiltrados = ticketsArray.filter(ticket => {
@@ -122,6 +128,11 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
     );
   }
 
+  const totalPages = Math.ceil(ticketsFiltrados.length / CARDS_PER_PAGE);
+  const startIdx = (currentPage - 1) * CARDS_PER_PAGE;
+  const endIdx = startIdx + CARDS_PER_PAGE;
+  const pageTickets = ticketsFiltrados.slice(startIdx, endIdx);
+
   return (
     <div className="container-1201">
       <Alert variant="success" className="alert-1202">
@@ -129,7 +140,7 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
           <div className="flex-1203">
             <div className="flex-inner-1204">
               <strong className="strong-1205">TICKET</strong>
-              
+              {/* ...Filtros existentes... */}
               <Dropdown className="category-filter-dropdown-xd31">
                 <Dropdown.Toggle 
                   variant="success" 
@@ -242,12 +253,17 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
         </div>
       )}
       {ticketsFiltrados.length > 0 && (
-        <div className="grid-1208">
-          {ticketsFiltrados.map((t, i) => (
+        <div className="grid-1208" style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${CARDS_PER_ROW}, 1fr)`,
+          gridTemplateRows: `repeat(${ROWS_PER_PAGE}, auto)`,
+          gap: '24px',
+        }}>
+          {pageTickets.map((t, i) => (
             <div className="card-ticket-1209" key={t?.id || i}>
               <div className="header-card-1210"></div>
               <div className="info-card-1211">
-                <p className="title-card-1212">{t?.ticket || `Ticket ${i + 1}`}</p>
+                <p className="title-card-1212">{t?.ticket || `Ticket ${startIdx + i + 1}`}</p>
                 <p className="elemento-card-1213">{t?.nom_elem || t?.elemento || 'Sin elemento'}</p>
                 <span className={`status-card-1214 ${(() => {
                   const estado = Number(t?.id_est_tick || t?.estado);
@@ -272,24 +288,31 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
           ))}
         </div>
       )}
-      
-      <div className="pagination-1217">
-        <div className="pagination-inner-1218">
-          <label>
-            <input value="1" name="value-radio" id="value-1" type="radio" defaultChecked />
-            <span>1</span>
-          </label>
-          <label>
-            <input value="2" name="value-radio" id="value-2" type="radio" />
-            <span>2</span>
-          </label>
-          <label>
-            <input value="3" name="value-radio" id="value-3" type="radio" />
-            <span>3</span>
-          </label>
-          <span className="selection-1219"></span>
+      {/* PAGINACIÓN */}
+      {totalPages > 1 && (
+        <div className="pagination-1217" style={{ marginTop: 32, display: 'flex', justifyContent: 'center' }}>
+          <nav>
+            <ul className="pagination-inner-1218" style={{ display: 'flex', gap: 8, listStyle: 'none', padding: 0 }}>
+              <li>
+                <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>&lt;</button>
+              </li>
+              {Array.from({ length: totalPages }, (_, idx) => (
+                <li key={idx}>
+                  <button
+                    style={{ fontWeight: currentPage === idx + 1 ? 'bold' : 'normal', minWidth: 32 }}
+                    onClick={() => setCurrentPage(idx + 1)}
+                  >
+                    {idx + 1}
+                  </button>
+                </li>
+              ))}
+              <li>
+                <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>&gt;</button>
+              </li>
+            </ul>
+          </nav>
         </div>
-      </div>
+      )}
     </div>
   );
 };
