@@ -72,16 +72,19 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
 
   const ticketsFiltrados = ticketsArray.filter(ticket => {
     if (selectedStatusFilter === "Todos los Estados") return true;
-    
     const estadoTicket = Number(ticket?.id_est_tick || ticket?.estado);
-    console.log(`🔍 Filtrando ticket ${ticket?.id_tickets}: estado=${ticket?.estado}, id_est_tick=${ticket?.id_est_tick}, estadoTicket=${estadoTicket}, filtro=${selectedStatusFilter}`);
-    
     if (selectedStatusFilter === "Activo" && estadoTicket === 1) return true;
     if (selectedStatusFilter === "Pendiente" && estadoTicket === 2) return true;
     if (selectedStatusFilter === "Inactivo" && estadoTicket === 3) return true;
-    
     return false;
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategoryFilter, selectedSubcategoryFilter, selectedStatusFilter, tickets]);
+
+  const totalPages = Math.ceil(ticketsFiltrados.length / CARDS_PER_PAGE);
+  const paginatedTickets = ticketsFiltrados.slice((currentPage - 1) * CARDS_PER_PAGE, currentPage * CARDS_PER_PAGE);
   
   const handleCategoryFilter = (category) => {
     setSelectedCategoryFilter(category);
@@ -128,14 +131,11 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
     );
   }
 
-  const totalPages = Math.ceil(ticketsFiltrados.length / CARDS_PER_PAGE);
   const startIdx = (currentPage - 1) * CARDS_PER_PAGE;
-  const endIdx = startIdx + CARDS_PER_PAGE;
-  const pageTickets = ticketsFiltrados.slice(startIdx, endIdx);
 
   return (
     <div className="container-1201">
-      <Alert variant="success" className="alert-1202">
+      <Alert className="alert-1202" style={{ background: '#fff', border: 'none', boxShadow: 'none', marginBottom: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <div className="flex-1203">
             <div className="flex-inner-1204">
@@ -231,15 +231,95 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
                 </Dropdown.Menu>
               </Dropdown>
             </div>
-            <div className='contador-ticket-1207'>
-              mostrando {ticketsFiltrados.length} tickets
-              de {ticketsArray.length} tickets
-            </div>
+              {/* Contador eliminado por solicitud del usuario */}
           </div>
           <div className="header-buttons-section">
-            <Button className="add-new-equipment-button-xd35" onClick={onCrearClick}>
-              <span role="img" aria-label="añadir">➕</span> Añadir Ticket
-            </Button>
+            <div style={{ 
+              display: 'inline-block', 
+              marginLeft: '20px',
+              marginRight: '10px',
+              height: '40px' // Match dropdown height
+            }}>
+              <button 
+                onClick={onCrearClick}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: '#28a745',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  padding: '0.6rem 1.2rem',
+                  color: 'white',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  fontSize: '0.9375rem',
+                  fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                  outline: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                  msAppearance: 'none',
+                  appearance: 'none',
+                  WebkitTapHighlightColor: 'transparent',
+                  WebkitUserSelect: 'none',
+                  MozUserSelect: 'none',
+                  msUserSelect: 'none',
+                  userSelect: 'none',
+                  whiteSpace: 'nowrap',
+                  height: '40px',
+                  boxSizing: 'border-box',
+                  lineHeight: '1.5',
+                  textAlign: 'center',
+                  textTransform: 'none',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = '#218838';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = '#28a745';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.transform = 'translateY(1px)';
+                  e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+                }}
+              >
+                <span style={{ 
+                  fontSize: '16px',
+                  lineHeight: '1',
+                  color: '#9C27B0',
+                  fontWeight: 'bold',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '22px',
+                  height: '22px',
+                  backgroundColor: 'white',
+                  borderRadius: '50%',
+                  marginRight: '10px',
+                  position: 'relative',
+                  flexShrink: 0,
+                  boxSizing: 'border-box',
+                  paddingBottom: '1px'
+                }}>+</span>
+                <span style={{ 
+                  whiteSpace: 'nowrap',
+                  position: 'relative',
+                  top: '1px'
+                }}>Añadir Ticket</span>
+              </button>
+            </div>
           </div>
         </div>
       </Alert>
@@ -259,7 +339,7 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
           gridTemplateRows: `repeat(${ROWS_PER_PAGE}, auto)`,
           gap: '24px',
         }}>
-          {pageTickets.map((t, i) => (
+          {paginatedTickets.map((t, i) => (
             <div className="card-ticket-1209" key={t?.id || i}>
               <div className="header-card-1210"></div>
               <div className="info-card-1211">
@@ -288,29 +368,38 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
           ))}
         </div>
       )}
-      {/* PAGINACIÓN */}
+      {/* PAGINACIÓN idéntica a adcrear.jsx (barra verde animada, fondo claro) */}
       {totalPages > 1 && (
-        <div className="pagination-1217" style={{ marginTop: 32, display: 'flex', justifyContent: 'center' }}>
-          <nav>
-            <ul className="pagination-inner-1218" style={{ display: 'flex', gap: 8, listStyle: 'none', padding: 0 }}>
-              <li>
-                <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>&lt;</button>
-              </li>
-              {Array.from({ length: totalPages }, (_, idx) => (
-                <li key={idx}>
-                  <button
-                    style={{ fontWeight: currentPage === idx + 1 ? 'bold' : 'normal', minWidth: 32 }}
-                    onClick={() => setCurrentPage(idx + 1)}
-                  >
-                    {idx + 1}
-                  </button>
-                </li>
-              ))}
-              <li>
-                <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>&gt;</button>
-              </li>
-            </ul>
-          </nav>
+        <div className="pagination-1215-xd136">
+          <div
+            className="pagination-inner-1216-xd137"
+            style={{
+              '--container_width': `${Math.max(totalPages, 3) * 60}px`,
+              width: 'var(--container_width)'
+            }}
+          >
+            {Array.from({ length: totalPages }, (_, i) => (
+              <label key={i + 1}>
+                <input
+                  value={i + 1}
+                  name="value-radio"
+                  id={`value-${i + 1}`}
+                  type="radio"
+                  checked={currentPage === i + 1}
+                  onChange={() => setCurrentPage(i + 1)}
+                />
+                <span>{i + 1}</span>
+              </label>
+            ))}
+            <span
+              className="selection-1217-xd138"
+              style={{
+                display: 'inline-block',
+                width: `calc(var(--container_width) / ${totalPages})`,
+                transform: `translateX(calc(var(--container_width) * ${(currentPage - 1)} / ${totalPages}))`
+              }}
+            ></span>
+          </div>
         </div>
       )}
     </div>
