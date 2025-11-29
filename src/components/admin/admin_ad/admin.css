@@ -1,3 +1,22 @@
+.add-new-equipment-button-xd35 {
+  background: #12bb1a !important;
+  border: none !important;
+  color: #fff !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 0.5rem !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: none !important;
+  min-width: 0;
+  height: 48px;
+  transition: background 0.2s;
+}
+.add-new-equipment-button-xd35:hover {
+  background: #0e9c15 !important;
+}
 .grid-1208 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
