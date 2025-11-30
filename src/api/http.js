@@ -2,6 +2,41 @@ import { getToken, clearToken } from './AuthApi';
 
 const BASE_URL = 'http://localhost:8081';
 
+// Función para decodificar el token JWT y obtener el usuario
+export function getCurrentUser() {
+  const token = getToken();
+  if (!token) {
+    return null;
+  }
+
+  try {
+    // Extraer el token sin el prefijo "Bearer "
+    const tokenWithoutBearer = token.replace(/^Bearer\s+/i, '');
+    
+    // Decodificar el payload del JWT (segunda parte del token)
+    const base64Url = tokenWithoutBearer.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+
+    const payload = JSON.parse(jsonPayload);
+    
+    // El payload contiene: { sub: "username", id: 5, roles: [...], ... }
+    return {
+      id: payload.id,
+      username: payload.sub,
+      roles: payload.roles || []
+    };
+  } catch (error) {
+    console.error('[AUTH] Error al decodificar token:', error);
+    return null;
+  }
+}
+
 export async function authorizedFetch(path, options = {}) {
   const token = getToken();
   console.log("[AUTH] Token presente:", !!token);

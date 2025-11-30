@@ -221,10 +221,10 @@ function Datos_escritorio() {
     }, [categoriaFiltro]);
 
     useEffect(() => {
-        // Obtener usuario actual del localStorage/token
-        const loadCurrentUser = async () => {
+        // Obtener usuario actual del token
+        const loadCurrentUser = () => {
             try {
-                const user = await getCurrentUser();
+                const user = getCurrentUser();
                 if (user && user.id) {
                     setCurrentUserId(user.id);
                     console.log('[USUARIO] ID cargado:', user.id);
