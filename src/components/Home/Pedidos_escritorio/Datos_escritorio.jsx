@@ -6,6 +6,7 @@ import { crearSolicitud } from "../../../api/solicitudesApi";
 import {obtenerCategoria} from "../../../api/CategoriaApi";
 import {obtenerSubcategorias} from "../../../api/SubcategotiaApi"; 
 import {obtenerEspacio} from "../../../api/EspaciosApi";
+import { getCurrentUser } from "../../../api/http";
 
 // --- FUNCIONES GLOBALES DE FECHA/HORA ---
 
@@ -46,6 +47,7 @@ function Datos_escritorio() {
     const [categorias, setCategorias] = useState([]);
     const [subcategorias, setSubcategorias] = useState([]);
     const [espacios, setEspacios] = useState([]);
+    const [currentUserId, setCurrentUserId] = useState(null);
 
     const [form, setForm] = useState({
         fecha_ini: "",
@@ -56,7 +58,6 @@ function Datos_escritorio() {
         cantid: "1", 
         id_elemen: "", 
         estadosoli: 1,
-        id_usu: 1, 
         num_ficha: "",
         id_categoria: "", 
         id_subcategoria: "", 
@@ -139,6 +140,12 @@ function Datos_escritorio() {
         const isoInicio = `${form.fecha_ini}T${form.hora_ini}:00`;
         const isoFin = `${form.fecha_fn}T${form.hora_fn}:00`;
 
+        // Validar que tengamos el ID del usuario
+        if (!currentUserId) {
+            alert("Error: No se pudo obtener la información del usuario. Por favor inicia sesión nuevamente.");
+            return;
+        }
+
         // 3. Crear DTO (Data Transfer Object)
         const dto = {
             fecha_ini: isoInicio, 
@@ -153,16 +160,13 @@ function Datos_escritorio() {
             // IDs a Long o null 
             id_categoria: form.id_categoria ? parseInt(form.id_categoria, 10) : null,
             id_subcategoria: form.id_subcategoria ? parseInt(form.id_subcategoria, 10) : null,
-            id_usu: form.id_usu,
+            id_usu: currentUserId, // ID obtenido del token/usuario
             id_esp: form.id_esp ? parseInt(form.id_esp, 10) : null, 
             
             // ids_elem como array de números (Longs)
             ids_elem: form.id_elemen ? [parseInt(form.id_elemen, 10)] : [], 
         };
-        
-        // **DEBUG**: Imprimir el JSON enviado. Descomenta para verificar con Postman
-        // console.log("JSON enviado al servidor:", JSON.stringify(dto, null, 2));
-
+    
         // 4. Llamada a la API
         try {
             await crearSolicitud(dto);
@@ -217,6 +221,23 @@ function Datos_escritorio() {
     }, [categoriaFiltro]);
 
     useEffect(() => {
+        // Obtener usuario actual del localStorage/token
+        const loadCurrentUser = async () => {
+            try {
+                const user = await getCurrentUser();
+                if (user && user.id) {
+                    setCurrentUserId(user.id);
+                    console.log('[USUARIO] ID cargado:', user.id);
+                } else {
+                    console.warn('[USUARIO] No se pudo obtener el ID del usuario');
+                }
+            } catch (err) {
+                console.error('[USUARIO] Error al cargar usuario:', err);
+            }
+        };
+        
+        loadCurrentUser();
+        
         // Cargar categorías y espacios al montar
         obtenerCategoria()
             .then(data => setCategorias(data))
