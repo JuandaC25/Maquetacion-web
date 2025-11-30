@@ -75,3 +75,70 @@ export const actualizarSolicitud = async (id, data) => {
 export const actualizarEstadoSolicitud = async (id, estado) => {
     return await actualizarSolicitud(id, { estado: estado });
 };
+
+export const verificarDisponibilidadEspacio = async (id_esp, fecha_ini, fecha_fn) => {
+    try {
+        const solicitudes = await obtenersolicitudes();
+        
+        console.log('[DEBUG] Todas las solicitudes:', solicitudes);
+        console.log('[DEBUG] Primera solicitud completa:', solicitudes[0]);
+        console.log('[DEBUG] Buscando conflictos para espacio ID:', id_esp);
+        
+        // Filtrar solicitudes del mismo espacio que estén activas
+        // Verificar diferentes nombres de campos posibles
+        const solicitudesDelEspacio = solicitudes.filter(sol => {
+            const idEspacio = sol.id_esp || sol.id_espa || sol.idEsp || sol.espacio?.id;
+            const estado = sol.estadosoli || sol.estado_soli || sol.est_soli || sol.estadoSoli;
+            
+            console.log(`[DEBUG] Solicitud ${sol.id_soli || sol.id}:`, {
+                todosLosCampos: Object.keys(sol),
+                idEspacio,
+                estado,
+                solCompleta: sol
+            });
+            
+            const mismoEspacio = idEspacio == id_esp; // Usar == para comparar number/string
+            const estadoActivo = estado !== 3 && estado !== 5 && estado !== 'Rechazado' && estado !== 'Finalizado';
+            
+            console.log(`[DEBUG] mismoEspacio=${mismoEspacio}, activo=${estadoActivo}`);
+            
+            return mismoEspacio && estadoActivo;
+        });
+
+        console.log('[DEBUG] Solicitudes del mismo espacio activas:', solicitudesDelEspacio);
+
+        const nuevaInicio = new Date(fecha_ini);
+        const nuevaFin = new Date(fecha_fn);
+
+        console.log('[DEBUG] Nueva reserva:', { inicio: nuevaInicio, fin: nuevaFin });
+
+        // Verificar si hay conflicto de horarios
+        for (const sol of solicitudesDelEspacio) {
+            const solicitudInicio = new Date(sol.fecha_ini);
+            const solicitudFin = new Date(sol.fecha_fn);
+
+            console.log(`[DEBUG] Comparando con solicitud ${sol.id_soli || sol.id}:`, { 
+                inicio: solicitudInicio, 
+                fin: solicitudFin 
+            });
+
+            // Verificar si hay solapamiento de horarios
+            const hayConflicto = !(nuevaFin <= solicitudInicio || nuevaInicio >= solicitudFin);
+
+            console.log(`[DEBUG] ¿Hay conflicto? ${hayConflicto}`);
+
+            if (hayConflicto) {
+                return {
+                    disponible: false,
+                    mensaje: `El espacio ya está reservado desde ${solicitudInicio.toLocaleString('es-ES')} hasta ${solicitudFin.toLocaleString('es-ES')}`
+                };
+            }
+        }
+
+        console.log('[DEBUG] No se encontraron conflictos. Espacio disponible.');
+        return { disponible: true };
+    } catch (error) {
+        console.error('Error al verificar disponibilidad:', error);
+        throw error;
+    }
+};
