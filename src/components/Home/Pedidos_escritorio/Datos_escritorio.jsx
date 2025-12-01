@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Button, Modal, Form, ButtonGroup, ToggleButton, Carousel, Spinner } from "react-bootstrap";
 import "./Pedidos_escritorio.css";
 import ElementosService from "../../../api/ElementosApi";
-import SolicitudModalForm from "./SolicitudModal/SolicitudModal";
+import SolicitudModalEscr from "./SolicitudModalEscr/SolicitudModalEscr";
 import { crearSolicitud } from "../../../api/solicitudesApi";
 import {obtenerCategoria} from "../../../api/CategoriaApi";
 import {obtenerSubcategorias} from "../../../api/SubcategotiaApi"; 
@@ -19,7 +19,6 @@ function Datos_escritorio() {
     const [categoriaFiltro, setCategoriaFiltro] = useState("computo");
     const [showModal, setShowModal] = useState(false);
     const [equiposDisponibles, setEquiposDisponibles] = useState([]);
-    const [minHoraInicio, setMinHoraInicio] = useState(getMinTime());
     const [categorias, setCategorias] = useState([]);
     const [subcategorias, setSubcategorias] = useState([]);
     const [espacios, setEspacios] = useState([]);
@@ -296,7 +295,7 @@ function Datos_escritorio() {
             ) : (
                 <p className="text-center mt-4">{error || "No hay datos disponibles."}</p>
             )}
-            <SolicitudModalForm
+            <SolicitudModalEscr
                 show={showModal}
                 handleHide={handleHideModal}
                 equiposDisponibles={equiposDisponibles}
