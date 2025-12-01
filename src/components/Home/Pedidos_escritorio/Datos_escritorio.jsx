@@ -19,7 +19,6 @@ function Datos_escritorio() {
     const [categoriaFiltro, setCategoriaFiltro] = useState("computo");
     const [showModal, setShowModal] = useState(false);
     const [equiposDisponibles, setEquiposDisponibles] = useState([]);
-    const [minHoraInicio, setMinHoraInicio] = useState(getMinTime());
     const [categorias, setCategorias] = useState([]);
     const [subcategorias, setSubcategorias] = useState([]);
     const [espacios, setEspacios] = useState([]);
