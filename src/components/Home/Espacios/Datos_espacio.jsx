@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Solicitud_espacios.css";
 import Card from "react-bootstrap/Card";
 import { Carousel, Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
-import { crearSolicitud } from "../../../api/solicitudesApi";
+import { crearSolicitud, verificarDisponibilidadEspacio } from "../../../api/solicitudesApi";
 import { listarEspacios } from "../../../api/EspaciosApi";
 
 function Datos_espacio() {
@@ -22,6 +22,15 @@ function Datos_espacio() {
     estadosoli: 1,
     id_usu: 1,
   });
+
+  // Obtener la fecha actual en formato YYYY-MM-DD
+  const getFechaMinima = () => {
+    const hoy = new Date();
+    const año = hoy.getFullYear();
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dia = String(hoy.getDate()).padStart(2, '0');
+    return `${año}-${mes}-${dia}`;
+  };
 
   // Cargar espacios al montar el componente
   useEffect(() => {
@@ -63,11 +72,28 @@ function Datos_espacio() {
       return;
     }
 
-  const fechaInicio = new Date(`${form.fecha_ini}T${form.hora_ini}:00`);
-  const fechaFin = new Date(`${form.fecha_fn}T${form.hora_fn}:00`);
+    const fechaInicio = new Date(`${form.fecha_ini}T${form.hora_ini}:00`);
+    const fechaFin = new Date(`${form.fecha_fn}T${form.hora_fn}:00`);
 
     if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
       alert("El formato de fecha u hora es inválido.");
+      return;
+    }
+
+    // ✅ Validación 1: No permitir fechas pasadas
+    const ahora = new Date();
+    const fechaActualSoloFecha = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+    const fechaInicioSoloFecha = new Date(fechaInicio.getFullYear(), fechaInicio.getMonth(), fechaInicio.getDate());
+    
+    // Si es una fecha anterior (día anterior), rechazar
+    if (fechaInicioSoloFecha < fechaActualSoloFecha) {
+      alert("❌ No puedes seleccionar una fecha anterior al día de hoy.");
+      return;
+    }
+
+    // Validar que la fecha de fin sea posterior a la de inicio
+    if (fechaFin <= fechaInicio) {
+      alert("❌ La fecha y hora de fin debe ser posterior a la de inicio.");
       return;
     }
     const pad = (n) => String(n).padStart(2, '0');
@@ -86,6 +112,19 @@ function Datos_espacio() {
     };
 
     try {
+      // ✅ Validación 2: Verificar disponibilidad del espacio
+      console.log('[VALIDACIÓN] Verificando disponibilidad del espacio...');
+      const verificacion = await verificarDisponibilidadEspacio(
+        espacioSeleccionado.id,
+        dto.fecha_ini,
+        dto.fecha_fn
+      );
+
+      if (!verificacion.disponible) {
+        alert(`❌ ${verificacion.mensaje}\n\nPor favor, elige otro horario o fecha.`);
+        return;
+      }
+
       console.log('[SOLICITUD] DTO enviado:', dto);
       await crearSolicitud(dto);
       alert("✅ Solicitud enviada correctamente");
@@ -206,6 +245,7 @@ function Datos_espacio() {
                     name="fecha_ini"
                     value={form.fecha_ini}
                     onChange={handleChange}
+                    min={getFechaMinima()}
                     required
                   />
                 </div>
@@ -229,6 +269,7 @@ function Datos_espacio() {
                     name="fecha_fn"
                     value={form.fecha_fn}
                     onChange={handleChange}
+                    min={form.fecha_ini || getFechaMinima()}
                     required
                   />
                 </div>
