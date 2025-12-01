@@ -1,5 +1,3 @@
-/* Estilos para Pedidos de Elementos Generales */
-
 .multimedia-main-container {
   background-color: #f9fbfd;
   min-height: 100vh;
@@ -47,8 +45,6 @@
   padding: 2rem;
 }
 
-/* ----------- TARJETA DESCRIPTIVA ----------- */
-
 .multimedia-ficha-descripcion {
   background: #ffffff;
   border-radius: 15px;
@@ -74,8 +70,6 @@
   font-size: 0.97rem;
 }
 
-/* ----------- CARRUSEL ----------- */
-
 .multimedia-carrusel {
   margin-top: 1.5rem;
   border-radius: 12px;
@@ -94,8 +88,6 @@
 .multimedia-carrusel-imagen:hover {
   transform: scale(1.03);
 }
-
-/* ----------- LISTA GENERAL ----------- */
 
 .multimedia-ficha-especificaciones {
   background: #ffffff;
@@ -143,8 +135,6 @@
 .multimedia-ficha-especificaciones li:last-child {
   border-bottom: none;
 }
-
-/* ----------- FOOTER ----------- */
 
 .multimedia-ficha-footer {
   text-align: center;
@@ -209,8 +199,6 @@
 .multimedia-boton-solicitar:hover span {
   color: #f8fff9;
 }
-
-/* ----------- RESPONSIVE ----------- */
 
 @media (max-width: 900px) {
   .multimedia-ficha-body {

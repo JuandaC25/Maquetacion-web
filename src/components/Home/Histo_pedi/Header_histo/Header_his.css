@@ -1,10 +1,10 @@
-.header-historial__container { /* CAMBIO: header-portatiles__container -> header-historial__container */
+.header-historial__container {
   width: 100%;
   background-color: rgb(9, 180, 26);
   padding: 0.1rem 1rem;
 }
 
-.header-historial__content { /* CAMBIO: header-portatiles__content -> header-historial__content */
+.header-historial__content {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -13,7 +13,7 @@
   gap: 1rem;
 }
 
-.header-historial__title-main { /* CAMBIO: header-portatiles__title-main -> header-historial__title-main */
+.header-historial__title-main {
   font-size: 2.8rem;
   font-family: 'Open Sans', sans-serif;
   font-weight: 900;
@@ -22,10 +22,6 @@
   flex-grow: 1;
   text-align: center;
 }
-
-/* ================================== */
-/* Botón de Menú (Hamburguesa) */
-/* ================================== */
 .menu-button {
   width: 150px;
   height: 50px;
@@ -78,10 +74,6 @@
   transform: scale(0.85);
 }
 
-/* ================================== */
-/* Offcanvas Menú Lateral */
-/* ================================== */
-/* Offcanvas */
 .offcanvas-header {
   background-color: rgb(9, 180, 26);
   color: white;
@@ -149,10 +141,7 @@
   margin-right: 8px;
 }
 
-/* ================================== */
-/* Contenedor de Íconos de Navegación */
-/* ================================== */
-.header-historial__icons-container { /* CAMBIO: header-portatiles__icons-container -> header-historial__icons-container */
+.header-historial__icons-container {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -162,7 +151,7 @@
   margin: auto;
 }
 
-.header-historial__buttons-wrapper { /* CAMBIO: header-portatiles__buttons-wrapper -> header-historial__buttons-wrapper */
+.header-historial__buttons-wrapper { 
   display: flex;
   background-color: rgb(9, 180, 26);
   width: 220px;
@@ -175,8 +164,7 @@
   padding: 5px;
 }
 
-.header-historial__buttons-wrapper:hover { /* CAMBIO: header-portatiles__buttons-wrapper:hover -> header-historial__buttons-wrapper:hover */
-  width: 270px;
+.header-historial__buttons-wrapper:hover {
   transition: all 0.5s;
 }
 
@@ -220,9 +208,6 @@
   font-size: 20px;
 }
 
-/* ================================== */
-/* Modal de Perfil (Simulación de Teléfono) */
-/* ================================== */
 .profile-modal-container {
   position: fixed;
   top: 80px;

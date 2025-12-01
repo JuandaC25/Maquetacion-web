@@ -30,8 +30,6 @@ function CrearEspacio() {
       lector.onerror = (error) => reject(error);
     });
   };
-
-  // Agregar imágenes
   const handleAgregarImagenes = async (e) => {
     const archivos = Array.from(e.target.files);
     if (archivos.length === 0) return;
@@ -119,8 +117,6 @@ function CrearEspacio() {
       const response = await crearEspacio(espacioData);
 
       setSuccess(`✓ Espacio "${formData.nom_espa}" creado exitosamente!`);
-
-      // Limpiar formulario
       setFormData({
         nom_espa: '',
         descripcion: '',

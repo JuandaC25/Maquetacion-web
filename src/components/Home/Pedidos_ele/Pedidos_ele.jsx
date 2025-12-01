@@ -75,12 +75,9 @@ function SoliciMultimedia() {
       try {
         setIsLoading(true);
         const data = await ElementosService.obtenerElementos();
-        
-        // Todas las categorías EXCEPTO Multimedia (id_categ !== 2)
-        // Y excluir subcategorías específicas
         const itemsFiltrados = data.filter(
           (item) =>
-            item.id_categ !== 2 && // Excluir Multimedia
+            item.id_categ !== 2 &&
             item.sub_catg !== "Equipo de mesa" &&
             item.sub_catg !== "Equipo de edicion" &&
             item.sub_catg !== "Portátil de edicion" &&
@@ -167,7 +164,7 @@ function SoliciMultimedia() {
                       src="/imagenes/Elementos/Teclaado.png"
                       alt="Teclado"
                     />
-                  </Carousel.Item>                  
+                  </Carousel.Item>
                 </Carousel>
               </div>
             </div>
