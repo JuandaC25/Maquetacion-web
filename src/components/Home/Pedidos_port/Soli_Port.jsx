@@ -4,7 +4,7 @@ import "./Soli_port.css";
 import ElementosService from "../../../api/ElementosApi";
 import Footer from '../../Footer/Footer.jsx';
 import Header_port from './Header soli/Header.jsx';
-import SolicitudModalForm from "./SolicitudModal/SolicitudModal";
+import SolicitudModalPort from "./SolicitudModal/SolicitudModal";
 
 
 const USER_ID = 1; 
@@ -140,7 +140,7 @@ function Soli_Port() {
                 <p className="text-center mt-4">No hay equipos disponibles.</p>
             )}
             <Footer />
-            <SolicitudModalForm
+            <SolicitudModalPort
                 show={showModal}
                 handleHide={handleHideModal}
                 equiposDisponibles={equiposDisponibles}

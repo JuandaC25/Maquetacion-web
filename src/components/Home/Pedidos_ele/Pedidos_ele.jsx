@@ -5,6 +5,7 @@ import Footer from "../../Footer/Footer";
 import Header_ad from './Header_ele/Header_elemen.jsx';
 import ElementosService from "../../../api/ElementosApi";
 import { crearSolicitud } from "../../../api/solicitudesApi";
+import SolicitudModalEle from "./SolicitudModalEle/SolicitudModalEle.jsx";
 
 function SoliciMultimedia() {
   const [multimediaInfo, setMultimediaInfo] = useState(null);
@@ -189,97 +190,15 @@ function SoliciMultimedia() {
       ) : (
         <p className="text-center mt-4">No hay datos disponibles.</p>
       )}
-
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Realizar Solicitud</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleFormSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Fecha y Hora de Inicio</Form.Label>
-              <div className="row g-2">
-                <div className="col-md-6">
-                  <Form.Control
-                    type="date"
-                    name="fecha_ini"
-                    value={form.fecha_ini}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <Form.Control
-                    type="time"
-                    name="hora_ini"
-                    value={form.hora_ini}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Fecha y Hora de Fin</Form.Label>
-              <div className="row g-2">
-                <div className="col-md-6">
-                  <Form.Control
-                    type="date"
-                    name="fecha_fn"
-                    value={form.fecha_fn}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <Form.Control
-                    type="time"
-                    name="hora_fn"
-                    value={form.hora_fn}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <div className="row g-2">
-                <div className="col-md-6">
-                  <Form.Label>Ambiente</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="ambient"
-                    placeholder="Ej: Ambiente 301"
-                    value={form.ambient}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="col-md-6">
-                  <Form.Label>Número de ficha</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="num_ficha"
-                    placeholder="Ej: 2560014"
-                    value={form.num_ficha}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-            </Form.Group>
-
-            <div className="text-center mt-4">
-              <Button variant="success" type="submit">
-                Enviar Solicitud
-              </Button>
-            </div>
-          </Form>
-        </Modal.Body>
-      </Modal>
-      <Footer />
+      <SolicitudModalEle
+        show={showModal}
+        handleHide={() => setShowModal(false)}
+        form={form} // 👈 ¡Nuevo!
+        handleChange={handleChange} // 👈 ¡Nuevo!
+        handleFormSubmit={handleFormSubmit} // 👈 ¡Nuevo!
+        equiposDisponibles={equiposDisponibles} // 👈 Opcional, pero útil si se requiere una selección
+      />
+      <Footer />
     </div>
   );
 }
