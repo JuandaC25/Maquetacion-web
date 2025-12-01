@@ -365,6 +365,19 @@ textarea.form-control {
 .detail-item-1631 { margin-bottom:16px; display:flex; gap:12px; align-items:center; }
 .detail-label-1632 { min-width:220px; font-weight:700; color:#333; }
 .detail-value-display-1633 { flex:1; }
+.modern-modal-body-1630 .detail-value-display-1633 .form-control,
+.modern-modal-body-1630 .detail-value-display-1633 input.form-control {
+  background: #ffffff;
+  border: 1px solid #e6e9ee;
+  border-radius: 6px;
+  padding: 8px 12px;
+  height: 40px;
+  box-shadow: none;
+}
+
+.modern-modal-body-1630 .detail-label-1632 {
+  color: #263238;
+}
 .modern-modal-footer-1634 { background:var(--bg, #f5f7fa); padding:16px 24px; display:flex; justify-content:flex-end; gap:12px; }
 .modal-action-button-1635 { padding:8px 18px; border-radius:8px; font-weight:700; background: linear-gradient(90deg, #28a745, #218838); color: #fff; border: none; box-shadow: 0 6px 16px rgba(33,136,56,0.16); }
 .modal-action-button-1635:hover { transform: translateY(-2px); }
