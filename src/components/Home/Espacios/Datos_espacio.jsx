@@ -32,7 +32,6 @@ function Datos_espacio() {
     try {
       setLoading(true);
       const data = await listarEspacios();
-      // Filtrar solo espacios activos (estadoespacio = 1)
       const espaciosActivos = data.filter(esp => esp.estadoespacio === 1);
       setEspacios(espaciosActivos);
       setError(null);
@@ -83,7 +82,7 @@ function Datos_espacio() {
       estadosoli: form.estadosoli,
       id_usu: form.id_usu,
       num_fich: form.num_ficha,
-      id_esp: espacioSeleccionado.id, // Usar el ID del espacio seleccionado
+      id_esp: espacioSeleccionado.id,
     };
 
     try {
@@ -109,22 +108,17 @@ function Datos_espacio() {
 
   return (
     <>
-      {/* Mensaje de carga */}
       {loading && (
         <div className="text-center mt-5">
           <Spinner animation="border" variant="success" />
           <p className="mt-3">Cargando espacios disponibles...</p>
         </div>
       )}
-
-      {/* Mensaje de error */}
       {error && (
         <div className="container mt-4">
           <Alert variant="danger">{error}</Alert>
         </div>
       )}
-
-      {/* Lista de espacios */}
       {!loading && !error && (
         <div className="ACMC-Cua">
           {espacios.length === 0 ? (
@@ -133,7 +127,6 @@ function Datos_espacio() {
             </div>
           ) : (
             espacios.map((espacio, index) => {
-              // Parsear las imágenes (vienen como JSON string)
               let imagenes = [];
               console.log('Espacio:', espacio.nom_espa);
               console.log('Imagenes raw:', espacio.imagenes);
@@ -145,21 +138,16 @@ function Datos_espacio() {
                 console.error("Error al parsear imágenes:", e);
                 imagenes = [];
               }
-
-              // Si no hay imágenes, usar una por defecto
               if (imagenes.length === 0) {
                 imagenes = ["/imagenes/imagenes_espacios/default.jpg"];
                 console.log('Usando imagen por defecto');
               }
-
-              // Alternar clases para efecto hover
               const cardClass = index % 2 === 0 ? "Cuadroparaespacio" : "Cuadroparaauditorio";
 
               return (
                 <Card key={espacio.id} className={cardClass}>
                   <Carousel className="carrusel-espacios" interval={3000}>
                     {imagenes.map((imgUrl, imgIndex) => {
-                      // Construir la URL completa
                       const fullUrl = imgUrl.startsWith('http') 
                         ? imgUrl 
                         : `http://localhost:8081${imgUrl}`;
@@ -187,7 +175,6 @@ function Datos_espacio() {
                   <div className="product-details">
                     <h1 className="solicitud-titulo001">{espacio.nom_espa}</h1>
                     <p>{espacio.descripcion}</p>
-
                     <button className="button-Espacio" onClick={() => handleOpen(espacio)}>
                       <div className="front">
                         <span>Apartar espacio</span>
@@ -233,7 +220,6 @@ function Datos_espacio() {
                 </div>
               </div>
             </Form.Group>
-
             <Form.Group className="mb-3">
               <Form.Label>Fecha y Hora de Fin</Form.Label>
               <div className="row g-2">
@@ -257,7 +243,6 @@ function Datos_espacio() {
                 </div>
               </div>
             </Form.Group>
-
             <Form.Group className="mb-3">
               <Form.Label>Ambiente</Form.Label>
               <Form.Control
@@ -281,7 +266,6 @@ function Datos_espacio() {
                 required
               />
             </Form.Group>
-
             <div className="text-center mt-3">
               <Button variant="success" type="submit">
                 Confirmar Reserva

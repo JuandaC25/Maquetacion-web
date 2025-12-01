@@ -76,7 +76,6 @@ function SoliciAudioVideo() {
       try {
         setIsLoading(true);
         const data = await ElementosService.obtenerElementos();
-        // Solo multimedia, excluyendo "Equipo de edicion" y "Portátil de edicion"
         const multimediaItems = data.filter(
           (item) =>
             item.id_categ === 2 &&

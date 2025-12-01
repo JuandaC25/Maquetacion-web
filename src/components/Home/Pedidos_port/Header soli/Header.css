@@ -1,10 +1,12 @@
-.header-portatiles__container { /* Cambio aquí */
+/* ================================== */
+
+.header-portatiles__container {
   width: 100%;
   background-color: rgb(9, 180, 26);
   padding: 0.1rem 1rem;
 }
 
-.header-portatiles__content { /* Cambio aquí */
+.header-portatiles__content {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -13,7 +15,7 @@
   gap: 1rem;
 }
 
-.header-portatiles__title-main { /* Cambio aquí */
+.header-portatiles__title-main {
   font-size: 2.8rem;
   font-family: 'Open Sans', sans-serif;
   font-weight: 900;
@@ -23,9 +25,7 @@
   text-align: center;
 }
 
-/* ================================== */
-/* Botón de Menú (Hamburguesa) */
-/* ================================== */
+
 .menu-button {
   width: 150px;
   height: 50px;
@@ -78,10 +78,6 @@
   transform: scale(0.85);
 }
 
-/* ================================== */
-/* Offcanvas Menú Lateral */
-/* ================================== */
-/* Offcanvas */
 .offcanvas-header {
   background-color: rgb(9, 180, 26);
   color: white;
@@ -98,7 +94,6 @@
   height: 45px;
 }
 
-/* Cards menú */
 .menu-cards {
   display: flex;
   flex-direction: column;
@@ -149,10 +144,7 @@
   margin-right: 8px;
 }
 
-/* ================================== */
-/* Contenedor de Íconos de Navegación */
-/* ================================== */
-.header-portatiles__icons-container { /* Cambio aquí */
+.header-portatiles__icons-container {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -162,7 +154,7 @@
   margin: auto;
 }
 
-.header-portatiles__buttons-wrapper { /* Cambio aquí */
+.header-portatiles__buttons-wrapper {
   display: flex;
   background-color: rgb(9, 180, 26);
   width: 220px;
@@ -175,7 +167,7 @@
   padding: 5px;
 }
 
-.header-portatiles__buttons-wrapper:hover { /* Cambio aquí */
+.header-portatiles__buttons-wrapper:hover {
   width: 270px;
   transition: all 0.5s;
 }
@@ -220,9 +212,7 @@
   font-size: 20px;
 }
 
-/* ================================== */
-/* Modal de Perfil (Simulación de Teléfono) */
-/* ================================== */
+
 .profile-modal-container {
   position: fixed;
   top: 80px;
@@ -388,4 +378,279 @@
 
 .profile-modal__close-button svg {
   stroke: white;
+}
+
+
+.modal-content {
+    border-radius: 12px;
+    background-color: #ffffff; 
+    color: #333333; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.edit-modal-header {
+    background-color: rgb(9, 180, 26);
+    border-bottom: 1px solid rgb(9, 180, 26);
+    padding: 20px 25px;
+}
+
+.edit-modal-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white; 
+}
+
+.edit-modal-title .bi-person-gear {
+    margin-right: 10px;
+    color: white;
+}
+
+.edit-modal-header .btn-close {
+    filter: none;
+    --bs-btn-close-color: #ffffff;
+    --bs-btn-close-opacity: 1;
+    --bs-btn-close-hover-opacity: 0.8;
+}
+
+.edit-modal-body {
+    padding: 25px;
+}
+
+.form-control {
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    color: #333333;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    background-color: #ffffff;
+    border-color: rgb(9, 180, 26);
+    box-shadow: 0 0 0 0.25rem rgba(9, 180, 26, 0.25);
+    color: #333333;
+}
+
+.form-label {
+    color: #333333;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+
+.edit-modal-subtitle {
+    font-size: 1.1rem;
+    color: #333333;
+    font-weight: 600;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.edit-modal-divider {
+    border-top: 1px solid #ced4da !important;
+}
+
+
+.edit-modal-footer {
+    border-top: 1px solid #ced4da;
+    padding: 15px 25px;
+    justify-content: flex-end;
+}
+
+/* Estilo de los botones */
+.modal-footer .btn-primary {
+    background-color: rgb(9, 180, 26);
+    border-color: rgb(9, 180, 26);
+    font-weight: 600;
+}
+
+.modal-footer .btn-primary:hover {
+    background-color: #008a00;
+    border-color: #008a00;
+}
+
+.modal-footer .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    font-weight: 600;
+}
+
+
+.port-ficha-visual {
+ max-width: 1100px;
+ margin: 3rem auto;
+ background: linear-gradient(135deg, #f5f5f5 0%, #f6fff9 100%);
+ border-radius: 20px;
+ box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+ overflow: hidden;
+ transition: all 0.3s ease;
+ position: relative;
+}
+.port-ficha-visual:hover {
+ transform: translateY(-4px);
+ box-shadow: 0 15px 40px rgba(46, 204, 113, 0.4);
+ transition: all 0.5s ease;
+}
+.port-ficha-header {
+ text-align: center;
+ padding: 2rem;  
+ background-color: #f7fcf7;
+ border-bottom: 2px solid #e0f2e0;
+}
+.port-ficha-titulo h2 {
+ font-size: 2rem;
+ font-weight: 700;
+ color: #2ecc71;
+}
+.port-ficha-subtitulo {
+ color: #555;
+ font-size: 1rem;
+ margin-top: 0.3rem;
+}
+.port-ficha-body {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 40px;
+ padding: 2rem;
+}
+.port-ficha-descripcion,
+.port-ficha-especificaciones {
+ background: #fff;
+ border-radius: 15px;
+ padding: 1.5rem;
+ box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.04);
+ transition: transform 0.3s ease;
+}
+.port-ficha-descripcion:hover,
+.port-ficha-especificaciones:hover {
+ transform: translateY(-3px);
+ box-shadow: 15px 15px 10px rgba(8, 219, 96, 0.349);
+ transition: all 0.60s ease;
+}
+.port-ficha-descripcion h4,
+.port-ficha-especificaciones h4 {
+ color: #27ae60;
+ font-weight: 700;
+ margin-bottom: 10px;
+}
+.port-ficha-descripcion p {
+ color: #444;
+ line-height: 1.6;
+}
+.port-ficha-especificaciones ul {
+ list-style: none;
+ padding: 0;
+}
+.port-ficha-especificaciones li {
+ padding: 8px 0;
+ color: #333;
+ border-bottom: 1px solid #f0f0f0;
+ position: relative;
+ padding-left: 25px; 
+ font-size: 0.95rem;
+}
+.port-ficha-especificaciones li::before {
+ content: "●";
+ color: #2ecc71;
+ font-size: 1.2rem;
+ line-height: 1;
+ position: absolute;
+ left: 0;
+ top: 7px;
+}
+.port-ficha-especificaciones li:last-child {
+ border-bottom: none;
+}
+.port-carrusel {
+ margin-top: 1.5rem;
+ border-radius: 12px;
+ overflow: hidden;
+ box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+.port-carrusel-imagen {
+ width: 100%;
+ height: 280px;
+ object-fit: contain;
+ background: #f8fdf8;
+ transition: transform 0.5s ease;
+}
+.port-carrusel-imagen:hover {
+ transform: scale(1.03);
+}
+.port-equipos-disponibles-notif {
+ position: absolute;
+ top: 24px;
+ right: 32px;
+ text-align: right;
+ z-index: 2;
+}
+.port-equipos-disponibles-notif span {
+ font-size: 0.95rem;
+ color: #2ecc71;
+ font-weight: 600;
+ background: #f7fcf7;
+ padding: 4px 14px;
+ border-radius: 12px;
+ box-shadow: 0 2px 8px rgba(46, 204, 113, 0.08);
+}
+.port-ficha-footer {
+ text-align: center;
+ padding: 2rem;
+}
+.port-boton-solicitar {
+ outline: none;
+ cursor: pointer;
+ border: none;
+ padding: 1rem 2.8rem;
+ margin: 0;
+ font-family: "Poppins", sans-serif;
+ font-size: 1.05rem;
+ font-weight: 600;
+ border-radius: 50px;
+ position: relative;
+ display: inline-block;
+ color: #fff;
+ letter-spacing: 0.03rem;
+ background: linear-gradient(135deg, #2ecc71, #27ae60);
+ box-shadow: 0 6px 18px rgba(46, 204, 113, 0.35);
+ overflow: hidden;
+ transition: all 0.4s ease;
+}
+.port-boton-solicitar span {
+ position: relative;
+ z-index: 2;
+ transition: color 0.3s ease;
+}
+.port-boton-solicitar::before {
+ content: "";
+ position: absolute;
+ top: 0;
+ left: -100%;
+ width: 100%;
+ height: 100%;
+ background: linear-gradient(
+  120deg,
+  transparent,
+  rgba(255, 255, 255, 0.5),
+  transparent
+ );
+ transition: all 0.6s ease;
+}
+.port-boton-solicitar:hover::before {
+ left: 100%;
+}
+.port-boton-solicitar:hover {
+ transform: translateY(-3px);
+ box-shadow: 0 12px 25px rgba(46, 204, 113, 0.45);
+}
+.port-boton-solicitar:active {
+ transform: scale(0.98);
+}
+.port-boton-solicitar:hover span {
+ color: #f8fff9;
 }

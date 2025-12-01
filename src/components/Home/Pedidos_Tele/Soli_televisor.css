@@ -51,8 +51,6 @@
   padding: 2rem;
 }
 
-/* ----------- TARJETA DESCRIPTIVA ----------- */
-
 .audio-video-ficha-descripcion {
   background: #ffffff;
   border-radius: 15px;
@@ -78,8 +76,6 @@
   font-size: 0.97rem;
 }
 
-/* ----------- CARRUSEL ----------- */
-
 .audio-video-carrusel {
   margin-top: 1.5rem;
   border-radius: 12px;
@@ -98,8 +94,6 @@
 .audio-video-carrusel-imagen:hover {
   transform: scale(1.03);
 }
-
-/* ----------- LISTA GENERAL ----------- */
 
 .audio-video-ficha-especificaciones {
   background: #ffffff;
@@ -146,8 +140,6 @@
 .audio-video-ficha-especificaciones li:last-child {
   border-bottom: none;
 }
-
-/* ----------- RESPONSIVE ----------- */
 
 @media (max-width: 900px) {
   .audio-video-ficha-body {

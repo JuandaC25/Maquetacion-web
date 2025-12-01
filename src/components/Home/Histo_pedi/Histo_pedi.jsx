@@ -8,13 +8,13 @@ import { Pagination, Button, Badge, Tabs, Tab } from 'react-bootstrap';
 import { obtenersolicitudes, eliminarSolicitud } from '../../../api/solicitudesApi.js'; 
 import { obtenerTickets, eliminarTicket } from '../../../api/ticket.js';
 import Modal_ver from '../Histo_pedi/Modal_ver/Modal_ver.jsx'; 
-
 const formatFecha = (fechaString) => {
     if (!fechaString || fechaString === 'N/A') return 'N/A';
     try {
-        // Formatea solo la fecha para la vista principal
-        const dateOnly = fechaString.includes('T') ? fechaString.split('T')[0] : fechaString;
-        return new Date(dateOnly).toLocaleDateString('es-ES', { 
+        const datePart = fechaString.split('T')[0];
+        const [year, month, day] = datePart.split('-').map(Number);
+        const dateObj = new Date(year, month - 1, day);
+        return dateObj.toLocaleDateString('es-ES', { 
             year: 'numeric', month: 'numeric', day: 'numeric' 
         });
     } catch (e) {
@@ -22,33 +22,25 @@ const formatFecha = (fechaString) => {
         return 'Fecha Inválida';
     }
 }
-
-// 📌 Función para obtener el color y texto del estado (AJUSTADA)
 const getStatusDetails = (estadoValor) => {
-    
-    // Convierte el valor del estado (de sol.est_soli) a minúsculas para la comparación
     const estadoTexto = estadoValor?.toString().toLowerCase().trim() || '';
 
     if (estadoTexto.includes('pendiente')) {
         return { text: 'Pendiente', variant: 'warning' };
     }
     if (estadoTexto.includes('aprobado')) {
-        // Por ejemplo: 'success' para indicar que ha pasado la aprobación
         return { text: 'Aprobado', variant: 'success' };
     }
     if (estadoTexto.includes('rechazado')) {
         return { text: 'Rechazado', variant: 'danger' };
     }
     if (estadoTexto.includes('en uso')) {
-        // Por ejemplo: 'primary' o 'info' para indicar un estado activo
         return { text: 'En uso', variant: 'primary' };
     }
     if (estadoTexto.includes('finalizado')) {
-        // Por ejemplo: 'secondary' o 'dark' para indicar un estado de conclusión
         return { text: 'Finalizado', variant: 'secondary' };
     }
 
-    // Caso por defecto para estados no contemplados o nulos
     return { text: 'Desconocido', variant: 'light' };
 };
 
@@ -66,15 +58,13 @@ function Historial_ped() {
         try {
             setIsLoading(true);
             const data = await obtenersolicitudes();
-            
-            // Aseguramos que data es un array antes de mapear
             const solicitudesConEquipos = Array.isArray(data) ? data.map(sol => {
                 const elementos = Array.isArray(sol.elementos_soli) 
                     ? sol.elementos_soli.map(el => ({
-                        id: el.id_eleme || el.id_accesorio,
-                        nombre:el.nom_eleme || el.nom_acces || 'Equipo/Accesorio sin nombre',
-                    }))
-                    : []; 
+                            id: el.id_eleme || el.id_accesorio,
+                            nombre:el.nom_eleme || el.nom_acces || 'Equipo/Accesorio sin nombre',
+                        }))
+                        : []; 
 
                 return {
                     ...sol,
@@ -97,15 +87,14 @@ function Historial_ped() {
             setIsLoading(true);
             const data = await obtenerTickets();
             
-            console.log('Tickets recibidos:', data); // Debug
+            console.log('Tickets recibidos:', data);
             
-            // Filtrar solo los tickets del usuario actual
             const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
             const ticketsDelUsuario = Array.isArray(data) 
                 ? data.filter(ticket => ticket.id_usuario === usuario.id)
                 : [];
             
-            console.log('Tickets filtrados del usuario:', ticketsDelUsuario); // Debug
+            console.log('Tickets filtrados del usuario:', ticketsDelUsuario);
             
             setTickets(ticketsDelUsuario);
             setError(null);
@@ -256,7 +245,6 @@ function Historial_ped() {
                                 </Badge>
                                 
                                 <span className='texto_pedido'>
-                                    ID Solicitud: {sol.id_soli || 'N/A'} | Usuario: {sol.nom_usu || 'N/A'} <br/>
                                     ID Solicitud: **{sol.id_soli || 'N/A'}** | Usuario: {sol.nom_usu || 'N/A'} <br/>
                                     Ambiente: {sol.ambient || 'N/A'} <br/>
                                     Inicio: {formatFecha(sol.fecha_ini || 'N/A')} | Fin: {formatFecha(sol.fecha_fn || 'N/A')}
@@ -264,15 +252,15 @@ function Historial_ped() {
                                         Equipos: {sol.equipos_detalles && sol.equipos_detalles.length > 0
                                             ? sol.equipos_detalles.map(eq => (
                                                 <span key={eq.id}>
-                                                    [{eq.id}] **{eq.nombre}**
+                                                     [{eq.id}] **{eq.nombre}**
                                                 </span>
-                                            )).reduce((prev, curr) => [prev, ', ', curr])
-                                            : 'N/A'
-                                        }
+                                                )).reduce((prev, curr) => [prev, ', ', curr])
+                                                : 'N/A'
+                                            }
                                     </div>
                                 </span>
                                 <div className='Cont_botones_histo'>
-                <div className='Btn_ver'>
+                                    <div className='Btn_ver'>
                                         <Modal_ver 
                                             solicitud={sol} 
                                             buttonText="Detalles 🔍" 
@@ -286,11 +274,8 @@ function Historial_ped() {
                                         className='Btn_desactivar_histo'
                                     >
                                         Desactivar <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-  <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-</svg>
-                                        className='Btn_eliminar_histo'
-                                    >
-                                        Eliminar 🗑️
+          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+        </svg>
                                     </Button>
                                 </div>
                             </div>
@@ -339,7 +324,6 @@ function Historial_ped() {
                                         variant="danger" 
                                         size="sm" 
                                         onClick={() => handleDeleteTicket(ticket.id_tickets)}
-                                        className='Btn_desactivar_histo'
                                         className='Btn_eliminar_histo'
                                     >
                                         Eliminar 🗑️

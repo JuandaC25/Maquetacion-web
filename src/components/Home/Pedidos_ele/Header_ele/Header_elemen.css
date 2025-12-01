@@ -23,9 +23,6 @@
   text-align: center;
 }
 
-/* ================================== */
-/* Botón de Menú (Hamburguesa) */
-/* ================================== */
 .menu-button {
   width: 150px;
   height: 50px;
@@ -78,10 +75,6 @@
   transform: scale(0.85);
 }
 
-/* ================================== */
-/* Offcanvas Menú Lateral */
-/* ================================== */
-/* Offcanvas */
 .offcanvas-header {
   background-color: rgb(9, 180, 26);
   color: white;
@@ -98,7 +91,6 @@
   height: 45px;
 }
 
-/* Cards menú */
 .menu-cards {
   display: flex;
   flex-direction: column;
@@ -149,9 +141,6 @@
   margin-right: 8px;
 }
 
-/* ================================== */
-/* Contenedor de Íconos de Navegación */
-/* ================================== */
 .header-elementos__icons-container {
   display: flex;
   align-items: center;
@@ -220,9 +209,6 @@
   font-size: 20px;
 }
 
-/* ================================== */
-/* Modal de Perfil (Simulación de Teléfono) */
-/* ================================== */
 .profile-modal-container {
   position: fixed;
   top: 80px;
