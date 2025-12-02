@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import { obtenerHistorialPorTicket, editarHistorial } from '../../../api/TransabilidadApi';
 import { Button, Alert, Dropdown, Modal, Form, Spinner } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
