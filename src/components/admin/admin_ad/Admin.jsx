@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import jsPDF from 'jspdf';
 import { obtenerHistorialPorTicket, editarHistorial } from '../../../api/TransabilidadApi';
 import { Button, Alert, Dropdown, Modal, Form, Spinner } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
@@ -19,6 +20,31 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
   const [historialLoading, setHistorialLoading] = useState(false);
   const [historialError, setHistorialError] = useState(null);
   const [historialTicketId, setHistorialTicketId] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  // Descargar historial en PDF
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('Historial de Ticket', 10, 15);
+    if (historialTicket && historialTicket.length > 0) {
+      let y = 30;
+      historialTicket.forEach((h, idx) => {
+        doc.setFontSize(12);
+        doc.text(`ID: ${h.id || ''}`, 10, y);
+        doc.text(`Descripción: ${h.descripcion || ''}`, 10, y + 7);
+        doc.text(`Fecha: ${h.fecha || ''}`, 10, y + 14);
+        y += 22;
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+      });
+    } else {
+      doc.setFontSize(12);
+      doc.text('No hay historial para este ticket.', 10, 30);
+    }
+    doc.save(`historial_ticket_${historialTicketId || ''}.pdf`);
+  };
 
   const handleOpenHistorialModal = async (ticket) => {
     setShowHistorialModal(true);
@@ -27,6 +53,7 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
     setHistorialTicketId(ticket.id || ticket.id_tickets);
     try {
       const data = await obtenerHistorialPorTicket(ticket.id || ticket.id_tickets);
+      console.log('Historial recibido para ticket', ticket.id || ticket.id_tickets, data);
       setHistorialTicket(data);
       setHistorialEdit({});
     } catch (err) {
@@ -451,9 +478,19 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
               {historialTicket.map((h) => (
                 <div key={h.id} style={{ borderBottom: '1px solid #eee', marginBottom: 12, paddingBottom: 8 }}>
                   <div><b>ID:</b> {h.id}</div>
-                  <div><b>Descripción:</b> <input type="text" value={historialEdit[h.id]?.descripcion ?? h.descripcion ?? ''} onChange={e => handleEditHistorialChange(h.id, 'descripcion', e.target.value)} style={{ width: '80%' }} /></div>
-                  <div><b>Fecha:</b> <input type="text" value={historialEdit[h.id]?.fecha ?? h.fecha ?? ''} onChange={e => handleEditHistorialChange(h.id, 'fecha', e.target.value)} style={{ width: '60%' }} /></div>
-                  <Button size="sm" variant="success" style={{ marginTop: 6 }} onClick={() => handleSaveHistorial(h.id)} disabled={historialLoading}>Guardar</Button>
+                  <div><b>Descripción:</b> {editMode ? (
+                    <input type="text" value={historialEdit[h.id]?.descripcion ?? h.descripcion ?? ''} onChange={e => handleEditHistorialChange(h.id, 'descripcion', e.target.value)} style={{ width: '80%' }} />
+                  ) : (
+                    <span>{h.descripcion}</span>
+                  )}</div>
+                  <div><b>Fecha:</b> {editMode ? (
+                    <input type="text" value={historialEdit[h.id]?.fecha ?? h.fecha ?? ''} onChange={e => handleEditHistorialChange(h.id, 'fecha', e.target.value)} style={{ width: '60%' }} />
+                  ) : (
+                    <span>{h.fecha}</span>
+                  )}</div>
+                  {editMode && (
+                    <Button size="sm" variant="success" style={{ marginTop: 6 }} onClick={() => handleSaveHistorial(h.id)} disabled={historialLoading}>Guardar</Button>
+                  )}
                 </div>
               ))}
             </div>
@@ -463,6 +500,12 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseHistorialModal}>Cerrar</Button>
+          <Button variant={editMode ? "outline-warning" : "warning"} onClick={() => setEditMode((v) => !v)} disabled={historialLoading || !historialTicket || historialTicket.length === 0} style={{ marginLeft: 8 }}>
+            {editMode ? "Cancelar edición" : "Editar"}
+          </Button>
+          <Button variant="info" onClick={handleDownloadPDF} style={{ marginLeft: 8 }} disabled={historialLoading}>
+            Descargar PDF
+          </Button>
         </Modal.Footer>
       </Modal>
       {/* PAGINACIÓN idéntica a adcrear.jsx (barra verde animada, fondo claro) */}
