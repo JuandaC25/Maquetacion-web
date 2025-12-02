@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { obtenerHistorialPorTicket, editarHistorial } from '../../../api/TransabilidadApi';
 import { Button, Alert, Dropdown, Modal, Form, Spinner } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import "./admin.css";
@@ -11,6 +12,62 @@ import { obtenerCategoria } from '../../../api/CategoriaApi.js';
 import { obtenersolicitudes } from '../../../api/solicitudesApi.js';
 
 const Listaxd = ({ onVerClick, onCrearClick }) => {
+  // --- MODAL HISTORIAL DE TICKETS ---
+  const [showHistorialModal, setShowHistorialModal] = useState(false);
+  const [historialTicket, setHistorialTicket] = useState([]);
+  const [historialEdit, setHistorialEdit] = useState({});
+  const [historialLoading, setHistorialLoading] = useState(false);
+  const [historialError, setHistorialError] = useState(null);
+  const [historialTicketId, setHistorialTicketId] = useState(null);
+
+  const handleOpenHistorialModal = async (ticket) => {
+    setShowHistorialModal(true);
+    setHistorialLoading(true);
+    setHistorialError(null);
+    setHistorialTicketId(ticket.id || ticket.id_tickets);
+    try {
+      const data = await obtenerHistorialPorTicket(ticket.id || ticket.id_tickets);
+      setHistorialTicket(data);
+      setHistorialEdit({});
+    } catch (err) {
+      setHistorialError(err.message);
+    } finally {
+      setHistorialLoading(false);
+    }
+  };
+
+  const handleCloseHistorialModal = () => {
+    setShowHistorialModal(false);
+    setHistorialTicket([]);
+    setHistorialEdit({});
+    setHistorialTicketId(null);
+  };
+
+  const handleEditHistorialChange = (id, field, value) => {
+    setHistorialEdit((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleSaveHistorial = async (id) => {
+    try {
+      setHistorialLoading(true);
+      const data = historialEdit[id];
+      await editarHistorial(id, data);
+      // Refrescar historial
+      const updated = await obtenerHistorialPorTicket(historialTicketId);
+      setHistorialTicket(updated);
+      setHistorialEdit((prev) => ({ ...prev, [id]: undefined }));
+    } catch (err) {
+      setHistorialError(err.message);
+    } finally {
+      setHistorialLoading(false);
+    }
+  };
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("Todas las Categorías");
   const [selectedSubcategoryFilter, setSelectedSubcategoryFilter] = useState("Todas las Subcategorías");
   const [selectedStatusFilter, setSelectedStatusFilter] = useState("Todos los Estados");
@@ -355,19 +412,59 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
                   })()}
                 </span>
               </div>
-              <div className="footer-card-1215">
+              <div className="footer-card-1215" style={{ display: 'flex', gap: '10px', justifyContent: 'center', padding: '1rem 1rem 0.5rem 1rem', background: 'rgba(9,180,26,0.082)', borderBottomLeftRadius: '0.75rem', borderBottomRightRadius: '0.75rem' }}>
                 <button 
                   type="button" 
                   className="action-card-1216"
+                  style={{ background: '#12bb1a', color: '#fff', fontWeight: 700, minWidth: 100 }}
                   onClick={() => onVerClick(t?.detalles || t)}
                 >
-                  Ver
+                  VER
+                </button>
+                <button
+                  type="button"
+                  className="action-card-1216"
+                  style={{ background: '#1976d2', color: '#fff', fontWeight: 700, minWidth: 140, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                  onClick={() => handleOpenHistorialModal(t)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16" style={{marginRight: 4}}><path d="M8 3.5a.5.5 0 0 1 .5.5v3.293l2.146 2.147a.5.5 0 0 1-.708.708l-2.25-2.25A.5.5 0 0 1 7.5 7V4a.5.5 0 0 1 .5-.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm0-1A7 7 0 1 1 8 1a7 7 0 0 1 0 14z"/></svg>
+                  Historial de tickets
                 </button>
               </div>
+              {/* Modal is rendered once at the root, not inside the map */}
             </div>
           ))}
         </div>
       )}
+      {/* MODAL HISTORIAL DE TICKETS - Rendered once at the root */}
+      <Modal show={showHistorialModal} onHide={handleCloseHistorialModal} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Historial de tickets</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {historialLoading ? (
+            <div className="text-center py-4">Cargando historial...</div>
+          ) : historialError ? (
+            <Alert variant="danger">{historialError}</Alert>
+          ) : historialTicket && historialTicket.length > 0 ? (
+            <div style={{ maxHeight: 400, overflowY: 'auto' }}>
+              {historialTicket.map((h) => (
+                <div key={h.id} style={{ borderBottom: '1px solid #eee', marginBottom: 12, paddingBottom: 8 }}>
+                  <div><b>ID:</b> {h.id}</div>
+                  <div><b>Descripción:</b> <input type="text" value={historialEdit[h.id]?.descripcion ?? h.descripcion ?? ''} onChange={e => handleEditHistorialChange(h.id, 'descripcion', e.target.value)} style={{ width: '80%' }} /></div>
+                  <div><b>Fecha:</b> <input type="text" value={historialEdit[h.id]?.fecha ?? h.fecha ?? ''} onChange={e => handleEditHistorialChange(h.id, 'fecha', e.target.value)} style={{ width: '60%' }} /></div>
+                  <Button size="sm" variant="success" style={{ marginTop: 6 }} onClick={() => handleSaveHistorial(h.id)} disabled={historialLoading}>Guardar</Button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div>No hay historial para este ticket.</div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseHistorialModal}>Cerrar</Button>
+        </Modal.Footer>
+      </Modal>
       {/* PAGINACIÓN idéntica a adcrear.jsx (barra verde animada, fondo claro) */}
       {totalPages > 1 && (
         <div className="pagination-1215-xd136">
