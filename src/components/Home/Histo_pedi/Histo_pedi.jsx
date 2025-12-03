@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Header_his from './Header_histo/Header_his.jsx';
 import './Histo_pedi.css';
@@ -7,18 +7,19 @@ import Footer from '../../Footer/Footer.jsx';
 import { Pagination, Button, Badge, Tabs, Tab } from 'react-bootstrap'; 
 import { 
     obtenersolicitudes, 
-    eliminarSolicitud,
-    actualizarEstadoSolicitud // ✨ Importación clave
+    actualizarEstadoSolicitud 
 } from '../../../api/solicitudesApi.js'; 
 import { obtenerTickets, eliminarTicket } from '../../../api/ticket.js';
-import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js';
+import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js'; 
+
+// --- Funciones de Formato ---
 
 const formatFecha = (fechaString) => {
     if (!fechaString || fechaString === 'N/A') return 'N/A';
     try {
         const datePart = fechaString.split('T')[0];
         const [year, month, day] = datePart.split('-').map(Number);
-        const dateObj = new Date(year, month - 1, day);
+        const dateObj = new Date(year, month - 1, day); 
         return dateObj.toLocaleDateString('es-ES', { 
             year: 'numeric', month: 'numeric', day: 'numeric' 
         });
@@ -46,7 +47,6 @@ const getStatusDetails = (estadoValor) => {
     if (estadoTexto.includes('finalizado')) {
         return { text: 'Finalizado', variant: 'secondary' };
     }
-    // ✅ Estado Cancelado
     if (estadoTexto.includes('cancelado')) {
         return { text: 'Cancelado', variant: 'secondary' }; 
     }
@@ -54,28 +54,37 @@ const getStatusDetails = (estadoValor) => {
     return { text: 'Desconocido', variant: 'light' };
 };
 
+// --- Componente Historial_ped ---
 
 function Historial_ped() {
     const [solicitudes, setSolicitudes] = useState([]);
     const [tickets, setTickets] = useState([]);
     const [subcategorias, setSubcategorias] = useState({}); 
+    const [subcategoriaOptions, setSubcategoriaOptions] = useState([]);
+    const [selectedSubcategoriaId, setSelectedSubcategoriaId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [solicitudesPerPage] = useState(5);
     const [activeTab, setActiveTab] = useState('solicitudes'); 
 
-    // ... (cargarSubcategorias, cargarSolicitudes, cargarTickets - sin cambios importantes) ...
-
     const cargarSubcategorias = async () => {
         try {
             const data = await obtenerSubcategorias();
             if (Array.isArray(data)) {
+                
+                // 1. Mapeo ID -> Nombre (para la visualización en las tarjetas)
                 const subMap = data.reduce((acc, sub) => {
-                    acc[sub.id] = sub.nom_subcateg; 
+                    acc[String(sub.id)] = sub.nom_subcateg; 
                     return acc;
                 }, {});
                 setSubcategorias(subMap);
+                
+                // 2. Lista de opciones para el Dropdown
+                setSubcategoriaOptions(data.map(sub => ({
+                    id: String(sub.id),
+                    nombre: sub.nom_subcateg
+                })));
             }
         } catch (err) {
             console.error("Fallo al obtener subcategorías:", err);
@@ -116,10 +125,11 @@ function Historial_ped() {
 
     useEffect(() => {
         cargarSubcategorias();
-    }, []);
+    }, []); 
 
     useEffect(() => {
         setCurrentPage(1); 
+        setSelectedSubcategoriaId(null); // Resetear filtro al cambiar de pestaña
         if (activeTab === 'solicitudes') {
             cargarSolicitudes();
         } else {
@@ -127,12 +137,29 @@ function Historial_ped() {
         }
     }, [activeTab]);
     
-    const currentItems = activeTab === 'solicitudes' ? solicitudes : tickets;
+    // LÓGICA DE FILTRADO: Filtra las solicitudes basándose en el ID seleccionado.
+    const filteredSolicitudes = useMemo(() => {
+        if (activeTab !== 'solicitudes' || !selectedSubcategoriaId) {
+            return solicitudes;
+        }
+
+        const filterId = String(selectedSubcategoriaId);
+        
+        return solicitudes.filter(sol => {
+            // Se asume que el ID de subcategoría puede venir en cualquiera de estas llaves
+            const solSubcatId = String(sol.id_subcatego ?? sol.id_subcate ?? sol.id_subcat ?? 'NULL');
+            
+            return solSubcatId === filterId;
+        });
+    }, [solicitudes, selectedSubcategoriaId, activeTab]);
+    
+    // Define el array para la paginación (Tickets o Solicitudes filtradas)
+    const currentItems = activeTab === 'solicitudes' ? filteredSolicitudes : tickets;
+
     const indexOfLastSolicitud = currentPage * solicitudesPerPage;
     const indexOfFirstSolicitud = indexOfLastSolicitud - solicitudesPerPage;
     const currentSolicitudes = currentItems.slice(indexOfFirstSolicitud, indexOfLastSolicitud); 
 
-    // 🚀 FUNCIÓN DE CANCELACIÓN: Llama a la API y actualiza el estado local de React.
     const handleCancelStatus = async (id_solicitud) => {
         const ESTADO_CANCELADO = 'Cancelado'; 
 
@@ -141,10 +168,8 @@ function Historial_ped() {
         }
 
         try {
-            // 1. Llamada a la API con el estado 'Cancelado'
             await actualizarEstadoSolicitud(id_solicitud, ESTADO_CANCELADO); 
             
-            // 2. Actualiza el estado local (`solicitudes`)
             setSolicitudes(prevSolicitudes => 
                 prevSolicitudes.map(sol => {
                     if (sol.id_soli === id_solicitud) {
@@ -158,13 +183,10 @@ function Historial_ped() {
             
         } catch (err) {
             console.error("Error al cancelar la solicitud:", err);
-            // Muestra el mensaje de error que proviene de la API (incluyendo el código HTTP/mensaje del servidor)
             alert(`Error al cancelar la solicitud ${id_solicitud}: ${err.message || 'Error desconocido'}`); 
         }
     };
     
-    // ... (handleDeleteTicket y paginación - sin cambios importantes) ...
-
     const handleDeleteTicket = async (id_ticket) => {
         if (!window.confirm(`¿Estás seguro de que deseas eliminar el ticket ${id_ticket}?`)) {
             return;
@@ -236,6 +258,12 @@ function Historial_ped() {
         }
         return items;
     };
+    
+    // Función para manejar la selección del filtro de subcategoría
+    const handleFilterChange = (id) => {
+        setSelectedSubcategoriaId(id === 'all' ? null : id);
+        setCurrentPage(1); // Resetear a la primera página al aplicar filtro
+    };
 
 
     let historialContent;
@@ -247,7 +275,7 @@ function Historial_ped() {
         historialContent = (
             <div className="p-3">
                 {activeTab === 'solicitudes' 
-                    ? 'No hay solicitudes en el historial.' 
+                    ? 'No hay solicitudes que coincidan con el filtro seleccionado.' 
                     : 'No has reportado ningún equipo aún.'}
             </div>
         );
@@ -258,11 +286,21 @@ function Historial_ped() {
             historialContent = (
                 <Stack gap={1}>
                     {currentSolicitudes.map((sol) => {
-                        
                         const status = getStatusDetails(sol.est_soli); 
-                        const subcategoriaNombre = subcategorias[sol.id_subcat] || 'N/A';
                         
-                        // Determinar si la solicitud puede ser cancelada (ej. si está 'Pendiente')
+                        // Obtener ID (será null si no existe)
+                        const rawId = sol.id_subcatego ?? sol.id_subcate ?? sol.id_subcat ?? null;
+                        
+                        // Si el ID es válido, lo convierte a string para buscar.
+                        const subcategoriaKey = rawId !== null && rawId !== undefined ? String(rawId) : '';
+                        
+                        let subcategoriaNombre;
+                        if (subcategoriaKey !== '') {
+                            subcategoriaNombre = subcategorias[subcategoriaKey] || 'N/A (ID No Encontrado)';
+                        } else {
+                            subcategoriaNombre = 'N/A';
+                        }
+                        
                         const puedeCancelar = sol.est_soli?.toLowerCase().includes('pendiente');
 
                         return (
@@ -294,10 +332,9 @@ function Historial_ped() {
                                         size="sm" 
                                         onClick={() => handleCancelStatus(sol.id_soli)}
                                         className='Btn_desactivar_histo'
-                                        // Deshabilitar si no puede ser cancelada
                                         disabled={!puedeCancelar}
                                     > Cancelar solicitud <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
-                                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                                         </svg>
                                     </Button>
                                 </div>
@@ -359,6 +396,9 @@ function Historial_ped() {
             );
         }
     }
+    
+    // Nombre actual del filtro seleccionado
+    const currentFilterName = subcategoriaOptions.find(opt => opt.id === selectedSubcategoriaId)?.nombre || 'Todas las subcategorías';
 
     return (
         <div className='Cont_historial'>
@@ -371,6 +411,38 @@ function Historial_ped() {
                 justify
             >
                 <Tab eventKey="solicitudes" title="📝 Mis Solicitudes">
+                    {/* CONTENEDOR DEL FILTRO DE CATEGORÍA */}
+                    <div className='Filter_Container'> 
+                        <Dropdown onSelect={handleFilterChange}>
+                            <Dropdown.Toggle 
+                                variant="success" 
+                                id="dropdown-filter-subcategoria"
+                                className='btn-filter-custom' 
+                            >
+                                {/* 🔑 CAMBIO DE TEXTO AQUÍ */}
+                                🏷️ Filtrar por Subcategoría:
+                            </Dropdown.Toggle>
+
+                            {/* El menú desplegable con el mismo ancho (w-100) */}
+                            <Dropdown.Menu className="w-100" align="start"> 
+                                <Dropdown.Item eventKey="all" active={selectedSubcategoriaId === null}>
+                                    Todas las subcategorías
+                                </Dropdown.Item>
+                                <Dropdown.Divider />
+                                {subcategoriaOptions.map(sub => (
+                                    <Dropdown.Item 
+                                        key={sub.id} 
+                                        eventKey={sub.id}
+                                        active={sub.id === selectedSubcategoriaId}
+                                    >
+                                        {sub.nombre}
+                                    </Dropdown.Item>
+                                ))}
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </div>
+                    {/* FIN DEL FILTRO */}
+                    
                     <div className='Container_historial'>
                         {historialContent}
                     </div>
