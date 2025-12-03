@@ -62,18 +62,22 @@ export const eliminarSolicitud = async (id) => {
 export const actualizarSolicitud = async (id, data) => {
     const res = await authorizedFetch(`/api/solicitudes/${id}`, {
         method: 'PUT',
+        // 🚨 Importante: asegurar Content-Type para la petición PUT 🚨
+        headers: { "Content-Type": "application/json" }, 
         body: JSON.stringify(data),
     });
     if (!res.ok) {
-        const text = await res.text().catch(() => null);
-        throw new Error(text || 'Error al actualizar la solicitud');
+        const errorText = await res.text().catch(() => 'No hay mensaje de error en el cuerpo.');
+        console.error(`Fallo de la API: Estado HTTP ${res.status}. Mensaje de error completo:`, errorText);
+        throw new Error(`Error ${res.status} al actualizar solicitud: ${errorText}`);
     }
     const text = await res.text();
     try { return text ? JSON.parse(text) : {}; } catch { return text; }
 };
 
 export const actualizarEstadoSolicitud = async (id, estado) => {
-    return await actualizarSolicitud(id, { estado: estado });
+    // ✅ CORRECCIÓN APLICADA: Usamos 'est_soli' para coincidir con el modelo de datos que lees en el frontend.
+    return await actualizarSolicitud(id, { est_soli: estado }); 
 };
 
 export const verificarDisponibilidadEspacio = async (id_esp, fecha_ini, fecha_fn) => {

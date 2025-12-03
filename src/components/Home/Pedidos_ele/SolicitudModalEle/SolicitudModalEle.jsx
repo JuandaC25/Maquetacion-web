@@ -64,7 +64,7 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
     // Reinicia el estado del formulario al abrir el modal o cambiar el ID de usuario/equipos
     useEffect(() => {
         if (show) {
-             setForm(getInitialFormState(equiposDisponibles, userId));
+            setForm(getInitialFormState(equiposDisponibles, userId));
         }
     }, [equiposDisponibles, show, userId]);
 
@@ -150,6 +150,12 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
             setIsSubmitting(false);
             return;
         }
+        
+        // 🚀 LÍNEA DE DIAGNÓSTICO CRUCIAL 🚀
+        console.log("-----------------------------------------");
+        console.log("DIAGNÓSTICO REACT: Valor de id_subcategoria antes de enviar:", form.id_subcategoria);
+        console.log("-----------------------------------------");
+        // FIN DEL DIAGNÓSTICO
 
         // Construcción del DTO (Data Transfer Object) para la API
         const dto = {
@@ -205,7 +211,7 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
                         </Form.Control>
                     </Form.Group>
                     
-                    {/* Campo Subcategoría (¡CORREGIDO!) */}
+                    {/* Campo Subcategoría */}
                     <Form.Group className="mb-3">
                         <Form.Label>Subcategoría</Form.Label>
                         <Form.Control
@@ -217,11 +223,10 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
                             disabled={!form.id_categoria || subcategorias.length === 0}
                         >
                             <option value="">Selecciona una subcategoría</option>
-                            {/* AQUÍ ESTÁ LA CORRECCIÓN: Usar 'sub.id_subcateg' */}
                             {subcategorias.map(sub => (
                                 <option 
                                     key={sub.id_subcateg} 
-                                    value={sub.id_subcateg} // Esto envía el ID correcto al estado 'form'
+                                    value={sub.id_subcateg} 
                                 >
                                     {sub.nom_subcateg}
                                 </option>

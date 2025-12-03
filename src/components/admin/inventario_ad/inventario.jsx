@@ -142,6 +142,12 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
             <Form.Control type="text" value={detalles.nombre} readOnly className="modern-form-control-xd18" />
           </div>
         </div>
+        <div className="detail-item-xd15">
+          <label className="detail-label-xd16">Marca:</label>
+          <div className="detail-value-display-xd17">
+            <Form.Control type="text" value={detalles.marca || "N/A"} readOnly className="modern-form-control-xd18" />
+          </div>
+        </div>
         
         {esAccesorio ? (
           <>
@@ -269,6 +275,19 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit, guard
         </div>
       </div>
       <div className="detail-item-xd15">
+        <label className="detail-label-xd16">Marca:</label>
+        <div className="detail-value-display-xd17">
+          <Form.Control
+            type="text"
+            id="marca"
+            value={nuevoEquipo.marca}
+            onChange={onChange}
+            placeholder="Ej. Dell, HP, Samsung"
+            className="modern-form-control-xd18"
+          />
+        </div>
+      </div>
+      <div className="detail-item-xd15">
         <label className="detail-label-xd16">Subcategoría:</label>
         <div className="detail-value-display-xd17">
           <Form.Select
@@ -365,7 +384,8 @@ const Admin = () => {
     id_subcateg: "", 
     serie: "", 
     observaciones: "",
-    componentes: ""
+    componentes: "",
+    marca: ""
   });
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState(null);
@@ -423,6 +443,7 @@ const Admin = () => {
           nombre: el.nom_eleme,
           categoria: el.tip_catg || "Sin categoría",
           serie: el.num_seri?.toString() || "",
+          marca: el.marc || el.marca || "",
           observaciones: el.obse,
           componentes: el.componen,
           id_subcateg: el.id_subcat || el.id_subcateg,
@@ -473,6 +494,7 @@ const Admin = () => {
           observaciones: detallesCompletos.obse,
           componentes: detallesCompletos.componen,
           est: detallesCompletos.est !== undefined ? detallesCompletos.est : (detallesCompletos.est_elem ?? detallesCompletos.est_elemn ?? detallesCompletos.estadosoelement ?? 1),
+          marca: detallesCompletos.marc || detallesCompletos.marca || "",
           tipo: 'elemento'
         };
       }
@@ -524,7 +546,8 @@ const Admin = () => {
       id_subcateg: "", 
       serie: "", 
       observaciones: "",
-      componentes: "" 
+      componentes: "",
+      marca: "" 
     });
   };
 
@@ -579,6 +602,7 @@ const Admin = () => {
         num_seri: nuevoEquipo.serie,
         obse: nuevoEquipo.observaciones || "",
         componen: nuevoEquipo.componentes || "",
+        marc: nuevoEquipo.marca || null,
         est: 1,
         id_categ: categoriaPadre ? categoriaPadre.id_cat : null,
         id_subcat: parseInt(nuevoEquipo.id_subcateg)
@@ -590,6 +614,7 @@ const Admin = () => {
       const elementoNormalizado = {
         id: elementoCreado.id_elemen,
         nombre: elementoCreado.nom_eleme,
+        marca: elementoCreado.marc || nuevoEquipo.marca || "",
         categoria: categoriaPadre ? categoriaPadre.nom_cat : "Sin categoría", 
         serie: nuevoEquipo.serie,
         observaciones: nuevoEquipo.observaciones,

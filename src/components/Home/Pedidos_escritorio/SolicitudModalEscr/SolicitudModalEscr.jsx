@@ -70,8 +70,9 @@ function SolicitudModalEscr({ show, handleHide, equiposDisponibles, userId }) {
         }
     }, [equiposDisponibles, show, userId]);
     
-    // Filtro de Categorías aplicado
+    // ⭐ 1. FILTRO DE CATEGORÍAS (Solo "Computo" y "Multimedia")
     useEffect(() => {
+        // ⭐ Definición de las únicas categorías permitidas
         const categoriasPermitidas = ["Computo", "Multimedia"]; 
 
         obtenerCategoria()
@@ -84,13 +85,15 @@ function SolicitudModalEscr({ show, handleHide, equiposDisponibles, userId }) {
             .catch(err => console.error("Error al cargar categorías:", err));
     }, []);
 
-    // Filtro y carga de Subcategorías
+    // ⭐ 2. FILTRO Y CARGA DE SUBCATEGORÍAS (Solo "Equipo de mesa" y "Equipo de edición")
     useEffect(() => {
+        // ⭐ Definición de las únicas subcategorías permitidas
         const subcategoriasPermitidas = ["Equipo de mesa", "Equipo de edición"];
 
         if (form.id_categoria) {
             obtenerSubcategorias(form.id_categoria) 
                 .then(data => {
+                    // Se aplica el filtro estricto sobre los datos de la API
                     const subcategoriasFiltradas = data.filter(sub => 
                         subcategoriasPermitidas.includes(sub.nom_subcateg)
                     );
@@ -197,13 +200,14 @@ function SolicitudModalEscr({ show, handleHide, equiposDisponibles, userId }) {
                             required
                         >
                             <option value="">Selecciona una categoría</option>
+                            {/* Solo mostrará las categorías filtradas ("Computo" y "Multimedia") */}
                             {categorias.map(cat => (
                                 <option key={cat.id_cat} value={cat.id_cat}>{cat.nom_cat}</option>
                             ))}
                         </Form.Control>
                     </Form.Group>
                     
-                    {/* Select de Subcategoría (CORREGIDO) */}
+                    {/* Select de Subcategoría */}
                     <Form.Group className="mb-3">
                         <Form.Label>Subcategoría</Form.Label>
                         <Form.Control
@@ -212,10 +216,12 @@ function SolicitudModalEscr({ show, handleHide, equiposDisponibles, userId }) {
                             value={form.id_subcategoria}
                             onChange={handleChange}
                             required
+                            // El desplegable estará deshabilitado si no se ha seleccionado una categoría 
+                            // O si no hay subcategorías (lo cual sucederá si el filtro estricto no encuentra coincidencias)
                             disabled={!form.id_categoria || subcategorias.length === 0} 
                         >
                             <option value="">Selecciona una subcategoría</option>
-                            {/* CORRECCIÓN APLICADA: Si tu API de subcategorías devuelve el ID en una propiedad llamada 'id_subcateg', cámbiala aquí: value={sub.id_subcateg} */}
+                            {/* Solo mostrará las subcategorías filtradas ("Equipo de mesa" y "Equipo de edición") */}
                             {subcategorias.map(sub => (
                                 <option 
                                     key={sub.id_subcateg || sub.id} 
