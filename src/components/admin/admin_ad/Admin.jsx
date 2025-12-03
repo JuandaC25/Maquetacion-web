@@ -553,10 +553,23 @@ const Admin = () => {
   const [editandoEstado, setEditandoEstado] = useState(false);
   const [nuevoEstado, setNuevoEstado] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const [editandoProblema, setEditandoProblema] = useState(false);
+  const [nuevoProblema, setNuevoProblema] = useState('');
+  const [problemas, setProblemas] = useState([]);
+  useEffect(() => {
+    if (showModal) {
+      // Cargar problemas solo si se abre el modal
+      import('../../../api/ProblemasApi').then(({ obtenerProblemas }) => {
+        obtenerProblemas().then(setProblemas).catch(() => setProblemas([]));
+      });
+    }
+  }, [showModal]);
 
   const handleVerClick = (detalles) => {
     setModalDetalles(detalles || {});
     setShowModal(true);
+    setEditandoProblema(false);
+    setNuevoProblema(String(detalles?.id_problem || detalles?.problem_id || ''));
   };
 
   const handleCloseModal = () => {
@@ -571,43 +584,45 @@ const Admin = () => {
     const estadoActual = modalDetalles?.id_est_tick || modalDetalles?.estado || '';
     console.log('🔧 Editando estado. Estado actual:', estadoActual, 'Datos completos:', modalDetalles);
     setNuevoEstado(String(estadoActual));
+    setEditandoProblema(false);
   };
 
   const handleGuardarEstado = async () => {
     const ticketId = modalDetalles?.id_tickets || modalDetalles?.id;
-    
     if (!ticketId) {
       alert('❌ No se encontró el ID del ticket');
       console.error('Datos del modal:', modalDetalles);
       return;
     }
-    
     if (!nuevoEstado) {
       alert('❌ Por favor seleccione un estado');
       return;
     }
-    
+    if (editandoProblema && !nuevoProblema) {
+      alert('❌ Selecciona un problema');
+      return;
+    }
     setGuardando(true);
     try {
       const estadoNumero = parseInt(nuevoEstado);
-      console.log('💾 Guardando estado:', { 
-        id: ticketId, 
-        id_est_tick: estadoNumero 
-      });
-
-      const resultado = await actualizarTicket(ticketId, {
+      const problemaId = editandoProblema ? parseInt(nuevoProblema) : (modalDetalles?.id_problem || modalDetalles?.problem_id);
+      const payload = {
         id_est_tick: estadoNumero
-      });
-      
+      };
+      if (editandoProblema) {
+        payload.id_problem = problemaId;
+      }
+      console.log('💾 Guardando estado/problema:', { id: ticketId, ...payload });
+      const resultado = await actualizarTicket(ticketId, payload);
       console.log('✅ Resultado:', resultado);
-      alert('✓ Estado actualizado exitosamente');
+      alert('✓ Ticket actualizado exitosamente');
       setEditandoEstado(false);
+      setEditandoProblema(false);
       handleCloseModal();
-      // Forzar recarga completa sin cache
       window.location.href = window.location.href;
     } catch (error) {
       console.error('❌ Error completo:', error);
-      alert('❌ Error al actualizar el estado: ' + error.message);
+      alert('❌ Error al actualizar el ticket: ' + error.message);
     } finally {
       setGuardando(false);
     }
@@ -677,15 +692,24 @@ const Admin = () => {
           <div className="form-row-1223">
             <label className="form-label-1224">Problema:</label>
             <div className="form-control-wrap-1225">
-              <Form.Control 
-                type="text" 
-                value={
-                  modalDetalles?.nom_problm || 
-                  modalDetalles?.nom_problem || 
-                  'No disponible'
-                } 
-                readOnly 
-              />
+              {editandoProblema ? (
+                <Form.Select value={nuevoProblema} onChange={e => setNuevoProblema(e.target.value)}>
+                  <option value="">Selecciona un problema</option>
+                  {problemas.map(p => (
+                    <option key={p.id} value={p.id}>{p.descripcion}</option>
+                  ))}
+                </Form.Select>
+              ) : (
+                <Form.Control 
+                  type="text" 
+                  value={
+                    modalDetalles?.nom_problm || 
+                    modalDetalles?.nom_problem || 
+                    'No disponible'
+                  } 
+                  readOnly 
+                />
+              )}
             </div>
           </div>
           
@@ -779,12 +803,17 @@ const Admin = () => {
             Cerrar
           </Button>
           {!editandoEstado ? (
-            <Button variant="warning" onClick={handleEditarEstado}>
-              Editar Estado
-            </Button>
+            <>
+              <Button variant="warning" onClick={handleEditarEstado}>
+                Editar Estado
+              </Button>
+              <Button variant="info" onClick={() => setEditandoProblema(true)} style={{ marginLeft: 8 }}>
+                Editar Problema
+              </Button>
+            </>
           ) : (
             <>
-              <Button variant="secondary" onClick={() => setEditandoEstado(false)} disabled={guardando}>
+              <Button variant="secondary" onClick={() => { setEditandoEstado(false); setEditandoProblema(false); }} disabled={guardando}>
                 Cancelar
               </Button>
               <Button variant="success" onClick={handleGuardarEstado} disabled={guardando}>
