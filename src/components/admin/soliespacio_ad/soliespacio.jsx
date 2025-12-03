@@ -678,7 +678,7 @@ const Soliespacio = () => {
                         </button>
 
                                     {/* Modal Editar Reserva */}
-                                    <Modal show={showModal} onHide={handleCloseModal} centered size="lg" backdrop="static">
+                                    <Modal show={showModal} onHide={handleCloseModal} centered size="lg" backdrop={false}>
                                       <div style={{ borderRadius: 10, overflow: 'hidden' }}>
                                         <div style={{ background: '#219653', color: 'white', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                           <h2 style={{ fontWeight: 700, fontSize: 30, margin: 0 }}>
@@ -730,7 +730,7 @@ const Soliespacio = () => {
                                       </div>
                                     </Modal>
                               {/* Modal Apartar Espacio */}
-                              <Modal show={showApartarModal} onHide={() => { setShowApartarModal(false); setEspacioApartar(null); }} centered size="md" backdrop="static">
+                              <Modal show={showApartarModal} onHide={() => { setShowApartarModal(false); setEspacioApartar(null); }} centered size="md" backdrop={false}>
                                 <div style={{ borderRadius: 10, overflow: 'hidden' }}>
                                   <div style={{ background: '#219653', color: 'white', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <h2 style={{ fontWeight: 700, fontSize: 30, margin: 0 }}>
@@ -989,8 +989,73 @@ const Soliespacio = () => {
         </div>
       )}
 
+
+      {/* Modal Editar Espacio */}
+      <Modal show={!!editEspacio} onHide={() => setEditEspacio(null)} centered size="lg" backdrop={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Editar Espacio</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {editEspacio && (
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Label>Nombre del espacio</Form.Label>
+                <Form.Control type="text" value={editEspacio.nom_espa} onChange={e => setEditEspacio(prev => ({ ...prev, nom_espa: e.target.value }))} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Descripción</Form.Label>
+                <Form.Control as="textarea" rows={3} value={editEspacio.descripcion} onChange={e => setEditEspacio(prev => ({ ...prev, descripcion: e.target.value }))} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Estado</Form.Label>
+                <Form.Select value={editEspacio.estadoespacio} onChange={e => setEditEspacio(prev => ({ ...prev, estadoespacio: e.target.value }))}>
+                  <option value={1}>Activo</option>
+                  <option value={2}>Inactivo</option>
+                </Form.Select>
+              </Form.Group>
+              {/* Aquí podrías agregar edición de imágenes si lo necesitas */}
+              <Form.Group className="mb-3">
+                <Form.Label>Imágenes actuales</Form.Label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                  {editEspacio.imagenesRaw && editEspacio.imagenesRaw.length > 0 ? (
+                    editEspacio.imagenesRaw.map((img, idx) => (
+                      (editEspacio.removedRawIdxs && editEspacio.removedRawIdxs.has(idx)) ? null : (
+                        <div key={idx} style={{ position: 'relative' }}>
+                          <img src={img.startsWith('http') ? img : `http://localhost:8081${img}`} alt={`Imagen ${idx + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '6px' }} />
+                          <Button variant="danger" size="sm" style={{ position: 'absolute', top: 0, right: 0, borderRadius: '50%'}} onClick={() => handleEliminarImagenExistente(idx)} title="Eliminar imagen">×</Button>
+                        </div>
+                      )
+                    ))
+                  ) : (
+                    <span>No hay imágenes subidas.</span>
+                  )}
+                </div>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Agregar nuevas imágenes</Form.Label>
+                <Form.Control type="file" multiple accept="image/*" onChange={handleAgregarImagenesEdit} />
+                {editEspacio.nuevasImagenesBase64 && editEspacio.nuevasImagenesBase64.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '10px' }}>
+                    {editEspacio.nuevasImagenesBase64.map((img, idx) => (
+                      <div key={idx} style={{ position: 'relative' }}>
+                        <img src={img} alt={`Nueva ${idx + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '6px' }} />
+                        <Button variant="danger" size="sm" style={{ position: 'absolute', top: 0, right: 0, borderRadius: '50%'}} onClick={() => handleEliminarImagenNueva(idx)} title="Eliminar nueva imagen">×</Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Form.Group>
+            </Form>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setEditEspacio(null)}>Cancelar</Button>
+          <Button variant="success" onClick={handleSaveEsp} disabled={savingEsp}>{savingEsp ? 'Guardando...' : 'Guardar Cambios'}</Button>
+        </Modal.Footer>
+      </Modal>
+
       {/* Modal Crear Nuevo Espacio, solo para el botón de nuevo espacio */}
-      <Modal show={showModal && editingId === null} onHide={handleCloseModal} centered size="lg" backdrop="static">
+      <Modal show={showModal && editingId === null} onHide={handleCloseModal} centered size="lg" backdrop={false}>
         <div style={{ padding: 0, background: '#f9fafd', borderRadius: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '24px 32px 0 32px' }}>
             <Button variant="light" onClick={handleCloseModal} style={{ fontSize: 28, fontWeight: 700, color: '#888', border: 'none', background: 'none', lineHeight: 1, padding: 0 }}>

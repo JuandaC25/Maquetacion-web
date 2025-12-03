@@ -1,3 +1,7 @@
+/* Quitar fondo negro del modal de React-Bootstrap */
+.modal-backdrop {
+  display: none !important;
+}
 .add-new-equipment-button-xd35 {
   background: #12bb1a !important;
   border: none !important;
