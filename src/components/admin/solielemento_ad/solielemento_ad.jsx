@@ -330,7 +330,7 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
     const handleEstadoFilter = (name) => { setSelectedEstadoFilter(name); };
     const handleSearch = (e) => { setSearchTerm(e.target ? e.target.value : e); };
 
-    const STATUS_MAP = {1: 'Pendiente', 2: 'Aprobado', 3: 'Rechazado', 4: 'En uso', 5: 'Finalizado'};
+    const STATUS_MAP = {1: 'Pendiente', 2: 'Aprobado', 3: 'Rechazado', 4: 'Cancelado', 5: 'Finalizado'};
 
     const estadoOptions = Array.from(new Set(tickets.map(t => {
       let s = t.estado ?? t.detalles?.estado ?? t.detalles?.est_soli ?? t.detalles?.estadosolicitud ?? '';
@@ -493,11 +493,12 @@ const PaginatedCards = ({ items = [], renderItem, itemsPerPage = 8 }) => {
   useEffect(() => {
 
     setCurrentPage(prev => {
-      if (!items || items.length === 0) return 1;
-      const tp = Math.max(1, Math.ceil(items.length / itemsPerPage));
-      return prev > tp ? tp : 1;
+      const len = Array.isArray(items) ? items.length : 0;
+      if (len === 0) return 1;
+      const tp = Math.max(1, Math.ceil(len / itemsPerPage));
+      return prev > tp ? tp : prev;
     });
-  }, [items]);
+  }, [items, itemsPerPage]);
 
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
@@ -518,23 +519,38 @@ const PaginatedCards = ({ items = [], renderItem, itemsPerPage = 8 }) => {
 
       <div className="pagination-1617">
         <div className="pagination-inner-1618">
-          {Array.from({ length: totalPages }, (_, idx) => {
-            const num = idx + 1;
-            return (
-              <label key={num}>
-                <input
-                  value={String(num)}
-                  name="value-radio"
-                  id={`value-${num}`}
-                  type="radio"
-                  checked={currentPage === num}
-                  onChange={() => handlePageChange(num)}
-                />
-                <span onClick={() => handlePageChange(num)}>{num}</span>
-              </label>
-            );
-          })}
-          <span className="selection-1619" />
+              {(() => {
+                const visibleCount = Math.min(3, totalPages);
+                const containerWidth = 180; 
+                const maxStart = Math.max(1, totalPages - visibleCount + 1);
+                const startPage = Math.max(1, Math.min(currentPage - Math.floor(visibleCount / 2), maxStart));
+                const endPage = Math.min(totalPages, startPage + visibleCount - 1);
+                const pages = [];
+                for (let p = startPage; p <= endPage; p++) pages.push(p);
+
+                const selWidth = containerWidth / visibleCount;
+                const selIndex = pages.indexOf(currentPage);
+                const selLeft = selIndex >= 0 ? selIndex * selWidth : 0;
+
+                return (
+                  <>
+                    {pages.map((num, idx) => (
+                      <label key={num} style={{ width: `${100 / visibleCount}%` }}>
+                        <input
+                          value={String(num)}
+                          name="value-radio"
+                          id={`value-${num}`}
+                          type="radio"
+                          checked={currentPage === num}
+                          onChange={() => handlePageChange(num)}
+                        />
+                        <span onClick={() => handlePageChange(num)}>{num}</span>
+                      </label>
+                    ))}
+                    <span className="selection-1619" style={{ display: 'inline-block', width: `${selWidth}px`, transform: `translateX(${selLeft}px)` }} />
+                  </>
+                );
+              })()}
         </div>
       </div>
     </>
@@ -562,7 +578,7 @@ const Solielemento = () => {
     { id: 1, label: 'Pendiente' },
     { id: 2, label: 'Aprobado' },
     { id: 3, label: 'Rechazado' },
-    { id: 4, label: 'En uso' },
+    { id: 4, label: 'Cancelado' },
     { id: 5, label: 'Finalizado' },
   ];
 
@@ -605,7 +621,7 @@ const Solielemento = () => {
           e?.num_seri || e?.num_serie || e?.numero_serie || e?.serie || e?.serial || ''
         )).filter(Boolean);
         const estadoStr = solicitudFull?.est_soli || solicitudFull?.estado || (typeof solicitudFull?.estadosolicitud !== 'undefined' ? (
-          (function(n){ switch(Number(n)){case 1:return 'Pendiente';case 2:return 'Aprobado';case 3:return 'Rechazado';case 4:return 'En uso';case 5:return 'Finalizado';default: return ''}})(solicitudFull.estadosolicitud)
+          (function(n){ switch(Number(n)){case 1:return 'Pendiente';case 2:return 'Aprobado';case 3:return 'Rechazado';case 4:return 'Cancelado';case 5:return 'Finalizado';default: return ''}})(solicitudFull.estadosolicitud)
         ) : '');
         let fallbackNames = [];
         if (elementNames.length === 0) {
@@ -739,7 +755,6 @@ const Solielemento = () => {
     setEditableDetails(prev => {
       let v = value;
       const next = { ...(prev || {}), [field]: v };
-      // En edición de fecha inicio: no permitir valores anteriores a nowMin
       if (field === 'fecha1' && nowMin) {
         try {
           const minD = new Date(nowMin);
@@ -748,8 +763,7 @@ const Solielemento = () => {
             v = nowMin;
             next[field] = v;
           }
-        } catch (e) { /* ignore parse errors */ }
-        // si fecha2 existe y queda antes de la nueva fecha1, ajustarla
+        } catch (e) {  }
         if (next.fecha2) {
           try {
             const d1 = new Date(v);
@@ -771,7 +785,6 @@ const Solielemento = () => {
     }
     setSaving(true);
     try {
-      // Validaciones de fecha: mismo día (hoy) y no en el pasado
       try {
         const fecha1Val = editableDetails?.fecha1 || modalDetalles?.fecha1 || '';
         const fecha2Val = editableDetails?.fecha2 || modalDetalles?.fecha2 || '';
@@ -838,8 +851,8 @@ const Solielemento = () => {
       setModalDetalles(prev => ({ ...(prev || {}), ...(editableDetails || {}), estado: estadoVal || prev?.estado }));
       setIsEditing(false);
       setEditableDetails(null);
-      // trigger list refresh so the card shows updated estado/cantidad/ambiente
-      try { setListRefreshKey(k => k + 1); } catch (e) { /* ignore if not available */ }
+
+      try { setListRefreshKey(k => k + 1); } catch (e) {  }
       alert('Solicitud actualizada correctamente');
     } catch (err) {
       console.error('Error actualizando solicitud', err);
