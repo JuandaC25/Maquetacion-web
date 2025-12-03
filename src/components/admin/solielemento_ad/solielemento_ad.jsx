@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../auth/AuthContext';
-import { Button, Alert, Dropdown, Modal, Form, Pagination } from 'react-bootstrap';
-import { FaUserCircle, FaBars } from 'react-icons/fa';
+import { Button, Alert, Dropdown, Modal, Form, Pagination, InputGroup } from 'react-bootstrap';
+import { FaUserCircle, FaBars, FaSearch } from 'react-icons/fa';
 import "./solielemento.css";
 import Footer from '../../Footer/Footer.jsx';
 import HeaderAd from '../header_solielemento/header_solielemento.jsx';
 import { obtenersolicitudes, obtenerSolicitudesPorid, actualizarSolicitud } from '../../../api/solicitudesApi';
 import ElementosService from '../../../api/ElementosApi';
+import SolicitudModalPort from '../../Home/Pedidos_port/SolicitudModal/SolicitudModal';
 import { obtenerCategoria } from '../../../api/CategoriaApi';
 import { obtenerSubcategorias } from '../../../api/SubcategotiaApi';
 
@@ -30,6 +31,134 @@ const toLocalInput = (d) => {
   } catch (e) {
     return '';
   }
+};
+
+const SolielementosHeader = ({
+  categorias = [],
+  subcategoriasFiltradas = [],
+  selectedCategoryFilter,
+  selectedSubcategoryFilter,
+  selectedEstadoFilter,
+  handleCategoryFilter,
+  handleSubcategoryFilter,
+  handleEstadoFilter,
+  searchTerm,
+  handleSearch,
+  estadoOptions = []
+  , onAgregarClick
+}) => {
+  return (
+    <Alert variant="info" className="solielementos-header-bar-se01">
+      <div className="header-bar-content-se02">
+        <div className="header-left-section-se03">
+          <h1 className="solielementos-main-title-se04">Gestión de Solielementos</h1>
+
+          <div className="filters-row-se05" style={{ marginBottom: '15px' }}>
+            <Dropdown className="category-filter-dropdown-se06">
+              <Dropdown.Toggle 
+                variant="success" 
+                id="dropdown-category-se06"
+                className="dropdown-toggle-se144"
+              >
+                {selectedCategoryFilter} <span className="dropdown-arrow-se07">▼</span>
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="dropdown-menu-se145 category-dropdown-menu-se08">
+                <Dropdown.Item 
+                  onClick={() => handleCategoryFilter(null, "Todas las Categorías")}
+                  className="dropdown-item-se146"
+                >
+                  Todas las Categorías
+                </Dropdown.Item>
+                {categorias.map((categoria) => (
+                  <Dropdown.Item 
+                    key={categoria.id ?? categoria.id_cat ?? categoria.id_categoria} 
+                    onClick={() => handleCategoryFilter(categoria.id ?? categoria.id_cat ?? categoria.id_categoria, (categoria.nom_cat || categoria.nom_categoria || categoria.nombre))}
+                    className="dropdown-item-se146"
+                  >
+                    {categoria.nom_cat || categoria.nom_categoria || categoria.nombre}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+
+            <Dropdown className="subcategory-filter-dropdown-se09">
+              <Dropdown.Toggle 
+                variant="success" 
+                id="dropdown-subcategory-se09"
+                className="dropdown-toggle-se144"
+              >
+                {selectedSubcategoryFilter} <span className="dropdown-arrow-se07">▼</span>
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="dropdown-menu-se145 subcategory-dropdown-menu-se10">
+                <Dropdown.Item 
+                  onClick={() => handleSubcategoryFilter(null, "Todas las Subcategorías")}
+                  className="dropdown-item-se146"
+                >
+                  Todas las Subcategorías
+                </Dropdown.Item>
+                {subcategoriasFiltradas.map((subcategoria) => (
+                  <Dropdown.Item 
+                    key={subcategoria.id ?? subcategoria.id_subcat ?? subcategoria.id_categoria} 
+                    onClick={() => handleSubcategoryFilter(subcategoria.id ?? subcategoria.id_subcat ?? subcategoria.id_categoria, (subcategoria.nom_subcateg || subcategoria.nom_subcat || subcategoria.nombre))}
+                    className="dropdown-item-se146"
+                  >
+                    {subcategoria.nom_subcateg || subcategoria.nom_subcat || subcategoria.nombre}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+
+            <Dropdown className="estado-filter-dropdown-se11">
+              <Dropdown.Toggle 
+                variant="success" 
+                id="dropdown-estado-se11"
+                className="dropdown-toggle-se144"
+              >
+                {selectedEstadoFilter} <span className="dropdown-arrow-se07">▼</span>
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="dropdown-menu-se145 estado-dropdown-menu-se12">
+                <Dropdown.Item 
+                  onClick={() => handleEstadoFilter("Todos los Estados")}
+                  className="dropdown-item-se146"
+                >
+                  Todos los Estados
+                </Dropdown.Item>
+                {estadoOptions.map((est) => (
+                  <Dropdown.Item
+                    key={est}
+                    onClick={() => handleEstadoFilter(est)}
+                    className="dropdown-item-se146"
+                  >
+                    {est}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Button variant="success" onClick={onAgregarClick} className="btn-agregar-solicitud-se01">
+                  Agregar solicitud
+                </Button>
+              </div>
+          </div>
+
+          <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
+            <InputGroup className="search-bar-se13" style={{ maxWidth: '600px' }}>
+              <InputGroup.Text>
+                <FaSearch />
+              </InputGroup.Text>
+              <Form.Control
+                type="text"
+                placeholder="Buscar por código, nombre o descripción..."
+                value={searchTerm}
+                onChange={handleSearch}
+              />
+            </InputGroup>
+          </div>
+        </div>
+      </div>
+    </Alert>
+  );
 };
 
 const Ticketxd = ({ estado, onVerClick, detalles }) => {
@@ -80,11 +209,19 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
   );
 };
 
-  const Listaxd = ({ onVerClick, refreshKey }) => {
+  const Listaxd = ({ onVerClick, refreshKey, onAgregarClick }) => {
     const [elementoSeleccionado, setElementoSeleccionado] = useState('Todos');
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedCategoryFilter, setSelectedCategoryFilter] = useState('Todas las Categorías');
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const [selectedSubcategoryFilter, setSelectedSubcategoryFilter] = useState('Todas las Subcategorías');
+    const [selectedSubcategoryId, setSelectedSubcategoryId] = useState(null);
+    const [selectedEstadoFilter, setSelectedEstadoFilter] = useState('Todos los Estados');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [cats, setCats] = useState([]);
+    const [subcats, setSubcats] = useState([]);
 
     useEffect(() => {
       let mounted = true;
@@ -120,6 +257,35 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
             return { ...s, id_solicitud, detalles: { ...detalles, id_solicitud } };
           });
           setTickets(elementos);
+          (async () => {
+            try {
+              const allIds = new Set();
+              elementos.forEach(t => {
+                const idsCsv = t.id_elem || t.id_elem || t.detalles?.id_elem || t.detalles?.id_elem || '';
+                if (!idsCsv) return;
+                const idsArr = (typeof idsCsv === 'string' ? idsCsv : String(idsCsv)).toString().split(',').map(x => x.trim()).filter(Boolean);
+                idsArr.forEach(id => allIds.add(id));
+              });
+
+              if (allIds.size === 0) return;
+              const idList = Array.from(allIds);
+              const fetches = idList.map(id => ElementosService.obtenerPorId(id).catch(() => null));
+              const elements = await Promise.all(fetches);
+              const elementMap = new Map();
+              elements.filter(Boolean).forEach(el => {
+                if (el && (el.id !== undefined && el.id !== null)) elementMap.set(String(el.id), el);
+              });
+              const withInfo = elementos.map(t => {
+                const idsCsv = t.id_elem || t.detalles?.id_elem || '';
+                const idsArr = idsCsv ? (String(idsCsv).split(',').map(x => x.trim()).filter(Boolean)) : [];
+                const elementosInfo = idsArr.map(id => elementMap.get(String(id))).filter(Boolean);
+                return { ...t, detalles: { ...(t.detalles || {}), elementosInfo } };
+              });
+              setTickets(withInfo);
+            } catch (e) {
+              console.error('Error precargando elementosInfo:', e);
+            }
+          })();
         })
         .catch(err => {
           console.error('Error al obtener solicitudes:', err);
@@ -129,12 +295,138 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
       return () => { mounted = false; };
     }, [refreshKey]);
 
-    const ticketsFiltrados = elementoSeleccionado === 'Todos'
-      ? tickets
-      : tickets.filter(ticket => {
-          const nombre = (ticket.elemento || ticket.detalles?.elemento || '').toString();
-          return nombre.toLowerCase() === elementoSeleccionado.toLowerCase();
-        });
+    useEffect(() => {
+      let mounted = true;
+      const loadCats = async () => {
+        try {
+          const cs = await obtenerCategoria();
+          const scs = await obtenerSubcategorias();
+          if (!mounted) return;
+          setCats(Array.isArray(cs) ? cs : []);
+          setSubcats(Array.isArray(scs) ? scs : []);
+        } catch (e) {
+          console.error('Error cargando categorías/subcategorías en header', e);
+        }
+      };
+      loadCats();
+      return () => { mounted = false; };
+    }, []);
+
+    const subcategoriasFiltradas = selectedCategoryId
+      ? subcats.filter(sc => Number(sc.id_cat ?? sc.id_categoria ?? sc.id) === Number(selectedCategoryId))
+      : subcats;
+
+    const handleCategoryFilter = (id, name) => {
+      setSelectedCategoryFilter(name);
+      setSelectedCategoryId(id ?? null);
+      setSelectedSubcategoryFilter('Todas las Subcategorías');
+      setSelectedSubcategoryId(null);
+    };
+
+    const handleSubcategoryFilter = (id, name) => {
+      setSelectedSubcategoryFilter(name);
+      setSelectedSubcategoryId(id ?? null);
+    };
+    const handleEstadoFilter = (name) => { setSelectedEstadoFilter(name); };
+    const handleSearch = (e) => { setSearchTerm(e.target ? e.target.value : e); };
+
+    const STATUS_MAP = {1: 'Pendiente', 2: 'Aprobado', 3: 'Rechazado', 4: 'En uso', 5: 'Finalizado'};
+
+    const estadoOptions = Array.from(new Set(tickets.map(t => {
+      let s = t.estado ?? t.detalles?.estado ?? t.detalles?.est_soli ?? t.detalles?.estadosolicitud ?? '';
+      if (s === null || s === undefined || s === '') return '';
+      if (typeof s === 'number' || (/^\d+$/.test(String(s)))) {
+        const n = Number(s);
+        return STATUS_MAP[n] || String(s);
+      }
+      return String(s);
+    }).filter(Boolean)));
+
+    const ticketsFiltrados = tickets.filter(ticket => {
+      if (selectedCategoryId) {
+        const possibleCatIds = [
+          ticket.detalles?.id_cat,
+          ticket.detalles?.id_categoria,
+          ticket.detalles?.idCategoria,
+          ticket.categoria_id,
+          ticket.categoria?.id,
+          ticket.id_cat,
+          ticket.id_categoria,
+          ticket.id
+        ].filter(v => v !== undefined && v !== null && v !== '')
+         .map(v => Number(v)).filter(n => !isNaN(n));
+        if (possibleCatIds.length > 0) {
+          if (!possibleCatIds.some(v => v === Number(selectedCategoryId))) return false;
+        } else {
+          const ticketCat = (ticket.detalles?.nom_cat || ticket.categoria || ticket.detalles?.categoria || '').toString().toLowerCase();
+          if (ticketCat !== selectedCategoryFilter.toString().toLowerCase()) return false;
+        }
+      } else if (selectedCategoryFilter && selectedCategoryFilter !== 'Todas las Categorías') {
+        const ticketCat = (ticket.detalles?.nom_cat || ticket.categoria || ticket.detalles?.categoria || '').toString().toLowerCase();
+        if (ticketCat !== selectedCategoryFilter.toString().toLowerCase()) return false;
+      }
+
+      if (selectedSubcategoryId) {
+        const possibleSubIds = [
+          ticket.detalles?.id_subcat,
+          ticket.detalles?.id_subcategoria,
+          ticket.detalles?.idSubcategoria,
+          ticket.subcategoria_id,
+          ticket.subcategoria?.id,
+          ticket.id_subcat,
+          ticket.id_subcategoria
+        ].filter(v => v !== undefined && v !== null && v !== '')
+         .map(v => Number(v)).filter(n => !isNaN(n));
+        if (possibleSubIds.length > 0) {
+          if (!possibleSubIds.some(v => v === Number(selectedSubcategoryId))) return false;
+        } else {
+          const ticketSub = (ticket.detalles?.nom_subcat || ticket.subcategoria || ticket.detalles?.subcategoria || '').toString().toLowerCase();
+          if (ticketSub !== selectedSubcategoryFilter.toString().toLowerCase()) return false;
+        }
+      } else if (selectedSubcategoryFilter && selectedSubcategoryFilter !== 'Todas las Subcategorías') {
+        const ticketSub = (ticket.detalles?.nom_subcat || ticket.subcategoria || ticket.detalles?.subcategoria || '').toString().toLowerCase();
+        if (ticketSub !== selectedSubcategoryFilter.toString().toLowerCase()) return false;
+      }
+      if (selectedEstadoFilter && selectedEstadoFilter !== 'Todos los Estados') {
+        let estadoVal = ticket.estado ?? ticket.detalles?.estado ?? ticket.detalles?.est_soli ?? ticket.detalles?.estadosolicitud ?? '';
+        if (estadoVal === null || estadoVal === undefined) estadoVal = '';
+        if (typeof estadoVal === 'number' || (/^\d+$/.test(String(estadoVal)))) {
+          const n = Number(estadoVal);
+          estadoVal = STATUS_MAP[n] || String(estadoVal);
+        }
+        if (String(estadoVal).toLowerCase() !== selectedEstadoFilter.toString().toLowerCase()) return false;
+      }
+      if (searchTerm && searchTerm.toString().trim() !== '') {
+        const s = searchTerm.toString().toLowerCase();
+
+        const elementInfoNames = (ticket.detalles?.elementosInfo || []).map(e => (
+          e?.nom_elemento || e?.nom_elem || e?.nombre || e?.nombreElemento || e?.nombre_elemento || e?.nombre_elem || ''
+        )).filter(Boolean).join(', ');
+
+        const fields = [
+
+          ticket.detalles?.elemento,
+          ticket.detalles?.elementNames,
+          elementInfoNames,
+          ticket.elemento,
+          ticket.detalles?.usuario,
+          ticket.detalles?.nom_usu,
+          ticket.detalles?.nombre_usuario,
+          ticket.usuario,
+          ticket.nombre_usuario,
+          ticket.id_solicitud,
+          ticket.id,
+          ticket._id
+        ].filter(Boolean).map(f => f.toString().toLowerCase());
+
+        if (!fields.some(f => f.includes(s))) return false;
+      }
+      if (elementoSeleccionado && elementoSeleccionado !== 'Todos') {
+        const nombre = (ticket.elemento || ticket.detalles?.elemento || '').toString();
+        if (nombre.toLowerCase() !== elementoSeleccionado.toLowerCase()) return false;
+      }
+      return true;
+    });
 
     const handleSelectElemento = (elemento) => { setElementoSeleccionado(elemento); };
 
@@ -143,27 +435,20 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
 
     return (
       <div className="lista-tickets-1613">
-        <Alert variant="success" className="alert-1614">
-          <div className="d-flex justify-content-between align-items-center">
-            <div className="d-flex align-items-center gap-3">
-              <Dropdown>
-                <Dropdown.Toggle 
-                  variant="success" 
-                  id="dropdown-basic-1615"
-                  className="dropdown-toggle-xd146"
-                >
-                  Elemento
-                </Dropdown.Toggle>
-                <Dropdown.Menu className="dropdown-menu-xd147">
-                  <Dropdown.Item onClick={() => handleSelectElemento('Todos')} className="dropdown-item-xd148">Todos</Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleSelectElemento('Portatil')} className="dropdown-item-xd148">Portátiles</Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleSelectElemento('Equipo de escritorio')} className="dropdown-item-xd148">Equipos de escritorio</Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleSelectElemento('Televisor')} className="dropdown-item-xd148">Televisores</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-          </div>
-        </Alert>
+        <SolielementosHeader
+          categorias={cats}
+          subcategoriasFiltradas={subcategoriasFiltradas}
+          selectedCategoryFilter={selectedCategoryFilter}
+          selectedSubcategoryFilter={selectedSubcategoryFilter}
+          selectedEstadoFilter={selectedEstadoFilter}
+          handleCategoryFilter={handleCategoryFilter}
+          handleSubcategoryFilter={handleSubcategoryFilter}
+          handleEstadoFilter={handleEstadoFilter}
+          estadoOptions={estadoOptions}
+          searchTerm={searchTerm}
+          handleSearch={handleSearch}
+          onAgregarClick={onAgregarClick}
+        />
 
         {ticketsFiltrados.length === 0 ? (
           <div className="elemento-empty-placeholder-1640">
@@ -173,35 +458,95 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
             </div>
           </div>
         ) : (
-          <div className="cards-container-1616">
-            {ticketsFiltrados.map((t, i) => {
-            const detalles = t.detalles ? t.detalles : {
-              fecha1: t.fecha1,
-              fecha2: t.fecha2,
-              elemento: t.elemento,
-              elementoserie: t.elementoserie,
-              accesorios: t.accesorios,
-              accesoriosserie: t.accesoriosserie,
-              usuario: t.usuario,
-              tecnico: t.tecnico,
-              ambiente: t.ambiente,
-              estado: t.estado
-            };
-            const estado = t.estado || detalles.estado || '';
-            return (
-              <Ticketxd key={t.id_solicitud ?? t.id ?? t._id ?? i} estado={estado} detalles={detalles} onVerClick={() => onVerClick({ ...detalles, id_solicitud: t.id_solicitud ?? t.id ?? t._id ?? i })} />
-            );
-            })}
-          </div>
+          <PaginatedCards
+            items={ticketsFiltrados}
+            renderItem={(t, i) => {
+              const detalles = t.detalles ? t.detalles : {
+                fecha1: t.fecha1,
+                fecha2: t.fecha2,
+                elemento: t.elemento,
+                elementoserie: t.elementoserie,
+                accesorios: t.accesorios,
+                accesoriosserie: t.accesoriosserie,
+                usuario: t.usuario,
+                tecnico: t.tecnico,
+                ambiente: t.ambiente,
+                estado: t.estado
+              };
+              const estado = t.estado || detalles.estado || '';
+              return (
+                <Ticketxd key={t.id_solicitud ?? t.id ?? t._id ?? i} estado={estado} detalles={detalles} onVerClick={() => onVerClick({ ...detalles, id_solicitud: t.id_solicitud ?? t.id ?? t._id ?? i })} />
+              );
+            }}
+            itemsPerPage={8}
+          />
         )}
       </div>
     );
   };
 
+const PaginatedCards = ({ items = [], renderItem, itemsPerPage = 8 }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.max(1, Math.ceil((Array.isArray(items) ? items.length : 0) / itemsPerPage));
+
+  useEffect(() => {
+
+    setCurrentPage(prev => {
+      if (!items || items.length === 0) return 1;
+      const tp = Math.max(1, Math.ceil(items.length / itemsPerPage));
+      return prev > tp ? tp : 1;
+    });
+  }, [items]);
+
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const pageItems = Array.isArray(items) ? items.slice(start, end) : [];
+
+  const handlePageChange = (n) => {
+    const nn = Number(n) || 1;
+    if (nn < 1) return setCurrentPage(1);
+    if (nn > totalPages) return setCurrentPage(totalPages);
+    setCurrentPage(nn);
+  };
+
+  return (
+    <>
+      <div className="cards-container-1616">
+        {pageItems.map((it, i) => renderItem(it, (start + i)))}
+      </div>
+
+      <div className="pagination-1617">
+        <div className="pagination-inner-1618">
+          {Array.from({ length: totalPages }, (_, idx) => {
+            const num = idx + 1;
+            return (
+              <label key={num}>
+                <input
+                  value={String(num)}
+                  name="value-radio"
+                  id={`value-${num}`}
+                  type="radio"
+                  checked={currentPage === num}
+                  onChange={() => handlePageChange(num)}
+                />
+                <span onClick={() => handlePageChange(num)}>{num}</span>
+              </label>
+            );
+          })}
+          <span className="selection-1619" />
+        </div>
+      </div>
+    </>
+  );
+};
+
 const Solielemento = () => {
-  const { roles } = useAuth();
+  const { roles, user } = useAuth();
   const isAdmin = Array.isArray(roles) && roles.includes('ADMINISTRADOR');
   const [listRefreshKey, setListRefreshKey] = useState(0);
+  const [equiposDisponibles, setEquiposDisponibles] = useState([]);
+  const [showSolicitudModal, setShowSolicitudModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [nowMin, setNowMin] = useState('');
   const [endOfDay, setEndOfDay] = useState('');
@@ -253,7 +598,6 @@ const Solielemento = () => {
         const idsCsv = solicitudFull?.id_elem || (solicitudFull?.id_elem?.toString && solicitudFull.id_elem.toString()) || '';
         const ids = idsCsv ? idsCsv.toString().split(',').map(x => x.trim()).filter(Boolean) : [];
         const elementosInfo = await Promise.all(ids.map(i => ElementosService.obtenerPorId(i).catch(() => null)));
-        // Normalizar nombres/series de elementos consultados. Intentar varias claves posibles.
         const elementNames = elementosInfo.map(e => (
           e?.nom_elemento || e?.nom_elem || e?.nombre || e?.nombreElemento || e?.nombre_elemento || e?.nombre_elem || ''
         )).filter(Boolean);
@@ -312,6 +656,21 @@ const Solielemento = () => {
 
   };
 
+  const handleAgregarClick = async () => {
+    try {
+      const data = await ElementosService.obtenerElementos();
+      const subcategoria = 'Portatil';
+      const portatiles = Array.isArray(data) ? data.filter((item) => (
+        (item.sub_catg === subcategoria || item.nom_eleme === subcategoria || item.nom_elemento === subcategoria) && item.est === 1
+      )) : [];
+      setEquiposDisponibles(portatiles);
+      setShowSolicitudModal(true);
+    } catch (e) {
+      console.error('Error cargando equipos disponibles para solicitud:', e);
+      alert('Error al cargar equipos disponibles. Intente nuevamente.');
+    }
+  };
+
   const handleCloseModal = () => {
     setShowModal(false);
     setModalDetalles(null);
@@ -324,7 +683,6 @@ const Solielemento = () => {
     if (!showModal) return;
     let mounted = true;
     const load = async () => {
-      // establecer límites de fecha/hora: ahora (local) como mínimo y fin del día como máximo
       try {
         const toLocalInput = (d) => {
           const date = (d instanceof Date) ? d : new Date(d);
@@ -494,24 +852,8 @@ const Solielemento = () => {
   return (
     <div className="page-with-footer-1639">
       <HeaderAd />
-      <Listaxd onVerClick={handleVerClick} refreshKey={listRefreshKey} />
-      <div className="pagination-1617">
-        <div className="pagination-inner-1618">
-          <label>
-            <input value="1" name="value-radio" id="value-1" type="radio" defaultChecked />
-            <span>1</span>
-          </label>
-          <label>
-            <input value="2" name="value-radio" id="value-2" type="radio" />
-            <span>2</span>
-          </label>
-          <label>
-            <input value="3" name="value-radio" id="value-3" type="radio" />
-            <span>3</span>
-          </label>
-          <span className="selection-1619"></span>
-        </div>
-      </div>
+      <Listaxd onVerClick={handleVerClick} refreshKey={listRefreshKey} onAgregarClick={handleAgregarClick} />
+      
       <Modal show={showModal} onHide={handleCloseModal} centered dialogClassName="modern-modal-dialog-1627">
         <Modal.Header closeButton className="modern-modal-header-1628">
           <Modal.Title className="modern-modal-title-1629">Detalles de la solicitud</Modal.Title>
@@ -712,6 +1054,13 @@ const Solielemento = () => {
         </Modal.Footer>
       </Modal>
       <Footer />
+      <SolicitudModalPort
+        show={showSolicitudModal}
+        handleHide={() => setShowSolicitudModal(false)}
+        equiposDisponibles={equiposDisponibles}
+        userId={user?.id || user?.id_usu || user?.id_usuario || 1}
+        onCreated={() => setListRefreshKey(k => k + 1)}
+      />
     </div>
   );
 };

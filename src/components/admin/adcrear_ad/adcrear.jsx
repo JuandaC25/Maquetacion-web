@@ -24,7 +24,8 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
             setEditedUser({
                 ...userDetails,
                 estadoEdit: userDetails.nom_est === 1 ? 'activo' : 'inactivo',
-                rolEdit: rolActual
+                rolEdit: rolActual,
+                password: '' // no devolvemos la contraseña desde el backend, permitir ingresar nueva contraseña
             });
         }
         setEditMode(false);
@@ -64,6 +65,14 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
                     usuarioActualizado.id_rl = idRol;
                 }
             }
+
+            if (editedUser.password && editedUser.password.length > 0) {
+                if (editedUser.password.length < 6) {
+                    alert('La contraseña debe tener al menos 6 caracteres.');
+                    return;
+                }
+                usuarioActualizado.password = editedUser.password;
+            }
             
             console.log('Guardando cambios:', usuarioActualizado);
             console.log('ID del usuario:', userDetails.id_usuari);
@@ -102,7 +111,33 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
                         />
                     </div>
                 </div>
-                
+                    <div className="detail-item-xd115">
+                        <label className="detail-label-xd116">Contraseña:</label>
+                        <div className="detail-value-display-xd117">
+                            {editMode ? (
+                                <Form.Control
+                                    type="password"
+                                    value={editedUser.password || ''}
+                                    onChange={(e) => handleEditChange('password', e.target.value)}
+                                    placeholder="Ingrese nueva contraseña (dejar vacío para no cambiar)"
+                                    className="modern-form-control-xd118"
+                                />
+                            ) : (
+                                <>
+                                    <Form.Control
+                                        type="text"
+                                        value={'********'}
+                                        readOnly
+                                        className="modern-form-control-xd118"
+                                    />
+                                    <Form.Text className="text-muted" style={{ display: 'block', marginTop: '6px' }}>
+                                        La contraseña no se muestra por seguridad. Ingrese una nueva para cambiarla.
+                                    </Form.Text>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
                 <div className="detail-item-xd115">
                     <label className="detail-label-xd116">Correo electrónico:</label>
                     <div className="detail-value-display-xd117">
