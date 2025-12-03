@@ -12,7 +12,7 @@ import ReportarEquipo from '../../Home/ReportarEquipo/ReportarEquipo.jsx';
 import { obtenerCategoria } from '../../../api/CategoriaApi.js';
 import { obtenersolicitudes } from '../../../api/solicitudesApi.js';
 
-const Listaxd = ({ onVerClick, onCrearClick }) => {
+const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial }) => {
   // --- MODAL HISTORIAL DE TICKETS ---
   const [showHistorialModal, setShowHistorialModal] = useState(false);
   const [historialTicket, setHistorialTicket] = useState([]);
@@ -25,25 +25,34 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(16);
-    doc.text('Historial de Ticket', 10, 15);
+    doc.text('Historial de trazabilidad', 10, 15);
     if (historialTicket && historialTicket.length > 0) {
       let y = 30;
       historialTicket.forEach((h, idx) => {
+        const id = h.id_trsa ?? h.id ?? '';
+        const fecha = h.fech ?? h.fecha ?? '';
+        const observ = h.obser ?? h.obse ?? h.descripcion ?? '';
+        const elemento = h.nom_elemen ?? h.nom_elem ?? h.elemento ?? '';
+        const ticketNum = h.id_ticet ?? h.id_tickets ?? historialTicketId ?? '';
+        const usuario = h.nom_us ?? h.nom_usu ?? (h.usuario && h.usuario.nombre) ?? '';
         doc.setFontSize(12);
-        doc.text(`ID: ${h.id || ''}`, 10, y);
-        doc.text(`Descripción: ${h.descripcion || ''}`, 10, y + 7);
-        doc.text(`Fecha: ${h.fecha || ''}`, 10, y + 14);
-        y += 22;
-        if (y > 270) {
+        doc.text(`ID: ${id}`, 10, y);
+        doc.text(`Fecha: ${fecha}`, 10, y + 7);
+        doc.text(`Ticket: ${ticketNum}`, 10, y + 14);
+        doc.text(`Usuario: ${usuario}`, 10, y + 21);
+        doc.text(`Elemento: ${elemento}`, 10, y + 28);
+        doc.text(`Observación: ${observ}`, 10, y + 35);
+        y += 48;
+        if (y > 260) {
           doc.addPage();
           y = 20;
         }
       });
     } else {
       doc.setFontSize(12);
-      doc.text('No hay historial para este ticket.', 10, 30);
+      doc.text('No hay entradas de trazabilidad para este ticket.', 10, 30);
     }
-    doc.save(`historial_ticket_${historialTicketId || ''}.pdf`);
+    doc.save(`trasabilidad_ticket_${historialTicketId || ''}.pdf`);
   };
 
   const handleOpenHistorialModal = async (ticket) => {
@@ -315,14 +324,13 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
                 </Dropdown.Menu>
               </Dropdown>
             </div>
-              {/* Contador eliminado por solicitud del usuario */}
           </div>
           <div className="header-buttons-section">
             <div style={{ 
               display: 'inline-block', 
-              marginLeft: '20px',
-              marginRight: '10px',
-              height: '40px' // Match dropdown height
+              marginRight: 8,
+              marginLeft: 0,
+              height: '40px' 
             }}>
               <button 
                 onClick={onCrearClick}
@@ -404,6 +412,30 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
                 }}>Añadir Ticket</span>
               </button>
             </div>
+            <div style={{ display: 'inline-block', marginLeft: 8 }}>
+              <button 
+                type="button"
+                onClick={() => onOpenAllHistorial && onOpenAllHistorial()}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: '#28a745',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  padding: '0.6rem 1.2rem',
+                  color: 'white',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  fontSize: '0.9375rem',
+                  height: '40px',
+                  boxSizing: 'border-box'
+                }}
+              >
+                Historial de tickets
+              </button>
+            </div>
           </div>
         </div>
       </Alert>
@@ -468,37 +500,68 @@ const Listaxd = ({ onVerClick, onCrearClick }) => {
         <Modal.Header closeButton>
           <Modal.Title>Historial de tickets</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="modal-body-1222 modal-body">
           {historialLoading ? (
             <div className="text-center py-4">Cargando historial...</div>
           ) : historialError ? (
             <Alert variant="danger">{historialError}</Alert>
           ) : historialTicket && historialTicket.length > 0 ? (
-            <div style={{ maxHeight: 400, overflowY: 'auto' }}>
-              {historialTicket.map((h) => (
-                <div key={h.id} style={{ borderBottom: '1px solid #eee', marginBottom: 12, paddingBottom: 8 }}>
-                  <div><b>ID:</b> {h.id}</div>
-                  <div><b>Descripción:</b> {editMode ? (
-                    <input type="text" value={historialEdit[h.id]?.descripcion ?? h.descripcion ?? ''} onChange={e => handleEditHistorialChange(h.id, 'descripcion', e.target.value)} style={{ width: '80%' }} />
-                  ) : (
-                    <span>{h.descripcion}</span>
-                  )}</div>
-                  <div><b>Fecha:</b> {editMode ? (
-                    <input type="text" value={historialEdit[h.id]?.fecha ?? h.fecha ?? ''} onChange={e => handleEditHistorialChange(h.id, 'fecha', e.target.value)} style={{ width: '60%' }} />
-                  ) : (
-                    <span>{h.fecha}</span>
-                  )}</div>
-                  {editMode && (
-                    <Button size="sm" variant="success" style={{ marginTop: 6 }} onClick={() => handleSaveHistorial(h.id)} disabled={historialLoading}>Guardar</Button>
-                  )}
-                </div>
-              ))}
+            <div className="historial-list" style={{ maxHeight: 400, overflowY: 'auto' }}>
+              {historialTicket.map((h) => {
+                const id = h.id_trsa ?? h.id ?? '';
+                const fecha = h.fech ?? h.fecha ?? '';
+                const observ = h.obser ?? h.obse ?? h.descripcion ?? '';
+                const elemento = h.nom_elemen ?? h.nom_elem ?? h.elemento ?? '';
+                const ticketNum = h.id_ticet ?? h.id_tickets ?? historialTicketId ?? '';
+                const usuario = h.nom_us ?? h.nom_usu ?? (h.usuario && h.usuario.nombre) ?? '';
+                return (
+                  <div key={id || Math.random()} className="historial-card report-card">
+                    <div className="report-header">
+                      <div className="report-title">Trazabilidad — Entrada #{id}</div>
+                      <div className="report-sub">Ticket: <span className="mono">{ticketNum}</span></div>
+                    </div>
+
+                    <div className="report-meta">
+                      <div className="meta-item">
+                        <div className="meta-label">Fecha</div>
+                        <div className="meta-value">{fecha}</div>
+                      </div>
+                      <div className="meta-item">
+                        <div className="meta-label">Usuario</div>
+                        <div className="meta-value">{usuario}</div>
+                      </div>
+                      <div className="meta-item">
+                        <div className="meta-label">Elemento</div>
+                        <div className="meta-value">{elemento}</div>
+                      </div>
+                      <div className="meta-item">
+                        <div className="meta-label">ID interno</div>
+                        <div className="meta-value mono">{id}</div>
+                      </div>
+                    </div>
+
+                    <div className="report-body">
+                      <div className="report-section-label">Observación</div>
+                      <div className="report-observacion">{observ}</div>
+                    </div>
+
+                    {editMode && (
+                      <div className="historial-edit">
+                        <Form.Control as="textarea" rows={4} value={historialEdit[id]?.observ ?? observ} onChange={e => handleEditHistorialChange(id, 'obser', e.target.value)} />
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                          <Button size="sm" variant="success" className="mt-2" onClick={() => handleSaveHistorial(id)} disabled={historialLoading}>Guardar</Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div>No hay historial para este ticket.</div>
           )}
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="modal-footer-1226">
           <Button variant="secondary" onClick={handleCloseHistorialModal}>Cerrar</Button>
           <Button variant={editMode ? "outline-warning" : "warning"} onClick={() => setEditMode((v) => !v)} disabled={historialLoading || !historialTicket || historialTicket.length === 0} style={{ marginLeft: 8 }}>
             {editMode ? "Cancelar edición" : "Editar"}
@@ -550,6 +613,8 @@ const Admin = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalDetalles, setModalDetalles] = useState(null);
   const [showCrearModal, setShowCrearModal] = useState(false);
+  const [showAllHistorialModal, setShowAllHistorialModal] = useState(false);
+  const [downloadAllLoading, setDownloadAllLoading] = useState(false);
   const [editandoEstado, setEditandoEstado] = useState(false);
   const [nuevoEstado, setNuevoEstado] = useState('');
   const [guardando, setGuardando] = useState(false);
@@ -639,29 +704,14 @@ const Admin = () => {
   return (
     <div className="page-with-footer-1227">
       <HeaderAd />
-      <Listaxd onVerClick={handleVerClick} onCrearClick={handleOpenCrearModal} />
+      <Listaxd onVerClick={handleVerClick} onCrearClick={handleOpenCrearModal} onOpenAllHistorial={() => setShowAllHistorialModal(true)} />
       <Modal show={showModal} onHide={handleCloseModal} className="modal-1220" centered>
         <Modal.Header closeButton className="modal-header-1221">
           <Modal.Title>Detalles del Ticket</Modal.Title>
         </Modal.Header>
         <Modal.Body className="modal-body-1222">
-                    <div className="form-row-1223">
-                      <label className="form-label-1224">Usuario:</label>
-                      <div className="form-control-wrap-1225">
-                        <Form.Control 
-                          type="text" 
-                          value={
-                            modalDetalles?.nom_usu ||
-                            modalDetalles?.usuario?.nombre ||
-                            modalDetalles?.nombre_usuario ||
-                            'No disponible'
-                          }
-                          readOnly
-                        />
-                      </div>
-                    </div>
           <div className="form-row-1223">
-            <label className="form-label-1224">ID Ticket:</label>
+            <label className="form-label-1224">Número del Ticket:</label>
             <div className="form-control-wrap-1225">
               <Form.Control 
                 type="text" 
@@ -670,6 +720,7 @@ const Admin = () => {
               />
             </div>
           </div>
+          
           <div className="form-row-1223">
             <label className="form-label-1224">Fecha de inicio:</label>
             <div className="form-control-wrap-1225">
@@ -680,6 +731,7 @@ const Admin = () => {
               />
             </div>
           </div>
+          
           <div className="form-row-1223">
             <label className="form-label-1224">Fecha de fin:</label>
             <div className="form-control-wrap-1225">
@@ -690,6 +742,7 @@ const Admin = () => {
               />
             </div>
           </div>
+
           <div className="form-row-1223">
             <label className="form-label-1224">Ambiente:</label>
             <div className="form-control-wrap-1225">
@@ -700,6 +753,7 @@ const Admin = () => {
               />
             </div>
           </div>
+          
           <div className="form-row-1223">
             <label className="form-label-1224">Problema:</label>
             <div className="form-control-wrap-1225">
@@ -721,6 +775,39 @@ const Admin = () => {
                   readOnly 
                 />
               )}
+            </div>
+          </div>
+          
+          
+          <div className="form-row-1223">
+            <label className="form-label-1224">Usuario:</label>
+            <div className="form-control-wrap-1225">
+              <Form.Control 
+                type="text" 
+                value={
+                  modalDetalles?.nom_usu || 
+                  modalDetalles?.usuario?.nombre || 
+                  'No disponible'
+                } 
+                readOnly 
+              />
+            </div>
+          </div>
+          
+          <div className="form-row-1223">
+            <label className="form-label-1224">Nombre del Elemento:</label>
+            <div className="form-control-wrap-1225">
+              <Form.Control 
+                type="text" 
+                value={
+                  modalDetalles?.nom_elem || 
+                  modalDetalles?.nom_elemento || 
+                  modalDetalles?.elemento || 
+                  modalDetalles?.nombre || 
+                  'No disponible'
+                } 
+                readOnly 
+              />
             </div>
           </div>
           
@@ -775,7 +862,6 @@ const Admin = () => {
         </Modal.Footer>
       </Modal>
 
-      {/* Modal para crear ticket usando componente de instructor */}
       <Modal show={showCrearModal} onHide={() => setShowCrearModal(false)} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>🚨 Reportar Equipo / Crear Ticket</Modal.Title>
@@ -790,6 +876,94 @@ const Admin = () => {
             </Button>
           </div>
         </Modal.Body>
+      </Modal>
+
+      <Modal show={showAllHistorialModal} onHide={() => setShowAllHistorialModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Descargar historial de tickets</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Vas a descargar un único PDF que contendrá las entradas de trazabilidad de todos los tickets. ¿Deseas continuar?</p>
+          {downloadAllLoading && (
+            <div className="text-center">
+              <Spinner animation="border" /> <div className="mt-2">Generando PDF...</div>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowAllHistorialModal(false)} disabled={downloadAllLoading}>Cancelar</Button>
+          <Button variant="success" onClick={async () => {
+            setDownloadAllLoading(true);
+            try {
+              const ticketsList = await obtenerTickets();
+              const fetches = (Array.isArray(ticketsList) ? ticketsList : []).map(async (t) => {
+                const id = t.id_tickets ?? t.id;
+                try {
+                  const data = await obtenerHistorialPorTicket(id);
+                  return { ticketId: id, ticket: t, entries: Array.isArray(data) ? data : [] };
+                } catch (e) {
+                  return { ticketId: id, ticket: t, entries: [] };
+                }
+              });
+              const results = await Promise.all(fetches);
+
+              const allEntries = [];
+              results.forEach(r => {
+                (r.entries || []).forEach(e => {
+                  allEntries.push({
+                    ...e,
+                    _ticketId: r.ticketId,
+                    _ticketObj: r.ticket
+                  });
+                });
+              });
+
+              const doc = new jsPDF();
+              doc.setFontSize(18);
+              const title = 'Reporte de Trazabilidad - Todos los tickets';
+              doc.text(title, 10, 15);
+              doc.setFontSize(11);
+              let y = 30;
+              if (allEntries.length === 0) {
+                doc.text('No se encontraron entradas de trazabilidad.', 10, y);
+              } else {
+                allEntries.forEach((h, idx) => {
+                  const id = h.id_trsa ?? h.id ?? '';
+                  const fecha = h.fech ?? h.fecha ?? '';
+                  const observ = h.obser ?? h.obse ?? h.descripcion ?? '';
+                  const elemento = h.nom_elemen ?? h.nom_elem ?? h.elemento ?? '';
+                  const ticketNum = h._ticketId ?? h.id_ticet ?? h.id_tickets ?? '';
+                  const usuario = h.nom_us ?? h.nom_usu ?? (h.usuario && h.usuario.nombre) ?? '';
+
+                  doc.setFontSize(12);
+                  doc.text(`Entrada #${id} — Ticket: ${ticketNum}`, 10, y);
+                  y += 7;
+                  doc.setFontSize(10);
+                  doc.text(`Fecha: ${fecha}`, 10, y);
+                  y += 6;
+                  doc.text(`Usuario: ${usuario}`, 10, y);
+                  y += 6;
+                  doc.text(`Elemento: ${elemento}`, 10, y);
+                  y += 8;
+                  // Observación possibly multiline
+                  const lines = doc.splitTextToSize(`Observación: ${observ}`, 180);
+                  doc.text(lines, 10, y);
+                  y += (lines.length * 6) + 8;
+
+                  if (y > 270) { doc.addPage(); y = 20; }
+                });
+              }
+              const now = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+              doc.save(`reporte_trazabilidad_todos_${now}.pdf`);
+            } catch (err) {
+              console.error('Error generando PDF:', err);
+              alert('Error al generar el PDF: ' + err.message);
+            } finally {
+              setDownloadAllLoading(false);
+              setShowAllHistorialModal(false);
+            }
+          }} disabled={downloadAllLoading}>Descargar PDF</Button>
+        </Modal.Footer>
       </Modal>
 
       <Footer />
