@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Card, Button, Modal, Form, Carousel, ButtonGroup, ToggleButton } from "react-bootstrap";
-import "./Soli_televisor.css";
+import "./Soli_audio_video.css";
 import Footer from "../../Footer/Footer";
-import Headertele from "./Header tele/Header";
+import Headertele from "./Header audio_video/Header";
 import ElementosService from "../../../api/ElementosApi";
 import { crearSolicitud } from "../../../api/solicitudesApi";
 
@@ -76,11 +76,15 @@ function SoliciAudioVideo() {
       try {
         setIsLoading(true);
         const data = await ElementosService.obtenerElementos();
+        // Filtrar por nombre de categoría y excluir subcategorías específicas
+        const subcategoriasExcluir = [
+          "Equipo de edicion",
+          "Portátil de edicion"
+        ];
         const multimediaItems = data.filter(
           (item) =>
-            item.id_categ === 2 &&
-            item.sub_catg !== "Equipo de edicion" &&
-            item.sub_catg !== "Portátil de edicion"
+            item.categoria && item.categoria.toLowerCase() === "multimedia" &&
+            (!item.sub_catg || !subcategoriasExcluir.includes(item.sub_catg))
         );
   const activos = multimediaItems.filter((item) => item.est === 1);
         setEquiposDisponibles(activos);

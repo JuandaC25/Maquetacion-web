@@ -26,6 +26,12 @@ function Headerpedidosescritorio() {
         alert('Información actualizada con éxito.');
     }
 
+    const handleLogout = () => {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.replace("/Login");
+    }
+
     const navigateToHome = () => {
         window.location.href = "http://localhost:5173/Login";
     };
@@ -178,7 +184,7 @@ function Headerpedidosescritorio() {
                         {user?.email || user?.correo || user?.username || user?.sub || 'Sin correo'}
                     </span>
                     <button className="profile-card-btn" style={{background:'#09b41a',color:'#fff'}} onClick={handleShowEditModal}>Editar información</button>
-                    <button className="profile-card-btn" style={{background:'#09b41a',color:'#fff'}} onClick={handleCloseProfile}>Cerrar sesión</button>
+                    <button className="profile-card-btn" style={{background:'#09b41a',color:'#fff'}} onClick={handleLogout}>Cerrar sesión</button>
                 </div>
             )}
             <Modal show={showEditModal} onHide={handleCloseEditModal} centered>
