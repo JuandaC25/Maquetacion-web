@@ -645,6 +645,21 @@ const Admin = () => {
           <Modal.Title>Detalles del Ticket</Modal.Title>
         </Modal.Header>
         <Modal.Body className="modal-body-1222">
+                    <div className="form-row-1223">
+                      <label className="form-label-1224">Usuario:</label>
+                      <div className="form-control-wrap-1225">
+                        <Form.Control 
+                          type="text" 
+                          value={
+                            modalDetalles?.nom_usu ||
+                            modalDetalles?.usuario?.nombre ||
+                            modalDetalles?.nombre_usuario ||
+                            'No disponible'
+                          }
+                          readOnly
+                        />
+                      </div>
+                    </div>
           <div className="form-row-1223">
             <label className="form-label-1224">ID Ticket:</label>
             <div className="form-control-wrap-1225">
@@ -655,7 +670,6 @@ const Admin = () => {
               />
             </div>
           </div>
-          
           <div className="form-row-1223">
             <label className="form-label-1224">Fecha de inicio:</label>
             <div className="form-control-wrap-1225">
@@ -666,7 +680,6 @@ const Admin = () => {
               />
             </div>
           </div>
-          
           <div className="form-row-1223">
             <label className="form-label-1224">Fecha de fin:</label>
             <div className="form-control-wrap-1225">
@@ -677,7 +690,6 @@ const Admin = () => {
               />
             </div>
           </div>
-
           <div className="form-row-1223">
             <label className="form-label-1224">Ambiente:</label>
             <div className="form-control-wrap-1225">
@@ -688,7 +700,6 @@ const Admin = () => {
               />
             </div>
           </div>
-          
           <div className="form-row-1223">
             <label className="form-label-1224">Problema:</label>
             <div className="form-control-wrap-1225">
@@ -710,66 +721,6 @@ const Admin = () => {
                   readOnly 
                 />
               )}
-            </div>
-          </div>
-          
-          <div className="form-row-1223">
-            <label className="form-label-1224">ID Problema:</label>
-            <div className="form-control-wrap-1225">
-              <Form.Control 
-                type="text" 
-                value={
-                  modalDetalles?.probloem_id || 
-                  modalDetalles?.problem_id || 
-                  'No disponible'
-                } 
-                readOnly 
-              />
-            </div>
-          </div>
-          
-          <div className="form-row-1223">
-            <label className="form-label-1224">Usuario:</label>
-            <div className="form-control-wrap-1225">
-              <Form.Control 
-                type="text" 
-                value={
-                  modalDetalles?.nom_usu || 
-                  modalDetalles?.usuario?.nombre || 
-                  'No disponible'
-                } 
-                readOnly 
-              />
-            </div>
-          </div>
-          
-          <div className="form-row-1223">
-            <label className="form-label-1224">ID Usuario:</label>
-            <div className="form-control-wrap-1225">
-              <Form.Control 
-                type="text" 
-                value={
-                  modalDetalles?.id_usuario || 
-                  modalDetalles?.id_usu || 
-                  'No disponible'
-                } 
-                readOnly 
-              />
-            </div>
-          </div>
-          
-          <div className="form-row-1223">
-            <label className="form-label-1224">ID Elemento:</label>
-            <div className="form-control-wrap-1225">
-              <Form.Control 
-                type="text" 
-                value={
-                  modalDetalles?.id_eleme || 
-                  modalDetalles?.id_elem || 
-                  'No disponible'
-                } 
-                readOnly 
-              />
             </div>
           </div>
           

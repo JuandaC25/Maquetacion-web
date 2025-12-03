@@ -345,57 +345,37 @@ const Soliespacio = () => {
     setSelectedEspacioFilter(espacio);
   };
 
-  const solicitudesFiltradas = solicitudes.filter(solicitud => {
-    const effectiveEstadoText = (() => {
-      try {
-        const fn = solicitud.fecha_fn ? new Date(solicitud.fecha_fn) : null;
-        if (fn && !isNaN(fn.getTime()) && fn.getTime() < Date.now()) return 'TERMINADO';
-      } catch { }
-      const estadoTxt = (solicitud.est_soli || (solicitud.estadosoli != null ? String(solicitud.estadosoli) : 'DESCONOCIDO')).toString();
-      return estadoTxt.toUpperCase();
-    })();
-    const sel = String(selectedEstadoFilter || '').toUpperCase();
-    const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
-      effectiveEstadoText.toUpperCase() === sel ||
-      (sel === 'FINALIZADO' && effectiveEstadoText.toUpperCase() === 'TERMINADO') ||
-      (sel === 'TERMINADO' && effectiveEstadoText.toUpperCase() === 'FINALIZADO');
-    const coincideEspacio = selectedEspacioFilter === "Todos los Espacios" || ((solicitud.nom_espa || 'N/A').toString().toUpperCase() === String(selectedEspacioFilter).toUpperCase());
-    return coincideEstado && coincideEspacio;
-  });
+  const AVAILABLE_ESTADOS = [
+    { id: 1, label: 'Pendiente' },
+    { id: 2, label: 'Aprobado' },
+    { id: 3, label: 'Rechazado' },
+    { id: 4, label: 'Cancelado' },
+    { id: 5, label: 'Finalizado' }
+  ];
 
   const getEstadoBadge = (estado) => {
-    if (estado == null) return { text: 'DESCONOCIDO', variant: 'secondary' };
+    if (estado == null) return { text: 'Desconocido', variant: 'secondary' };
     const asNumber = Number(estado);
     if (!isNaN(asNumber)) {
       const estadosNum = {
-        1: { text: 'PENDIENTE', variant: 'warning' },
-        2: { text: 'APROBADO', variant: 'success' },
-        3: { text: 'RECHAZADO', variant: 'danger' },
-        4: { text: 'EN USO', variant: 'info' },
-        5: { text: 'FINALIZADO', variant: 'secondary' }
+        1: { text: 'Pendiente', variant: 'warning' },
+        2: { text: 'Aprobado', variant: 'success' },
+        3: { text: 'Rechazado', variant: 'danger' },
+        4: { text: 'Cancelado', variant: 'info' },
+        5: { text: 'Finalizado', variant: 'secondary' }
       };
-      return estadosNum[asNumber] || { text: String(estado).toUpperCase(), variant: 'secondary' };
+      return estadosNum[asNumber] || { text: String(estado), variant: 'secondary' };
     }
-    const texto = String(estado).toUpperCase();
+    const texto = String(estado).toLowerCase();
     const mapText = {
-      'PENDIENTE': { text: 'PENDIENTE', variant: 'warning' },
-      'APROBADO': { text: 'APROBADO', variant: 'success' },
-      'RECHAZADO': { text: 'RECHAZADO', variant: 'danger' },
-      'EN USO': { text: 'EN USO', variant: 'info' },
-      'FINALIZADO': { text: 'FINALIZADO', variant: 'secondary' },
-      'ACTIVO': { text: 'ACTIVO', variant: 'success' },
-      'INACTIVO': { text: 'INACTIVO', variant: 'secondary' }
+      'pendiente': { text: 'Pendiente', variant: 'warning' },
+      'aprobado': { text: 'Aprobado', variant: 'success' },
+      'rechazado': { text: 'Rechazado', variant: 'danger' },
+      'cancelado': { text: 'Cancelado', variant: 'info' },
+      'finalizado': { text: 'Finalizado', variant: 'secondary' }
     };
     return mapText[texto] || { text: texto, variant: 'secondary' };
   };
-
-  const AVAILABLE_ESTADOS = [
-    { id: 1, label: 'PENDIENTE' },
-    { id: 2, label: 'APROBADO' },
-    { id: 3, label: 'RECHAZADO' },
-    { id: 4, label: 'EN USO' },
-    { id: 5, label: 'FINALIZADO' }
-  ];
 
   const formatFecha = (fecha) => {
     if (!fecha) return 'N/A';
@@ -526,7 +506,25 @@ const Soliespacio = () => {
     }
   };
 
-  
+  // Declarar solicitudesFiltradas antes del return
+  const solicitudesFiltradas = solicitudes.filter(solicitud => {
+    const effectiveEstadoText = (() => {
+      const estadoNum = Number(solicitud.estadosoli ?? solicitud.est_soli);
+      switch (estadoNum) {
+        case 1: return 'Pendiente';
+        case 2: return 'Aprobado';
+        case 3: return 'Rechazado';
+        case 4: return 'Cancelado';
+        case 5: return 'Finalizado';
+        default: return 'Desconocido';
+      }
+    })();
+    const sel = String(selectedEstadoFilter || '').toLowerCase();
+    const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
+      effectiveEstadoText.toLowerCase() === sel;
+    const coincideEspacio = selectedEspacioFilter === "Todos los Espacios" || ((solicitud.nom_espa || 'N/A').toString().toUpperCase() === String(selectedEspacioFilter).toUpperCase());
+    return coincideEstado && coincideEspacio;
+  });
 
   return (
     <div className="inventory-app-container-xd25">
@@ -590,34 +588,34 @@ const Soliespacio = () => {
                     Todos los Estados
                   </Dropdown.Item>
                   <Dropdown.Item
-                    onClick={() => handleEstadoFilter("PENDIENTE")}
+                    onClick={() => handleEstadoFilter("Pendiente")}
                     className="dropdown-item-xd148"
                   >
-                    PENDIENTE
+                    Pendiente
                   </Dropdown.Item>
                   <Dropdown.Item
-                    onClick={() => handleEstadoFilter("APROBADO")}
+                    onClick={() => handleEstadoFilter("Aprobado")}
                     className="dropdown-item-xd148"
                   >
-                    APROBADO
+                    Aprobado
                   </Dropdown.Item>
                   <Dropdown.Item
-                    onClick={() => handleEstadoFilter("RECHAZADO")}
+                    onClick={() => handleEstadoFilter("Rechazado")}
                     className="dropdown-item-xd148"
                   >
-                    RECHAZADO
+                    Rechazado
                   </Dropdown.Item>
                   <Dropdown.Item
-                    onClick={() => handleEstadoFilter("EN USO")}
+                    onClick={() => handleEstadoFilter("Cancelado")}
                     className="dropdown-item-xd148"
                   >
-                    EN USO
+                    Cancelado
                   </Dropdown.Item>
                   <Dropdown.Item
-                    onClick={() => handleEstadoFilter("FINALIZADO")}
+                    onClick={() => handleEstadoFilter("Finalizado")}
                     className="dropdown-item-xd148"
                   >
-                    FINALIZADO
+                    Finalizado
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
@@ -742,25 +740,23 @@ const Soliespacio = () => {
                                     <Form onSubmit={handleConfirmApartar}>
                                       <Form.Group className="mb-3">
                                         <Form.Label>Fecha y Hora de Inicio</Form.Label>
-                                        <div className="row g-2">
-                                          <div className="col-md-6">
-                                            <Form.Control type="date" name="fecha_ini" value={reservaForm.fecha_ini} onChange={handleReservaFormChange} required />
-                                          </div>
-                                          <div className="col-md-6">
-                                            <Form.Control type="time" name="hora_ini" value={reservaForm.hora_ini} onChange={handleReservaFormChange} required />
-                                          </div>
-                                        </div>
+                                        <Form.Control
+                                          type="datetime-local"
+                                          name="fecha_ini"
+                                          value={reservaForm.fecha_ini}
+                                          onChange={handleReservaFormChange}
+                                          required
+                                        />
                                       </Form.Group>
                                       <Form.Group className="mb-3">
                                         <Form.Label>Fecha y Hora de Fin</Form.Label>
-                                        <div className="row g-2">
-                                          <div className="col-md-6">
-                                            <Form.Control type="date" name="fecha_fn" value={reservaForm.fecha_fn} onChange={handleReservaFormChange} required />
-                                          </div>
-                                          <div className="col-md-6">
-                                            <Form.Control type="time" name="hora_fn" value={reservaForm.hora_fn} onChange={handleReservaFormChange} required />
-                                          </div>
-                                        </div>
+                                        <Form.Control
+                                          type="datetime-local"
+                                          name="fecha_fn"
+                                          value={reservaForm.fecha_fn}
+                                          onChange={handleReservaFormChange}
+                                          required
+                                        />
                                       </Form.Group>
                                       <Form.Group className="mb-3">
                                         <Form.Label>Ambiente</Form.Label>
@@ -966,9 +962,13 @@ const Soliespacio = () => {
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Estado</Form.Label>
-                <div style={{ padding: '8px 12px', background: '#f5f5f5', borderRadius: 4 }}>
-                  {modalIsTerminado ? 'TERMINADO' : (nuevaSolicitud.estadosoli === 1 ? 'PENDIENTE' : nuevaSolicitud.estadosoli === 2 ? 'APROBADO' : nuevaSolicitud.estadosoli === 3 ? 'RECHAZADO' : nuevaSolicitud.estadosoli === 4 ? 'EN USO' : 'FINALIZADO')}
-                </div>
+                <Form.Select name="estadosoli" value={nuevaSolicitud.estadosoli} onChange={handleInputChange} required>
+                  <option value={1}>Pendiente</option>
+                  <option value={2}>Aprobado</option>
+                  <option value={3}>Rechazado</option>
+                  <option value={4}>Cancelado</option>
+                  <option value={5}>Finalizado</option>
+                </Form.Select>
               </Form.Group>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
                 <Button variant="secondary" onClick={handleCloseModal}>Cancelar</Button>
@@ -1009,8 +1009,11 @@ const Soliespacio = () => {
               <Form.Group className="mb-3">
                 <Form.Label>Estado</Form.Label>
                 <Form.Select value={editEspacio.estadoespacio} onChange={e => setEditEspacio(prev => ({ ...prev, estadoespacio: e.target.value }))}>
-                  <option value={1}>Activo</option>
-                  <option value={2}>Inactivo</option>
+                  <option value={1}>Pendiente</option>
+                  <option value={2}>Aprobado</option>
+                  <option value={3}>Rechazado</option>
+                  <option value={4}>Cancelado</option>
+                  <option value={5}>Finalizado</option>
                 </Form.Select>
               </Form.Group>
               {/* Aquí podrías agregar edición de imágenes si lo necesitas */}
