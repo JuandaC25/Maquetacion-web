@@ -82,6 +82,27 @@ export const actualizarUsuario = async (id, data) => {
     }
 };
 
+export const actualizarMiPerfil = async (data) => {
+    try {
+        const res = await authorizedFetch('/api/Usuarios/perfil/me', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            let msg = 'Error al actualizar perfil';
+            try { const e = await res.json(); msg = e.error || e.message || msg; } catch {}
+            throw new Error(msg);
+        }
+        return await res.json();
+    } catch (error) {
+        if (error.message?.toLowerCase().includes('failed to fetch') || error.message?.includes('NetworkError')) {
+            throw new Error('No se pudo conectar con el servidor');
+        }
+        throw error;
+    }
+};
+
 export const uploadUsuariosMasivos = async (file) => {
     try {
         const form = new FormData();

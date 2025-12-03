@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from '../../../../auth/AuthContext';
+import { actualizarMiPerfil } from '../../../../api/UsuariosApi';
 import { Navbar, Container, Nav, Button, Offcanvas, Modal, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -10,20 +11,82 @@ function Headerpedidosescritorio() {
     const [showProfile, setShowProfile] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const { user } = useAuth();
+    
+    const [formData, setFormData] = useState({
+        nom_us: '',
+        ape_us: '',
+        corre: '',
+        password: '',
+        confirmPassword: ''
+    });
+    
     const handleCloseMenu = () => setShowMenu(false);
     const handleShowMenu = () => setShowMenu(true);
     const handleCloseProfile = () => setShowProfile(false);
     const handleShowProfile = () => setShowProfile(true);
-    const handleCloseEditModal = () => setShowEditModal(false);
+    const handleCloseEditModal = () => {
+        setShowEditModal(false);
+        setFormData({
+            nom_us: '',
+            ape_us: '',
+            corre: '',
+            password: '',
+            confirmPassword: ''
+        });
+    };
     const handleShowEditModal = () => {
         setShowProfile(false);
+        // Pre-cargar datos del usuario
+        setFormData({
+            nom_us: user?.nombre || user?.name || '',
+            ape_us: user?.apellido || '',
+            corre: user?.email || user?.correo || '',
+            password: '',
+            confirmPassword: ''
+        });
         setShowEditModal(true);
     };
 
-    const handleSaveChanges = () => {
-        console.log('Guardando cambios en el perfil...');
-        handleCloseEditModal();
-        alert('Información actualizada con éxito.');
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSaveChanges = async (e) => {
+        e.preventDefault();
+        
+        // Validar contraseñas si se están cambiando
+        if (formData.password && formData.password !== formData.confirmPassword) {
+            alert('Las contraseñas no coinciden');
+            return;
+        }
+
+        try {
+            const dataToSend = {
+                nom_us: formData.nom_us,
+                ape_us: formData.ape_us,
+                corre: formData.corre
+            };
+
+            // Solo enviar password si se ingresó una nueva
+            if (formData.password) {
+                dataToSend.password = formData.password;
+            }
+
+            console.log('Datos a enviar:', dataToSend);
+            const resultado = await actualizarMiPerfil(dataToSend);
+            console.log('Respuesta del servidor:', resultado);
+            alert('Información actualizada con éxito. Por favor, inicia sesión nuevamente.');
+            handleCloseEditModal();
+            handleLogout();
+        } catch (error) {
+            console.error('Error completo:', error);
+            console.error('Mensaje de error:', error.message);
+            alert('Error al actualizar perfil: ' + error.message);
+        }
     }
 
     const handleLogout = () => {
@@ -194,13 +257,26 @@ function Headerpedidosescritorio() {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="edit-modal-body">
-                    <Form>
+                    <Form onSubmit={handleSaveChanges}>
                         <Form.Group className="mb-3" controlId="formEditName">
-                            <Form.Label>Nombre Completo</Form.Label>
+                            <Form.Label>Nombre</Form.Label>
                             <Form.Control 
                                 type="text" 
-                                placeholder="Tu Nombre Actual" 
-                                defaultValue="Nombre del Usuario"
+                                name="nom_us"
+                                placeholder="Tu Nombre" 
+                                value={formData.nom_us}
+                                onChange={handleInputChange}
+                                required 
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formEditApellido">
+                            <Form.Label>Apellido</Form.Label>
+                            <Form.Control 
+                                type="text" 
+                                name="ape_us"
+                                placeholder="Tu Apellido" 
+                                value={formData.ape_us}
+                                onChange={handleInputChange}
                                 required 
                             />
                         </Form.Group>
@@ -208,12 +284,14 @@ function Headerpedidosescritorio() {
                             <Form.Label>Correo Electrónico</Form.Label>
                             <Form.Control 
                                 type="email" 
+                                name="corre"
                                 placeholder="email@ejemplo.com" 
-                                defaultValue="Example@gmail.com"
-                                disabled 
+                                value={formData.corre}
+                                onChange={handleInputChange}
+                                required
                             />
                             <Form.Text className="text-muted">
-                                El correo es tu identificador y no se puede modificar.
+                                El correo es tu identificador. Si lo cambias, deberás iniciar sesión con el nuevo correo.
                             </Form.Text>
                         </Form.Group>
 
@@ -222,15 +300,24 @@ function Headerpedidosescritorio() {
                         <Form.Group className="mb-3" controlId="formEditNewPassword">
                             <Form.Label>Nueva Contraseña (Opcional)</Form.Label>
                             <Form.Control 
-                                type="password" 
-                                placeholder="Ingresa nueva contraseña" 
+                                type="password"
+                                name="password" 
+                                placeholder="Ingresa nueva contraseña"
+                                value={formData.password}
+                                onChange={handleInputChange}
                             />
+                            <Form.Text className="text-muted">
+                                Déjalo en blanco si no deseas cambiar la contraseña.
+                            </Form.Text>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formEditConfirmPassword">
                             <Form.Label>Confirmar Contraseña</Form.Label>
                             <Form.Control 
-                                type="password" 
-                                placeholder="Confirma nueva contraseña" 
+                                type="password"
+                                name="confirmPassword" 
+                                placeholder="Confirma nueva contraseña"
+                                value={formData.confirmPassword}
+                                onChange={handleInputChange}
                             />
                         </Form.Group>
                     </Form>
