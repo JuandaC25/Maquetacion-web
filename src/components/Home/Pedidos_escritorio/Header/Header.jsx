@@ -39,6 +39,12 @@ function Headerpedidosescritorio() {
         alert('Información actualizada con éxito.');
     }
 
+    const handleLogout = () => {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.replace("/Login");
+    }
+
     return (
         <div className='header-escritorio__container'> 
             <Navbar expand="xxxl" className="w-100">
@@ -240,8 +246,7 @@ function Headerpedidosescritorio() {
                                 <div className="profile-modal__footer-item">
                                     <Button
                                         className="profile-modal__button"
-                                        href="http://localhost:5173/Login"
-                                        onClick={handleCloseProfile}>
+                                        onClick={handleLogout}>
                                         Cerrar sesión
                                     </Button>
                                 </div>
