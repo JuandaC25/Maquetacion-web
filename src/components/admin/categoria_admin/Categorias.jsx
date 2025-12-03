@@ -9,6 +9,8 @@ import { obtenerSubcategorias, crearSubcategoria, eliminarSubcategoria,} from '.
 import { actualizarEstadoSubcategoria } from '../../../api/SubcategotiaApi.js';
 
 const Categorias = () => {
+      const [searchSubcategoria, setSearchSubcategoria] = useState("");
+    const [searchCategoria, setSearchCategoria] = useState("");
   const [categorias, setCategorias] = useState([]);
   const [subcategorias, setSubcategorias] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -195,19 +197,21 @@ const Categorias = () => {
   };
 
   const categoriasFiltradas = categorias.filter(categoria => {
-    if (filtroEstadoCategoria === 'Todos los Estados') return true;
     const estado = categoria.estado !== undefined ? categoria.estado : 1;
-    if (filtroEstadoCategoria === 'Activos') return estado === 1;
-    if (filtroEstadoCategoria === 'Inactivos') return estado !== 1;
-    return true;
+    const coincideEstado = filtroEstadoCategoria === 'Todos los Estados' ||
+      (filtroEstadoCategoria === 'Activos' && estado === 1) ||
+      (filtroEstadoCategoria === 'Inactivos' && estado !== 1);
+    const coincideNombre = searchCategoria.trim() === "" || categoria.nom_cat.toLowerCase().includes(searchCategoria.trim().toLowerCase());
+    return coincideEstado && coincideNombre;
   });
 
   const subcategoriasFiltradas = subcategorias.filter(subcategoria => {
-    if (filtroEstadoSubcategoria === 'Todos los Estados') return true;
     const estado = subcategoria.estado !== undefined ? subcategoria.estado : 1;
-    if (filtroEstadoSubcategoria === 'Activos') return estado === 1;
-    if (filtroEstadoSubcategoria === 'Inactivos') return estado !== 1;
-    return true;
+    const coincideEstado = filtroEstadoSubcategoria === 'Todos los Estados' ||
+      (filtroEstadoSubcategoria === 'Activos' && estado === 1) ||
+      (filtroEstadoSubcategoria === 'Inactivos' && estado !== 1);
+    const coincideNombre = searchSubcategoria.trim() === "" || subcategoria.nom_subcateg.toLowerCase().includes(searchSubcategoria.trim().toLowerCase());
+    return coincideEstado && coincideNombre;
   });
 
   const generarPDF = () => {
@@ -610,6 +614,13 @@ const Categorias = () => {
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
+                  <input
+                    type="text"
+                    placeholder="Buscar por nombre..."
+                    value={searchCategoria}
+                    onChange={e => setSearchCategoria(e.target.value)}
+                    style={{ marginLeft: 12, padding: '6px 12px', borderRadius: 6, border: '1px solid #ccc', minWidth: 180 }}
+                  />
                   <Button 
                     className="add-button-cat12" 
                     onClick={generarPDF}
@@ -712,6 +723,13 @@ const Categorias = () => {
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
+                  <input
+                    type="text"
+                    placeholder="Buscar por nombre..."
+                    value={searchSubcategoria}
+                    onChange={e => setSearchSubcategoria(e.target.value)}
+                    style={{ marginLeft: 12, padding: '6px 12px', borderRadius: 6, border: '1px solid #ccc', minWidth: 180 }}
+                  />
                   <Button className="add-button-cat12" onClick={handleOpenModalSubcategoria}>
                     <FaPlus /> Nueva Subcategoría
                   </Button>

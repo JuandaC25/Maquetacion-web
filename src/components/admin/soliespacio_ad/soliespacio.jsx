@@ -1009,11 +1009,8 @@ const Soliespacio = () => {
               <Form.Group className="mb-3">
                 <Form.Label>Estado</Form.Label>
                 <Form.Select value={editEspacio.estadoespacio} onChange={e => setEditEspacio(prev => ({ ...prev, estadoespacio: e.target.value }))}>
-                  <option value={1}>Pendiente</option>
-                  <option value={2}>Aprobado</option>
-                  <option value={3}>Rechazado</option>
-                  <option value={4}>Cancelado</option>
-                  <option value={5}>Finalizado</option>
+                  <option value={1}>Activado</option>
+                  <option value={0}>Desactivado</option>
                 </Form.Select>
               </Form.Group>
               {/* Aquí podrías agregar edición de imágenes si lo necesitas */}
