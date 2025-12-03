@@ -42,7 +42,7 @@ const todayDate = getMinMaxDate();
  * @param {Array<object>} equiposDisponibles - Lista de equipos disponibles (e.g., [ {id_elemen, num_ficha, sub_catg, ...} ]).
  * @param {number} userId - ID del usuario que realiza la solicitud.
  */
-function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId }) {
+function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCreated }) {
     const [minHoraInicio, setMinHoraInicio] = useState(getMinTime()); // Mantengo setMinHoraInicio pero no se usa explícitamente en el código restante
     const [categorias, setCategorias] = useState([]);
     const [subcategorias, setSubcategorias] = useState([]);
@@ -190,8 +190,9 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId }) {
 
         // 4. Llamada a la API
         try {
-            await crearSolicitud(dto);
+            const res = await crearSolicitud(dto);
             alert("Solicitud realizada correctamente ✅");
+            try { if (typeof onCreated === 'function') onCreated(res); } catch(e){console.warn('onCreated callback error', e)}
             handleHide(); // Ocultar el modal y limpiar el formulario
         } catch (err) {
             console.error("Error al realizar la solicitud:", err);
