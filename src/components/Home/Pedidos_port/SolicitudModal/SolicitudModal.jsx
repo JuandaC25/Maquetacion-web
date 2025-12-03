@@ -3,6 +3,7 @@ import { Modal, Form, Button, Spinner } from "react-bootstrap";
 import { crearSolicitud } from "../../../../api/solicitudesApi";
 import { obtenerCategoria } from "../../../../api/CategoriaApi";
 import { obtenerSubcategorias } from "../../../../api/SubcategotiaApi";
+import ElementosService from "../../../../api/ElementosApi";
 // Se eliminó: import { obtenerEspacio } from "../../../../api/EspaciosApi";
 
 // --- FUNCIONES GLOBALES DE FECHA/HORA (Mantenidas aquí para encapsular la lógica) ---
@@ -46,6 +47,7 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
     const [minHoraInicio, setMinHoraInicio] = useState(getMinTime()); // Mantengo setMinHoraInicio pero no se usa explícitamente en el código restante
     const [categorias, setCategorias] = useState([]);
     const [subcategorias, setSubcategorias] = useState([]);
+    const [elementosPorSubcategoria, setElementosPorSubcategoria] = useState([]);
     // Se eliminó: const [espacios, setEspacios] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     
@@ -79,53 +81,51 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
     }, [equiposDisponibles, show, userId]); // Dependencia de 'show' para resetear al abrir
 
     useEffect(() => {
+        // Recargar categorías cada vez que se abre el modal (show cambia)
         const categoriasPermitidas = ["Computo", "Multimedia"];
-        
+        if (!show) return;
         obtenerCategoria()
             .then(data => {
-                const categoriasFiltradas = data.filter(cat => 
+                const categoriasFiltradas = (Array.isArray(data) ? data : []).filter(cat => 
                     categoriasPermitidas.includes(cat.nom_cat)
                 );
                 setCategorias(categoriasFiltradas);
             })
             .catch(err => console.error("Error al cargar categorías:", err));
-            
-        // Se eliminó la llamada a obtenerEspacio
-        /*
-        obtenerEspacio()
-            .then(data => setEspacios(data))
-            .catch(err => console.error("Error al cargar espacios:", err));
-        */
-    }, []);
+
+        // Nota: no se cargan espacios en este modal
+    }, [show]);
 
 // ----------------------------------------------------------------------
 // 🚨 FILTRO APLICADO 2: Filtrar Subcategorías (solo "Portatil")
 // ----------------------------------------------------------------------
     useEffect(() => {
-        const subcategoriaPermitida = "Portatil";
-
+        // Cargar todas las subcategorías y filtrar por la categoría seleccionada
         if (form.id_categoria) {
-            // Se debe asegurar que obtenerSubcategorias reciba el ID correctamente (String o Number)
-            obtenerSubcategorias(form.id_categoria) 
+            obtenerSubcategorias()
                 .then(data => {
-                    const subcategoriasFiltradas = data.filter(sub => 
-                        sub.nom_subcateg === subcategoriaPermitida
-                    );
+                    const arr = Array.isArray(data) ? data : [];
+                    const subcategoriasFiltradas = arr.filter(sub => {
+                        // Normalizar posible campo de id de categoría en la subcategoría
+                        const scCatId = (sub.id_cat ?? sub.id_categoria ?? sub.categoria_id ?? sub.categoria);
+                        return scCatId !== undefined && scCatId !== null && String(scCatId) === String(form.id_categoria);
+                    });
                     setSubcategorias(subcategoriasFiltradas);
-                    
-                    // Si solo queda una subcategoría ("Portatil"), seleccionarla automáticamente
+
+                    // Si hay exactamente una subcategoría, seleccionarla automáticamente
                     if (subcategoriasFiltradas.length === 1) {
-                           setForm(prevForm => ({ ...prevForm, id_subcategoria: subcategoriasFiltradas[0].id.toString() }));
+                        setForm(prevForm => ({ ...prevForm, id_subcategoria: String(subcategoriasFiltradas[0].id) }));
                     } else {
-                           // Resetear subcategoría si se cambia la categoría
-                           setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
+                        // Resetear selección si la categoría cambió y hay 0 o varias subcategorías
+                        setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
                     }
                 })
                 .catch(err => console.error("Error al cargar subcategorías:", err));
         } else {
             setSubcategorias([]);
+            setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
         }
-    }, [form.id_categoria]);
+    }, [form.id_categoria, show]);
 
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
@@ -145,8 +145,8 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
 
         // 1. Validaciones
         const parsedCantid = parseInt(form.cantid, 10);
-        if (isNaN(parsedCantid) || parsedCantid <= 0 || parsedCantid > equiposDisponibles.length) {
-            alert(`La cantidad a solicitar debe ser un número positivo (1-${equiposDisponibles.length})`);
+        if (isNaN(parsedCantid) || parsedCantid <= 0 || parsedCantid > maxCantidad) {
+            alert(`La cantidad a solicitar debe ser un número positivo (1-${maxCantidad})`);
             setIsSubmitting(false);
             return;
         }
@@ -202,18 +202,54 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
         }
     };
 
-    // La lista de elementos debe ser filtrada por la subcategoría seleccionada
-    const elementosFiltradosPorSubcategoria = equiposDisponibles.filter(equipo => {
-        // En este componente, el filtrado de equipos por subcategoría debería hacerse aquí 
-        // si `equiposDisponibles` no viene prefiltrado.
-        // Pero para simplificar, asumimos que 'equiposDisponibles' ya cumple con el filtro "Portatil" 
-        // o dejamos el filtro más granular para una implementación futura si es necesario, 
-        // mientras solo se filtra la lista de selección (dropdowns).
-        return true; 
-    });
+    // Elementos filtrados por subcategoría: preferir datos traídos desde API, sino filtrar el prop `equiposDisponibles`
+    const elementosFiltradosPorSubcategoria = (elementosPorSubcategoria && elementosPorSubcategoria.length > 0)
+        ? elementosPorSubcategoria
+        : (Array.isArray(equiposDisponibles) ? equiposDisponibles.filter(equipo => {
+            const scId = (equipo.id_subcat ?? equipo.id_subcategoria ?? equipo.subcategoria_id ?? equipo.sub_catg_id ?? equipo.sub_catg);
+            const scName = (equipo.nom_subcateg ?? equipo.nom_subcat ?? equipo.subcategoria ?? equipo.sub_catg ?? equipo.subcategoria_nombre);
+            if (!form.id_subcategoria) return true;
+            if (scId !== undefined && scId !== null && String(scId) === String(form.id_subcategoria)) return true;
+            if (scName !== undefined && scName !== null && String(scName).toLowerCase() === String(form.id_subcategoria).toLowerCase()) return true;
+            return false;
+        }) : []);
 
+    const maxCantidad = Array.isArray(elementosFiltradosPorSubcategoria) ? elementosFiltradosPorSubcategoria.length : 0;
 
-    const maxCantidad = equiposDisponibles.length;
+    // Cuando cambia la subcategoría seleccionada, obtener elementos del backend y filtrarlos
+    useEffect(() => {
+        let mounted = true;
+        const loadElementos = async () => {
+            if (!form.id_subcategoria) {
+                setElementosPorSubcategoria([]);
+                return;
+            }
+            try {
+                const all = await ElementosService.obtenerElementos();
+                if (!mounted) return;
+                const arr = Array.isArray(all) ? all : [];
+                const filtered = arr.filter(el => {
+                    const elSubId = (el.id_subcat ?? el.id_subcategoria ?? el.subcategoria_id ?? el.sub_catg_id ?? el.sub_catg);
+                    const elSubName = (el.nom_subcateg ?? el.nom_subcat ?? el.subcategoria ?? el.sub_catg ?? el.subcategoria_nombre ?? el.subcategoriaName);
+                    if (elSubId !== undefined && elSubId !== null && String(elSubId) === String(form.id_subcategoria)) return true;
+                    if (elSubName !== undefined && elSubName !== null && String(elSubName).toLowerCase() === String(form.id_subcategoria).toLowerCase()) return true;
+                    // also compare if form.id_subcategoria may contain an object id from subcategory list (nom or id)
+                    return false;
+                });
+                setElementosPorSubcategoria(filtered);
+                if (filtered.length > 0) {
+                    setForm(prev => ({ ...prev, id_elemen: String(filtered[0].id_elemen ?? filtered[0].id ?? prev.id_elemen) }));
+                } else {
+                    setForm(prev => ({ ...prev, id_elemen: "" }));
+                }
+            } catch (err) {
+                console.error('Error cargando elementos por subcategoría:', err);
+                setElementosPorSubcategoria([]);
+            }
+        };
+        loadElementos();
+        return () => { mounted = false; };
+    }, [form.id_subcategoria]);
 
     return (
         <Modal show={show} onHide={handleHide} centered>
@@ -271,12 +307,12 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
                         >
                             <option value="">Selecciona el equipo a solicitar</option>
                             
-                            {equiposDisponibles.map((equipo) => (
+                            {elementosFiltradosPorSubcategoria.map((equipo) => (
                                 <option 
-                                    key={equipo.id_elemen} 
-                                    value={equipo.id_elemen}
+                                    key={equipo.id_elemen ?? equipo.id ?? equipo.identifier}
+                                    value={equipo.id_elemen ?? equipo.id ?? equipo.identifier}
                                 >
-                                    {equipo.num_ficha} - {equipo.sub_catg}
+                                    {(equipo.num_ficha ?? equipo.num_fich ?? equipo.ficha ?? equipo.numero_ficha ?? equipo.numFicha) || (equipo.nom_elemento ?? equipo.nom_elem ?? equipo.nombre) || String(equipo.id_elemen ?? equipo.id)} {" - "} {(equipo.sub_catg ?? equipo.nom_subcateg ?? equipo.subcategoria ?? '')}
                                 </option>
                             ))}
                             
