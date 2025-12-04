@@ -146,3 +146,21 @@ export const verificarDisponibilidadEspacio = async (id_esp, fecha_ini, fecha_fn
         throw error;
     }
 };
+
+// Nueva función para cancelar solicitud como instructor
+export async function cancelarSolicitudComoInstructor(id, data, token) {
+    const res = await authorizedFetch(`/api/solicitudes/cancelar/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+        const errorText = await res.text().catch(() => 'No hay mensaje de error en el cuerpo.');
+        throw new Error(`Error ${res.status} al cancelar solicitud: ${errorText}`);
+    }
+    const text = await res.text();
+    try { return text ? JSON.parse(text) : {}; } catch { return text; }
+}

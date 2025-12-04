@@ -163,7 +163,8 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
             cantid: parsedCantid,
             id_estado_soli: form.estadosoli,
             id_categoria: form.id_categoria ? parseInt(form.id_categoria, 10) : null,
-            id_subcategoria: form.id_subcategoria ? parseInt(form.id_subcategoria, 10) : null,
+            // Enviar SIEMPRE el id_subcategoria como número si está seleccionado
+            id_subcategoria: (form.id_subcategoria && !isNaN(Number(form.id_subcategoria))) ? Number(form.id_subcategoria) : null,
             id_usu: form.id_usu,
             ids_elem: form.id_elemen ? [parseInt(form.id_elemen, 10)] : [],
         };

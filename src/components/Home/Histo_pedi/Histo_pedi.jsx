@@ -7,8 +7,15 @@ import Footer from '../../Footer/Footer.jsx';
 import { Pagination, Button, Badge, Tabs, Tab } from 'react-bootstrap'; 
 import { 
     obtenersolicitudes, 
+<<<<<<< HEAD
     actualizarEstadoSolicitud 
 } from '../../../api/solicitudesApi.js'; 
+=======
+    eliminarSolicitud,
+    actualizarEstadoSolicitud, // ✨ Importación clave
+    cancelarSolicitudComoInstructor
+} from '../../../api/solicitudesApi.js';
+>>>>>>> 06de13a (cambios)
 import { obtenerTickets, eliminarTicket } from '../../../api/ticket.js';
 import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js'; 
 
@@ -16,7 +23,6 @@ import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js';
 
 const formatFecha = (fechaString) => {
     if (!fechaString || fechaString === 'N/A') return 'N/A';
-    try {
         const datePart = fechaString.split('T')[0];
         const [year, month, day] = datePart.split('-').map(Number);
         const dateObj = new Date(year, month - 1, day); 
@@ -30,6 +36,14 @@ const formatFecha = (fechaString) => {
 }
 
 const getStatusDetails = (estadoValor) => {
+    import { 
+         obtenersolicitudes, 
+         eliminarSolicitud,
+         actualizarEstadoSolicitud, // Importación clave
+         cancelarSolicitudComoInstructor
+    } from '../../../api/solicitudesApi.js';
+    import { obtenerTickets, eliminarTicket } from '../../../api/ticket.js';
+    import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js'; 
     const estadoTexto = estadoValor?.toString().toLowerCase().trim() || '';
 
     if (estadoTexto.includes('pendiente')) {
@@ -75,7 +89,9 @@ function Historial_ped() {
                 
                 // 1. Mapeo ID -> Nombre (para la visualización en las tarjetas)
                 const subMap = data.reduce((acc, sub) => {
-                    acc[String(sub.id)] = sub.nom_subcateg; 
+                    // Mapear tanto por sub.id como por sub.id_subcateg para máxima compatibilidad
+                    if (sub.id !== undefined) acc[sub.id] = sub.nom_subcateg;
+                    if (sub.id_subcateg !== undefined) acc[sub.id_subcateg] = sub.nom_subcateg;
                     return acc;
                 }, {});
                 setSubcategorias(subMap);
@@ -160,17 +176,22 @@ function Historial_ped() {
     const indexOfFirstSolicitud = indexOfLastSolicitud - solicitudesPerPage;
     const currentSolicitudes = currentItems.slice(indexOfFirstSolicitud, indexOfLastSolicitud); 
 
+<<<<<<< HEAD
+=======
+    // 🚀 FUNCIÓN DE CANCELACIÓN: Llama a la API correcta según el rol y actualiza el estado local de React.
+>>>>>>> 06de13a (cambios)
     const handleCancelStatus = async (id_solicitud) => {
-        const ESTADO_CANCELADO = 'Cancelado'; 
-
+        const ESTADO_CANCELADO = 'Cancelado';
         if (!window.confirm(`¿Estás seguro de que deseas cancelar la solicitud ${id_solicitud}? El estado cambiará a "${ESTADO_CANCELADO}".`)) {
             return;
         }
 
+        // Siempre usar el endpoint de instructor con token JWT
+        const token = localStorage.getItem('auth_token');
         try {
-            await actualizarEstadoSolicitud(id_solicitud, ESTADO_CANCELADO); 
-            
-            setSolicitudes(prevSolicitudes => 
+            // El backend espera id_est_soli=4 para cancelar
+            await cancelarSolicitudComoInstructor(id_solicitud, { id_est_soli: 4 }, token);
+            setSolicitudes(prevSolicitudes =>
                 prevSolicitudes.map(sol => {
                     if (sol.id_soli === id_solicitud) {
                         return { ...sol, est_soli: ESTADO_CANCELADO };
@@ -178,12 +199,10 @@ function Historial_ped() {
                     return sol;
                 })
             );
-            
             alert(`Solicitud ${id_solicitud} cambiada a ${ESTADO_CANCELADO} correctamente.`);
-            
         } catch (err) {
             console.error("Error al cancelar la solicitud:", err);
-            alert(`Error al cancelar la solicitud ${id_solicitud}: ${err.message || 'Error desconocido'}`); 
+            alert(`Error al cancelar la solicitud ${id_solicitud}: ${err.message || 'Error desconocido'}`);
         }
     };
     
@@ -287,6 +306,8 @@ function Historial_ped() {
                 <Stack gap={1}>
                     {currentSolicitudes.map((sol) => {
                         const status = getStatusDetails(sol.est_soli); 
+                        // Mostrar el nombre de la subcategoría si viene en la solicitud, si no usar el mapeo
+                        const subcategoriaNombre = sol.nom_subcat || subcategorias[sol.id_subcat] || 'N/A';
                         
                         // Obtener ID (será null si no existe)
                         const rawId = sol.id_subcatego ?? sol.id_subcate ?? sol.id_subcat ?? null;

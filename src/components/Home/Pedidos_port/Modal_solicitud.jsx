@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Form, Button, ListGroup } from 'react-bootstrap';
 import { crearSolicitud } from '../../../api/solicitudesApi.js';
+import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js';
 
 const id_usuario = 1; 
 const ESTADO_SOLI_INICIAL = 1;
@@ -15,7 +16,22 @@ const [form, setForm] = useState({
   num_ficha: "",
   estadosoli: ESTADO_SOLI_INICIAL,
   id_usu: id_usuario,
+  id_subcategoria: ""
 });
+
+const [subcategorias, setSubcategorias] = useState([]);
+
+useEffect(() => {
+  async function cargarSubcategorias() {
+    try {
+      const data = await obtenerSubcategorias();
+      setSubcategorias(Array.isArray(data) ? data : []);
+    } catch (e) {
+      setSubcategorias([]);
+    }
+  }
+  cargarSubcategorias();
+}, []);
 
 const handleChange = (e) => {
   const { name, value } = e.target;
@@ -41,7 +57,8 @@ const dto = {
   estadosoli: form.estadosoli,
   id_usu: form.id_usu,
   num_ficha: form.num_ficha,
-  id_elemen: equiposSeleccionados.map(eq => eq.id), 
+  id_elemen: equiposSeleccionados.map(eq => eq.id),
+  id_subcat: form.id_subcategoria ? Number(form.id_subcategoria) : undefined
 };
 
 try {
@@ -115,6 +132,15 @@ return (
     <Form.Control type="text" placeholder="Ej: 2560014" name="num_ficha" value={form.num_ficha} onChange={handleChange} required />
 </div>
 </div>
+</Form.Group>
+<Form.Group className="mb-3">
+  <Form.Label>Subcategoría</Form.Label>
+  <Form.Select name="id_subcategoria" value={form.id_subcategoria} onChange={handleChange} required>
+    <option value="">Seleccione una subcategoría</option>
+    {subcategorias.map(sub => (
+      <option key={sub.id} value={sub.id}>{sub.nom_subcateg}</option>
+    ))}
+  </Form.Select>
 </Form.Group>
 <div className="form-section-title mt-4">Equipos Incluidos ({equiposSeleccionados.length})</div>
 <ListGroup className="mb-3">
