@@ -16,6 +16,7 @@ function Header({ title = "Solicitud elementos" }) {
         nom_us: '',
         ape_us: '',
         corre: '',
+        currentPassword: '',
         password: '',
         confirmPassword: ''
     });
@@ -30,6 +31,7 @@ function Header({ title = "Solicitud elementos" }) {
             nom_us: '',
             ape_us: '',
             corre: '',
+            currentPassword: '',
             password: '',
             confirmPassword: ''
         });
@@ -40,6 +42,7 @@ function Header({ title = "Solicitud elementos" }) {
             nom_us: user?.nombre || user?.name || '',
             ape_us: user?.apellido || '',
             corre: user?.email || user?.correo || '',
+            currentPassword: '',
             password: '',
             confirmPassword: ''
         });
@@ -57,9 +60,16 @@ function Header({ title = "Solicitud elementos" }) {
     const handleSaveChanges = async (e) => {
         e.preventDefault();
         
-        if (formData.password && formData.password !== formData.confirmPassword) {
-            alert('Las contraseñas no coinciden');
-            return;
+        // Si se quiere cambiar la contraseña, validar que se ingresó la actual
+        if (formData.password) {
+            if (!formData.currentPassword) {
+                alert('Debes ingresar tu contraseña actual para poder cambiarla');
+                return;
+            }
+            if (formData.password !== formData.confirmPassword) {
+                alert('Las contraseñas nuevas no coinciden');
+                return;
+            }
         }
 
         try {
@@ -70,6 +80,7 @@ function Header({ title = "Solicitud elementos" }) {
             };
 
             if (formData.password) {
+                dataToSend.currentPassword = formData.currentPassword;
                 dataToSend.password = formData.password;
             }
 
@@ -78,7 +89,21 @@ function Header({ title = "Solicitud elementos" }) {
             handleCloseEditModal();
             handleLogout();
         } catch (error) {
-            alert('Error al actualizar perfil: ' + error.message);
+            // Mensajes de error personalizados
+            let errorMessage = 'Error al actualizar perfil';
+            
+            if (error.message?.includes('contraseña actual es incorrecta') || 
+                error.message?.includes('contraseña actual no coincide')) {
+                errorMessage = '❌ La contraseña actual que ingresaste es incorrecta. Por favor, verifica e intenta nuevamente.';
+            } else if (error.message?.includes('proporcionar tu contraseña actual')) {
+                errorMessage = '❌ Debes ingresar tu contraseña actual para poder cambiarla.';
+            } else if (error.message?.includes('correo ya está registrado')) {
+                errorMessage = '❌ El correo electrónico ya está siendo utilizado por otro usuario.';
+            } else if (error.message) {
+                errorMessage = `❌ ${error.message}`;
+            }
+            
+            alert(errorMessage);
         }
     }
 
@@ -234,16 +259,41 @@ function Header({ title = "Solicitud elementos" }) {
                         </Form.Group>
                         <hr className="my-3 edit-modal-divider" />
                         <h5 className="edit-modal-subtitle">Cambio de Contraseña</h5>
+                        <Form.Text className="text-muted d-block mb-3">
+                            Si deseas cambiar tu contraseña, completa los siguientes campos:
+                        </Form.Text>
                         <Form.Group className="mb-3">
-                            <Form.Label>Nueva Contraseña (Opcional)</Form.Label>
-                            <Form.Control type="password" name="password" value={formData.password} onChange={handleInputChange} />
+                            <Form.Label>Contraseña Actual</Form.Label>
+                            <Form.Control 
+                                type="password" 
+                                name="currentPassword" 
+                                value={formData.currentPassword} 
+                                onChange={handleInputChange}
+                                placeholder="Ingresa tu contraseña actual"
+                            />
                             <Form.Text className="text-muted">
-                                Déjalo en blanco si no deseas cambiar la contraseña.
+                                Requerida solo si deseas cambiar tu contraseña.
                             </Form.Text>
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Confirmar Contraseña</Form.Label>
-                            <Form.Control type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} />
+                            <Form.Label>Nueva Contraseña</Form.Label>
+                            <Form.Control 
+                                type="password" 
+                                name="password" 
+                                value={formData.password} 
+                                onChange={handleInputChange}
+                                placeholder="Ingresa tu nueva contraseña"
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Confirmar Nueva Contraseña</Form.Label>
+                            <Form.Control 
+                                type="password" 
+                                name="confirmPassword" 
+                                value={formData.confirmPassword} 
+                                onChange={handleInputChange}
+                                placeholder="Confirma tu nueva contraseña"
+                            />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
