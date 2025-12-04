@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import './ModalTec1.css';
 import ConfirmacionModal from '../../Modal_Confriamcion/ConfirmacionModal';
+import { authorizedFetch } from '../../../../../api/http';
 
 function ModalFormulario({ show, onHide, prest, onActualizado }) {
   const [loading, setLoading] = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [mostrarConfirmacionRechazo, setMostrarConfirmacionRechazo] = useState(false);
 
   if (!show || !prest) return null;
 
@@ -20,6 +22,9 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
 
   const abrirConfirmacion = () => setMostrarConfirmacion(true);
   const cerrarConfirmacion = () => setMostrarConfirmacion(false);
+  
+  const abrirConfirmacionRechazo = () => setMostrarConfirmacionRechazo(true);
+  const cerrarConfirmacionRechazo = () => setMostrarConfirmacionRechazo(false);
 
 
   const confirmarFinalizacion = async () => {
@@ -29,10 +34,10 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
     try {
       console.log("🔹 Datos de la solicitud recibidos:", prest);
 
-      const updateResponse = await fetch(`http://localhost:8081/api/solicitudes/${prest.id_soli}`, {
+      const updateResponse = await authorizedFetch(`/api/solicitudes/${prest.id_soli}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_soli: prest.id_soli, id_est_soli: 1 }),
+        body: JSON.stringify({ id_soli: prest.id_soli, id_est_soli: 2 }),
       });
 
       if (!updateResponse.ok) throw new Error('Error al actualizar el estado de la solicitud');
@@ -43,15 +48,15 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
             ? prest.id_elem.split(',').map(Number)
             : [prest.id_elem])
         : [];
-        // Buscar el campo correcto para idEsp
-        const idEsp = prest.id_espac || prest.id_esp || prest.idEsp || null;
-        const postResponse = await fetch('http://localhost:8081/api/prestamos', {
+        // Usar id_espa del SolicitudesDto
+        const idEsp = prest.id_espa;
+        const postResponse = await authorizedFetch('/api/prestamos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             fechaEntreg: prest.fecha_ini,
             fechaRepc: prest.fecha_fn,
-            tipoPres: "Elemento",
+            tipoPres: "AUTO",
             estado: 1,
             idUsuario: prest.id_usu,
             idsElem: prest.id_elem
@@ -78,6 +83,34 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
     } catch (error) {
       console.error("❌ Error al finalizar:", error);
       alert("Ocurrió un error al finalizar la solicitud.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const confirmarRechazo = async () => {
+    cerrarConfirmacionRechazo();
+    setLoading(true);
+
+    try {
+      console.log("🔹 Rechazando solicitud:", prest.id_soli);
+
+      const updateResponse = await authorizedFetch(`/api/solicitudes/${prest.id_soli}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_soli: prest.id_soli, id_est_soli: 3 }),
+      });
+
+      if (!updateResponse.ok) throw new Error('Error al rechazar la solicitud');
+      console.log("✅ Solicitud rechazada correctamente");
+
+      alert("Solicitud rechazada");
+
+      onActualizado && onActualizado(prest.id_soli);
+      onHide();
+    } catch (error) {
+      console.error("❌ Error al rechazar:", error);
+      alert("Ocurrió un error al rechazar la solicitud.");
     } finally {
       setLoading(false);
     }
@@ -136,11 +169,11 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
             disabled={loading}
             style={{ minWidth: '110px', marginRight: '18px' }}
           >
-            {loading ? 'Guardando...' : 'Tomar'}
+            {loading ? 'Guardando...' : 'Aprobar'}
           </button>
           <button
             id="buttonModalTec"
-            onClick={onHide}
+            onClick={abrirConfirmacionRechazo}
             disabled={loading}
             style={{ minWidth: '110px' }}
           >
@@ -153,7 +186,14 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
         show={mostrarConfirmacion}
         onHide={cerrarConfirmacion}
         onConfirm={confirmarFinalizacion}
-        mensaje="¿Quieres realizar este préstamo?"
+        mensaje="¿Quieres aprobar este préstamo?"
+      />
+
+      <ConfirmacionModal
+        show={mostrarConfirmacionRechazo}
+        onHide={cerrarConfirmacionRechazo}
+        onConfirm={confirmarRechazo}
+        mensaje="¿Quieres rechazar esta solicitud?"
       />
     </>
   );

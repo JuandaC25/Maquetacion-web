@@ -1,13 +1,10 @@
-
-
 import React, { useState, useEffect } from 'react';
 import Footer from '../../Footer/Footer';
 import HeaderPrestamosActivos from './header_prestamos_activos.jsx';
 import '../informacion_de_equipos/Info_equipos_tec.css';
 import { authorizedFetch } from '../../../api/http';
-import ModalPrestamo from './Modal_Prestamos/ModalPrestamo';
 
-function PrestamosActivos() {
+function PrestamosActivosIndependiente() {
   const categorias = ['Portátiles', 'Televisores', 'Equipos de escritorio', 'Accesorios', 'Espacios'];
   const [prestamos, setPrestamos] = useState([]);
   const [elementos, setElementos] = useState([]);
@@ -16,9 +13,9 @@ function PrestamosActivos() {
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [paginaActual, setPaginaActual] = useState(1);
-  const [showModal, setShowModal] = useState(false);
-  const [prestamoSeleccionado, setPrestamoSeleccionado] = useState(null);
+  const [loading, setLoading] = useState(false);
 
+  // Cargar datos iniciales
   useEffect(() => {
     cargarPrestamos();
     cargarElementos();
@@ -26,11 +23,9 @@ function PrestamosActivos() {
 
   const cargarPrestamos = async () => {
     try {
-      const response = await authorizedFetch('/api/prestamos/activos');
+      const response = await authorizedFetch('http://localhost:8081/api/prestamos/estado/1');
       const data = await response.json();
-      const prestamosFiltrados = Array.isArray(data) ? data : [];
-      setPrestamos(prestamosFiltrados);
-      console.log("Préstamos cargados:", prestamosFiltrados);
+      setPrestamos(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error al obtener préstamos activos:', err);
       setPrestamos([]);
@@ -39,7 +34,7 @@ function PrestamosActivos() {
 
   const cargarElementos = async () => {
     try {
-      const response = await authorizedFetch('/api/elementos');
+      const response = await authorizedFetch('http://localhost:8081/api/elementos');
       const data = await response.json();
       setElementos(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -52,10 +47,11 @@ function PrestamosActivos() {
 
   const prestamosArray = Array.isArray(prestamos) ? prestamos : [];
   const prestamosConCategoria = prestamosArray.map(p => {
+    const elemento = elementos.find(e => e.id_elemen === p.id_eleme);
     return { 
       ...p, 
-      categoria: p.nom_cat || p.tipo_pres || 'Sin categoría',
-      nom_elem: p.nom_elem || ''
+      categoria: elemento ? elemento.tip_catg : 'Sin categoría', 
+      nom_elem: elemento ? elemento.nom_elemento : '' 
     };
   });
 
@@ -74,22 +70,6 @@ function PrestamosActivos() {
 
   const irPagina = n => setPaginaActual(Math.min(Math.max(1, n), totalPaginas));
 
-  const abrirModal = (prestamo) => {
-    console.log("🔹 Abriendo modal con préstamo:", prestamo);
-    setPrestamoSeleccionado(prestamo);
-    setShowModal(true);
-  };
-
-  const cerrarModal = () => {
-    console.log("❌ Cerrando modal");
-    setShowModal(false);
-    setPrestamoSeleccionado(null);
-  };
-
-  const alActualizar = async (idPrestamo) => {
-    await cargarPrestamos();
-  };
-
   const renderTarjetasEnFilas = () => {
     const filas = [];
     for (let i = 0; i < itemsPagina.length; i += 4) {
@@ -97,34 +77,12 @@ function PrestamosActivos() {
       filas.push(
         <div className="recipiente" key={i}>
           {fila.map(prest => (
-            <div className="cuadra1" key={prest.id_prest} style={{ cursor: 'pointer' }}>
+            <div className="cuadra1" key={prest.id_prest}>
               <div className="cuadra2">
                 <div className="card-tipo">{prest.categoria}</div>
                 <div className="card-modelo">{prest.nom_elem}</div>
                 <div className="card-usuario">Usuario: {prest.nom_usu}</div>
                 <div className="card-fecha">Fecha entrega: {new Date(prest.fecha_entreg).toLocaleString()}</div>
-                <button 
-                  onClick={() => abrirModal(prest)}
-                  className="btn-abrir-prestamo"
-                  style={{
-                    margin: 'auto auto 0 auto',
-                    padding: '2px 3px',
-                    backgroundColor: 'rgb(9, 180, 26)',
-                    color: 'white',
-                    border: '3px solid rgb(9, 180, 26)',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    transition: 'background-color 0.3s',
-                    lineHeight: '1',
-                    width: '50%',
-                    display: 'block'
-                  }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = 'rgb(6, 140, 20)'}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = 'rgb(9, 180, 26)'}
-                >
-                  Abrir
-                </button>
               </div>
             </div>
           ))}
@@ -177,17 +135,9 @@ function PrestamosActivos() {
           <button onClick={() => irPagina(paginaActual + 1)} disabled={paginaActual === totalPaginas}>Siguiente →</button>
         </nav>
       </main>
-
-      <ModalPrestamo
-        show={showModal}
-        onHide={cerrarModal}
-        prestamo={prestamoSeleccionado}
-        onActualizado={alActualizar}
-      />
-
       <Footer />
     </>
   );
 }
 
-export default PrestamosActivos;
+export default PrestamosActivosIndependiente;

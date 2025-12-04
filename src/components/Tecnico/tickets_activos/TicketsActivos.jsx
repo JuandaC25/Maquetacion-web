@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
 import Footer from '../../Footer/Footer';
-import ModalPeticion from '../informacion_de_equipos/modal_informacion_E/Modal2'; // ahora recibe ticket y elementos
+import ModalTicketsActivos from './ModalTicketsActivos';
 import '../informacion_de_equipos/Info_equipos_tec.css';
 import Otromodal from '../informacion_de_equipos/OTRO.MODAL/Otro_modal';
 import HeaderTicketsActivos from '../header_tickets_activos/header_tickets_activos.jsx';
 import Carousel from 'react-bootstrap/Carousel';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { authorizedFetch } from '../../../api/http';
 
 function TicketsActivos() {
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -25,13 +26,21 @@ function TicketsActivos() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Solo obtener tickets activos
-        const ticketsRes = await fetch('http://localhost:8081/api/tickets/activos');
+        console.log('Obteniendo tickets activos...');
+        // Solo obtener tickets activos con autenticación
+        const ticketsRes = await authorizedFetch('/api/tickets/activos');
+        console.log('Status:', ticketsRes.status);
+        
+        if (!ticketsRes.ok) {
+          throw new Error(`HTTP error! status: ${ticketsRes.status}`);
+        }
+        
         const ticketsJson = await ticketsRes.json();
+        console.log('Tickets activos obtenidos:', ticketsJson);
         setTicketsData(ticketsJson);
         setTicketsFiltrados(ticketsJson);
 
-        const elementosRes = await fetch('http://localhost:8081/api/elementos');
+        const elementosRes = await authorizedFetch('/api/elementos');
         const elementosJson = await elementosRes.json();
         setElementos(elementosJson);
       } catch (error) {
@@ -45,7 +54,23 @@ function TicketsActivos() {
     setTicketSeleccionado(ticket);
     setMostrarModal(true);
   };
+  
   const cerrarModal = () => setMostrarModal(false);
+
+  const actualizarTicketsDespuesDeReporte = async () => {
+    // Recargar los tickets después de cambiar el estado
+    try {
+      const ticketsRes = await authorizedFetch('/api/tickets/activos');
+      if (ticketsRes.ok) {
+        const ticketsJson = await ticketsRes.json();
+        setTicketsData(ticketsJson);
+        setTicketsFiltrados(ticketsJson);
+      }
+    } catch (error) {
+      console.error('Error al recargar tickets:', error);
+    }
+    cerrarModal();
+  };
 
   const filtrarTickets = (busqueda, categoria, subcategoria) => {
     const filtrados = ticketsData.filter(ticket => {
@@ -166,17 +191,48 @@ function TicketsActivos() {
                   {grupo.map(ticket => {
                     const elemento = elementos.find(e => e.id_elemen === ticket.id_eleme);
                     const categoriaElem = elemento ? elemento.tip_catg : '';
+                    
+                    // Extraer imagen del atributo imageness
+                    const obtenerPrimeraImagen = () => {
+                      if (!ticket || !ticket.imageness) return null;
+                      try {
+                        if (typeof ticket.imageness === 'string' && ticket.imageness.startsWith('[')) {
+                          const imagenes = JSON.parse(ticket.imageness);
+                          console.log('Imágenes parseadas de JSON:', imagenes);
+                          return imagenes[0];
+                        }
+                        console.log('imageness value:', ticket.imageness);
+                        return Array.isArray(ticket.imageness) ? ticket.imageness[0] : ticket.imageness;
+                      } catch (e) {
+                        console.error('Error parseando imageness:', e, 'valor:', ticket.imageness);
+                        return null;
+                      }
+                    };
+                    
+                    const imagen = obtenerPrimeraImagen();
+                    console.log('Primera imagen:', imagen);
+                    const imagenUrl = imagen 
+                      ? (imagen.startsWith('data:') || imagen.startsWith('http') 
+                          ? imagen 
+                          : `http://localhost:8081${imagen}`)
+                      : null;
+                    console.log('URL final:', imagenUrl);
+                    
                     return (
-                      <div key={ticket.id_tickets} className='reportes'>
+                      <div key={ticket.id_tickets || ticket.id} className='reportes'>
                         <h4 className='oter'>{ticket.nom_elem}</h4>
                         <div className='pcesito'>
-                          <img src="/imagenes/ticket.png" alt="ticket" className='comp' />
+                          {imagenUrl ? (
+                            <img src={imagenUrl} alt={ticket.nom_elem || 'Ticket'} className='comp' onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = '<p style="color:#999;text-align:center;">Sin imagen</p>'; }} />
+                          ) : (
+                            <p style={{ color: '#999', textAlign: 'center', margin: 'auto' }}>Sin imagen disponible</p>
+                          )}
                         </div>
                         <h5>Ambiente:</h5>
-                        <h6>{ticket.ambient}</h6>
+                        <h6>{ticket.ambiente || ticket.ambient || 'No registrado'}</h6>
                         <h5>Categoría:</h5>
                         <h6>{categoriaElem}</h6>
-                        <Button className='buttoninfo' onClick={() => abrirModal(ticket)}>Abrir</Button>
+                        <Button className='buttoninfo' onClick={() => abrirModal(ticket)}>Reportar</Button>
                       </div>
                     );
                   })}
@@ -195,11 +251,12 @@ function TicketsActivos() {
           </div>
         )}
 
-        <ModalPeticion 
+        <ModalTicketsActivos 
           show={mostrarModal} 
           onHide={cerrarModal} 
           ticket={ticketSeleccionado} 
-          elementos={elementos} 
+          elementos={elementos}
+          onTicketUpdated={actualizarTicketsDespuesDeReporte}
         />
       </div>
       <Footer />

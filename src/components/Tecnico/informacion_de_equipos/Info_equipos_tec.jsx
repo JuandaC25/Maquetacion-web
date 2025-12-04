@@ -8,6 +8,7 @@ import Otromodal from './OTRO.MODAL/Otro_modal';
 import Header_informacion from '../header_informacion_E/Header_informacion_E.jsx';
 import Carousel from 'react-bootstrap/Carousel';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { authorizedFetch } from '../../../api/http';
 
 function Cuarta() {
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -27,14 +28,22 @@ function Cuarta() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const ticketsRes = await fetch('http://localhost:8081/api/tickets');
-        let ticketsJson = await ticketsRes.json();
-        // Excluir tickets con estado 0 (inactivos)
-        ticketsJson = ticketsJson.filter(ticket => ticket.estado !== 0);
+        console.log('Obteniendo tickets pendientes...');
+        const ticketsRes = await authorizedFetch('/api/tickets/pendientes');
+        console.log('Status:', ticketsRes.status);
+        
+        if (!ticketsRes.ok) {
+          throw new Error(`HTTP error! status: ${ticketsRes.status}`);
+        }
+        
+        const ticketsJson = await ticketsRes.json();
+        console.log('Tickets obtenidos:', ticketsJson);
+        
+        // Obtiene solo tickets con estado 2 (pendiente)
         setTicketsData(ticketsJson);
         setTicketsFiltrados(ticketsJson);
 
-        const elementosRes = await fetch('http://localhost:8081/api/elementos');
+        const elementosRes = await authorizedFetch('/api/elementos');
         const elementosJson = await elementosRes.json();
         setElementos(elementosJson);
       } catch (error) {
@@ -169,11 +178,102 @@ function Cuarta() {
                   {grupo.map(ticket => {
                     const elemento = elementos.find(e => e.id_elemen === ticket.id_eleme);
                     const categoriaElem = elemento ? elemento.tip_catg : '';
+                    
+                    // Extraer imágenes del atributo imageness
+                    const obtenerImagenes = () => {
+                      if (!ticket.imageness) {
+                        return [];
+                      }
+                      
+                      try {
+                        let imagenes = [];
+                        
+                        // Si es string
+                        if (typeof ticket.imageness === 'string') {
+                          // Si comienza con [ o {, es JSON
+                          if (ticket.imageness.trim().startsWith('[') || ticket.imageness.trim().startsWith('{')) {
+                            try {
+                              imagenes = JSON.parse(ticket.imageness);
+                            } catch (e) {
+                              imagenes = [ticket.imageness];
+                            }
+                          } else {
+                            // Es una URL o base64 directo
+                            imagenes = [ticket.imageness];
+                          }
+                        } else if (Array.isArray(ticket.imageness)) {
+                          imagenes = ticket.imageness;
+                        } else if (typeof ticket.imageness === 'object') {
+                          imagenes = [ticket.imageness];
+                        }
+                        
+                        return imagenes;
+                      } catch (e) {
+                        console.error('Error al procesar imageness:', e);
+                        return [];
+                      }
+                    };
+                    
+                    const imagenes = obtenerImagenes();
+                    const imagenPrincipal = imagenes.length > 0 ? imagenes[0] : null;
+                    
+                    // Logging para debug
+                    if (imagenPrincipal) {
+                      const urlFinal = imagenPrincipal.startsWith('data:') 
+                        ? 'data:...' 
+                        : imagenPrincipal.startsWith('http')
+                        ? imagenPrincipal
+                        : `http://localhost:8081${imagenPrincipal}`;
+                      console.log(`[${ticket.id_tickets}] imagenPrincipal original:`, imagenPrincipal);
+                      console.log(`[${ticket.id_tickets}] URL final a cargar:`, urlFinal);
+                    }
+                    
                     return (
                       <div key={ticket.id_tickets} className='reportes'>
                         <h4 className='oter'>{ticket.nom_elem}</h4>
                         <div className='pcesito'>
-                          <img src="/imagenes/ticket.png" alt="ticket" className='comp' />
+                          {imagenPrincipal ? (
+                            <img 
+                              src={
+                                imagenPrincipal.startsWith('data:') 
+                                  ? imagenPrincipal 
+                                  : imagenPrincipal.startsWith('http')
+                                  ? imagenPrincipal
+                                  : `http://localhost:8081${imagenPrincipal}`
+                              } 
+                              alt="ticket" 
+                              className='comp'
+                              onError={(e) => {
+                                console.log(`[ERROR] Fallo al cargar imagen: ${e.target.src}`);
+                                if (e.target.getAttribute('data-fallback') !== 'true') {
+                                  console.log(`[INTENTO] Cargando placeholder...`);
+                                  e.target.src = '/imagenes/ticket.png';
+                                  e.target.setAttribute('data-fallback', 'true');
+                                } else {
+                                  console.log(`[FALLBACK] Mostrando texto "No hay imagen"`);
+                                  // Reemplazar imagen con div de texto
+                                  const container = e.target.parentElement;
+                                  container.innerHTML = `
+                                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999; font-size: 0.95rem; font-weight: 500;">
+                                      No hay imagen
+                                    </div>
+                                  `;
+                                }
+                              }}
+                            />
+                          ) : (
+                            <div style={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              justifyContent: 'center', 
+                              height: '100%',
+                              color: '#999',
+                              fontSize: '0.95rem',
+                              fontWeight: '500'
+                            }}>
+                              No hay imagen
+                            </div>
+                          )}
                         </div>
                         <h5>Ambiente:</h5>
                         <h6>{ticket.ambient}</h6>

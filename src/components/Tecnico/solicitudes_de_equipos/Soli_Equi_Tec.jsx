@@ -4,6 +4,7 @@ import Footer from '../../Footer/Footer';
 import Button from 'react-bootstrap/Button';
 import ModalFormulario from './modal_soli_E/FormularioModal/ModalFormulario';
 import Header_solicitud_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
+import { authorizedFetch } from '../../../api/http';
 
 export default function Tecnico() {
   const categorias = ['Portátiles', 'Televisores', 'Equipos de escritorio', 'Accesorios', 'Espacios'];
@@ -20,15 +21,24 @@ export default function Tecnico() {
   const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:8081/api/solicitudes')
-      .then(res => res.json())
-      .then(data => setPrestamos(data))
-      .catch(err => console.error('Error al obtener solicitudes:', err));
+    const fetchData = async () => {
+      try {
+        const resSolicitudes = await authorizedFetch('/api/solicitudes/pendientes');
+        if (!resSolicitudes.ok) throw new Error(`Error ${resSolicitudes.status}`);
+        const dataSolicitudes = await resSolicitudes.json();
+        console.log('Solicitudes recibidas:', dataSolicitudes);
+        setPrestamos(dataSolicitudes);
 
-    fetch('http://localhost:8081/api/elementos')
-      .then(res => res.json())
-      .then(data => setElementos(data))
-      .catch(err => console.error('Error al obtener elementos:', err));
+        const resElementos = await authorizedFetch('/api/elementos');
+        if (!resElementos.ok) throw new Error(`Error ${resElementos.status}`);
+        const dataElementos = await resElementos.json();
+        setElementos(dataElementos);
+      } catch (err) {
+        console.error('Error al obtener datos:', err);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => setPaginaActual(1), [categoriaFiltro, busquedaMarca, fechaInicio, fechaFin]);
@@ -36,10 +46,11 @@ export default function Tecnico() {
   // Asegura que prestamos sea siempre un array
   const prestamosArray = Array.isArray(prestamos) ? prestamos : [];
 
-  const prestamosConCategoria = prestamosArray.map(p => {
-    const elemento = elementos.find(e => e.id_elemen === p.id_elem);
-    return { ...p, categoria: elemento ? elemento.tip_catg : 'Sin categoría' };
-  });
+  // No necesita mapear con elementos - ya viene nom_cat del backend
+  const prestamosConCategoria = prestamosArray.map(p => ({
+    ...p,
+    categoria: p.nom_cat || 'Sin categoría'
+  }));
 
   const equiposFiltrados = prestamosConCategoria.filter(eq => {
     const cumpleCategoria = categoriaFiltro ? eq.categoria?.toLowerCase().includes(categoriaFiltro.toLowerCase()) : true;
@@ -82,7 +93,7 @@ export default function Tecnico() {
                 <div className="card-fecha">Fecha inicio: {new Date(prest.fecha_ini).toLocaleString()}</div>
                 <div className="card-accion">
                   <Button className="botun" size="sm" onClick={() => abrirFormulario(prest)}>
-                    Revisar
+                    Ver
                   </Button>
                 </div>
               </div>

@@ -38,12 +38,17 @@
 }
 .pcesito{
     
-    width: 70%;
+    width: 120px;
+    height: 120px;
     margin: auto;
     margin-bottom: 10px;
-    height: 200px;
-
-   
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
 }
 .reportes{
     width: 20%;
@@ -56,8 +61,14 @@
     padding-left: 10px;
     padding-right: 10px;
     border: 1px solid rgba(0, 128, 0, 0.818);
-    margin: auto;
-    height: 420px;
+    margin: 25px auto !important;
+    height: auto;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 .reportes:hover{
     box-shadow:  4px 4px 4px 4px rgb(224, 248, 221) ;
@@ -81,16 +92,16 @@
 .buttoninfo {
 color: white;
 cursor: pointer !important;
-padding: 0 !important;
+padding: 5px 12px !important;
 border: none;
 background-color: rgb(9, 180, 26) !important;
-width: 40%;
-margin-bottom: 10px;
+width: 70%;
+margin: 10px auto 5px auto;
 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-height: 30px;
-margin-top: 10px;
-margin: auto;
-margin-bottom: 10px;
+height: auto;
+min-height: 28px;
+font-size: 0.85rem;
+font-weight: 500;
 }
 .buttoninfo:hover{
     background-color: rgb(27, 144, 27) !important;
@@ -106,6 +117,11 @@ margin-bottom: 10px;
 .carrusel_1{
     display: flex;
     flex-direction: row !important;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
 }
 .carousel-control-prev{
     width: 3%;
@@ -117,8 +133,11 @@ margin-bottom: 10px;
 
 .comp{
     position: relative;
-    width: 100%;
-    margin-top: 50px;
+    width: 110px;
+    height: 110px;
+    margin: auto;
+    object-fit: cover;
+    border-radius: 4px;
 }
 .dibsi{
     display: flex;

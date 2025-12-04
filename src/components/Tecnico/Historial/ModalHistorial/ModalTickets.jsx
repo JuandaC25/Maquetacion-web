@@ -3,7 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import './ModalTickets.css';
 import Otromodal from '../../informacion_de_equipos/OTRO.MODAL/Otro_modal';
 
-function ModalTickets({ show, onHide, ticket, elementos, tipo }) {
+function ModalTickets({ show, onHide, ticket, elementos, tipo, trasabilidad }) {
   const [mostrarOtromodal, setMostrarOtromodal] = useState(false);
 
   const abrirOtromodal = () => setMostrarOtromodal(true);
@@ -17,6 +17,11 @@ function ModalTickets({ show, onHide, ticket, elementos, tipo }) {
 
   const categoriaElemento = elementoRelacionado ? elementoRelacionado.tip_catg : 'Sin categoría';
   const numSerieElemento = elementoRelacionado ? elementoRelacionado.num_seri : 'No registrada';
+
+  // Encontrar trasabilidad relacionada al ticket
+  const trasabilidadTicket = ticket && tipo === "Tickets"
+    ? trasabilidad.find(t => t.id_ticet === ticket.id_tickets)
+    : null;
 
   return (
     <>
@@ -75,10 +80,12 @@ function ModalTickets({ show, onHide, ticket, elementos, tipo }) {
                   <div className="modal-item-blanco"><span>Accesorio:</span><p>{ticket.nom_aces || 'No registrado'}</p></div>
                 </>
               )}
-              <div className="modal-item-full-blanco">
-                <span>Observaciones:</span>
-                <p>{ticket.obser || 'Sin observaciones'}</p>
-              </div>
+              {tipo === "Tickets" && trasabilidadTicket && (
+                <div className="modal-item-full-blanco">
+                  <span>Observaciones:</span>
+                  <p>{trasabilidadTicket.obse || 'Sin observaciones'}</p>
+                </div>
+              )}
             </div>
           ) : (
             <p style={{ textAlign: 'center', margin: '20px 0' }}>Cargando información...</p>
