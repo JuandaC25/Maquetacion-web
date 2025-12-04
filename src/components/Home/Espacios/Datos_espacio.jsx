@@ -70,8 +70,8 @@ function Datos_espacio() {
     // Obtener el usuario autenticado del token JWT
     const currentUser = getCurrentUser();
     if (!currentUser || !currentUser.id) {
-      alert("❌ Error: No se pudo obtener el usuario autenticado. Por favor, inicia sesión nuevamente.");
-      return;
+        alert("❌ Error: No se pudo obtener el usuario autenticado. Por favor, inicia sesión nuevamente.");
+        return;
     }
 
     if (!espacioSeleccionado || !espacioSeleccionado.id) {
@@ -112,10 +112,10 @@ function Datos_espacio() {
       fecha_ini: formatLocal(fechaInicio),
       fecha_fn: formatLocal(fechaFin),
       ambient: form.ambient,
-      estadosoli: form.estadosoli,
-      id_usu: currentUser.id, // ✅ Usuario autenticado del token JWT
-      num_fich: form.num_ficha,
-      id_esp: espacioSeleccionado.id,
+      estadosoli: parseInt(form.estadosoli, 10) || 1, // ✅ Usar el alias que acepta el DTO
+      num_fich: parseInt(form.num_ficha, 10), // ✅ Convertir a número entero
+      id_esp: espacioSeleccionado.id
+      // ❌ NO enviar id_usu - el backend lo asigna automáticamente desde el token JWT
     };
 
     try {

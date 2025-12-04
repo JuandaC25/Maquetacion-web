@@ -21,28 +21,48 @@ export const obtenerSolicitudesPorid = async (id) => {
 
 export const crearSolicitud = async (data) => {
     try {
+        console.log('[SOLICITUD] Datos enviados:', data);
+        
         const res = await authorizedFetch('/api/solicitudes', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
         });
 
+        console.log('[SOLICITUD] Status de respuesta:', res.status);
+        console.log('[SOLICITUD] Headers de respuesta:', [...res.headers.entries()]);
+
         if (!res.ok) {
             let errorMessage = `Error ${res.status}: Fallo al crear la solicitud.`;
-            try {
-                const errorResponse = await res.clone().json();
-                errorMessage = errorResponse.message
-                    || errorResponse.error
-                    || JSON.stringify(errorResponse);
-            } catch (e) {
-                errorMessage = `${res.statusText}: No se pudo leer el mensaje detallado del servidor.`;
+            
+            // Intentar leer la respuesta como texto primero
+            const responseText = await res.text();
+            console.error('[SOLICITUD] Respuesta de error (texto):', responseText);
+            
+            if (responseText) {
+                try {
+                    const errorResponse = JSON.parse(responseText);
+                    console.error('[SOLICITUD] Respuesta de error (JSON):', errorResponse);
+                    errorMessage = errorResponse.message
+                        || errorResponse.error
+                        || errorResponse.mensaje
+                        || JSON.stringify(errorResponse);
+                } catch (e) {
+                    // Si no es JSON, usar el texto directamente
+                    errorMessage = responseText || `${res.status} ${res.statusText}`;
+                }
+            } else {
+                errorMessage = `${res.status} ${res.statusText}`;
             }
+            
             throw new Error(errorMessage);
         }
 
         const text = await res.text();
+        console.log('[SOLICITUD] Respuesta exitosa:', text);
         try { return text ? JSON.parse(text) : {}; } catch { return text; }
     } catch (error) {
+        console.error('[SOLICITUD] Error capturado:', error);
         if ((error.message || '').toLowerCase().includes('failed to fetch') || error.message.includes('No se pudo conectar')) {
             throw new Error('No se pudo conectar con el servidor');
         }

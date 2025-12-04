@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Modal, Form, Button, Spinner } from "react-bootstrap";
 import { crearSolicitud } from "../../../../api/solicitudesApi";
@@ -11,7 +10,7 @@ import { obtenerSubcategorias } from "../../../../api/SubcategotiaApi";
 const getMinMaxDate = () => {
     const today = new Date();
     const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, "0"); 
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
     const dd = String(today.getDate()).padStart(2, "0");
     return `${yyyy}-${mm}-${dd}`;
 };
@@ -22,7 +21,7 @@ const getMinMaxDate = () => {
  */
 const getMinTime = () => {
     const now = new Date();
-    const adjustedTime = new Date(now.getTime() + 60000); 
+    const adjustedTime = new Date(now.getTime() + 60000);
     const adjustedHh = String(adjustedTime.getHours()).padStart(2, "0");
     const adjustedMm = String(adjustedTime.getMinutes()).padStart(2, "0");
     return `${adjustedHh}:${adjustedMm}`;
@@ -70,32 +69,46 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
         }
     }, [equiposDisponibles, show, userId]);
     
-    // ⭐ 1. FILTRO DE CATEGORÍAS (Solo "Computo" y "Multimedia")
+    // ✅ 1. FILTRO DE CATEGORÍAS (Excluye "Multimedia")
     useEffect(() => {
-        // ⭐ Definición de las únicas categorías permitidas
-        const categoriasPermitidas = ["Computo", "Multimedia"]; 
+        // ⭐ Definición de las categorías a EXCLUIR
+        const categoriasExcluidas = ["Multimedia"]; 
 
         obtenerCategoria()
             .then(data => {
+                // Filtra para EXCLUIR las categorías en la lista
                 const categoriasFiltradas = data.filter(cat => 
-                    categoriasPermitidas.includes(cat.nom_cat)
+                    !categoriasExcluidas.includes(cat.nom_cat)
                 );
                 setCategorias(categoriasFiltradas);
+                // NOTA: Si la categoría previamente seleccionada ahora está excluida, 
+                // el select se actualizará, pero el valor del form.id_categoria
+                // puede que no se borre automáticamente, por lo que se recomienda 
+                // que el usuario seleccione una nueva.
             })
             .catch(err => console.error("Error al cargar categorías:", err));
     }, []);
 
-    // ⭐ 2. FILTRO Y CARGA DE SUBCATEGORÍAS (Solo "Equipo de mesa" y "Equipo de edición")
+    // ✅ 2. FILTRO Y CARGA DE SUBCATEGORÍAS (Excluye las subcategorías especificadas)
     useEffect(() => {
-        // ⭐ Definición de las únicas subcategorías permitidas
-        const subcategoriasPermitidas = ["Equipo de mesa", "Equipo de edición"];
+        // ⭐ Definición de las subcategorías a EXCLUIR
+        const subcategoriasExcluidas = [
+            "Equipo de mesa", 
+            "Equipo de edición",
+            "Portatil",
+            "Portatil de edición"
+        ];
 
         if (form.id_categoria) {
             obtenerSubcategorias(form.id_categoria)
                 .then(data => {
-                    console.log("Subcategorías recibidas:", data); // DEPURACIÓN
-                    // Mostrar todas las subcategorías recibidas, sin filtro estricto
-                    setSubcategorias(data);
+                    console.log("Subcategorías recibidas antes de filtrar:", data); // DEPURACIÓN
+                    // Filtra para EXCLUIR las subcategorías en la lista
+                    const subcategoriasFiltradas = data.filter(sub => 
+                        !subcategoriasExcluidas.includes(sub.nom_subcateg)
+                    );
+                    
+                    setSubcategorias(subcategoriasFiltradas);
                     setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
                 })
                 .catch(err => console.error("Error al cargar subcategorías:", err));
@@ -196,7 +209,7 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
                             required
                         >
                             <option value="">Selecciona una categoría</option>
-                            {/* Solo mostrará las categorías filtradas ("Computo" y "Multimedia") */}
+                            {/* Ahora muestra TODAS las categorías EXCEPTO "Multimedia" */}
                             {categorias.map(cat => (
                                 <option key={cat.id_cat} value={cat.id_cat}>{cat.nom_cat}</option>
                             ))}
@@ -220,6 +233,7 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
                                     No hay subcategorías disponibles para esta categoría
                                 </option>
                             )}
+                            {/* Ahora solo muestra las subcategorías que NO son de Equipo de Mesa/Edición/Portátil/Edición */}
                             {subcategorias.map(sub => (
                                 <option 
                                     key={sub.id_subcateg || sub.id} 

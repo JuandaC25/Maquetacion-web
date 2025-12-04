@@ -230,7 +230,7 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
                                 <option value="">Seleccionar rol</option>
                                 <option value="instructor">Instructor</option>
                                 <option value="técnico">Técnico</option>
-                                <option value="administrador">Administrador</option>
+                                <option value="administrador" disabled title="Solo puede existir un administrador en el sistema">Administrador (Bloqueado)</option>
                             </Form.Control>
                         ) : (
                             <Form.Control 
@@ -722,7 +722,7 @@ const UserManagementList = () => {
                                 <option value="">Seleccionar rol</option>
                                 <option value="instructor">Instructor</option>
                                 <option value="técnico">Técnico</option>
-                                <option value="administrador">Administrador</option>
+                                <option value="administrador" disabled title="Solo puede existir un administrador en el sistema">Administrador (Bloqueado)</option>
                             </Form.Control>
                         </div>
                     </div>
