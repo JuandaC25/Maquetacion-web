@@ -9,7 +9,6 @@ function Soliespacios() {
     <>
       <Header title="Solicitud de espacios"/>
       <Datos_espacio />
-      <CrearEspacio />
       <div className=' Ajustfot'>
         <Footer/>
       </div>
