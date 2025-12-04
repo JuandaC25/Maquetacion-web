@@ -4,37 +4,35 @@ const BASE_URL = 'http://localhost:8081';
 
 // Función para decodificar el token JWT y obtener el usuario
 export function getCurrentUser() {
-  const token = getToken();
-  if (!token) {
-    return null;
-  }
+    // Primero intenta obtener el usuario del localStorage (guardado por AuthContext)
+    const usuarioGuardado = localStorage.getItem('usuario');
+    if (usuarioGuardado) {
+        try {
+            return JSON.parse(usuarioGuardado);
+        } catch (e) {
+            console.error('Error al parsear usuario guardado:', e);
+        }
+    }
 
-  try {
-    // Extraer el token sin el prefijo "Bearer "
-    const tokenWithoutBearer = token.replace(/^Bearer\s+/i, '');
-    
-    // Decodificar el payload del JWT (segunda parte del token)
-    const base64Url = tokenWithoutBearer.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
+    // Si no está el usuario guardado, intenta decodificar el token JWT
+    const token = localStorage.getItem('auth_token');
+    if (!token) return null;
 
-    const payload = JSON.parse(jsonPayload);
-    
-    // El payload contiene: { sub: "username", id: 5, roles: [...], ... }
-    return {
-      id: payload.id,
-      username: payload.sub,
-      roles: payload.roles || []
-    };
-  } catch (error) {
-    console.error('[AUTH] Error al decodificar token:', error);
-    return null;
-  }
+    try {
+        // Remover "Bearer " si existe en el token
+        const jwtToken = token.replace(/^Bearer\s+/i, '');
+        // Decodifica el payload del JWT
+        const payload = JSON.parse(atob(jwtToken.split('.')[1]));
+        // Retorna el usuario del payload
+        return {
+            id: payload.id || payload.userId || payload.sub,
+            username: payload.username || payload.sub,
+            roles: payload.roles || []
+        };
+    } catch (e) {
+        console.error('Error al decodificar token JWT:', e);
+        return null;
+    }
 }
 
 export async function authorizedFetch(path, options = {}) {
