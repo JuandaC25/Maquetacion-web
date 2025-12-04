@@ -28,11 +28,18 @@
 .confirmacion-cabeza {
   background: var(--verde-principal, #09b41a); 
   color: #fff;
-  padding: 15px;
+  padding: 8px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   font-weight: bold;
+  position: relative;
+}
+
+.confirmacion-cabeza h2 {
+  margin: 0;
+  font-size: 18px;
+  text-align: center;
 }
 
 .confirmacion-close-btn {
@@ -42,12 +49,16 @@
   font-size: 22px;
   cursor: pointer;
   transition: 0.2s;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .confirmacion-close-btn:hover {
   color: #d4f8d4;
 }
 .confirmacion-cuerpo {
-  padding: 25px 20px;
+  padding: 8px 10px;
   text-align: center;
   font-size: 17px;
   color: #333;
@@ -55,15 +66,13 @@
 .confirmacion-footer {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  padding: 20px;
-  border-top: 1px solid #ddd;
+  gap: 10px;
+  padding: 8px;
 }
 .btn-verde-no {
-  background-color: var(--verde-principal, #09b41a);
-  opacity: 0.8;
-  color: white;
-  border: none;
+  background-color: white;
+  color: var(--verde-principal, #09b41a);
+  border: 2px solid var(--verde-principal, #09b41a);
   border-radius: 8px;
   padding: 8px 25px;
   font-size: 15px;
@@ -72,12 +81,13 @@
 }
 
 .btn-verde-no:hover {
-  opacity: 1;
-}
-.btn-verde-si {
   background-color: var(--verde-principal, #09b41a);
   color: white;
-  border: none;
+}
+.btn-verde-si {
+  background-color: white;
+  color: var(--verde-principal, #09b41a);
+  border: 2px solid var(--verde-principal, #09b41a);
   border-radius: 8px;
   padding: 8px 25px;
   font-size: 15px;
@@ -87,5 +97,6 @@
 }
 
 .btn-verde-si:hover {
-  filter: brightness(1.15);
+  background-color: var(--verde-principal, #09b41a);
+  color: white;
 }

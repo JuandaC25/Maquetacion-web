@@ -8,6 +8,7 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import { FaFilter } from "react-icons/fa";
 import ModalTickets from "./ModalHistorial/ModalTickets.jsx";
 import TicketsActivosTec from "./TicketsActivosTec.jsx";
+import { authorizedFetch } from "../../../api/http";
 
 const HistorialTec = () => {
   const [categoriaGeneral, setCategoriaGeneral] = useState("Tickets"); 
@@ -18,6 +19,7 @@ const HistorialTec = () => {
 
   const [historial, setHistorial] = useState([]);
   const [elementos, setElementos] = useState([]);
+  const [trasabilidad, setTrasabilidad] = useState([]);
   const [error, setError] = useState("");
   const [ticketSeleccionado, setTicketSeleccionado] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -28,23 +30,30 @@ const HistorialTec = () => {
         setError("");
         let dataHistorial = [];
         let dataElementos = [];
+        let dataTrasabilidad = [];
 
         if (categoriaGeneral === "Tickets") {
-          const resTickets = await fetch("http://localhost:8081/api/tickets");
+          const resTickets = await authorizedFetch("/api/tickets/finalizados");
           if (!resTickets.ok) throw new Error(`Error ${resTickets.status}`);
           dataHistorial = await resTickets.json();
         } else {
-          const resPrestamos = await fetch("http://localhost:8081/api/prestamos");
+          const resPrestamos = await authorizedFetch("/api/prestamos/finalizados");
           if (!resPrestamos.ok) throw new Error(`Error ${resPrestamos.status}`);
           dataHistorial = await resPrestamos.json();
         }
 
-        const resElementos = await fetch("http://localhost:8081/api/elementos");
+        const resElementos = await authorizedFetch("/api/elementos");
         if (!resElementos.ok) throw new Error(`Error ${resElementos.status}`);
         dataElementos = await resElementos.json();
 
+        const resTrasabilidad = await authorizedFetch("/api/trasabilidad");
+        if (resTrasabilidad.ok) {
+          dataTrasabilidad = await resTrasabilidad.json();
+        }
+
         setHistorial(dataHistorial);
         setElementos(dataElementos);
+        setTrasabilidad(dataTrasabilidad);
       } catch (err) {
         console.error("Error al obtener historial:", err);
         setError("No se pudo conectar con el backend. Verifica que esté corriendo y la URL sea correcta.");
@@ -54,15 +63,8 @@ const HistorialTec = () => {
     fetchData();
   }, [categoriaGeneral]);
 
-  // Filtrar tickets por estado 0 o 4 solo si la categoría general es Tickets
-  const historialConCategoria = historial
-    .filter(item => {
-      if (categoriaGeneral === "Tickets") {
-        return item.estado === 0 || item.estado === 4;
-      }
-      return true;
-    })
-    .map((item) => {
+  // Mapear tickets con información de elementos
+  const historialConCategoria = historial.map((item) => {
       const elementoRelacionado = elementos.find(
         (el) => el.id_elemen === (categoriaGeneral === "Tickets" ? item.id_eleme : item.id_elem)
       );
@@ -209,6 +211,7 @@ const HistorialTec = () => {
           ticket={ticketSeleccionado}
           elementos={elementos}
           tipo={categoriaGeneral}
+          trasabilidad={trasabilidad}
         />
       )}
 

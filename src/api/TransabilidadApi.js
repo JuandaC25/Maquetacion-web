@@ -18,6 +18,22 @@ export const obtenerHistorialPorTicket = async (ticketId) => {
   }
 };
 
+export const crearTrasabilidad = async (data) => {
+  try {
+    const res = await authorizedFetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      throw new Error(`Error al crear trasabilidad: ${res.status}`);
+    }
+    return await res.json();
+  } catch (error) {
+    console.error('[TRANSABILIDAD] Error al crear trasabilidad:', error);
+    throw error;
+  }
+};
+
 export const editarHistorial = async (historialId, data) => {
   try {
     const res = await authorizedFetch(`${API_URL}/${historialId}`, {

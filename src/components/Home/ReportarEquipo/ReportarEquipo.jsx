@@ -165,10 +165,10 @@ function ReportarEquipo() {
               {submitting ? (
                 <>
                   <Spinner animation="border" size="sm" className="me-2" />
-                  Reportando...
+                  Tomando...
                 </>
               ) : (
-                '🚨 Reportar Equipo'
+                '✋ Tomar'
               )}
             </Button>
 
