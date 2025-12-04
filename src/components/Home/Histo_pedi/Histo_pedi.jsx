@@ -7,15 +7,10 @@ import Footer from '../../Footer/Footer.jsx';
 import { Pagination, Button, Badge, Tabs, Tab } from 'react-bootstrap'; 
 import { 
     obtenersolicitudes, 
-<<<<<<< HEAD
-    actualizarEstadoSolicitud 
-} from '../../../api/solicitudesApi.js'; 
-=======
     eliminarSolicitud,
     actualizarEstadoSolicitud, // ✨ Importación clave
     cancelarSolicitudComoInstructor
 } from '../../../api/solicitudesApi.js';
->>>>>>> 06de13a (cambios)
 import { obtenerTickets, eliminarTicket } from '../../../api/ticket.js';
 import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js'; 
 
@@ -23,6 +18,7 @@ import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js';
 
 const formatFecha = (fechaString) => {
     if (!fechaString || fechaString === 'N/A') return 'N/A';
+    try {
         const datePart = fechaString.split('T')[0];
         const [year, month, day] = datePart.split('-').map(Number);
         const dateObj = new Date(year, month - 1, day); 
@@ -36,14 +32,7 @@ const formatFecha = (fechaString) => {
 }
 
 const getStatusDetails = (estadoValor) => {
-    import { 
-         obtenersolicitudes, 
-         eliminarSolicitud,
-         actualizarEstadoSolicitud, // Importación clave
-         cancelarSolicitudComoInstructor
-    } from '../../../api/solicitudesApi.js';
-    import { obtenerTickets, eliminarTicket } from '../../../api/ticket.js';
-    import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js'; 
+        // Limpieza: No se deben importar módulos dentro de funciones
     const estadoTexto = estadoValor?.toString().toLowerCase().trim() || '';
 
     if (estadoTexto.includes('pendiente')) {
@@ -162,9 +151,15 @@ function Historial_ped() {
         const filterId = String(selectedSubcategoriaId);
         
         return solicitudes.filter(sol => {
-            // Se asume que el ID de subcategoría puede venir en cualquiera de estas llaves
-            const solSubcatId = String(sol.id_subcatego ?? sol.id_subcate ?? sol.id_subcat ?? 'NULL');
-            
+            // Buscar el id de subcategoría en todas las posibles llaves
+            const solSubcatId = String(
+                sol.id_subcategoria ??
+                sol.id_subcatego ??
+                sol.id_subcate ??
+                sol.id_subcat ??
+                sol.id_subcateg ??
+                'NULL'
+            );
             return solSubcatId === filterId;
         });
     }, [solicitudes, selectedSubcategoriaId, activeTab]);
@@ -176,10 +171,7 @@ function Historial_ped() {
     const indexOfFirstSolicitud = indexOfLastSolicitud - solicitudesPerPage;
     const currentSolicitudes = currentItems.slice(indexOfFirstSolicitud, indexOfLastSolicitud); 
 
-<<<<<<< HEAD
-=======
     // 🚀 FUNCIÓN DE CANCELACIÓN: Llama a la API correcta según el rol y actualiza el estado local de React.
->>>>>>> 06de13a (cambios)
     const handleCancelStatus = async (id_solicitud) => {
         const ESTADO_CANCELADO = 'Cancelado';
         if (!window.confirm(`¿Estás seguro de que deseas cancelar la solicitud ${id_solicitud}? El estado cambiará a "${ESTADO_CANCELADO}".`)) {
@@ -306,21 +298,19 @@ function Historial_ped() {
                 <Stack gap={1}>
                     {currentSolicitudes.map((sol) => {
                         const status = getStatusDetails(sol.est_soli); 
-                        // Mostrar el nombre de la subcategoría si viene en la solicitud, si no usar el mapeo
-                        const subcategoriaNombre = sol.nom_subcat || subcategorias[sol.id_subcat] || 'N/A';
-                        
-                        // Obtener ID (será null si no existe)
-                        const rawId = sol.id_subcatego ?? sol.id_subcate ?? sol.id_subcat ?? null;
-                        
-                        // Si el ID es válido, lo convierte a string para buscar.
-                        const subcategoriaKey = rawId !== null && rawId !== undefined ? String(rawId) : '';
-                        
-                        let subcategoriaNombre;
-                        if (subcategoriaKey !== '') {
-                            subcategoriaNombre = subcategorias[subcategoriaKey] || 'N/A (ID No Encontrado)';
-                        } else {
-                            subcategoriaNombre = 'N/A';
-                        }
+                        // Unificar el acceso al id de subcategoría para mostrar el nombre correcto
+                        const subcatId = (
+                            sol.id_subcategoria ??
+                            sol.id_subcatego ??
+                            sol.id_subcate ??
+                            sol.id_subcat ??
+                            sol.id_subcateg ??
+                            null
+                        );
+                        const subcategoriaKey = subcatId !== null && subcatId !== undefined ? String(subcatId) : '';
+                        const subcategoriaNombre = subcategoriaKey !== ''
+                            ? (subcategorias[subcategoriaKey] || 'N/A (ID No Encontrado)')
+                            : 'N/A';
                         
                         const puedeCancelar = sol.est_soli?.toLowerCase().includes('pendiente');
 
