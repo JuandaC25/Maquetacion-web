@@ -51,6 +51,14 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
 
     const handleSaveChanges = async () => {
         try {
+            if (editedUser.corre) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(editedUser.corre)) {
+                    alert('Ingrese un correo válido (ejemplo@dominio.com)');
+                    return;
+                }
+            }
+
             const usuarioActualizado = {
                 nom_us: editedUser.nom_usua,
                 ape_us: editedUser.ape_usua,
@@ -79,7 +87,6 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
             
             await onActualizarUsuario(userDetails.id_usuari, usuarioActualizado);
             setEditMode(false);
-            alert('Usuario actualizado exitosamente');
         } catch (error) {
             console.error('Error completo:', error);
             console.error('Mensaje de error:', error.message);
@@ -103,12 +110,39 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
                 <div className="detail-item-xd115">
                     <label className="detail-label-xd116">Nombre completo:</label>
                     <div className="detail-value-display-xd117">
-                        <Form.Control 
-                            type="text" 
-                            value={`${userDetails.nom_usua || ''} ${userDetails.ape_usua || ''}`} 
-                            readOnly 
-                            className="modern-form-control-xd118" 
-                        />
+                        {editMode ? (
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                                    <label className="detail-label-xd116" style={{ marginBottom: '6px' }}>Nombre</label>
+                                    <Form.Control
+                                        type="text"
+                                        value={editedUser.nom_usua || ''}
+                                        onChange={(e) => handleEditChange('nom_usua', e.target.value)}
+                                        placeholder="Nombre"
+                                        className="modern-form-control-xd118"
+                                    />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                                    <label className="detail-label-xd116" style={{ marginBottom: '6px' }}>Apellidos</label>
+                                    <Form.Control
+                                        type="text"
+                                        value={editedUser.ape_usua || ''}
+                                        onChange={(e) => handleEditChange('ape_usua', e.target.value)}
+                                        placeholder="Apellidos"
+                                        aria-label="Apellidos"
+                                        title="Apellidos"
+                                        className="modern-form-control-xd118"
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            <Form.Control 
+                                type="text" 
+                                value={`${userDetails.nom_usua || ''} ${userDetails.ape_usua || ''}`} 
+                                readOnly 
+                                className="modern-form-control-xd118" 
+                            />
+                        )}
                     </div>
                 </div>
                     <div className="detail-item-xd115">
@@ -141,12 +175,22 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
                 <div className="detail-item-xd115">
                     <label className="detail-label-xd116">Correo electrónico:</label>
                     <div className="detail-value-display-xd117">
-                        <Form.Control 
-                            type="email" 
-                            value={userDetails.corre || ''} 
-                            readOnly 
-                            className="modern-form-control-xd118" 
-                        />
+                        {editMode ? (
+                            <Form.Control
+                                type="email"
+                                value={editedUser.corre || ''}
+                                onChange={(e) => handleEditChange('corre', e.target.value)}
+                                placeholder="ejemplo@dominio.com"
+                                className="modern-form-control-xd118"
+                            />
+                        ) : (
+                            <Form.Control 
+                                type="email" 
+                                value={userDetails.corre || ''} 
+                                readOnly 
+                                className="modern-form-control-xd118" 
+                            />
+                        )}
                     </div>
                 </div>
                 

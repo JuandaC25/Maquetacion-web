@@ -5,6 +5,7 @@ import './Categorias.css';
 import Footer from '../../Footer/Footer.jsx';
 import HeaderCategorias from '../header_categorias/header_categorias.jsx';
 import { obtenerCategoria, crearCategoria, eliminarCategoria, actualizarEstadoCategoria,} from '../../../api/CategoriaApi.js';
+import { getJson } from '../../../api/http';
 import { obtenerSubcategorias, crearSubcategoria, eliminarSubcategoria,} from '../../../api/SubcategotiaApi.js';
 import { actualizarEstadoSubcategoria } from '../../../api/SubcategotiaApi.js';
 
@@ -31,6 +32,7 @@ const Categorias = () => {
   
   const [filtroEstadoCategoria, setFiltroEstadoCategoria] = useState('Todos los Estados');
   const [filtroEstadoSubcategoria, setFiltroEstadoSubcategoria] = useState('Todos los Estados');
+  const [userRoles, setUserRoles] = useState([]);
 
   useEffect(() => {
     cargarDatos();
@@ -44,6 +46,12 @@ const Categorias = () => {
         obtenerCategoria(),
         obtenerSubcategorias()
       ]);
+      try {
+        const me = await getJson('/auth/me');
+        setUserRoles(Array.isArray(me.roles) ? me.roles : []);
+      } catch (e) {
+        console.warn('No se pudo obtener info de usuario (/auth/me):', e.message || e);
+      }
       setCategorias(Array.isArray(categoriasData) ? categoriasData : []);
       setSubcategorias(Array.isArray(subcategoriasData) ? subcategoriasData : []);
     } catch (err) {
@@ -53,6 +61,11 @@ const Categorias = () => {
       setLoading(false);
     }
   };
+
+  const isAdmin = () => {
+    if (!userRoles || userRoles.length === 0) return false;
+    return userRoles.some(r => /admin/i.test(String(r)));
+  }
   const handleOpenModalCategoria = () => {
     setNuevaCategoria({ nom_cat: '' });
     setShowModalCategoria(true);
@@ -656,23 +669,29 @@ const Categorias = () => {
                           <span className="card-badge-cat24">ID: {categoria.id_cat}</span>
                         </div>
                         <div className="card-actions-cat25">
-                          <Button 
-                            variant="danger" 
-                            size="sm" 
-                            className="delete-btn-cat26"
-                            onClick={() => handleEliminarCategoria(categoria.id_cat)}
-                          >
-                            <FaTrash /> Eliminar
-                          </Button>
-                          <Button
-                            variant={categoria.estado === 1 ? 'warning' : 'success'}
-                            size="sm"
-                            className="toggle-btn-cat30"
-                            onClick={() => handleToggleCategoria(categoria)}
-                            disabled={togglingCategoriaId === categoria.id_cat}
-                          >
-                            {togglingCategoriaId === categoria.id_cat ? '...' : (categoria.estado === 1 ? 'Desactivar' : 'Activar')}
-                          </Button>
+                          {isAdmin() ? (
+                            <>
+                              <Button 
+                                variant="danger" 
+                                size="sm" 
+                                className="delete-btn-cat26"
+                                onClick={() => handleEliminarCategoria(categoria.id_cat)}
+                              >
+                                <FaTrash /> Eliminar
+                              </Button>
+                              <Button
+                                variant={categoria.estado === 1 ? 'warning' : 'success'}
+                                size="sm"
+                                className="toggle-btn-cat30"
+                                onClick={() => handleToggleCategoria(categoria)}
+                                disabled={togglingCategoriaId === categoria.id_cat}
+                              >
+                                {togglingCategoriaId === categoria.id_cat ? '...' : (categoria.estado === 1 ? 'Desactivar' : 'Activar')}
+                              </Button>
+                            </>
+                          ) : (
+                            <div style={{ fontSize: 12, color: '#666' }}>No autorizado</div>
+                          )}
                         </div>
                       </div>
                     </div>
