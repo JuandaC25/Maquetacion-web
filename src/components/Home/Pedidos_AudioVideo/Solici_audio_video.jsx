@@ -76,6 +76,7 @@ function SoliciAudioVideo() {
       try {
         setIsLoading(true);
         const data = await ElementosService.obtenerElementos();
+        
         // Filtrar por nombre de categoría y excluir subcategorías específicas
         const subcategoriasExcluir = [
           "Equipo de edicion",
@@ -83,7 +84,8 @@ function SoliciAudioVideo() {
         ];
         const multimediaItems = data.filter(
           (item) =>
-            item.categoria && item.categoria.toLowerCase() === "multimedia" &&
+            item.tip_catg && 
+            item.tip_catg.toLowerCase().trim() === "multimedia" &&
             (!item.sub_catg || !subcategoriasExcluir.includes(item.sub_catg))
         );
   const activos = multimediaItems.filter((item) => item.est === 1);
