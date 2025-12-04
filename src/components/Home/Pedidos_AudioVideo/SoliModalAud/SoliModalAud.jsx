@@ -1,0 +1,382 @@
+import React, { useState, useEffect, useCallback } from "react";
+import { Modal, Form, Button, Spinner } from "react-bootstrap";
+import { crearSolicitud } from "../../../../api/solicitudesApi";
+import { obtenerCategoria } from "../../../../api/CategoriaApi";
+import { obtenerSubcategorias } from "../../../../api/SubcategotiaApi";
+
+// [Funciones utilitarias getMinMaxDate y getMinTime se mantienen igual...]
+
+const getMinMaxDate = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0"); 
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+};
+
+const getMinTime = () => {
+    const now = new Date();
+    const adjustedTime = new Date(now.getTime() + 60000); 
+    const adjustedHh = String(adjustedTime.getHours()).padStart(2, "0");
+    const adjustedMm = String(adjustedTime.getMinutes()).padStart(2, "0");
+    return `${adjustedHh}:${adjustedMm}`;
+};
+
+const todayDate = getMinMaxDate();
+
+// --- COMPONENTE PRINCIPAL ---
+
+function SoliciAudVid({ show, onHide, equiposDisponibles, userId }) {
+    const [categorias, setCategorias] = useState([]);
+    const [subcategorias, setSubcategorias] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    // ... [getInitialFormState se mantiene igual]
+
+    const getInitialFormState = (equipos, id) => ({
+        fecha_ini: todayDate,
+        hora_ini: getMinTime(),
+        fecha_fn: todayDate,
+        hora_fn: "",
+        ambient: "",
+        cantid: "1", 
+        id_elemen: equipos.length > 0 ? equipos[0].id_elemen.toString() : "", 
+        estadosoli: 1, 
+        id_usu: id, 
+        num_ficha: "",
+        id_categoria: "", 
+        id_subcategoria: "", 
+    });
+
+    const [form, setForm] = useState(getInitialFormState(equiposDisponibles, userId));
+    
+    // ... [useEffect para resetear estado se mantiene igual]
+
+    useEffect(() => {
+        if (show) {
+            setForm(getInitialFormState(equiposDisponibles, userId));
+        }
+    }, [equiposDisponibles, show, userId]);
+    
+    
+    // ❌ 1. FILTRO DE CATEGORÍAS (Excluyendo "Computo")
+    useEffect(() => {
+        // ❌ Definición de la categoría a excluir
+        const categoriaAExcluir = "Computo"; 
+        
+        obtenerCategoria()
+            .then(data => {
+                const categoriasFiltradas = data.filter(cat => 
+                    // Se filtra para incluir las que NO sean la categoría a excluir
+                    cat.nom_cat !== categoriaAExcluir 
+                );
+                setCategorias(categoriasFiltradas);
+                
+                // Si la categoría actualmente seleccionada fue excluida, limpiamos el formulario
+                if (form.id_categoria && !categoriasFiltradas.some(c => c.id_cat.toString() === form.id_categoria)) {
+                     setForm(prevForm => ({ ...prevForm, id_categoria: "", id_subcategoria: "" }));
+                }
+
+            })
+            .catch(err => console.error("Error al cargar categorías:", err));
+    }, [form.id_categoria]); // Se añade form.id_categoria para asegurar que se limpia si la categoría es excluida.
+
+
+    // ❌ 2. FILTRO Y CARGA DE SUBCATEGORÍAS (Excluyendo "Portatil de edición" y "Equipo de edición")
+    useEffect(() => {
+        // ❌ Definición de las subcategorías a excluir
+        const subcategoriasAExcluir = ["Portatil de edición", "Equipo de edición"];
+
+        if (form.id_categoria) {
+            obtenerSubcategorias(form.id_categoria)
+                .then(data => {
+                    // Filtrar para incluir solo las subcategorías que NO estén en la lista de exclusión
+                    const subcategoriasFiltradas = data.filter(sub => 
+                         !subcategoriasAExcluir.includes(sub.nom_subcateg)
+                    ); 
+                    
+                    setSubcategorias(subcategoriasFiltradas);
+                    setForm(prevForm => ({ 
+                        ...prevForm, 
+                        id_subcategoria: subcategoriasFiltradas.length > 0 
+                            ? prevForm.id_subcategoria
+                            : ""
+                    }));
+                })
+                .catch(err => console.error("Error al cargar subcategorías:", err));
+        } else {
+            setSubcategorias([]);
+            setForm(prevForm => ({ ...prevForm, id_subcategoria: "" })); 
+        }
+    }, [form.id_categoria]);
+
+    // ... [handleChange y handleFormSubmit se mantienen iguales]
+    const handleChange = useCallback((e) => {
+        const { name, value } = e.target;
+        setForm(prevForm => {
+            let newState = { ...prevForm, [name]: value };
+
+            if (name === "fecha_ini" && value > prevForm.fecha_fn && prevForm.fecha_fn) {
+                newState.fecha_fn = value;
+            }
+            
+            if (name === "id_categoria") {
+                newState.id_subcategoria = ""; 
+            }
+            
+            return newState;
+        });
+    }, []);
+
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        const parsedCantid = parseInt(form.cantid, 10);
+        
+        if (isNaN(parsedCantid) || parsedCantid <= 0 || parsedCantid > equiposDisponibles.length) {
+            alert(`La cantidad a solicitar debe ser un número positivo (1-${equiposDisponibles.length})`);
+            setIsSubmitting(false);
+            return;
+        }
+
+        if (!form.id_elemen) {
+            alert("Debes seleccionar un equipo específico para realizar la solicitud.");
+            setIsSubmitting(false);
+            return;
+        }
+        
+        const fechaInicio = new Date(`${form.fecha_ini}T${form.hora_ini}:00`);
+        const fechaFin = new Date(`${form.fecha_fn}T${form.hora_fn}:00`);
+
+        if (fechaFin <= fechaInicio) {
+            alert("La fecha y hora de fin debe ser posterior a la de inicio.");
+            setIsSubmitting(false);
+            return;
+        }
+        
+        const dto = {
+            fecha_ini: `${form.fecha_ini}T${form.hora_ini}:00`, 
+            fecha_fn: `${form.fecha_fn}T${form.hora_fn}:00`, 
+            ambient: form.ambient,
+            num_fich: form.num_ficha ? parseInt(form.num_ficha, 10) : null, 
+            cantid: parsedCantid, 
+            id_estado_soli: form.estadosoli,
+            id_categoria: form.id_categoria ? parseInt(form.id_categoria, 10) : null,
+            id_subcategoria: form.id_subcategoria ? parseInt(form.id_subcategoria, 10) : null,
+            id_usu: form.id_usu,
+            ids_elem: form.id_elemen ? [parseInt(form.id_elemen, 10)] : [], 
+        };
+        
+        try {
+            await crearSolicitud(dto);
+            alert("Solicitud realizada correctamente ✅");
+            onHide();
+        } catch (err) {
+            console.error("Error al realizar la solicitud:", err);
+            alert(`Hubo un problema al enviar la solicitud: ${err.message}`);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+    
+    const maxCantidad = equiposDisponibles.length;
+
+
+    return (
+        <Modal show={show} onHide={onHide} centered>
+            <Modal.Header className="Modal_hea" closeButton>
+                <Modal.Title className="Txt_modal_header">Realizar Solicitud</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form onSubmit={handleFormSubmit}>
+                    {/* Select de Categoría */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Categoría</Form.Label>
+                        <Form.Control
+                            as="select"
+                            name="id_categoria"
+                            value={form.id_categoria}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">Selecciona una categoría</option>
+                            {/* Solo mostrará las categorías NO excluidas (ej: "Multimedia") */}
+                            {categorias.map(cat => (
+                                <option key={cat.id_cat} value={cat.id_cat}>{cat.nom_cat}</option>
+                            ))}
+                        </Form.Control>
+                    </Form.Group>
+                    
+                    {/* Select de Subcategoría */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Subcategoría</Form.Label>
+                        <Form.Control
+                            as="select"
+                            name="id_subcategoria"
+                            value={form.id_subcategoria}
+                            onChange={handleChange}
+                            required
+                            disabled={!form.id_categoria}
+                        >
+                            <option value="">Selecciona una subcategoría</option>
+                            {subcategorias.length === 0 && form.id_categoria && (
+                                <option value="" disabled>
+                                    No hay subcategorías disponibles para esta categoría
+                                </option>
+                            )}
+                            {/* Mostrará subcategorías de la categoría seleccionada (sin "Portatil de edición" ni "Equipo de edición") */}
+                            {subcategorias.map(sub => (
+                                <option 
+                                    key={sub.id_subcateg || sub.id} 
+                                    value={sub.id_subcateg || sub.id}
+                                >
+                                    {sub.nom_subcateg}
+                                </option>
+                            ))}
+                        </Form.Control>
+                    </Form.Group>
+                    
+                    {/* [Resto del formulario se mantiene igual] */}
+                    <Form.Group className="mb-3">
+                        <Form.Label>Selecione el equipo</Form.Label>
+                        <Form.Control
+                            as="select"
+                            name="id_elemen"
+                            value={form.id_elemen}
+                            onChange={handleChange}
+                            required
+                            disabled={maxCantidad === 0}
+                        >
+                            <option value="">Selecciona el equipo a solicitar</option>
+                            {equiposDisponibles.map((equipo) => (
+                                <option 
+                                    key={equipo.id_elemen} 
+                                    value={equipo.id_elemen}
+                                >
+                                    {equipo.num_ficha} - {equipo.sub_catg}
+                                </option>
+                            ))}
+                            {maxCantidad === 0 && (
+                                <option value="" disabled>
+                                    No hay equipos disponibles.
+                                </option>
+                            )}
+                        </Form.Control>
+                    </Form.Group>
+                    
+                    <Form.Group className="mb-3">
+                        <Form.Label>Cantidad a solicitar (Máx: {maxCantidad})</Form.Label>
+                        <Form.Control
+                            type="number"
+                            name="cantid"
+                            placeholder="Ej: 1"
+                            value={form.cantid}
+                            onChange={handleChange}
+                            min="1"
+                            max={maxCantidad.toString()}
+                            required
+                            disabled={maxCantidad === 0}
+                        />
+                    </Form.Group>
+                    
+                    <Form.Group className="mb-3">
+                        <Form.Label>Fecha y Hora de Inicio</Form.Label>
+                        <div className="row g-2">
+                            <div className="col-md-6">
+                                <Form.Control
+                                    type="date"
+                                    name="fecha_ini"
+                                    value={form.fecha_ini}
+                                    onChange={handleChange}
+                                    min={todayDate}
+                                    max={todayDate}
+                                    required
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <Form.Control
+                                    type="time"
+                                    name="hora_ini"
+                                    value={form.hora_ini}
+                                    onChange={handleChange}
+                                    min={form.fecha_ini === todayDate ? getMinTime() : "00:00"}
+                                    max="23:59"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Fecha y Hora de Fin</Form.Label>
+                        <div className="row g-2">
+                            <div className="col-md-6">
+                                <Form.Control
+                                    type="date"
+                                    name="fecha_fn"
+                                    value={form.fecha_fn}
+                                    onChange={handleChange}
+                                    min={form.fecha_ini || todayDate}
+                                    max={todayDate}
+                                    required
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <Form.Control
+                                    type="time"
+                                    name="hora_fn"
+                                    value={form.hora_fn}
+                                    onChange={handleChange}
+                                    min={form.fecha_fn === form.fecha_ini ? form.hora_ini : "00:00"} 
+                                    max="23:59"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </Form.Group>
+                    
+                    <Form.Group className="mb-3">
+                        <div className="row g-2">
+                            <div className="col-md-6">
+                                <Form.Label>Ambiente</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="ambient"
+                                    placeholder="Ej: Ambiente 301"
+                                    value={form.ambient}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                            <div className="col-md-6">
+                                <Form.Label>Número de ficha (Usuario)</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="num_ficha"
+                                    placeholder="Ej: 2560014"
+                                    value={form.num_ficha}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </Form.Group>
+                    
+                    <div className="text-center mt-4">
+                        <Button variant="success" type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? (
+                                <>
+                                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                                    {' Enviando...'}
+                                </>
+                            ) : (
+                                'Enviar Solicitud'
+                            )}
+                        </Button>
+                    </div>
+                </Form>
+            </Modal.Body>
+        </Modal>
+    );
+}
+
+export default SoliciAudVid;
