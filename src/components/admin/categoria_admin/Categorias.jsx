@@ -4,9 +4,9 @@ import { FaPlus, FaEdit, FaTrash, FaFilePdf } from 'react-icons/fa';
 import './Categorias.css';
 import Footer from '../../Footer/Footer.jsx';
 import HeaderCategorias from '../header_categorias/header_categorias.jsx';
-import { obtenerCategoria, crearCategoria, eliminarCategoria, actualizarEstadoCategoria,} from '../../../api/CategoriaApi.js';
+import { obtenerCategoria, crearCategoria, eliminarCategoria, actualizarEstadoCategoria, actualizarCategoria } from '../../../api/CategoriaApi.js';
 import { getJson } from '../../../api/http';
-import { obtenerSubcategorias, crearSubcategoria, eliminarSubcategoria,} from '../../../api/SubcategotiaApi.js';
+import { obtenerSubcategorias, crearSubcategoria, eliminarSubcategoria, actualizarSubcategoria } from '../../../api/SubcategotiaApi.js';
 import { actualizarEstadoSubcategoria } from '../../../api/SubcategotiaApi.js';
 
 const Categorias = () => {
@@ -29,6 +29,12 @@ const Categorias = () => {
   });
   const [guardandoSubcategoria, setGuardandoSubcategoria] = useState(false);
   const [togglingSubcategoriaId, setTogglingSubcategoriaId] = useState(null);
+  const [showEditSubModal, setShowEditSubModal] = useState(false);
+  const [editSubcategoria, setEditSubcategoria] = useState({ id: null, nom_subcateg: '', id_cat: '' });
+  const [guardandoEditSub, setGuardandoEditSub] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editCategoria, setEditCategoria] = useState({ id: null, nom_categoria: '' });
+  const [guardandoEdit, setGuardandoEdit] = useState(false);
   
   const [filtroEstadoCategoria, setFiltroEstadoCategoria] = useState('Todos los Estados');
   const [filtroEstadoSubcategoria, setFiltroEstadoSubcategoria] = useState('Todos los Estados');
@@ -201,6 +207,73 @@ const Categorias = () => {
       console.error(err);
     } finally {
       setTogglingSubcategoriaId(null);
+    }
+  };
+  const handleOpenEditSubModal = (subcategoria) => {
+    setEditSubcategoria({ id: subcategoria.id, nom_subcateg: subcategoria.nom_subcateg, id_cat: subcategoria.id_cat });
+    setShowEditSubModal(true);
+  };
+
+  const handleCloseEditSubModal = () => {
+    setShowEditSubModal(false);
+    setEditSubcategoria({ id: null, nom_subcateg: '', id_cat: '' });
+  };
+
+  const handleChangeEditSubInput = (e) => {
+    const { value } = e.target;
+    setEditSubcategoria(prev => ({ ...prev, nom_subcateg: value }));
+  };
+
+  const handleSubmitEditSub = async () => {
+    if (!editSubcategoria.nom_subcateg || !editSubcategoria.nom_subcateg.trim()) {
+      alert('Ingresa un nombre válido para la subcategoría');
+      return;
+    }
+
+    try {
+      setGuardandoEditSub(true);
+      await actualizarSubcategoria(editSubcategoria.id, { nom_subcategoria: editSubcategoria.nom_subcateg });
+      await cargarDatos();
+      handleCloseEditSubModal();
+      alert('Subcategoría actualizada correctamente');
+    } catch (err) {
+      alert('Error al actualizar la subcategoría: ' + err.message);
+      console.error(err);
+    } finally {
+      setGuardandoEditSub(false);
+    }
+  };
+  const handleOpenEditModal = (categoria) => {
+    setEditCategoria({ id: categoria.id_cat, nom_categoria: categoria.nom_cat });
+    setShowEditModal(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setEditCategoria({ id: null, nom_categoria: '' });
+  };
+
+  const handleChangeEditInput = (e) => {
+    setEditCategoria(prev => ({ ...prev, nom_categoria: e.target.value }));
+  };
+
+  const handleSubmitEdit = async () => {
+    if (!editCategoria.nom_categoria || !editCategoria.nom_categoria.trim()) {
+      alert('Ingresa un nombre válido para la categoría');
+      return;
+    }
+
+    try {
+      setGuardandoEdit(true);
+      await actualizarCategoria(editCategoria.id, { nom_categoria: editCategoria.nom_categoria });
+      await cargarDatos();
+      handleCloseEditModal();
+      alert('Categoría actualizada correctamente');
+    } catch (err) {
+      alert('Error al actualizar la categoría: ' + err.message);
+      console.error(err);
+    } finally {
+      setGuardandoEdit(false);
     }
   };
 
@@ -671,6 +744,15 @@ const Categorias = () => {
                         <div className="card-actions-cat25">
                           {isAdmin() ? (
                             <>
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                className="toggle-btn-cat30 edit-btn-cat35"
+                                onClick={() => handleOpenEditModal(categoria)}
+                                style={{ marginRight: 8 }}
+                              >
+                                <FaEdit /> Editar
+                              </Button>
                               <Button 
                                 variant="danger" 
                                 size="sm" 
@@ -789,6 +871,15 @@ const Categorias = () => {
                             <FaTrash /> Eliminar
                           </Button>
                           <Button
+                            variant="primary"
+                            size="sm"
+                            className="toggle-btn-cat30 edit-btn-cat35"
+                            onClick={() => handleOpenEditSubModal(subcategoria)}
+                            style={{ margin: '0 8px' }}
+                          >
+                            <FaEdit /> Editar
+                          </Button>
+                          <Button
                             variant={subcategoria.estado === 1 ? 'warning' : 'success'}
                             size="sm"
                             className="toggle-btn-cat30"
@@ -883,6 +974,68 @@ const Categorias = () => {
             disabled={guardandoSubcategoria}
           >
             {guardandoSubcategoria ? <Spinner animation="border" size="sm" /> : 'Crear Subcategoría'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal para editar Subcategoría (mini modal) */}
+      <Modal show={showEditSubModal} onHide={handleCloseEditSubModal} centered>
+        <Modal.Header closeButton className="modal-header-cat28">
+          <Modal.Title>Editar Nombre de Subcategoría</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="modal-body-cat29">
+          <Form.Group>
+            <Form.Label className="form-label-cat30">Nuevo Nombre</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Ingrese el nuevo nombre de la subcategoría"
+              value={editSubcategoria.nom_subcateg}
+              onChange={handleChangeEditSubInput}
+              className="form-input-cat31"
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer className="modal-footer-cat32">
+          <Button variant="secondary" onClick={handleCloseEditSubModal}>
+            Cancelar
+          </Button>
+          <Button 
+            variant="success" 
+            onClick={handleSubmitEditSub}
+            disabled={guardandoEditSub}
+          >
+            {guardandoEditSub ? <Spinner animation="border" size="sm" /> : 'Guardar'}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal para editar Categoría (mini modal) */}
+      <Modal show={showEditModal} onHide={handleCloseEditModal} centered>
+        <Modal.Header closeButton className="modal-header-cat28">
+          <Modal.Title>Editar Nombre de Categoría</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="modal-body-cat29">
+          <Form.Group>
+            <Form.Label className="form-label-cat30">Nuevo Nombre</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Ingrese el nuevo nombre de la categoría"
+              value={editCategoria.nom_categoria}
+              onChange={handleChangeEditInput}
+              className="form-input-cat31"
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer className="modal-footer-cat32">
+          <Button variant="secondary" onClick={handleCloseEditModal}>
+            Cancelar
+          </Button>
+          <Button 
+            variant="success" 
+            onClick={handleSubmitEdit}
+            disabled={guardandoEdit}
+          >
+            {guardandoEdit ? <Spinner animation="border" size="sm" /> : 'Guardar'}
           </Button>
         </Modal.Footer>
       </Modal>
