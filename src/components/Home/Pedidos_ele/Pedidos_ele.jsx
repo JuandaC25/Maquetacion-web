@@ -109,21 +109,9 @@ function SoliciMultimedia() {
     fetchMultimediaInfo();
   }, []);
 
-  return (
-    <div className="multimedia-main-container">
-      <Header title="Solicitud Multimedia" />
-      {isLoading ? (
-        <p className="text-center">Cargando información...</p>
-      ) : error ? (
-        <p className="text-center text-danger">{error}</p>
-      ) : multimediaInfo ? (
-        <Card className="multimedia-ficha-visual">
-          <div className="multimedia-ficha-header">
-            {/* ... (Contenido de Card se mantiene igual) ... */}
-          </div>
   return (
     <div className="multimedia-main-container">
-      <Header_ad />
+      <Header title="Solicitud Elementos" />
       {isLoading ? (
         <p className="text-center">Cargando información...</p>
       ) : error ? (
@@ -205,10 +193,10 @@ function SoliciMultimedia() {
       <SolicitudModalEle
         show={showModal}
         handleHide={() => setShowModal(false)}
-        form={form} // 👈 ¡Nuevo!
-        handleChange={handleChange} // 👈 ¡Nuevo!
-        handleFormSubmit={handleFormSubmit} // 👈 ¡Nuevo!
-        equiposDisponibles={equiposDisponibles} // 👈 Opcional, pero útil si se requiere una selección
+        form={form}
+        handleChange={handleChange}
+        handleFormSubmit={handleFormSubmit}
+        equiposDisponibles={equiposDisponibles}
       />
       <Footer />
     </div>
