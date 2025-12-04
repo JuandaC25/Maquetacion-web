@@ -121,12 +121,27 @@ export const eliminarCategoria = async (id) => {
             method: "DELETE",
         });
 
-        if (res.status !== 204 && !res.ok) {
-            const errorData = await res.json().catch(() => ({}));
-            throw new Error(errorData.message || "Error al eliminar el categoria");
+        if (res.status === 204) {
+            return { success: true, message: "Categoría eliminada correctamente" };
+        }
+        let body = null;
+        try {
+            body = await res.json();
+        } catch (e) {
+            try {
+                body = await res.text();
+            } catch (e2) {
+                body = null;
+            }
         }
 
-        return { success: true, message: "categoria eliminado correctamente" };
+        if (res.status === 403) {
+            const msg = (body && (body.message || body.error)) || (typeof body === 'string' && body) || 'No tienes permisos para eliminar categorías (403)';
+            throw new Error(msg);
+        }
+
+        const fallback = (body && (body.message || body.error)) || (typeof body === 'string' && body) || `Error ${res.status} al eliminar la categoría`;
+        throw new Error(fallback);
     } catch (error) {
         if (error.message && (error.message.includes("failed to fetch") || error.message.includes("NetworkError"))) {
             throw new Error("No se pudo conectar con el servidor");
