@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Button, Modal, Form, Carousel } from "react-bootstrap";
 import "./Pedidos_ele.css";
 import Footer from "../../Footer/Footer";
-import Header_ad from './Header_ele/Header_elemen.jsx';
+import Header from '../../common/Header/Header';
 import ElementosService from "../../../api/ElementosApi";
 import { crearSolicitud } from "../../../api/solicitudesApi";
 import SolicitudModalEle from "./SolicitudModalEle/SolicitudModalEle.jsx";
@@ -109,6 +109,18 @@ function SoliciMultimedia() {
     fetchMultimediaInfo();
   }, []);
 
+  return (
+    <div className="multimedia-main-container">
+      <Header title="Solicitud Multimedia" />
+      {isLoading ? (
+        <p className="text-center">Cargando información...</p>
+      ) : error ? (
+        <p className="text-center text-danger">{error}</p>
+      ) : multimediaInfo ? (
+        <Card className="multimedia-ficha-visual">
+          <div className="multimedia-ficha-header">
+            {/* ... (Contenido de Card se mantiene igual) ... */}
+          </div>
   return (
     <div className="multimedia-main-container">
       <Header_ad />
