@@ -65,6 +65,7 @@ function Historial_ped() {
     const [subcategorias, setSubcategorias] = useState({}); 
     const [subcategoriaOptions, setSubcategoriaOptions] = useState([]);
     const [selectedSubcategoriaId, setSelectedSubcategoriaId] = useState(null);
+    const [tipoSolicitudFilter, setTipoSolicitudFilter] = useState('all'); // 'all', 'elementos', 'espacios'
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -135,6 +136,7 @@ function Historial_ped() {
     useEffect(() => {
         setCurrentPage(1); 
         setSelectedSubcategoriaId(null); // Resetear filtro al cambiar de pestaña
+        setTipoSolicitudFilter('all'); // Resetear filtro de tipo
         if (activeTab === 'solicitudes') {
             cargarSolicitudes();
         } else {
@@ -142,27 +144,47 @@ function Historial_ped() {
         }
     }, [activeTab]);
     
-    // LÓGICA DE FILTRADO: Filtra las solicitudes basándose en el ID seleccionado.
+    // LÓGICA DE FILTRADO: Filtra las solicitudes basándose en el ID seleccionado y el tipo.
     const filteredSolicitudes = useMemo(() => {
-        if (activeTab !== 'solicitudes' || !selectedSubcategoriaId) {
+        if (activeTab !== 'solicitudes') {
             return solicitudes;
         }
 
-        const filterId = String(selectedSubcategoriaId);
-        
-        return solicitudes.filter(sol => {
-            // Buscar el id de subcategoría en todas las posibles llaves
-            const solSubcatId = String(
-                sol.id_subcategoria ??
-                sol.id_subcatego ??
-                sol.id_subcate ??
-                sol.id_subcat ??
-                sol.id_subcateg ??
-                'NULL'
-            );
-            return solSubcatId === filterId;
-        });
-    }, [solicitudes, selectedSubcategoriaId, activeTab]);
+        let filtered = [...solicitudes];
+
+        // Filtrar por tipo (elementos o espacios)
+        if (tipoSolicitudFilter === 'elementos') {
+            // Elementos: tienen id_subcategoria definido
+            filtered = filtered.filter(sol => {
+                const subcatId = sol.id_subcategoria ?? sol.id_subcatego ?? sol.id_subcate ?? sol.id_subcat ?? sol.id_subcateg;
+                return subcatId !== null && subcatId !== undefined;
+            });
+        } else if (tipoSolicitudFilter === 'espacios') {
+            // Espacios: NO tienen id_subcategoria (o es null/undefined)
+            filtered = filtered.filter(sol => {
+                const subcatId = sol.id_subcategoria ?? sol.id_subcatego ?? sol.id_subcate ?? sol.id_subcat ?? sol.id_subcateg;
+                return subcatId === null || subcatId === undefined;
+            });
+        }
+
+        // Filtrar por subcategoría específica (solo si es tipo 'elementos' o 'all')
+        if (selectedSubcategoriaId && tipoSolicitudFilter !== 'espacios') {
+            const filterId = String(selectedSubcategoriaId);
+            filtered = filtered.filter(sol => {
+                const solSubcatId = String(
+                    sol.id_subcategoria ??
+                    sol.id_subcatego ??
+                    sol.id_subcate ??
+                    sol.id_subcat ??
+                    sol.id_subcateg ??
+                    'NULL'
+                );
+                return solSubcatId === filterId;
+            });
+        }
+
+        return filtered;
+    }, [solicitudes, selectedSubcategoriaId, tipoSolicitudFilter, activeTab]);
     
     // Define el array para la paginación (Tickets o Solicitudes filtradas)
     const currentItems = activeTab === 'solicitudes' ? filteredSolicitudes : tickets;
@@ -276,6 +298,13 @@ function Historial_ped() {
         setCurrentPage(1); // Resetear a la primera página al aplicar filtro
     };
 
+    // Función para manejar el filtro de tipo (elementos/espacios)
+    const handleTipoFilterChange = (tipo) => {
+        setTipoSolicitudFilter(tipo);
+        setSelectedSubcategoriaId(null); // Resetear filtro de subcategoría
+        setCurrentPage(1);
+    };
+
 
     let historialContent;
     if (isLoading) {
@@ -385,20 +414,33 @@ function Historial_ped() {
                                         </div>
                                     )}
                                     {ticket.imageness && ticket.imageness !== 'null' && (
-                                        <div style={{ marginTop: '5px', fontSize: '0.85em', color: '#667eea' }}>
-                                            📷 Tiene imágenes adjuntas
+                                        <div style={{ marginTop: '8px' }}>
+                                            <strong style={{ fontSize: '0.9em', color: '#333' }}>📷 Imágenes adjuntas:</strong>
+                                            <div style={{ display: 'flex', gap: '10px', marginTop: '5px', flexWrap: 'wrap' }}>
+                                                {ticket.imageness.split(',').map((img, idx) => (
+                                                    <a 
+                                                        key={idx} 
+                                                        href={img.trim()} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        style={{ 
+                                                            display: 'inline-block',
+                                                            padding: '5px 10px',
+                                                            backgroundColor: '#667eea',
+                                                            color: 'white',
+                                                            borderRadius: '5px',
+                                                            textDecoration: 'none',
+                                                            fontSize: '0.85em'
+                                                        }}
+                                                    >
+                                                        🖼️ Ver imagen {idx + 1}
+                                                    </a>
+                                                ))}
+                                            </div>
                                         </div>
                                     )}
                                 </span>
                                 <div className='Cont_botones_histo'>
-                                    <Button 
-                                        variant="danger" 
-                                        size="sm" 
-                                        onClick={() => handleDeleteTicket(ticket.id_tickets)}
-                                        className='Btn_eliminar_histo'
-                                    >
-                                        Eliminar 🗑️
-                                    </Button>
                                 </div>
                             </div>
                         );
@@ -422,37 +464,62 @@ function Historial_ped() {
                 justify
             >
                 <Tab eventKey="solicitudes" title="📝 Mis Solicitudes">
-                    {/* CONTENEDOR DEL FILTRO DE CATEGORÍA */}
-                    <div className='Filter_Container'> 
-                        <Dropdown onSelect={handleFilterChange}>
+                    {/* CONTENEDOR DE FILTROS */}
+                    <div className='Filter_Container' style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}> 
+                        {/* Filtro por Tipo (Elementos/Espacios) */}
+                        <Dropdown onSelect={handleTipoFilterChange}>
                             <Dropdown.Toggle 
-                                variant="success" 
-                                id="dropdown-filter-subcategoria"
+                                variant="primary" 
+                                id="dropdown-filter-tipo"
                                 className='btn-filter-custom' 
                             >
-                                {/* 🔑 CAMBIO DE TEXTO AQUÍ */}
-                                🏷️ Filtrar por Subcategoría:
+                                🔍 Tipo: {tipoSolicitudFilter === 'all' ? 'Todas' : tipoSolicitudFilter === 'elementos' ? 'Elementos' : 'Espacios'}
                             </Dropdown.Toggle>
 
-                            {/* El menú desplegable con el mismo ancho (w-100) */}
-                            <Dropdown.Menu className="w-100" align="start"> 
-                                <Dropdown.Item eventKey="all" active={selectedSubcategoriaId === null}>
-                                    Todas las subcategorías
+                            <Dropdown.Menu>
+                                <Dropdown.Item eventKey="all" active={tipoSolicitudFilter === 'all'}>
+                                    Todas las solicitudes
                                 </Dropdown.Item>
                                 <Dropdown.Divider />
-                                {subcategoriaOptions.map(sub => (
-                                    <Dropdown.Item 
-                                        key={sub.id} 
-                                        eventKey={sub.id}
-                                        active={sub.id === selectedSubcategoriaId}
-                                    >
-                                        {sub.nombre}
-                                    </Dropdown.Item>
-                                ))}
+                                <Dropdown.Item eventKey="elementos" active={tipoSolicitudFilter === 'elementos'}>
+                                    📦 Solo Elementos
+                                </Dropdown.Item>
+                                <Dropdown.Item eventKey="espacios" active={tipoSolicitudFilter === 'espacios'}>
+                                    🏢 Solo Espacios
+                                </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
+
+                        {/* Filtro por Subcategoría (solo visible si es tipo 'elementos' o 'all') */}
+                        {tipoSolicitudFilter !== 'espacios' && (
+                            <Dropdown onSelect={handleFilterChange}>
+                                <Dropdown.Toggle 
+                                    variant="success" 
+                                    id="dropdown-filter-subcategoria"
+                                    className='btn-filter-custom' 
+                                >
+                                    🏷️ Subcategoría: {currentFilterName}
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu className="w-100" align="start"> 
+                                    <Dropdown.Item eventKey="all" active={selectedSubcategoriaId === null}>
+                                        Todas las subcategorías
+                                    </Dropdown.Item>
+                                    <Dropdown.Divider />
+                                    {subcategoriaOptions.map(sub => (
+                                        <Dropdown.Item 
+                                            key={sub.id} 
+                                            eventKey={sub.id}
+                                            active={sub.id === selectedSubcategoriaId}
+                                        >
+                                            {sub.nombre}
+                                        </Dropdown.Item>
+                                    ))}
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        )}
                     </div>
-                    {/* FIN DEL FILTRO */}
+                    {/* FIN DE LOS FILTROS */}
                     
                     <div className='Container_historial'>
                         {historialContent}
