@@ -1,11 +1,11 @@
 import './Pedidos_escritorio.css';
 import Datos_escritorio from './Datos_escritorio'
 import Footer from '../../Footer/Footer';
-import Headerpedidosescritorio from './Header/Header';
+import Header from '../../common/Header/Header';
 function Pedidos_escritorio() {
   return (
   <>
-<Headerpedidosescritorio/>
+<Header title="Solicitud escritorios"/>
 <Datos_escritorio/>
 <div className='Ajust'>
 <Footer/>

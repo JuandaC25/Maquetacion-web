@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Button, Modal, Form, Carousel, ButtonGroup, ToggleButton } from "react-bootstrap";
 import "./Soli_audio_video.css";
 import Footer from "../../Footer/Footer";
-import Headertele from "./Header audio_video/Header";
+import Header from '../../common/Header/Header';
 import ElementosService from "../../../api/ElementosApi";
 import { crearSolicitud } from "../../../api/solicitudesApi";
 
@@ -112,7 +112,7 @@ function SoliciAudioVideo() {
 
   return (
     <div className="audio-video-main-container">
-      <Headertele />
+      <Header title="Solicitud Audio/Video" />
       {isLoading ? (
         <p className="text-center">Cargando información...</p>
       ) : error ? (

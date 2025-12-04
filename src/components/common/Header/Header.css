@@ -134,6 +134,7 @@
     cursor: pointer;
     z-index: 10;
     padding: 0;
+    transition: background 0.3s;
 }
 
 .profile-card-close-btn:hover {
@@ -354,4 +355,46 @@
 
 .menu-cards .menu-card .bi {
     margin-right: 8px;
+}
+
+/* ESTILOS DEL MODAL DE EDICIÓN */
+.edit-modal-header {
+    background-color: rgb(9, 180, 26);
+    border-bottom: 1px solid rgb(9, 180, 26);
+    padding: 20px 25px;
+}
+
+.edit-modal-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+}
+
+.edit-modal-title .bi-person-gear {
+    margin-right: 10px;
+    color: white;
+}
+
+.edit-modal-body {
+    padding: 25px;
+}
+
+.edit-modal-subtitle {
+    font-size: 1.1rem;
+    color: #333333;
+    font-weight: 600;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.edit-modal-divider {
+    border-top: 1px solid #ced4da !important;
+}
+
+.edit-modal-footer {
+    border-top: 1px solid #ced4da;
+    padding: 15px 25px;
+    justify-content: flex-end;
 }

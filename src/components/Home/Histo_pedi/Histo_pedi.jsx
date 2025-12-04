@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
-import Header_his from './Header_histo/Header_his.jsx';
+import Header from '../../common/Header/Header';
 import './Histo_pedi.css';
 import Stack from 'react-bootstrap/Stack';
 import Footer from '../../Footer/Footer.jsx';
@@ -402,7 +402,7 @@ function Historial_ped() {
 
     return (
         <div className='Cont_historial'>
-            <Header_his/>
+            <Header title="Historial de pedidos"/>
             
             <Tabs
                 activeKey={activeTab}

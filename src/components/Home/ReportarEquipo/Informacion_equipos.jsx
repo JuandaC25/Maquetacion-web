@@ -1,12 +1,12 @@
 import './ReportarEquipo.css';
-import Headerpedidosescritorio from './Header/Header';
+import Header from '../../common/Header/Header';
 import Footer from '../../Footer/Footer';
 import ReportarEquipo from './ReportarEquipo';
 
 function Información_equipos() {
   return (
     <>
-      <Headerpedidosescritorio />
+      <Header title="Información de equipos" />
       
       <div className="informacion-equipos-container">
           <ReportarEquipo />

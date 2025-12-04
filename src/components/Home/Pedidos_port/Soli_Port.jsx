@@ -3,7 +3,7 @@ import { Card,Button,Carousel,Spinner,ButtonGroup,ToggleButton} from "react-boot
 import "./Soli_port.css";
 import ElementosService from "../../../api/ElementosApi";
 import Footer from '../../Footer/Footer.jsx';
-import Header_port from './Header soli/Header.jsx';
+import Header from '../../common/Header/Header';
 import SolicitudModalPort from "./SolicitudModal/SolicitudModal";
 
 
@@ -53,7 +53,7 @@ function Soli_Port() {
 
     return (
         <div className="port-main-page-container">
-            <Header_port />
+            <Header title="Solicitud Portátiles" />
             <div className="mb-3 d-flex justify-content-center">
                 <ButtonGroup>
                     <ToggleButton
