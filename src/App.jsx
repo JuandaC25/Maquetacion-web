@@ -8,8 +8,8 @@ import Solielemento from './components/admin/solielemento_ad/solielemento_ad.jsx
 import Soliespacio from './components/admin/soliespacio_ad/soliespacio.jsx';
 import Tecnico from './components/Tecnico/solicitudes_de_equipos/Soli_Equi_Tec.jsx';
 import Cuarta from './components/Tecnico/informacion_de_equipos/Info_equipos_tec.jsx';
-import Soliespacios from './components/Home/Espacios/Solicitud_espacios';
-import Historial_ped from './components/Home/Histo_pedi/Histo_pedi.jsx';
+import Soliespacios from './components/Home/Espacios/Solicitud_espacios' ;
+import Historial_ped from './components/Home/Histo_pedi/Histo_pedi.jsx' ;
 import Soli_port from './components/Home/Pedidos_port/Soli_Port.jsx';
 import Solitelevisores from './components/Home/Pedidos_AudioVideo/Solici_audio_video.jsx';
 import Pedidos_ele from './components/Home/Pedidos_ele/Pedidos_ele.jsx';  
