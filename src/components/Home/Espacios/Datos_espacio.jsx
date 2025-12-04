@@ -4,6 +4,7 @@ import Card from "react-bootstrap/Card";
 import { Carousel, Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
 import { crearSolicitud, verificarDisponibilidadEspacio } from "../../../api/solicitudesApi";
 import { listarEspacios } from "../../../api/EspaciosApi";
+import { getCurrentUser } from "../../../api/http";
 
 function Datos_espacio() {
   const [espacios, setEspacios] = useState([]);
@@ -20,7 +21,6 @@ function Datos_espacio() {
     ambient: "",
     num_ficha: "",
     estadosoli: 1,
-    id_usu: 1,
   });
 
   // Obtener la fecha actual en formato YYYY-MM-DD
@@ -67,6 +67,13 @@ function Datos_espacio() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    // Obtener el usuario autenticado del token JWT
+    const currentUser = getCurrentUser();
+    if (!currentUser || !currentUser.id) {
+      alert("❌ Error: No se pudo obtener el usuario autenticado. Por favor, inicia sesión nuevamente.");
+      return;
+    }
+
     if (!espacioSeleccionado || !espacioSeleccionado.id) {
       alert("Error: no se seleccionó ningún espacio.");
       return;
@@ -106,7 +113,7 @@ function Datos_espacio() {
       fecha_fn: formatLocal(fechaFin),
       ambient: form.ambient,
       estadosoli: form.estadosoli,
-      id_usu: form.id_usu,
+      id_usu: currentUser.id, // ✅ Usuario autenticado del token JWT
       num_fich: form.num_ficha,
       id_esp: espacioSeleccionado.id,
     };
@@ -137,7 +144,6 @@ function Datos_espacio() {
         ambient: "",
         num_ficha: "",
         estadosoli: 1,
-        id_usu: 1,
       });
     } catch (err) {
       console.error("Error en la solicitud:", err);
