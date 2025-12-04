@@ -29,44 +29,47 @@ const getMinTime = () => {
 
 const todayDate = getMinMaxDate();
 
-// --- COMPONENTE PRINCIPAL ---
-
-/**
- * Componente de Modal con Formulario de Solicitud.
- * @param {object} props
- * @param {boolean} show
- * @param {function} handleHide
- * @param {number} userId
- */
-function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
-    const [categorias, setCategorias] = useState([]);
-    const [subcategorias, setSubcategorias] = useState([]);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+// 🚨 FUNCIÓN FUERA DEL COMPONENTE (CORRECCIÓN DE DEPENDENCIA) 🚨
+const getInitialFormState = (equipos, id) => {
+    // 💡 Protección Interna: Asegura que 'equipos' sea un array.
+    const safeEquipos = equipos || []; 
     
-    // Define el estado inicial completo fuera del componente para evitar redefiniciones
-    const getInitialFormState = (equipos, id) => ({
+    return {
         fecha_ini: todayDate,
         hora_ini: getMinTime(),
         fecha_fn: todayDate,
         hora_fn: "",
         ambient: "",
         cantid: "1",
-        id_elemen: equipos.length > 0 ? equipos[0].id_elemen.toString() : "",
+        // Usa safeEquipos para acceder a .length (línea donde ocurrió el error original)
+        id_elemen: safeEquipos.length > 0 ? safeEquipos[0].id_elemen.toString() : "",
         estadosoli: 1,
         id_usu: id,
         num_ficha: "",
         id_categoria: "",
         id_subcategoria: "",
-    });
+    };
+};
 
-    const [form, setForm] = useState(getInitialFormState(equiposDisponibles, userId));
+// --- COMPONENTE PRINCIPAL ---
+
+/**
+ * Componente de Modal con Formulario de Solicitud.
+ */
+function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
+    const [categorias, setCategorias] = useState([]);
+    const [subcategorias, setSubcategorias, ] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    // 🚨 PROTECCIÓN EXTERNA: Garantiza que se pase un array vacío si la prop es undefined
+    const [form, setForm] = useState(getInitialFormState(equiposDisponibles || [], userId));
 
     // Reinicia el estado del formulario al abrir el modal o cambiar el ID de usuario/equipos
     useEffect(() => {
         if (show) {
-            setForm(getInitialFormState(equiposDisponibles, userId));
+            setForm(getInitialFormState(equiposDisponibles || [], userId));
         }
-    }, [equiposDisponibles, show, userId]);
+    }, [equiposDisponibles, show, userId]); // getInitialFormState ya no es dependencia
 
     useEffect(() => {
         obtenerCategoria()
@@ -93,7 +96,6 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
                         sub => !subcategoriasExcluidas.includes(sub.nom_subcateg)
                     );
                     setSubcategorias(subcategoriasFiltradas);
-                    // Importante: Reiniciar la subcategoría al cambiar de categoría
                     setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
                 })
                 .catch(err => console.error("Error al cargar subcategorías:", err));
@@ -109,12 +111,10 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
         setForm(prevForm => {
             let newState = { ...prevForm, [name]: value };
 
-            // Lógica para sincronizar fechas
             if (name === "fecha_ini" && value > prevForm.fecha_fn && prevForm.fecha_fn) {
                 newState.fecha_fn = value;
             }
             
-            // Si cambia la categoría, también se resetea la subcategoría para forzar la recarga
             if (name === "id_categoria") {
                 newState.id_subcategoria = ""; 
             }
@@ -127,10 +127,13 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
+        
+        // 💡 Protección para la validación del formulario
+        const safeEquiposLength = (equiposDisponibles || []).length;
         const parsedCantid = parseInt(form.cantid, 10);
         
-        if (isNaN(parsedCantid) || parsedCantid <= 0 || parsedCantid > equiposDisponibles.length) {
-            alert(`La cantidad a solicitar debe ser un número positivo (1-${equiposDisponibles.length})`);
+        if (isNaN(parsedCantid) || parsedCantid <= 0 || parsedCantid > safeEquiposLength) {
+            alert(`La cantidad a solicitar debe ser un número positivo (1-${safeEquiposLength})`);
             setIsSubmitting(false);
             return;
         }
@@ -151,13 +154,7 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
             return;
         }
         
-        // 🚀 LÍNEA DE DIAGNÓSTICO CRUCIAL 🚀
-        console.log("-----------------------------------------");
-        console.log("DIAGNÓSTICO REACT: Valor de id_subcategoria antes de enviar:", form.id_subcategoria);
-        console.log("-----------------------------------------");
-        // FIN DEL DIAGNÓSTICO
-
-        // Construcción del DTO (Data Transfer Object) para la API
+        // Construcción del DTO
         const dto = {
             fecha_ini: `${form.fecha_ini}T${form.hora_ini}:00`,
             fecha_fn: `${form.fecha_fn}T${form.hora_fn}:00`,
@@ -166,7 +163,6 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
             cantid: parsedCantid,
             id_estado_soli: form.estadosoli,
             id_categoria: form.id_categoria ? parseInt(form.id_categoria, 10) : null,
-            // Aquí se envía el ID de subcategoría capturado del formulario
             id_subcategoria: form.id_subcategoria ? parseInt(form.id_subcategoria, 10) : null,
             id_usu: form.id_usu,
             ids_elem: form.id_elemen ? [parseInt(form.id_elemen, 10)] : [],
@@ -184,7 +180,8 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
         }
     };
     
-    const maxCantidad = equiposDisponibles.length;
+    // 💡 Protección para el rendering
+    const maxCantidad = (equiposDisponibles || []).length; 
 
     return (
         <Modal show={show} onHide={handleHide} centered>
@@ -224,7 +221,7 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
                         >
                             <option value="">Selecciona una subcategoría</option>
                             {subcategorias.map(sub => (
-                                <option 
+                                <option
                                     key={sub.id_subcateg} 
                                     value={sub.id_subcateg} 
                                 >
@@ -247,7 +244,8 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
                         >
                             <option value="">Selecciona el equipo a solicitar</option>
                             
-                            {equiposDisponibles.map((equipo) => (
+                            {/* Usamos el chequeo condicional aquí también */}
+                            {equiposDisponibles && equiposDisponibles.map((equipo) => (
                                 <option
                                     key={equipo.id_elemen}
                                     value={equipo.id_elemen}
