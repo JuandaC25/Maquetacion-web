@@ -5,7 +5,7 @@ import Footer from '../../Footer/Footer';
 import ModalTicketsActivos from './ModalTicketsActivos';
 import '../informacion_de_equipos/Info_equipos_tec.css';
 import Otromodal from '../informacion_de_equipos/OTRO.MODAL/Otro_modal';
-import HeaderTicketsActivos from '../header_tickets_activos/header_tickets_activos.jsx';
+import Header_soli_equi_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
 import Carousel from 'react-bootstrap/Carousel';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { authorizedFetch } from '../../../api/http';
@@ -99,7 +99,7 @@ function TicketsActivos() {
 
   return (
     <div className='suprem'>
-      <HeaderTicketsActivos />
+      <Header_soli_equi_tec title="Tickets Activos" />
       <div className='carrusel'>
         <div className="barra-filtros">
           <select value={categoriaSeleccionada} onChange={e => {
