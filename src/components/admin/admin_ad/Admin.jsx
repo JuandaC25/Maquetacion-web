@@ -10,7 +10,8 @@ import { Ticket } from 'react-bootstrap-icons';
 import { obtenerTickets, actualizarTicket } from '../../../api/ticket.js';
 import ReportarEquipo from '../../Home/ReportarEquipo/ReportarEquipo.jsx';
 import { obtenerCategoria } from '../../../api/CategoriaApi.js';
-import { obtenersolicitudes } from '../../../api/solicitudesApi.js';
+import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js';
+import ElementosService from '../../../api/ElementosApi.js';
 
 const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial }) => {
   // --- MODAL HISTORIAL DE TICKETS ---
@@ -127,7 +128,37 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial }) => {
           id_est_tick: t.id_est_tick
         })));
       }
-      setTickets(Array.isArray(datosTickets) ? datosTickets : []);
+      try {
+        const elementos = await ElementosService.obtenerElementos();
+        const enriched = Array.isArray(datosTickets) ? datosTickets.map(t => {
+            const elemId = t.id_eleme ?? t.id_elem ?? t.id_elemento ?? t.id_elemenn;
+            const nombreElementoTicket = (t.nom_elem || t.nom_eleme || t.elemento || '').toString();
+            let elementoRelacionado = Array.isArray(elementos) ? (
+              elementos.find(e => e.id_elemen === elemId || e.id_elemen == elemId || e.id === elemId || e.id == elemId)
+            ) : null;
+            if (!elementoRelacionado && nombreElementoTicket) {
+              const ticketNameLow = nombreElementoTicket.toLowerCase();
+              elementoRelacionado = elementos.find(e => {
+                const en = (e.nom_eleme || e.nom_elemen || e.nom || e.nombre || '').toString().toLowerCase();
+                return en === ticketNameLow || en.includes(ticketNameLow) || ticketNameLow.includes(en);
+              }) || null;
+            }
+
+            const categoriaName = elementoRelacionado ? (elementoRelacionado.tip_catg || elementoRelacionado.nom_cat || '') : (t.nom_cat || '');
+            const subcategoriaName = elementoRelacionado ? (elementoRelacionado.sub_catg || elementoRelacionado.nom_subcateg || '') : (t.nom_subcateg || '');
+
+            return {
+              ...t,
+              elementoRelacionado,
+              categoria: categoriaName,
+              subcategoria: subcategoriaName
+            };
+          }) : [];
+        setTickets(enriched);
+      } catch (err) {
+        console.warn('No se pudieron obtener elementos para enriquecer tickets:', err);
+        setTickets(Array.isArray(datosTickets) ? datosTickets : []);
+      }
     } catch (err) {
       setError(err.message);
       console.error('[ERROR] Error al cargar tickets:', err);
@@ -144,12 +175,39 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial }) => {
 
   const cargarCategoriasYSubcategorias = async () => {
     try {
-      const [datosCateg, datosSubcateg] = await Promise.all([
+      const [datosCateg, datosSubcateg, elementos] = await Promise.all([
         obtenerCategoria(),
-        obtenersolicitudes()
+        obtenerSubcategorias(),
+        ElementosService.obtenerElementos().catch(() => [])
       ]);
-      setCategorias(Array.isArray(datosCateg) ? datosCateg : []);
-      setSubcategorias(Array.isArray(datosSubcateg) ? datosSubcateg : []);
+
+      const apiCategorias = Array.isArray(datosCateg) ? datosCateg : [];
+      const apiSubcategorias = Array.isArray(datosSubcateg) ? datosSubcateg : [];
+      const elementosArr = Array.isArray(elementos) ? elementos : [];
+      const categoriasFromElements = [];
+      const subcategoriasFromElements = [];
+      elementosArr.forEach(e => {
+        const catName = e.tip_catg || e.nom_cat || e.categoria || '';
+        const subName = e.sub_catg || e.nom_subcateg || e.subcategoria || '';
+        if (catName && !categoriasFromElements.find(c => c.nom_cat === catName)) {
+          categoriasFromElements.push({ id_cat: null, nom_cat: catName });
+        }
+        if (subName) {
+          subcategoriasFromElements.push({ id: null, nom_subcateg: subName, nom_cat: catName || null });
+        }
+      });
+      const mergedCategorias = [...apiCategorias];
+      categoriasFromElements.forEach(c => {
+        if (!mergedCategorias.find(mc => mc.nom_cat === c.nom_cat)) mergedCategorias.push(c);
+      });
+
+      const mergedSubcategorias = [...apiSubcategorias];
+      subcategoriasFromElements.forEach(s => {
+        if (!mergedSubcategorias.find(ms => ms.nom_subcateg === s.nom_subcateg)) mergedSubcategorias.push(s);
+      });
+
+      setCategorias(mergedCategorias);
+      setSubcategorias(mergedSubcategorias);
     } catch (err) {
       console.error('Error al cargar categorías:', err);
     }
@@ -164,12 +222,22 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial }) => {
   const ticketsArray = Array.isArray(tickets) ? tickets : [];
 
   const ticketsFiltrados = ticketsArray.filter(ticket => {
-    if (selectedStatusFilter === "Todos los Estados") return true;
-    const estadoTicket = Number(ticket?.id_est_tick || ticket?.estado);
-    if (selectedStatusFilter === "Activo" && estadoTicket === 1) return true;
-    if (selectedStatusFilter === "Pendiente" && estadoTicket === 2) return true;
-    if (selectedStatusFilter === "Inactivo" && estadoTicket === 3) return true;
-    return false;
+    if (selectedStatusFilter !== "Todos los Estados") {
+      const estadoTicket = Number(ticket?.id_est_tick || ticket?.estado);
+      if (selectedStatusFilter === "Activo" && estadoTicket !== 1) return false;
+      if (selectedStatusFilter === "Pendiente" && estadoTicket !== 2) return false;
+      if (selectedStatusFilter === "Inactivo" && estadoTicket !== 3) return false;
+    }
+    if (selectedCategoryFilter && selectedCategoryFilter !== "Todas las Categorías") {
+      const ticketCat = ticket.categoria || ticket.elementoRelacionado?.tip_catg || ticket.nom_cat || '';
+      if (!ticketCat || ticketCat !== selectedCategoryFilter) return false;
+    }
+    if (selectedSubcategoryFilter && selectedSubcategoryFilter !== "Todas las Subcategorías") {
+      const ticketSub = ticket.subcategoria || ticket.elementoRelacionado?.sub_catg || ticket.nom_subcateg || '';
+      if (!ticketSub || ticketSub !== selectedSubcategoryFilter) return false;
+    }
+
+    return true;
   });
 
   useEffect(() => {
@@ -195,8 +263,14 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial }) => {
   const subcategoriasFiltradas = selectedCategoryFilter === "Todas las Categorías" 
     ? subcategorias 
     : subcategorias.filter(sub => {
-        const categoria = categorias.find(cat => cat.id_cat === sub.id_cat);
-        return categoria && categoria.nom_cat === selectedCategoryFilter;
+        const subNom = sub.nom_subcateg || sub.sub_catg || '';
+        const subNomCat = sub.nom_cat || sub.sub_catg || sub.nom_cat || '';
+        if (sub.nom_cat) return sub.nom_cat === selectedCategoryFilter;
+        if (sub.id_cat) {
+          const categoria = categorias.find(cat => cat.id_cat === sub.id_cat);
+          return categoria && categoria.nom_cat === selectedCategoryFilter;
+        }
+        return false;
       });
 
   if (loading) {

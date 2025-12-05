@@ -121,9 +121,26 @@ export const eliminarCategoria = async (id) => {
             method: "DELETE",
         });
 
-        if (res.status === 204) {
-            return { success: true, message: "Categoría eliminada correctamente" };
+        // Consider any 2xx response as success (some controllers return 200 con mensaje, otros 204 sin cuerpo)
+        if (res.ok) {
+            if (res.status === 204) {
+                return { success: true, message: "Categoría eliminada correctamente" };
+            }
+            // Intentar parsear JSON si existe
+            try {
+                const body = await res.json();
+                return body;
+            } catch (e) {
+                try {
+                    const text = await res.text();
+                    return { success: true, message: text || 'Categoría eliminada correctamente' };
+                } catch (e2) {
+                    return { success: true, message: 'Categoría eliminada correctamente' };
+                }
+            }
         }
+
+        // No fue OK -> intentar extraer mensaje de error útil
         let body = null;
         try {
             body = await res.json();
