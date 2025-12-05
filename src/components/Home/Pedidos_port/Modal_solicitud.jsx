@@ -25,7 +25,13 @@ useEffect(() => {
   async function cargarSubcategorias() {
     try {
       const data = await obtenerSubcategorias();
-      setSubcategorias(Array.isArray(data) ? data : []);
+      const subcategoriasFiltradas = Array.isArray(data) 
+        ? data.filter(sub => 
+            sub.nom_subcateg === 'Portatil' || 
+            sub.nom_subcateg === 'Portatil de edición'
+          )
+        : [];
+      setSubcategorias(subcategoriasFiltradas);
     } catch (e) {
       setSubcategorias([]);
     }
@@ -44,6 +50,10 @@ const handleFormSubmit = async (e) => {
   alert("Por favor, selecciona al menos un equipo de portátil para la solicitud.");
   return;
 }
+if (equiposSeleccionados.length > 3) {
+  alert("Solo puedes seleccionar un máximo de 3 equipos por solicitud.");
+  return;
+}
 const fechaInicio = new Date(`${form.fecha_ini}T${form.hora_ini}:00`);
 const fechaFin = new Date(`${form.fecha_fn}T${form.hora_fn}:00`);
 if (isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
@@ -54,7 +64,7 @@ const dto = {
   fecha_ini: `${form.fecha_ini}T${form.hora_ini}:00`,
   fecha_fn: `${form.fecha_fn}T${form.hora_fn}:00`,
   ambient: form.ambient,
-  estadosoli: form.estadosoli,
+  estadosoli: form.estadosoli,  
   id_usu: form.id_usu,
   num_ficha: form.num_ficha,
   id_elemen: equiposSeleccionados.map(eq => eq.id),
@@ -142,12 +152,17 @@ return (
     ))}
   </Form.Select>
 </Form.Group>
-<div className="form-section-title mt-4">Equipos Incluidos ({equiposSeleccionados.length})</div>
+<div className="form-section-title mt-4">Equipos Incluidos ({equiposSeleccionados.length}/3) - Máximo 3 equipos</div>
+{equiposSeleccionados.length > 3 && (
+  <div className="alert alert-warning mb-2" role="alert">
+    ⚠️ Has seleccionado más de 3 equipos. Por favor, reduce la cantidad.
+  </div>
+)}
 <ListGroup className="mb-3">
     {selectedEquiposDetails.length > 0 ? selectedEquiposDetails : <p className="p-2">No hay equipos en la lista.</p>}
 </ListGroup>
 <div className="text-center mt-4">
-    <Button variant="primary" type="submit" className="px-4" disabled={equiposSeleccionados.length === 0}>
+    <Button variant="primary" type="submit" className="px-4" disabled={equiposSeleccionados.length === 0 || equiposSeleccionados.length > 3}>
       Enviar Solicitud
     </Button>
 </div>
