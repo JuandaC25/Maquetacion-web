@@ -4,7 +4,6 @@ import Card from "react-bootstrap/Card";
 import { Carousel, Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
 import { crearSolicitud, verificarDisponibilidadEspacio } from "../../../api/solicitudesApi";
 import { listarEspacios } from "../../../api/EspaciosApi";
-import { getCurrentUser } from "../../../api/http";
 
 function Datos_espacio() {
   const [espacios, setEspacios] = useState([]);
@@ -40,13 +39,19 @@ function Datos_espacio() {
   const cargarEspacios = async () => {
     try {
       setLoading(true);
+      setError(null);
+      console.log('[ESPACIOS] Iniciando carga de espacios...');
       const data = await listarEspacios();
+      console.log('[ESPACIOS] Datos recibidos:', data);
+      console.log('[ESPACIOS] Total de espacios:', data?.length);
       const espaciosActivos = data.filter(esp => esp.estadoespacio === 1);
+      console.log('[ESPACIOS] Espacios activos:', espaciosActivos.length);
       setEspacios(espaciosActivos);
       setError(null);
     } catch (err) {
-      console.error("Error al cargar espacios:", err);
-      setError("No se pudieron cargar los espacios disponibles");
+      console.error("[ESPACIOS] Error al cargar espacios:", err);
+      console.error("[ESPACIOS] Error completo:", err.message, err.stack);
+      setError("No se pudieron cargar los espacios disponibles: " + (err?.message || err));
     } finally {
       setLoading(false);
     }
@@ -66,13 +71,6 @@ function Datos_espacio() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
-    // Obtener el usuario autenticado del token JWT
-    const currentUser = getCurrentUser();
-    if (!currentUser || !currentUser.id) {
-        alert("❌ Error: No se pudo obtener el usuario autenticado. Por favor, inicia sesión nuevamente.");
-        return;
-    }
 
     if (!espacioSeleccionado || !espacioSeleccionado.id) {
       alert("Error: no se seleccionó ningún espacio.");
