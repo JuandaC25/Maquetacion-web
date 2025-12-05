@@ -214,7 +214,7 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
             return false;
         }) : []);
 
-    const maxCantidad = Array.isArray(elementosFiltradosPorSubcategoria) ? elementosFiltradosPorSubcategoria.length : 0;
+    const maxCantidad = Math.min(3, Array.isArray(elementosFiltradosPorSubcategoria) ? elementosFiltradosPorSubcategoria.length : 0);
 
     // Cuando cambia la subcategoría seleccionada, obtener elementos del backend y filtrarlos
     useEffect(() => {
