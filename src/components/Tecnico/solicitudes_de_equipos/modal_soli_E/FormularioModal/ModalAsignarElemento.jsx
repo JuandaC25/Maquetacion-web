@@ -46,34 +46,19 @@ function ModalAsignarElemento({ show, onHide, prest, onConfirm }) {
 
       // Filtrar elementos disponibles (no asignados) Y que coincidan con la categoría y subcategoría de la solicitud
       let disponibles = elementos.filter(elem => !idsAsignados.has(elem.id_elemen));
-      console.log('Después de filtrar asignados:', disponibles.length);
 
       // Si la solicitud tiene categoría, filtrar por eso
-      if (prest.tip_catg) {
-        console.log('Filtrando por categoría:', prest.tip_catg);
-        disponibles = disponibles.filter(elem => elem.tip_catg === prest.tip_catg);
-        console.log('Después de filtrar categoría:', disponibles.length);
+      if (prest.nom_cat) {
+        disponibles = disponibles.filter(elem => elem.tip_catg === prest.nom_cat);
       }
 
       // Si la solicitud tiene subcategoría, filtrar por eso también
-      if (prest.tip_subcat) {
-        console.log('Filtrando por subcategoría:', prest.tip_subcat);
-        disponibles = disponibles.filter(elem => elem.tip_subcat === prest.tip_subcat);
-        console.log('Después de filtrar subcategoría:', disponibles.length);
+      if (prest.nom_subcat) {
+        disponibles = disponibles.filter(elem => elem.sub_catg === prest.nom_subcat);
       }
 
-      // Filtrar solo elementos con estado activo (estado = 1)
-      console.log('Filtrando por estado = 1');
-      // Temporalmente no filtramos por estado para ver qué aparece
-      // disponibles = disponibles.filter(elem => elem.est_elemen === 1);
-      
-      // Verificar campos disponibles en elementos
-      if (disponibles.length > 0) {
-        console.log('Estructura completa del primer elemento:', disponibles[0]);
-        console.log('Campos disponibles:', Object.keys(disponibles[0]));
-      }
-      
-      console.log('Después de filtrar estado:', disponibles.length, disponibles);
+      // Filtrar solo elementos con estado activo (est = 1)
+      disponibles = disponibles.filter(elem => elem.est === 1);
 
       setElementosDisponibles(disponibles);
 
