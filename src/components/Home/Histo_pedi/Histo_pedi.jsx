@@ -341,11 +341,15 @@ function Historial_ped() {
                             ? (subcategorias[subcategoriaKey] || 'N/A (ID No Encontrado)')
                             : 'N/A';
                         
+                        // Determinar si es solicitud de espacio o elemento
+                        const esEspacio = subcatId === null || subcatId === undefined;
+                        const nombreEspacio = sol.nom_espa || sol.nombre_espacio || 'N/A';
+                        
                         const puedeCancelar = sol.est_soli?.toLowerCase().includes('pendiente');
 
                         return (
                             <div className="p-3 item_historial" key={sol.id_soli}>
-                                <span className='emoji_historial'>📝</span>
+                                <span className='emoji_historial'>{esEspacio ? '🏢' : '📦'}</span>
                                 
                                 <Badge 
                                     className='let_histo' 
@@ -356,12 +360,17 @@ function Historial_ped() {
                                 
                                 <span className='texto_pedido'>
                                     ID Solicitud: {sol.id_soli || 'N/A'} | Usuario: {sol.nom_usu || 'N/A'} <br/>
+                                    {esEspacio ? (
+                                        <>
+                                            <strong>Espacio:</strong> {nombreEspacio} <br/>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <strong>Elemento:</strong> {subcategoriaNombre} | <strong>Cantidad:</strong> {sol.cantid || 1} <br/>
+                                        </>
+                                    )}
                                     Ambiente: {sol.ambient || 'N/A'} <br/>
                                     Inicio: {formatFecha(sol.fecha_ini || 'N/A')} | Fin: {formatFecha(sol.fecha_fn || 'N/A')}
-                                    
-                                    <div style={{ marginTop: '5px', fontSize: '0.9em', color: '#555' }}>
-                                        Subcategoría: {subcategoriaNombre} | Cantidad: {sol.cantid || 1}
-                                    </div>
                                 </span>
                                 <div className='Cont_botones_histo'>
                                     <div>
