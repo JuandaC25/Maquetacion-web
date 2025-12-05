@@ -3,7 +3,7 @@ import './Soli_Equi_Tec.css';
 import Footer from '../../Footer/Footer';
 import Button from 'react-bootstrap/Button';
 import ModalFormulario from './modal_soli_E/FormularioModal/ModalFormulario';
-import Header_solicitud_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
+import Header_soli_equi_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
 import { authorizedFetch } from '../../../api/http';
 
 export default function Tecnico() {
@@ -107,7 +107,7 @@ export default function Tecnico() {
 
   return (
     <>
-      <Header_solicitud_tec />
+      <Header_soli_equi_tec title="Solicitudes de Equipos" />
 
       <main className="contenedor-principal-peq">
         <div className="barra-filtros">
