@@ -12,6 +12,8 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
 
   if (!show || !prest) return null;
 
+  console.log('ModalFormulario - Solicitud abierta:', prest.nom_elem, 'Categoría:', prest.nom_cat, 'Subcategoría:', prest.nom_subcat);
+
   const formatDate = (fecha) => {
     if (!fecha) return '';
     const d = new Date(fecha);
@@ -38,9 +40,8 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
 
   const confirmarConElementoAsignado = async (elementoId) => {
     cerrarModalAsignar();
-    setMostrarConfirmacion(true);
-    // Guardamos el elemento seleccionado en el estado de la solicitud
     prest.id_elem = elementoId;
+    setMostrarConfirmacion(true);
   };
 
 
@@ -49,7 +50,8 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
     setLoading(true);
 
     try {
-      console.log("🔹 Datos de la solicitud recibidos:", prest);
+      console.log("🔹 Finalizando solicitud:", prest.id_soli);
+      console.log("🔹 Elemento asignado (id_elem):", prest.id_elem);
 
       const updateResponse = await authorizedFetch(`/api/solicitudes/${prest.id_soli}`, {
         method: 'PUT',
@@ -65,6 +67,9 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
             ? prest.id_elem.split(',').map(Number)
             : [prest.id_elem])
         : [];
+      
+      console.log("🔹 IDs de elementos a enviar al préstamo:", idsElem);
+      
         // Usar id_espa del SolicitudesDto
         const idEsp = prest.id_espa;
         const postResponse = await authorizedFetch('/api/prestamos', {
@@ -169,12 +174,12 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
               <input type="text" className="tecito" disabled value={prest.num_fich ?? ''} />
             </div>
             <div className="Cont_label_tec">
-              <label className="origin">Nombre elemento:</label>
-              <input type="text" className="tecito" disabled value={prest.nom_elem ?? ''} />
+              <label className="origin">Categoría:</label>
+              <input type="text" className="tecito" disabled value={prest.nom_cat ?? ''} />
             </div>
             <div className="Cont_label_tec">
-              <label className="origin">Nombre accesorio:</label>
-              <input type="text" className="tecito" disabled value={prest.nom_acces ?? ''} />
+              <label className="origin">Subcategoría:</label>
+              <input type="text" className="tecito" disabled value={prest.nom_subcat ?? ''} />
             </div>
           </div>
         </div>

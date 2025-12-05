@@ -18,6 +18,7 @@ function ModalPrestamo({ show, onHide, prestamo, onActualizado }) {
 
     try {
       console.log("🔹 Finalizando préstamo:", prestamo.id_prest);
+      console.log("🔹 Elementos asignados:", prestamo.idsElem || prestamo.id_elem);
 
       const updateResponse = await authorizedFetch(`/api/prestamos`, {
         method: 'PUT',
@@ -27,6 +28,7 @@ function ModalPrestamo({ show, onHide, prestamo, onActualizado }) {
 
       if (!updateResponse.ok) throw new Error('Error al finalizar el préstamo');
       console.log("✅ Préstamo finalizado correctamente");
+      console.log("✅ Los elementos deberían cambiar a estado ACTIVO (1) nuevamente");
 
       alert("Préstamo finalizado correctamente");
 
