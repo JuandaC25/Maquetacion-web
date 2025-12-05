@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import './ModalTec1.css';
 import ConfirmacionModal from '../../Modal_Confriamcion/ConfirmacionModal';
+import ModalAsignarElemento from './ModalAsignarElemento';
 import { authorizedFetch } from '../../../../../api/http';
 
 function ModalFormulario({ show, onHide, prest, onActualizado }) {
   const [loading, setLoading] = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [mostrarConfirmacionRechazo, setMostrarConfirmacionRechazo] = useState(false);
+  const [mostrarModalAsignar, setMostrarModalAsignar] = useState(false);
 
   if (!show || !prest) return null;
 
@@ -20,11 +22,26 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
   };
 
 
-  const abrirConfirmacion = () => setMostrarConfirmacion(true);
+  const abrirConfirmacion = () => {
+    console.log('Click en Aprobar - abriendo modal de asignar');
+    setMostrarModalAsignar(true);
+  };
+  const cerrarModalAsignar = () => {
+    console.log('Cerrando modal de asignar');
+    setMostrarModalAsignar(false);
+  };
+  
   const cerrarConfirmacion = () => setMostrarConfirmacion(false);
   
   const abrirConfirmacionRechazo = () => setMostrarConfirmacionRechazo(true);
   const cerrarConfirmacionRechazo = () => setMostrarConfirmacionRechazo(false);
+
+  const confirmarConElementoAsignado = async (elementoId) => {
+    cerrarModalAsignar();
+    setMostrarConfirmacion(true);
+    // Guardamos el elemento seleccionado en el estado de la solicitud
+    prest.id_elem = elementoId;
+  };
 
 
   const confirmarFinalizacion = async () => {
@@ -194,6 +211,13 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
         onHide={cerrarConfirmacionRechazo}
         onConfirm={confirmarRechazo}
         mensaje="¿Quieres rechazar esta solicitud?"
+      />
+
+      <ModalAsignarElemento
+        show={mostrarModalAsignar}
+        onHide={cerrarModalAsignar}
+        prest={prest}
+        onConfirm={confirmarConElementoAsignado}
       />
     </>
   );
