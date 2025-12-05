@@ -101,7 +101,16 @@ function Historial_ped() {
         try {
             setIsLoading(true);
             const data = await obtenersolicitudes();
-            setSolicitudes(Array.isArray(data) ? data : []);
+            
+            // Obtener el usuario actual desde localStorage
+            const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+            
+            // Filtrar solo las solicitudes del usuario actual
+            const solicitudesDelUsuario = Array.isArray(data) 
+                ? data.filter(sol => sol.id_usu === usuario.id)
+                : [];
+            
+            setSolicitudes(solicitudesDelUsuario);
             setError(null);
         } catch (err) {
             console.error("Fallo al obtener solicitudes:", err);
@@ -359,7 +368,7 @@ function Historial_ped() {
                                 </Badge>
                                 
                                 <span className='texto_pedido'>
-                                    ID Solicitud: {sol.id_soli || 'N/A'} | Usuario: {sol.nom_usu || 'N/A'} <br/>
+                                    Usuario: {sol.nom_usu || 'N/A'} <br/>
                                     {esEspacio ? (
                                         <>
                                             <strong>Espacio:</strong> {nombreEspacio} <br/>
