@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./HistorialTec.css";
-import Header_HistorialTec from "../header_historialTec/Header_HistorialTec.jsx";
+import Header_soli_equi_tec from "../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx";
 import Footer from "../../Footer/Footer";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -108,7 +108,7 @@ const HistorialTec = () => {
 
   return (
     <>
-      <Header_HistorialTec />
+      <Header_soli_equi_tec title="Historial" />
       <section className="tecnico-historial">
         <div className="barra-filtros">
           <DropdownButton

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Footer from '../../Footer/Footer';
-import HeaderPrestamosActivos from './header_prestamos_activos.jsx';
+import Header_soli_equi_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
 import '../informacion_de_equipos/Info_equipos_tec.css';
 import { authorizedFetch } from '../../../api/http';
 import ModalPrestamo from './Modal_Prestamos/ModalPrestamo';
@@ -136,7 +136,7 @@ function PrestamosActivos() {
 
   return (
     <>
-      <HeaderPrestamosActivos />
+      <Header_soli_equi_tec title="Préstamos Activos" />
       <main className="contenedor-principal-peq">
         <div className="barra-filtros">
           <select value={categoriaFiltro} onChange={e => setCategoriaFiltro(e.target.value)}>
