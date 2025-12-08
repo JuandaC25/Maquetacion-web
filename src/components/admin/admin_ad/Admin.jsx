@@ -64,7 +64,17 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
     try {
       const data = await obtenerHistorialPorTicket(ticket.id || ticket.id_tickets);
       console.log('Historial recibido para ticket', ticket.id || ticket.id_tickets, data);
-      setHistorialTicket(data);
+      let ultimaTrazabilidad = [];
+      if (data && data.length > 0) {
+        const sortedData = [...data].sort((a, b) => {
+          const fechaA = new Date(a.fech || a.fecha || 0);
+          const fechaB = new Date(b.fech || b.fecha || 0);
+          return fechaB - fechaA;
+        });
+        ultimaTrazabilidad = [sortedData[0]];
+      }
+      
+      setHistorialTicket(ultimaTrazabilidad);
       setHistorialEdit({});
     } catch (err) {
       setHistorialError(err.message);
@@ -597,10 +607,19 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
               {historialTicket.map((h) => {
                 const id = h.id_trsa ?? h.id ?? '';
                 const fecha = h.fech ?? h.fecha ?? '';
-                const observ = h.obser ?? h.obse ?? h.descripcion ?? '';
+                // obse es la respuesta del técnico (trazabilidad)
+                const observ = h.obse ?? '';
                 const elemento = h.nom_elemen ?? h.nom_elem ?? h.elemento ?? '';
                 const ticketNum = h.id_ticet ?? h.id_tickets ?? historialTicketId ?? '';
-                const usuario = h.nom_us ?? h.nom_usu ?? (h.usuario && h.usuario.nombre) ?? '';
+                
+                // Quién respondió (técnico)
+                const tecnico = h.nom_us ?? h.nom_usu ?? (h.usuario && h.usuario.nombre) ?? '';
+                const cedulaTecnico = h.num_doc ?? (h.usuario && h.usuario.num_doc) ?? '';
+                
+                // Quién reportó
+                const usuarioReporta = h.nom_us_reporta ?? '';
+                const cedulaReporta = h.num_doc_reporta ?? '';
+                
                 return (
                   <div key={id || Math.random()} className="historial-card report-card">
                     <div className="report-header">
@@ -613,10 +632,18 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
                         <div className="meta-label">Fecha</div>
                         <div className="meta-value">{fecha}</div>
                       </div>
-                      <div className="meta-item">
-                        <div className="meta-label">Usuario</div>
-                        <div className="meta-value">{usuario}</div>
+                      <div className="meta-item" style={{ gridColumn: '1 / -1' }}>
+                        <div className="meta-label">Reportado por / Respondido por</div>
+                        <div className="meta-value" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                          <div>
+                            <strong>Reportó:</strong> {usuarioReporta || 'N/A'}
+                          </div>
+                          <div style={{ borderLeft: '1px solid #ddd', paddingLeft: '20px' }}>
+                            <strong>Respondió (Técnico):</strong> {tecnico}
+                          </div>
+                        </div>
                       </div>
+                      
                       <div className="meta-item">
                         <div className="meta-label">Elemento</div>
                         <div className="meta-value">{elemento}</div>
@@ -628,13 +655,18 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
                     </div>
 
                     <div className="report-body">
-                      <div className="report-section-label">Observación</div>
-                      <div className="report-observacion">{observ}</div>
+                      <div className="report-section-label">Respuesta del Técnico</div>
+                      <div className="report-observacion">{observ || 'Sin respuesta registrada'}</div>
                     </div>
 
                     {editMode && (
                       <div className="historial-edit">
-                        <Form.Control as="textarea" rows={4} value={historialEdit[id]?.observ ?? observ} onChange={e => handleEditHistorialChange(id, 'obser', e.target.value)} />
+                        <Form.Control 
+                          as="textarea" 
+                          rows={4} 
+                          value={historialEdit[id]?.obser ?? observ} 
+                          onChange={e => handleEditHistorialChange(id, 'obser', e.target.value)} 
+                        />
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                           <Button size="sm" variant="success" className="mt-2" onClick={() => handleSaveHistorial(id)} disabled={historialLoading}>Guardar</Button>
                         </div>
@@ -719,6 +751,9 @@ const Admin = () => {
   }, [showModal]);
 
   const handleVerClick = (detalles) => {
+    console.log('🔍 Datos del ticket completos:', detalles);
+    console.log('📋 Campo Obser (mayúscula):', detalles?.Obser);
+    console.log('📋 Campo obser (minúscula):', detalles?.obser);
     setModalDetalles(detalles || {});
     setShowModal(true);
     setEditandoProblema(false);
@@ -896,6 +931,23 @@ const Admin = () => {
                   'No disponible'
                 } 
                 readOnly 
+              />
+            </div>
+          </div>
+          
+          <div className="form-row-1223">
+            <label className="form-label-1224">Observaciones:</label>
+            <div className="form-control-wrap-1225">
+              <Form.Control 
+                as="textarea"
+                rows={3}
+                value={
+                  modalDetalles?.obser || 
+                  modalDetalles?.Obser || 
+                  'No disponible'
+                } 
+                readOnly 
+                style={{ resize: 'vertical' }}
               />
             </div>
           </div>

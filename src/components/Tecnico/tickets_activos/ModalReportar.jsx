@@ -3,6 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import './ModalTicketsActivos.css';
 import { actualizarTicket } from '../../../api/ticket';
 import { crearTrasabilidad } from '../../../api/TransabilidadApi';
+import { useAuth } from '../../../auth/AuthContext';
 
 function ModalReportar({ show, onHide, ticket, onSuccess }) {
   const [observacion, setObservacion] = useState('');
@@ -10,6 +11,7 @@ function ModalReportar({ show, onHide, ticket, onSuccess }) {
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [estadoSeleccionado, setEstadoSeleccionado] = useState(null);
   const [tipoAccion, setTipoAccion] = useState(null); // 'terminar' o 'inactivar'
+  const { user: usuarioActual } = useAuth();
 
   const abrirConfirmacion = (estado, tipo) => {
     setEstadoSeleccionado(estado);
@@ -33,8 +35,8 @@ function ModalReportar({ show, onHide, ticket, onSuccess }) {
       try {
         const dataTrasa = {
           fech: new Date().toISOString().split('T')[0], // Fecha actual
-          obser: observacion, // La observación del usuario - esto va a obse en la respuesta
-          id_usu: ticket.id_usuario || 1, // ID del usuario del ticket
+          obse: observacion,
+          id_usu: usuarioActual?.id || usuarioActual?.id_usu || 1, 
           id_ticet: ticketId,
           id_elemen: ticket.id_eleme || ticket.id_elemento, // ID del elemento
         };
