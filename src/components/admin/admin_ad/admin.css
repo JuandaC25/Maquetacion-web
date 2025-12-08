@@ -97,14 +97,29 @@
   display: inline-block;
 }
 
-.status-card-1214.en-proceso {
-  background-color: #e8f5e8;
+.status-card-1214.activo {
+  background-color: #e8f5e9;
   color: #2e7d32;
 }
 
 .status-card-1214.pendiente {
   background-color: #fff3e0;
   color: #ef6c00;
+}
+
+.status-card-1214.terminado {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-card-1214.inactivo {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-card-1214.en-proceso {
+  background-color: #e8f5e8;
+  color: #2e7d32;
 }
 
 .footer-card-1215 {
