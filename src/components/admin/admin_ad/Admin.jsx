@@ -13,7 +13,7 @@ import { obtenerCategoria } from '../../../api/CategoriaApi.js';
 import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js';
 import ElementosService from '../../../api/ElementosApi.js';
 
-const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial }) => {
+const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger }) => {
   // --- MODAL HISTORIAL DE TICKETS ---
   const [showHistorialModal, setShowHistorialModal] = useState(false);
   const [historialTicket, setHistorialTicket] = useState([]);
@@ -173,6 +173,12 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial }) => {
     cargarCategoriasYSubcategorias();
   }, []);
 
+  useEffect(() => {
+    if (refreshTrigger) {
+      cargarTickets();
+    }
+  }, [refreshTrigger]);
+
   const cargarCategoriasYSubcategorias = async () => {
     try {
       const [datosCateg, datosSubcateg, elementos] = await Promise.all([
@@ -226,7 +232,8 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial }) => {
       const estadoTicket = Number(ticket?.id_est_tick || ticket?.estado);
       if (selectedStatusFilter === "Activo" && estadoTicket !== 1) return false;
       if (selectedStatusFilter === "Pendiente" && estadoTicket !== 2) return false;
-      if (selectedStatusFilter === "Inactivo" && estadoTicket !== 3) return false;
+      if (selectedStatusFilter === "Terminado" && estadoTicket !== 3) return false;
+      if (selectedStatusFilter === "Inactivo" && estadoTicket !== 4) return false;
     }
     if (selectedCategoryFilter && selectedCategoryFilter !== "Todas las Categorías") {
       const ticketCat = ticket.categoria || ticket.elementoRelacionado?.tip_catg || ticket.nom_cat || '';
@@ -390,6 +397,12 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial }) => {
                     🟡 Pendiente
                   </Dropdown.Item>
                   <Dropdown.Item 
+                    onClick={() => handleStatusFilter("Terminado")}
+                    className="dropdown-item-xd148"
+                  >
+                    ✅ Terminado
+                  </Dropdown.Item>
+                  <Dropdown.Item 
                     onClick={() => handleStatusFilter("Inactivo")}
                     className="dropdown-item-xd148"
                   >
@@ -537,11 +550,11 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial }) => {
                 <p className="elemento-card-1213">{t?.nom_elem || t?.elemento || 'Sin elemento'}</p>
                 <span className={`status-card-1214 ${(() => {
                   const estado = Number(t?.id_est_tick || t?.estado);
-                  return estado === 1 ? 'activo' : estado === 2 ? 'pendiente' : estado === 3 ? 'inactivo' : 'pendiente';
+                  return estado === 1 ? 'activo' : estado === 2 ? 'pendiente' : estado === 3 ? 'terminado' : estado === 4 ? 'inactivo' : 'pendiente';
                 })()}`}>
                   {(() => {
                     const estado = Number(t?.id_est_tick || t?.estado);
-                    return estado === 1 ? '🟢 Activo' : estado === 2 ? '🟡 Pendiente' : estado === 3 ? '🔴 Inactivo' : 'Pendiente';
+                    return estado === 1 ? '🟢 Activo' : estado === 2 ? '🟡 Pendiente' : estado === 3 ? '✅ Terminado' : estado === 4 ? '🔴 Inactivo' : 'Pendiente';
                   })()}
                 </span>
               </div>
@@ -695,6 +708,7 @@ const Admin = () => {
   const [editandoProblema, setEditandoProblema] = useState(false);
   const [nuevoProblema, setNuevoProblema] = useState('');
   const [problemas, setProblemas] = useState([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   useEffect(() => {
     if (showModal) {
       // Cargar problemas solo si se abre el modal
@@ -758,7 +772,8 @@ const Admin = () => {
       setEditandoEstado(false);
       setEditandoProblema(false);
       handleCloseModal();
-      window.location.href = window.location.href;
+      // Recargar tickets sin recargar toda la página
+      setRefreshTrigger(prev => prev + 1);
     } catch (error) {
       console.error('❌ Error completo:', error);
       alert('❌ Error al actualizar el ticket: ' + error.message);
@@ -778,7 +793,7 @@ const Admin = () => {
   return (
     <div className="page-with-footer-1227">
       <HeaderAd />
-      <Listaxd onVerClick={handleVerClick} onCrearClick={handleOpenCrearModal} onOpenAllHistorial={() => setShowAllHistorialModal(true)} />
+      <Listaxd onVerClick={handleVerClick} onCrearClick={handleOpenCrearModal} onOpenAllHistorial={() => setShowAllHistorialModal(true)} refreshTrigger={refreshTrigger} />
       <Modal show={showModal} onHide={handleCloseModal} className="modal-1220" centered>
         <Modal.Header closeButton className="modal-header-1221">
           <Modal.Title>Detalles del Ticket</Modal.Title>
@@ -895,14 +910,15 @@ const Admin = () => {
                 >
                   <option value="1">Activo</option>
                   <option value="2">Pendiente</option>
-                  <option value="3">Inactivo</option>
+                  <option value="3">Terminado</option>
+                  <option value="4">Inactivo</option>
                 </Form.Select>
               ) : (
                 <Form.Control 
                   type="text" 
                   value={(() => {
                     const estado = Number(modalDetalles?.id_est_tick || modalDetalles?.estado);
-                    return estado === 1 ? '🟢 Activo' : estado === 2 ? '🟡 Pendiente' : estado === 3 ? '🔴 Inactivo' : 'No disponible';
+                    return estado === 1 ? '🟢 Activo' : estado === 2 ? '🟡 Pendiente' : estado === 3 ? '✅ Terminado' : estado === 4 ? '🔴 Inactivo' : 'No disponible';
                   })()} 
                   readOnly 
                 />
@@ -944,7 +960,8 @@ const Admin = () => {
           <ReportarEquipo />
           <div className="mt-3 text-center">
             <Button variant="success" onClick={() => {
-              window.location.reload();
+              setShowCrearModal(false);
+              setRefreshTrigger(prev => prev + 1);
             }}>
               ✓ Cerrar y Actualizar
             </Button>
