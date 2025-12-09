@@ -22,6 +22,13 @@ const formatDateTime = (value) => {
   }
 };
 
+const isSpaceRequest = (s) => {
+  if (!s) return false;
+  return Boolean(
+    s.id_esp || s.id_espa || s.nom_espa || s.nom_espa || s.id_espacio || s.id_espa
+  );
+};
+
 const toLocalInput = (d) => {
   try {
     const date = (d instanceof Date) ? d : new Date(d);
@@ -256,7 +263,7 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
             const id_solicitud = s.id_soli || s.id || s._id || s.identifier || null;
             return { ...s, id_solicitud, detalles: { ...detalles, id_solicitud } };
           });
-          setTickets(elementos);
+          setTickets(elementos.filter(el => !isSpaceRequest(el)));
           (async () => {
             try {
               const allIds = new Set();
@@ -281,7 +288,7 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
                 const elementosInfo = idsArr.map(id => elementMap.get(String(id))).filter(Boolean);
                 return { ...t, detalles: { ...(t.detalles || {}), elementosInfo } };
               });
-              setTickets(withInfo);
+              setTickets(withInfo.filter(el => !isSpaceRequest(el)));
             } catch (e) {
               console.error('Error precargando elementosInfo:', e);
             }
