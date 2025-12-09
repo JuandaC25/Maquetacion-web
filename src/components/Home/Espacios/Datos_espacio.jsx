@@ -288,29 +288,7 @@ function Datos_espacio() {
                 </div>
               </div>
             </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Ambiente</Form.Label>
-              <Form.Control
-                type="text"
-                name="ambient"
-                placeholder="Ej: Ambiente301"
-                value={form.ambient}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Número de ficha</Form.Label>
-              <Form.Control
-                type="text"
-                name="num_ficha"
-                placeholder="Ej: 2560014"
-                value={form.num_ficha}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
+            {/* Eliminados campos de ambiente y número de ficha, solo fechas y horas */}
             <div className="text-center mt-3">
               <Button variant="success" type="submit">
                 Confirmar Reserva
