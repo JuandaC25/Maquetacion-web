@@ -47,11 +47,9 @@ function PrestamosActivosIndependiente() {
 
   const prestamosArray = Array.isArray(prestamos) ? prestamos : [];
   const prestamosConCategoria = prestamosArray.map(p => {
-    const elemento = elementos.find(e => e.id_elemen === p.id_eleme);
     return { 
       ...p, 
-      categoria: elemento ? elemento.tip_catg : 'Sin categoría', 
-      nom_elem: elemento ? elemento.nom_elemento : '' 
+      categoria: p.nom_cat || 'Sin categoría'
     };
   });
 

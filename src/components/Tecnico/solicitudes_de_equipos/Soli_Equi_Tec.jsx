@@ -6,7 +6,7 @@ import ModalFormulario from './modal_soli_E/FormularioModal/ModalFormulario';
 import Header_soli_equi_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
 import { authorizedFetch } from '../../../api/http';
 
-export default function Tecnico() {
+export default function SoliEquiTec() {
   const categorias = ['Portátiles', 'Televisores', 'Equipos de escritorio', 'Accesorios', 'Espacios'];
 
   const [prestamos, setPrestamos] = useState([]);

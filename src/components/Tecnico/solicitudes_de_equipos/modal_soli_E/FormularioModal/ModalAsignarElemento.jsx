@@ -4,9 +4,11 @@ import { authorizedFetch } from '../../../../../api/http';
 
 function ModalAsignarElemento({ show, onHide, prest, onConfirm }) {
   const [elementosDisponibles, setElementosDisponibles] = useState([]);
-  const [elementoSeleccionado, setElementoSeleccionado] = useState('');
+  const [elementosSeleccionados, setElementosSeleccionados] = useState([]); // Array de {id, cantidad}
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const cantidadSolicitada = prest?.cantid || 0;
+  const cantidadAsignada = elementosSeleccionados.reduce((sum, item) => sum + item.cantidad, 0);
 
   useEffect(() => {
     console.log('ModalAsignarElemento - show:', show);
@@ -28,15 +30,20 @@ function ModalAsignarElemento({ show, onHide, prest, onConfirm }) {
       console.log('Todos los elementos:', elementos);
       console.log('Primer elemento estructura:', elementos[0]);
 
-      // Obtener elementos ya asignados en préstamos activos
-      const resPrestamos = await authorizedFetch('/api/prestamos/activos');
-      if (!resPrestamos.ok) throw new Error('Error al obtener préstamos');
-      const prestamos = await resPrestamos.json();
+      // Obtener todos los préstamos
+      const resPrestamos = await authorizedFetch('/api/prestamos');
+      if (!resPrestamos.ok) {
+        console.warn('No se pudo obtener préstamos, continuando sin filtro de asignados');
+        // Si falla, continuamos sin filtrar elementos asignados
+      }
+      
+      const prestamos = resPrestamos.ok ? await resPrestamos.json() : [];
 
-      // Crear set de IDs de elementos asignados
+      // Crear set de IDs de elementos asignados (solo en préstamos activos - estado 1)
       const idsAsignados = new Set();
       prestamos.forEach(p => {
-        if (p.id_elem) {
+        // Solo contar como asignados los préstamos activos
+        if (p.est_prest === 1 && p.id_elem) {
           const ids = typeof p.id_elem === 'string' 
             ? p.id_elem.split(',').map(Number)
             : [p.id_elem];
@@ -77,11 +84,62 @@ function ModalAsignarElemento({ show, onHide, prest, onConfirm }) {
   };
 
   const handleConfirm = () => {
-    if (!elementoSeleccionado) {
-      setError('Por favor selecciona un elemento');
+    if (elementosSeleccionados.length === 0) {
+      setError('Por favor selecciona al menos un elemento');
       return;
     }
-    onConfirm(elementoSeleccionado);
+    if (cantidadAsignada === 0) {
+      setError('Debes asignar al menos 1 elemento');
+      return;
+    }
+    // Pasar los elementos seleccionados al padre
+    onConfirm(elementosSeleccionados);
+  };
+
+  const agregarElemento = (elementoId) => {
+    // Verificar si ya está seleccionado
+    const yaExiste = elementosSeleccionados.find(e => e.id === elementoId);
+    if (yaExiste) {
+      // Si ya existe, eliminarlo (toggle)
+      eliminarElemento(elementoId);
+      return;
+    }
+
+    // Verificar si aún hay cupo
+    if (cantidadAsignada >= cantidadSolicitada) {
+      setError(`Ya has asignado la cantidad solicitada (${cantidadSolicitada})`);
+      return;
+    }
+
+    // Agregar con cantidad 1
+    setElementosSeleccionados([...elementosSeleccionados, { id: elementoId, cantidad: 1 }]);
+    setError('');
+  };
+
+  const eliminarElemento = (elementoId) => {
+    setElementosSeleccionados(elementosSeleccionados.filter(e => e.id !== elementoId));
+  };
+
+  const actualizarCantidad = (elementoId, nuevaCantidad) => {
+    if (nuevaCantidad < 1) return;
+    
+    // Calcular nueva cantidad total sin este elemento
+    const otrasCantidades = elementosSeleccionados
+      .filter(e => e.id !== elementoId)
+      .reduce((sum, item) => sum + item.cantidad, 0);
+
+    // Verificar que no exceda el solicitado
+    if (otrasCantidades + nuevaCantidad > cantidadSolicitada) {
+      setError(`No puedes exceder ${cantidadSolicitada} elementos en total`);
+      return;
+    }
+
+    setElementosSeleccionados(
+      elementosSeleccionados.map(e => 
+        e.id === elementoId ? { ...e, cantidad: nuevaCantidad } : e
+      )
+    );
+    setError('');
   };
 
   if (!show) return null;
@@ -102,39 +160,38 @@ function ModalAsignarElemento({ show, onHide, prest, onConfirm }) {
             <p className="error-message">{error}</p>
           ) : (
             <>
-              <div className="form-group-asignar">
-                <label htmlFor="elemento-select">Selecciona un elemento disponible:</label>
-                <select
-                  id="elemento-select"
-                  value={elementoSeleccionado}
-                  onChange={(e) => {
-                    setElementoSeleccionado(e.target.value);
-                    setError('');
-                  }}
-                  className="select-elemento"
-                >
-                  <option value="">-- Selecciona un elemento --</option>
-                  {elementosDisponibles.map(elem => (
-                    <option key={elem.id_elemen} value={elem.id_elemen}>
-                      {elem.nom_eleme} {elem.mar_elem ? `(${elem.mar_elem})` : ''}
-                    </option>
-                  ))}
-                </select>
+              <div className="info-solicitud">
+                <p><strong>Cantidad solicitada:</strong> {cantidadSolicitada}</p>
+                <p><strong>Cantidad asignada:</strong> <span style={{ color: cantidadAsignada >= cantidadSolicitada ? '#09b41a' : '#ff9800' }}>{cantidadAsignada} / {cantidadSolicitada}</span></p>
               </div>
 
-              {elementoSeleccionado && (
-                <div className="elemento-info">
-                  {elementosDisponibles.find(e => e.id_elemen === parseInt(elementoSeleccionado)) && (
-                    <>
-                      <p><strong>Elemento seleccionado:</strong></p>
-                      <p>{elementosDisponibles.find(e => e.id_elemen === parseInt(elementoSeleccionado)).nom_eleme}</p>
-                      {elementosDisponibles.find(e => e.id_elemen === parseInt(elementoSeleccionado)).mar_elem && (
-                        <p><strong>Marca:</strong> {elementosDisponibles.find(e => e.id_elemen === parseInt(elementoSeleccionado)).mar_elem}</p>
-                      )}
-                    </>
+              <div className="form-group-asignar">
+                <label><strong>Elementos disponibles ({elementosDisponibles.length}):</strong></label>
+                <div className="elementos-grid">
+                  {elementosDisponibles.length === 0 ? (
+                    <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#999' }}>No hay elementos disponibles</p>
+                  ) : (
+                    elementosDisponibles.map(elem => {
+                      const estaSeleccionado = elementosSeleccionados.find(e => e.id === elem.id_elemen);
+                      const cantidadSeleccionada = estaSeleccionado ? estaSeleccionado.cantidad : 0;
+                      return (
+                        <div 
+                          key={elem.id_elemen} 
+                          className={`elemento-card ${estaSeleccionado ? 'seleccionado' : ''}`}
+                          onClick={() => agregarElemento(elem.id_elemen)}
+                          title={`${elem.nom_eleme} ${elem.mar_elem ? `- ${elem.mar_elem}` : ''}`}
+                        >
+                          <p className="elem-nombre">{elem.nom_eleme}</p>
+                          {elem.mar_elem && <p className="elem-marca">{elem.mar_elem}</p>}
+                          {estaSeleccionado && (
+                            <div className="badge-cantidad">{cantidadSeleccionada}x</div>
+                          )}
+                        </div>
+                      );
+                    })
                   )}
                 </div>
-              )}
+              </div>
             </>
           )}
         </div>
@@ -147,10 +204,22 @@ function ModalAsignarElemento({ show, onHide, prest, onConfirm }) {
           >
             Cancelar
           </button>
+          {elementosSeleccionados.length > 0 && (
+            <button 
+              className="btn-limpiar-asignar" 
+              onClick={() => {
+                setElementosSeleccionados([]);
+                setError('');
+              }}
+              disabled={loading}
+            >
+              Limpiar selección
+            </button>
+          )}
           <button 
             className="btn-confirmar-asignar" 
             onClick={handleConfirm}
-            disabled={loading || !elementoSeleccionado}
+            disabled={loading || elementosSeleccionados.length === 0}
           >
             Confirmar
           </button>

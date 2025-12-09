@@ -38,9 +38,11 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
   const abrirConfirmacionRechazo = () => setMostrarConfirmacionRechazo(true);
   const cerrarConfirmacionRechazo = () => setMostrarConfirmacionRechazo(false);
 
-  const confirmarConElementoAsignado = async (elementoId) => {
+  const confirmarConElementoAsignado = async (elementosSeleccionados) => {
     cerrarModalAsignar();
-    prest.id_elem = elementoId;
+    // Guardar los elementos seleccionados como array de objetos {id, cantidad}
+    prest.elementos_asignados = elementosSeleccionados;
+    console.log('Elementos asignados:', elementosSeleccionados);
     setMostrarConfirmacion(true);
   };
 
@@ -51,60 +53,50 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
 
     try {
       console.log("🔹 Finalizando solicitud:", prest.id_soli);
-      console.log("🔹 Elemento asignado (id_elem):", prest.id_elem);
+      console.log("🔹 Elementos asignados:", prest.elementos_asignados);
+      
+      // Obtener el usuario actual desde localStorage
+      const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+      const id_tecnico = usuario.id;
+      const nombre_tecnico = usuario.nombre || usuario.name || 'Técnico';
+      
+      // Construir array de IDs de elementos
+      const idsElem = [];
+      if (prest.elementos_asignados && Array.isArray(prest.elementos_asignados)) {
+        prest.elementos_asignados.forEach(item => {
+          // Agregar el ID de elemento 'cantidad' veces
+          for (let i = 0; i < item.cantidad; i++) {
+            idsElem.push(item.id);
+          }
+        });
+      }
+      
+      console.log("🔹 IDs de elementos a enviar:", idsElem);
+      
+      const payload = { 
+        id_soli: prest.id_soli, 
+        id_est_soli: 2,
+        ids_elem: idsElem,  // ← AGREGAR ELEMENTOS
+        id_tecnico: id_tecnico,  // ← AGREGAR ID TÉCNICO
+        nombre_tecnico: nombre_tecnico  // ← AGREGAR NOMBRE TÉCNICO
+      };
+      console.log("📤 Payload enviado al backend:", JSON.stringify(payload));
 
       const updateResponse = await authorizedFetch(`/api/solicitudes/${prest.id_soli}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_soli: prest.id_soli, id_est_soli: 2 }),
+        body: JSON.stringify(payload),
       });
 
       if (!updateResponse.ok) throw new Error('Error al actualizar el estado de la solicitud');
-      console.log("✅ Solicitud actualizada correctamente");
-
-      const idsElem = prest.id_elem
-        ? (typeof prest.id_elem === 'string'
-            ? prest.id_elem.split(',').map(Number)
-            : [prest.id_elem])
-        : [];
-      
-      console.log("🔹 IDs de elementos a enviar al préstamo:", idsElem);
-      
-        // Usar id_espa del SolicitudesDto
-        const idEsp = prest.id_espa;
-        const postResponse = await authorizedFetch('/api/prestamos', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            fechaEntreg: prest.fecha_ini,
-            fechaRepc: prest.fecha_fn,
-            tipoPres: "AUTO",
-            estado: 1,
-            idUsuario: prest.id_usu,
-            idsElem: prest.id_elem
-              ? (typeof prest.id_elem === 'string'
-                  ? prest.id_elem.split(',').map(Number)
-                  : [prest.id_elem])
-              : [],
-            idEsp
-          }),
-        });
-
-        if (!postResponse.ok) {
-          const errorData = await postResponse.json().catch(() => ({}));
-          console.error("❌ Detalle del error backend:", errorData);
-          alert("Error al registrar el préstamo:\n" + (errorData.mensaje || errorData.errores1 || errorData.errores2 || JSON.stringify(errorData)));
-          throw new Error('Error al registrar el préstamo');
-        }
-
-      console.log("✅ Préstamo creado correctamente");
-      alert("Solicitud finalizada y registrada como préstamo");
+      console.log("✅ Solicitud aprobada correctamente");
+      alert("Solicitud aprobada exitosamente");
 
       onActualizado && onActualizado(prest.id_soli);
       onHide();
     } catch (error) {
       console.error("❌ Error al finalizar:", error);
-      alert("Ocurrió un error al finalizar la solicitud.");
+      alert("Ocurrió un error al aprobar la solicitud.");
     } finally {
       setLoading(false);
     }
@@ -150,10 +142,6 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
         <div className="cuerpito">
           <div className="cont_mod_tec1">
             <div className="Cont_label_tec">
-              <label className="origin">ID de solicitud:</label>
-              <input type="text" className="tecito" disabled value={prest.id_soli ?? ''} />
-            </div>
-            <div className="Cont_label_tec">
               <label className="origin">Nombre usuario:</label>
               <input type="text" className="tecito" disabled value={prest.nom_usu ?? ''} />
             </div>
@@ -180,6 +168,10 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
             <div className="Cont_label_tec">
               <label className="origin">Subcategoría:</label>
               <input type="text" className="tecito" disabled value={prest.nom_subcat ?? ''} />
+            </div>
+            <div className="Cont_label_tec">
+              <label className="origin">Cantidad solicitada:</label>
+              <input type="text" className="tecito" disabled value={prest.cantid ?? ''} />
             </div>
           </div>
         </div>
