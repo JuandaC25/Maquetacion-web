@@ -11,6 +11,11 @@ import CrearEspacio from '../../Home/Espacios/Crear_espacio/Crear_espacio.jsx';
 import { listarEspacios, actualizarEspacio, eliminarEspacio, subirImagenesEspacio } from '../../../api/EspaciosApi.js';
 
 const Soliespacio = () => {
+  const isSpaceRequest = (s) => {
+    if (!s) return false;
+    return Boolean(s.id_espa || s.id_espa || s.id_esp || s.nom_espa || s.nom_espa || s.id_espa || s.id_espacio);
+  };
+
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -184,6 +189,14 @@ const Soliespacio = () => {
     setShowApartarModal(true);
   };
 
+  const getFechaMinima = () => {
+    const hoy = new Date();
+    const año = hoy.getFullYear();
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dia = String(hoy.getDate()).padStart(2, '0');
+    return `${año}-${mes}-${dia}`;
+  };
+
   const handleReservaFormChange = (e) => {
     const { name, value } = e.target;
     setReservaForm(prev => ({ ...prev, [name]: value }));
@@ -196,8 +209,39 @@ const Soliespacio = () => {
       setSavingEsp(true);
       const pad = (n) => String(n).padStart(2, '0');
       const formatLocal = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-      const fechaInicio = new Date(`${reservaForm.fecha_ini}T${reservaForm.hora_ini}:00`);
-      const fechaFin = new Date(`${reservaForm.fecha_fn}T${reservaForm.hora_fn}:00`);
+      const makeDateFromReserva = (fieldValue, altHour) => {
+        if (!fieldValue) return null;
+        try {
+          if (String(fieldValue).includes('T')) {
+            const asIs = new Date(fieldValue);
+            if (!isNaN(asIs.getTime())) return asIs;
+            const withSec = fieldValue.length === 16 ? `${fieldValue}:00` : fieldValue;
+            const asWithSec = new Date(withSec);
+            if (!isNaN(asWithSec.getTime())) return asWithSec;
+            return null;
+          }
+          const hora = altHour || '00:00';
+          const combined = `${fieldValue}T${hora}:00`;
+          const d = new Date(combined);
+          return isNaN(d.getTime()) ? null : d;
+        } catch (e) {
+          return null;
+        }
+      };
+
+      const fechaInicio = makeDateFromReserva(reservaForm.fecha_ini, reservaForm.hora_ini);
+      const fechaFin = makeDateFromReserva(reservaForm.fecha_fn, reservaForm.hora_fn);
+      if (!fechaInicio || !fechaFin || isNaN(fechaInicio.getTime()) || isNaN(fechaFin.getTime())) {
+        setError('Fechas u horas inválidas. Por favor completa fecha y hora correctamente.');
+        setSavingEsp(false);
+        return;
+      }
+
+      if (fechaInicio.getTime() >= fechaFin.getTime()) {
+        setError('La fecha/hora de inicio debe ser anterior a la de fin.');
+        setSavingEsp(false);
+        return;
+      }
       // Validar que no haya cruce de fechas con reservas existentes para este espacio
       const reservasEspacio = solicitudes.filter(s => (s.id_espa === espacioApartar.id || s.id_esp === espacioApartar.id));
       const hayCruce = reservasEspacio.some(s => {
@@ -266,11 +310,11 @@ const Soliespacio = () => {
         if (!v) return null;
         try {
           const d = new Date(v);
-          if (isNaN(d.getTime())) return v;
+          if (isNaN(d.getTime())) return null;
           const pad = (n) => String(n).padStart(2, '0');
           return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
         } catch {
-          return v;
+          return null;
         }
       };
 
@@ -327,7 +371,7 @@ const Soliespacio = () => {
       setLoading(true);
       setError(null);
       const data = await obtenersolicitudes();
-      setSolicitudes(Array.isArray(data) ? data : []);
+      setSolicitudes(Array.isArray(data) ? (data.filter(isSpaceRequest)) : []);
     } catch (err) {
       setError('Error al cargar las solicitudes de espacios: ' + err.message);
       console.error('[ERROR] Error al cargar solicitudes:', err);
@@ -700,14 +744,6 @@ const Soliespacio = () => {
                                               <Form.Control type="text" name="id_usu" value={nuevaSolicitud.nom_usu || ''} readOnly />
                                             </Form.Group>
                                             <Form.Group className="mb-3">
-                                              <Form.Label>Ambiente *</Form.Label>
-                                              <Form.Control type="text" name="ambient" value={nuevaSolicitud.ambient} onChange={handleInputChange} required />
-                                            </Form.Group>
-                                            <Form.Group className="mb-3">
-                                              <Form.Label>Número de Ficha *</Form.Label>
-                                              <Form.Control type="text" name="num_fich" value={nuevaSolicitud.num_fich} onChange={handleInputChange} required />
-                                            </Form.Group>
-                                            <Form.Group className="mb-3">
                                               <Form.Label>Fecha y Hora de Inicio *</Form.Label>
                                               <Form.Control type="datetime-local" name="fecha_ini" value={nuevaSolicitud.fecha_ini} onChange={handleInputChange} required />
                                             </Form.Group>
@@ -727,57 +763,68 @@ const Soliespacio = () => {
                                         </div>
                                       </div>
                                     </Modal>
-                              {/* Modal Apartar Espacio */}
-                              <Modal show={showApartarModal} onHide={() => { setShowApartarModal(false); setEspacioApartar(null); }} centered size="md" backdrop={false}>
-                                <div style={{ borderRadius: 10, overflow: 'hidden' }}>
-                                  <div style={{ background: '#219653', color: 'white', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <h2 style={{ fontWeight: 700, fontSize: 30, margin: 0 }}>
-                                      Reservar {espacioApartar?.nom_espa || ''}
-                                    </h2>
-                                    <Button variant="link" onClick={() => { setShowApartarModal(false); setEspacioApartar(null); }} style={{ color: 'white', fontSize: 28, fontWeight: 700, textDecoration: 'none', lineHeight: 1, padding: 0, border: 'none', background: 'none' }}>×</Button>
-                                  </div>
-                                  <div style={{ padding: 32, background: 'white' }}>
-                                    <Form onSubmit={handleConfirmApartar}>
-                                      <Form.Group className="mb-3">
-                                        <Form.Label>Fecha y Hora de Inicio</Form.Label>
-                                        <Form.Control
-                                          type="datetime-local"
-                                          name="fecha_ini"
-                                          value={reservaForm.fecha_ini}
-                                          onChange={handleReservaFormChange}
-                                          required
-                                        />
-                                      </Form.Group>
-                                      <Form.Group className="mb-3">
-                                        <Form.Label>Fecha y Hora de Fin</Form.Label>
-                                        <Form.Control
-                                          type="datetime-local"
-                                          name="fecha_fn"
-                                          value={reservaForm.fecha_fn}
-                                          onChange={handleReservaFormChange}
-                                          required
-                                        />
-                                      </Form.Group>
-                                      <Form.Group className="mb-3">
-                                        <Form.Label>Ambiente</Form.Label>
-                                        <Form.Control type="text" name="ambient" placeholder="Ej: Ambiente301" value={reservaForm.ambient} onChange={handleReservaFormChange} required />
-                                      </Form.Group>
-                                      <Form.Group className="mb-3">
-                                        <Form.Label>Número de ficha</Form.Label>
-                                        <Form.Control type="text" name="num_ficha" placeholder="Ej: 2560014" value={reservaForm.num_ficha} onChange={handleReservaFormChange} required />
-                                      </Form.Group>
-                                      <div className="text-center mt-3">
-                                        <Button
-                                          style={{ minWidth: 220, fontWeight: 600, fontSize: 20, background: '#219653', border: 'none', borderRadius: 8, padding: '12px 0' }}
-                                          type="submit"
-                                          disabled={savingEsp}
-                                        >
-                                          {savingEsp ? 'Reservando...' : 'Confirmar Reserva'}
-                                        </Button>
+                              <Modal show={showApartarModal} onHide={() => { setShowApartarModal(false); setEspacioApartar(null); }} centered size="md" backdrop={false} dialogClassName="modern-modal-dialog-1627">
+                                <Modal.Header className="modern-modal-header-1628" closeButton>
+                                  <Modal.Title className="modern-modal-title-1629">Reservar {espacioApartar?.nom_espa || ''}</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body className="modern-modal-body-1630">
+                                  <Form onSubmit={handleConfirmApartar}>
+                                    <Form.Group className="mb-3">
+                                      <Form.Label>Fecha y Hora de Inicio</Form.Label>
+                                      <div className="row g-2">
+                                        <div className="col-md-6">
+                                          <Form.Control
+                                            type="date"
+                                            name="fecha_ini"
+                                            value={reservaForm.fecha_ini}
+                                            onChange={handleReservaFormChange}
+                                            min={getFechaMinima()}
+                                            required
+                                          />
+                                        </div>
+                                        <div className="col-md-6">
+                                          <Form.Control
+                                            type="time"
+                                            name="hora_ini"
+                                            value={reservaForm.hora_ini}
+                                            onChange={handleReservaFormChange}
+                                            required
+                                          />
+                                        </div>
                                       </div>
-                                    </Form>
-                                  </div>
-                                </div>
+                                    </Form.Group>
+                                    <Form.Group className="mb-3">
+                                      <Form.Label>Fecha y Hora de Fin</Form.Label>
+                                      <div className="row g-2">
+                                        <div className="col-md-6">
+                                          <Form.Control
+                                            type="date"
+                                            name="fecha_fn"
+                                            value={reservaForm.fecha_fn}
+                                            onChange={handleReservaFormChange}
+                                            min={reservaForm.fecha_ini || getFechaMinima()}
+                                            required
+                                          />
+                                        </div>
+                                        <div className="col-md-6">
+                                          <Form.Control
+                                            type="time"
+                                            name="hora_fn"
+                                            value={reservaForm.hora_fn}
+                                            onChange={handleReservaFormChange}
+                                            required
+                                          />
+                                        </div>
+                                      </div>
+                                    </Form.Group>
+                                    {/* Eliminados campos de ambiente y número de ficha, solo fechas y horas */}
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+                                      <Button variant="secondary" onClick={() => { setShowApartarModal(false); setEspacioApartar(null); }} className="modal-action-button-1635 cancel-action-1636">Cancelar</Button>
+                                      <Button variant="success" type="submit" disabled={savingEsp} className="modal-action-button-1635">{savingEsp ? 'Reservando...' : 'Confirmar Reserva'}</Button>
+                                    </div>
+                                  </Form>
+                                </Modal.Body>
+                                <Modal.Footer className="modern-modal-footer-1634" />
                               </Modal>
                         <button className="button-Espacio" onClick={() => handleEditEsp(espacio)}>
                           <div className="front">
@@ -890,12 +937,6 @@ const Soliespacio = () => {
                     <p className="equipment-serie-xd07">
                       <strong>Usuario:</strong> {solicitud.nom_usu || 'N/A'}
                     </p>
-                    <p className="equipment-serie-xd07">
-                      <strong>Ambiente:</strong> {solicitud.ambient || 'N/A'}
-                    </p>
-                    <p className="equipment-serie-xd07">
-                      <strong>Ficha:</strong> {solicitud.num_fich || 'N/A'}
-                    </p>
                     {solicitud.nom_elem && (
                       <p className="equipment-serie-xd07">
                         <strong>Elementos:</strong> {solicitud.nom_elem}
@@ -943,14 +984,6 @@ const Soliespacio = () => {
               <Form.Group className="mb-3">
                 <Form.Label>Usuario (ID)</Form.Label>
                 <div style={{ padding: '8px 12px', background: '#f5f5f5', borderRadius: 4 }}>{nuevaSolicitud.nom_usu || ''}</div>
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Ambiente *</Form.Label>
-                <Form.Control type="text" name="ambient" value={nuevaSolicitud.ambient} onChange={handleInputChange} required />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Número de Ficha *</Form.Label>
-                <Form.Control type="text" name="num_fich" value={nuevaSolicitud.num_fich} onChange={handleInputChange} required />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Fecha y Hora de Inicio *</Form.Label>
