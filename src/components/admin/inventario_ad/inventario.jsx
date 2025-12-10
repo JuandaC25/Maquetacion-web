@@ -4,7 +4,7 @@ import { FaSearch } from "react-icons/fa";
 import "./inventario.css";
 import "../adcrear_ad/adcrear_ad.css";
 import Footer from "../../Footer/Footer.jsx";
-import HeaderInv from "../header_inv/header_inv.jsx";
+import HeaderInv from "../headers/AdminHeader.jsx";
 import ElementosService from "../../../api/ElementosApi.js";
 import { obtenerCategoria } from "../../../api/CategoriaApi.js";
 import { obtenersolicitudes } from "../../../api/solicitudesApi.js";
@@ -717,7 +717,7 @@ const Admin = () => {
 
   return (
     <div className="inventory-app-container-xd25">
-      <HeaderInv />
+      <HeaderInv title="Inventario" />
       
       {error && (
         <Alert variant="danger" dismissible onClose={() => setError(null)}>

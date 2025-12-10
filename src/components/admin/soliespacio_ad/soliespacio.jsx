@@ -4,7 +4,7 @@ import Card from 'react-bootstrap/Card';
 import './soliespacio.css';
 import '../../Home/Espacios/Solicitud_espacios.css';
 import Footer from '../../Footer/Footer.jsx';
-import HeaderSoliespacio from '../header_soliespacio/header_soliespacio.jsx';
+import HeaderSoliespacio from '../headers/AdminHeader.jsx';
 import { obtenersolicitudes, crearSolicitud, eliminarSolicitud, actualizarSolicitud } from '../../../api/solicitudesApi.js';
 import { obtenerUsuarioPorId } from '../../../api/UsuariosApi.js';
 import CrearEspacio from '../../Home/Espacios/Crear_espacio/Crear_espacio.jsx';
@@ -572,7 +572,7 @@ const Soliespacio = () => {
 
   return (
     <div className="inventory-app-container-xd25">
-      <HeaderSoliespacio />
+      <HeaderSoliespacio title="Solicitudes de espacios" />
 
       {error && (
         <Alert variant="danger" dismissible onClose={() => setError(null)} style={{ margin: '20px' }}>

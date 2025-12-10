@@ -5,7 +5,7 @@ import { Button, Alert, Dropdown, Modal, Form, Spinner } from 'react-bootstrap';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
 import "./admin.css";
 import Footer from '../../Footer/Footer.jsx';
-import HeaderAd from '../header_admin/header_ad.jsx'; 
+import HeaderAd from '../headers/AdminHeader.jsx'; 
 import { Ticket } from 'react-bootstrap-icons';
 import { obtenerTickets, actualizarTicket } from '../../../api/ticket.js';
 import { getToken } from '../../../api/AuthApi';
@@ -1373,7 +1373,7 @@ const Admin = () => {
 
   return (
     <div className="page-with-footer-1227">
-      <HeaderAd />
+      <HeaderAd title="Estado del ticket" />
       <Listaxd onVerClick={handleVerClick} onCrearClick={handleOpenCrearModal} onOpenAllHistorial={handleDownloadAllPdf} refreshTrigger={refreshTrigger} />
       <Modal show={showModal} onHide={handleCloseModal} className="modal-1220" centered>
         <Modal.Header closeButton className="modal-header-1221">
