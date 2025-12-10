@@ -3,7 +3,7 @@ import { Button, Alert, Modal, Form, Spinner, Tab, Tabs, Dropdown } from 'react-
 import { FaPlus, FaEdit, FaTrash, FaFilePdf } from 'react-icons/fa';
 import './Categorias.css';
 import Footer from '../../Footer/Footer.jsx';
-import HeaderCategorias from '../header_categorias/header_categorias.jsx';
+import HeaderCategorias from '../headers/AdminHeader.jsx';
 import { obtenerCategoria, crearCategoria, eliminarCategoria, actualizarEstadoCategoria, actualizarCategoria } from '../../../api/CategoriaApi.js';
 import { getJson } from '../../../api/http';
 import { obtenerSubcategorias, crearSubcategoria, eliminarSubcategoria, actualizarSubcategoria } from '../../../api/SubcategotiaApi.js';
@@ -617,7 +617,7 @@ const Categorias = () => {
 
   return (
     <div className="categorias-container-cat01">
-      <HeaderCategorias />
+      <HeaderCategorias title="Gestión de Categorías" />
       
       {error && (
         <Alert variant="danger" dismissible onClose={() => setError(null)} className="error-alert-cat03">

@@ -3,7 +3,7 @@ import { Button, Alert, Modal, Form, Dropdown, InputGroup } from 'react-bootstra
 import { FaUserCircle, FaSearch } from 'react-icons/fa';
 import "./adcrear_ad.css"; 
 import Footer from '../../Footer/Footer.jsx';
-import HeaderCrear from '../header_crear/header_crear.jsx'; 
+import HeaderCrear from '../headers/AdminHeader.jsx'; 
 import { 
     obtenerUsuarios, 
     crearUsuario, 
@@ -574,7 +574,7 @@ const UserManagementList = () => {
 
     return (
         <div className="inventory-app-container-xd125">
-            <HeaderCrear />
+            <HeaderCrear title="Gestionar usuarios" />
 
             <div className="inventory-header-bar-xd126">
                 <div className="header-bar-content-xd127">

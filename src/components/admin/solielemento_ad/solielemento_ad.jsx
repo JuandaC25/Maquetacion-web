@@ -4,7 +4,7 @@ import { Button, Alert, Dropdown, Modal, Form, Pagination, InputGroup } from 're
 import { FaUserCircle, FaBars, FaSearch } from 'react-icons/fa';
 import "./solielemento.css";
 import Footer from '../../Footer/Footer.jsx';
-import HeaderAd from '../header_solielemento/header_solielemento.jsx';
+import HeaderAd from '../headers/AdminHeader.jsx';
 import { obtenersolicitudes, obtenerSolicitudesPorid, actualizarSolicitud } from '../../../api/solicitudesApi';
 import ElementosService from '../../../api/ElementosApi';
 import SolicitudModalPort from '../../Home/Pedidos_port/SolicitudModal/SolicitudModal';
@@ -871,7 +871,7 @@ const Solielemento = () => {
 
   return (
     <div className="page-with-footer-1639">
-      <HeaderAd />
+      <HeaderAd title="Solicitudes de elementos" />
       <Listaxd onVerClick={handleVerClick} refreshKey={listRefreshKey} onAgregarClick={handleAgregarClick} />
       
       <Modal show={showModal} onHide={handleCloseModal} centered dialogClassName="modern-modal-dialog-1627">
