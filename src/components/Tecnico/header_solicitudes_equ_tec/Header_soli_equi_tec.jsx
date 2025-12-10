@@ -152,6 +152,12 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
                                     Ver solicitudes de prestamos 
                                 </p>
                             </Link>
+                            <Link to="/PrestamosActivos" className="menu-card">
+                                <p className="card-title">
+                                    <i className="bi bi-search"></i> Prestamos Activos
+                                </p>
+                                <p className="card-subtitle">Ver solo prestamos activos</p>
+                            </Link>
                             <Link to="/Tickets-Tecnico" className="menu-card">
                                 <p className="card-title">
                                     <i className="bi bi-person-plus"></i> Tickets
@@ -169,11 +175,13 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
                                 </p>
                                     
                             </Link>
-                            <Link to="/PrestamosActivos" className="menu-card">
+                            <Link to="/Solicitudes-Espacios-Tecnico" className="menu-card">
                                 <p className="card-title">
-                                    <i className="bi bi-search"></i> Prestamos Activos
+                                    <i className="bi bi-building"></i> Solicitudes Espacios
                                 </p>
-                                <p className="card-subtitle">Ver solo prestamos activos</p>
+                                <p className="card-subtitle">
+                                    Ver solicitudes de espacios 
+                                </p>
                             </Link>
                             <Link to="/HistorialTec" className="menu-card">
                                 <p className="card-title">

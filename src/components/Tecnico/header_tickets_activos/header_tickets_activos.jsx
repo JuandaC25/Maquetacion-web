@@ -47,10 +47,13 @@ function Header_informacion() {
             </Offcanvas.Header>
             <Offcanvas.Body className="cards-xd208tec">
               
-              
               <Link to="/Prestamos-Tecnico" className='card-xd209tec'>
                 <p className="text-primary-xd210tec"><i className="bi bi-arrow-left-right"></i> Prestamos</p>
                 <p className="text-secondary-xd211tec">Ver solicitudes de prestamos</p>
+              </Link>
+              <Link to="/PrestamosActivos" className='card-xd209tec'>
+                <p className="text-primary-xd210tec"><i className="bi bi-lightning-charge"></i> Préstamos Activos</p>
+                <p className="text-secondary-xd211tec">Ver solo préstamos activos</p>
               </Link>
               <Link to="/Tickets-Tecnico" className='card-xd209tec'>
                 <p className="text-primary-xd210tec"><i className="bi bi-tools"></i> Tickets</p>
@@ -60,9 +63,9 @@ function Header_informacion() {
                 <p className="text-primary-xd210tec"><i className="bi bi-lightning-charge"></i> Tickets Activos</p>
                 <p className="text-secondary-xd211tec">Ver solo tickets activos</p>
               </Link>
-              <Link to="/PrestamosActivos" className='card-xd209tec'>
-                <p className="text-primary-xd210tec"><i className="bi bi-lightning-charge"></i> Préstamos Activos</p>
-                <p className="text-secondary-xd211tec">Ver solo préstamos activos</p>
+              <Link to="/Solicitudes-Espacios-Tecnico" className='card-xd209tec'>
+                <p className="text-primary-xd210tec"><i className="bi bi-building"></i> Solicitudes Espacios</p>
+                <p className="text-secondary-xd211tec">Ver solicitudes de espacios</p>
               </Link>
               <Link to="/HistorialTec" className='card-xd209tec'>
                 <p className="text-primary-xd210tec"><i className="bi bi-clock-history"></i> Historial</p>

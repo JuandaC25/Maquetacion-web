@@ -7,6 +7,7 @@ import AdCrear from './components/admin/adcrear_ad/adcrear.jsx';
 import Solielemento from './components/admin/solielemento_ad/solielemento_ad.jsx';
 import Soliespacio from './components/admin/soliespacio_ad/soliespacio.jsx';
 import Tecnico from './components/Tecnico/solicitudes_de_equipos/Soli_Equi_Tec.jsx';
+import SoliEspaciosTec from './components/Tecnico/solicitudes_de_espacios/Soli_Espacios_Tec.jsx';
 import Cuarta from './components/Tecnico/informacion_de_equipos/Info_equipos_tec.jsx';
 import Soliespacios from './components/Home/Espacios/Solicitud_espacios' ;
 import Historial_ped from './components/Home/Histo_pedi/Histo_pedi.jsx' ;
@@ -57,6 +58,11 @@ function App() {
         <Route path='/soliespacio' element={
           <ProtectedRoute roles={['ADMINISTRADOR']} excludeRoles={['TECNICO']}>
             <Soliespacio/>
+          </ProtectedRoute>
+        } />
+        <Route path='/Solicitudes-Espacios-Tecnico' element={
+          <ProtectedRoute roles={['TECNICO']} excludeRoles={['ADMINISTRADOR']}>
+            <SoliEspaciosTec />
           </ProtectedRoute>
         } />
         <Route path='/Prestamos-Tecnico' element={

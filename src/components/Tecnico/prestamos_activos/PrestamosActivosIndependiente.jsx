@@ -5,7 +5,7 @@ import '../informacion_de_equipos/Info_equipos_tec.css';
 import { authorizedFetch } from '../../../api/http';
 
 function PrestamosActivosIndependiente() {
-  const categorias = ['Portátiles', 'Televisores', 'Equipos de escritorio', 'Accesorios', 'Espacios'];
+  const [categorias, setCategorias] = useState([]);
   const [prestamos, setPrestamos] = useState([]);
   const [elementos, setElementos] = useState([]);
   const [categoriaFiltro, setCategoriaFiltro] = useState('');
@@ -25,7 +25,24 @@ function PrestamosActivosIndependiente() {
     try {
       const response = await authorizedFetch('http://localhost:8081/api/prestamos/estado/1');
       const data = await response.json();
-      setPrestamos(Array.isArray(data) ? data : []);
+      const prestamosFiltrados = Array.isArray(data) ? data : [];
+      setPrestamos(prestamosFiltrados);
+      console.log("Préstamos cargados:", prestamosFiltrados);
+      console.log("Primer préstamo estructura:", JSON.stringify(prestamosFiltrados[0], null, 2));
+
+      const resElementos = await authorizedFetch('http://localhost:8081/api/elementos');
+      const dataElementos = await resElementos.json();
+      console.log("Elementos cargados:", dataElementos);
+      console.log("Primer elemento estructura:", JSON.stringify(dataElementos[0], null, 2));
+      setElementos(dataElementos);
+
+      // Extraer categorías únicas de los elementos asociados a los préstamos
+      const categoriasMap = prestamosFiltrados
+        .map(prest => prest.nom_cat || prest.categoria || null)
+        .filter(cat => cat);
+      const categoriasUnicas = [...new Set(categoriasMap)];
+      console.log('Categorías extraídas:', categoriasUnicas);
+      setCategorias(categoriasUnicas);
     } catch (err) {
       console.error('Error al obtener préstamos activos:', err);
       setPrestamos([]);
