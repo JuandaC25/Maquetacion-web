@@ -937,17 +937,6 @@ const Categorias = () => {
         </Modal.Header>
         <Modal.Body className="modal-body-cat29">
           <Form.Group className="mb-3">
-            <Form.Label className="form-label-cat30">Nombre de la Subcategoría</Form.Label>
-            <Form.Control
-              type="text"
-              name="nom_subcateg"
-              placeholder="Ej: Laptops, Monitores, etc."
-              value={nuevaSubcategoria.nom_subcateg}
-              onChange={handleChangeSubcategoriaInput}
-              className="form-input-cat31"
-            />
-          </Form.Group>
-          <Form.Group>
             <Form.Label className="form-label-cat30">Categoría Padre</Form.Label>
             <Form.Select
               name="id_cat"
@@ -962,6 +951,17 @@ const Categorias = () => {
                 </option>
               ))}
             </Form.Select>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label className="form-label-cat30">Nombre de la Subcategoría</Form.Label>
+            <Form.Control
+              type="text"
+              name="nom_subcateg"
+              placeholder="Ej: Laptops, Monitores, etc."
+              value={nuevaSubcategoria.nom_subcateg}
+              onChange={handleChangeSubcategoriaInput}
+              className="form-input-cat31"
+            />
           </Form.Group>
         </Modal.Body>
         <Modal.Footer className="modal-footer-cat32">
