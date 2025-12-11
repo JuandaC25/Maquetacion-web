@@ -8,7 +8,7 @@ import { Pagination, Button, Badge, Tabs, Tab } from 'react-bootstrap';
 import { 
     obtenersolicitudes, 
     eliminarSolicitud,
-    actualizarEstadoSolicitud, // ✨ Importación clave
+    actualizarEstadoSolicitud,
     cancelarSolicitudComoInstructor
 } from '../../../api/solicitudesApi.js';
 import { obtenerTickets, eliminarTicket } from '../../../api/ticket.js';
@@ -32,7 +32,6 @@ const formatFecha = (fechaString) => {
 }
 
 const getStatusDetails = (estadoValor) => {
-        // Limpieza: No se deben importar módulos dentro de funciones
     const estadoTexto = estadoValor?.toString().toLowerCase().trim() || '';
 
     if (estadoTexto.includes('pendiente')) {
@@ -65,7 +64,7 @@ function Historial_ped() {
     const [subcategorias, setSubcategorias] = useState({}); 
     const [subcategoriaOptions, setSubcategoriaOptions] = useState([]);
     const [selectedSubcategoriaId, setSelectedSubcategoriaId] = useState(null);
-    const [tipoSolicitudFilter, setTipoSolicitudFilter] = useState('all'); // 'all', 'elementos', 'espacios'
+    const [tipoSolicitudFilter, setTipoSolicitudFilter] = useState('all');
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -76,17 +75,12 @@ function Historial_ped() {
         try {
             const data = await obtenerSubcategorias();
             if (Array.isArray(data)) {
-                
-                // 1. Mapeo ID -> Nombre (para la visualización en las tarjetas)
                 const subMap = data.reduce((acc, sub) => {
-                    // Mapear tanto por sub.id como por sub.id_subcateg para máxima compatibilidad
                     if (sub.id !== undefined) acc[sub.id] = sub.nom_subcateg;
                     if (sub.id_subcateg !== undefined) acc[sub.id_subcateg] = sub.nom_subcateg;
                     return acc;
                 }, {});
                 setSubcategorias(subMap);
-                
-                // 2. Lista de opciones para el Dropdown
                 setSubcategoriaOptions(data.map(sub => ({
                     id: String(sub.id),
                     nombre: sub.nom_subcateg
@@ -101,15 +95,43 @@ function Historial_ped() {
         try {
             setIsLoading(true);
             const data = await obtenersolicitudes();
-            
-            // Obtener el usuario actual desde localStorage
             const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
-            
-            // Filtrar solo las solicitudes del usuario actual
-            const solicitudesDelUsuario = Array.isArray(data) 
+            let solicitudesDelUsuario = Array.isArray(data)
                 ? data.filter(sol => sol.id_usu === usuario.id)
                 : [];
-            
+
+            // Cancelar automáticamente si la hora de fin ya pasó y está pendiente
+            const now = new Date();
+            const token = localStorage.getItem('auth_token');
+            const promesasCancelacion = solicitudesDelUsuario.map(async (sol) => {
+                if (
+                    sol.est_soli &&
+                    typeof sol.est_soli === 'string' &&
+                    sol.est_soli.trim().toLowerCase() === 'pendiente'
+                ) {
+                    let fechaFinStr = sol.fecha_fn;
+                    let horaFinStr = sol.hora_fn;
+                    if ((!horaFinStr || horaFinStr === 'undefined') && typeof fechaFinStr === 'string' && fechaFinStr.includes('T')) {
+                        horaFinStr = fechaFinStr.split('T')[1]?.slice(0,5);
+                        fechaFinStr = fechaFinStr.split('T')[0];
+                    }
+                    if (fechaFinStr && horaFinStr) {
+                        if (horaFinStr.length > 5) horaFinStr = horaFinStr.slice(0,5);
+                        const fechaHoraFin = new Date(`${fechaFinStr}T${horaFinStr}:00`);
+                        if (now > fechaHoraFin) {
+                            try {
+                                await cancelarSolicitudComoInstructor(sol.id_soli, { id_est_soli: 4 }, token);
+                            } catch (err) {
+                            }
+                        }
+                    }
+                }
+            });
+            await Promise.all(promesasCancelacion);
+            const dataActualizada = await obtenersolicitudes();
+            solicitudesDelUsuario = Array.isArray(dataActualizada)
+                ? dataActualizada.filter(sol => sol.id_usu === usuario.id)
+                : [];
             setSolicitudes(solicitudesDelUsuario);
             setError(null);
         } catch (err) {
@@ -144,8 +166,8 @@ function Historial_ped() {
 
     useEffect(() => {
         setCurrentPage(1); 
-        setSelectedSubcategoriaId(null); // Resetear filtro al cambiar de pestaña
-        setTipoSolicitudFilter('all'); // Resetear filtro de tipo
+        setSelectedSubcategoriaId(null);
+        setTipoSolicitudFilter('all');
         if (activeTab === 'solicitudes') {
             cargarSolicitudes();
         } else {
@@ -163,20 +185,17 @@ function Historial_ped() {
 
         // Filtrar por tipo (elementos o espacios)
         if (tipoSolicitudFilter === 'elementos') {
-            // Elementos: tienen id_subcategoria definido
             filtered = filtered.filter(sol => {
                 const subcatId = sol.id_subcategoria ?? sol.id_subcatego ?? sol.id_subcate ?? sol.id_subcat ?? sol.id_subcateg;
                 return subcatId !== null && subcatId !== undefined;
             });
         } else if (tipoSolicitudFilter === 'espacios') {
-            // Espacios: NO tienen id_subcategoria (o es null/undefined)
             filtered = filtered.filter(sol => {
                 const subcatId = sol.id_subcategoria ?? sol.id_subcatego ?? sol.id_subcate ?? sol.id_subcat ?? sol.id_subcateg;
                 return subcatId === null || subcatId === undefined;
             });
         }
 
-        // Filtrar por subcategoría específica (solo si es tipo 'elementos' o 'all')
         if (selectedSubcategoriaId && tipoSolicitudFilter !== 'espacios') {
             const filterId = String(selectedSubcategoriaId);
             filtered = filtered.filter(sol => {
@@ -195,24 +214,18 @@ function Historial_ped() {
         return filtered;
     }, [solicitudes, selectedSubcategoriaId, tipoSolicitudFilter, activeTab]);
     
-    // Define el array para la paginación (Tickets o Solicitudes filtradas)
     const currentItems = activeTab === 'solicitudes' ? filteredSolicitudes : tickets;
-
     const indexOfLastSolicitud = currentPage * solicitudesPerPage;
     const indexOfFirstSolicitud = indexOfLastSolicitud - solicitudesPerPage;
-    const currentSolicitudes = currentItems.slice(indexOfFirstSolicitud, indexOfLastSolicitud); 
-
-    // 🚀 FUNCIÓN DE CANCELACIÓN: Llama a la API correcta según el rol y actualiza el estado local de React.
+    const currentSolicitudes = currentItems.slice(indexOfFirstSolicitud, indexOfLastSolicitud);
     const handleCancelStatus = async (id_solicitud) => {
         const ESTADO_CANCELADO = 'Cancelado';
         if (!window.confirm(`¿Estás seguro de que deseas cancelar la solicitud ${id_solicitud}? El estado cambiará a "${ESTADO_CANCELADO}".`)) {
             return;
         }
 
-        // Siempre usar el endpoint de instructor con token JWT
         const token = localStorage.getItem('auth_token');
         try {
-            // El backend espera id_est_soli=4 para cancelar
             await cancelarSolicitudComoInstructor(id_solicitud, { id_est_soli: 4 }, token);
             setSolicitudes(prevSolicitudes =>
                 prevSolicitudes.map(sol => {
@@ -300,17 +313,15 @@ function Historial_ped() {
         }
         return items;
     };
-    
-    // Función para manejar la selección del filtro de subcategoría
+
     const handleFilterChange = (id) => {
         setSelectedSubcategoriaId(id === 'all' ? null : id);
-        setCurrentPage(1); // Resetear a la primera página al aplicar filtro
+        setCurrentPage(1);
     };
 
-    // Función para manejar el filtro de tipo (elementos/espacios)
     const handleTipoFilterChange = (tipo) => {
         setTipoSolicitudFilter(tipo);
-        setSelectedSubcategoriaId(null); // Resetear filtro de subcategoría
+        setSelectedSubcategoriaId(null);
         setCurrentPage(1);
     };
 
@@ -335,8 +346,7 @@ function Historial_ped() {
             historialContent = (
                 <Stack gap={1}>
                     {currentSolicitudes.map((sol) => {
-                        const status = getStatusDetails(sol.est_soli); 
-                        // Unificar el acceso al id de subcategoría para mostrar el nombre correcto
+                        const status = getStatusDetails(sol.est_soli);
                         const subcatId = (
                             sol.id_subcategoria ??
                             sol.id_subcatego ??
@@ -349,13 +359,9 @@ function Historial_ped() {
                         const subcategoriaNombre = subcategoriaKey !== ''
                             ? (subcategorias[subcategoriaKey] || 'N/A (ID No Encontrado)')
                             : 'N/A';
-                        
-                        // Determinar si es solicitud de espacio o elemento
                         const esEspacio = subcatId === null || subcatId === undefined;
                         const nombreEspacio = sol.nom_espa || sol.nombre_espacio || 'N/A';
-                        
                         const puedeCancelar = sol.est_soli?.toLowerCase().includes('pendiente');
-
                         return (
                             <div className="p-3 item_historial" key={sol.id_soli}>
                                 <span className='emoji_historial'>{esEspacio ? '🏢' : '📦'}</span>

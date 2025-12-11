@@ -145,6 +145,7 @@ function Soli_Port() {
                 handleHide={handleHideModal}
                 equiposDisponibles={equiposDisponibles}
                 userId={USER_ID}
+                categoriaDefault={categoriaFiltro === "computo" ? "Computo" : "Multimedia"}
             />
         </div>
     );

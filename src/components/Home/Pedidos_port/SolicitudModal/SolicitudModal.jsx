@@ -42,8 +42,9 @@ const todayDate = getMinMaxDate();
  * @param {function} handleHide - Función para cerrar el modal.
  * @param {Array<object>} equiposDisponibles - Lista de equipos disponibles (e.g., [ {id_elemen, num_ficha, sub_catg, ...} ]).
  * @param {number} userId - ID del usuario que realiza la solicitud.
+ * @param {string} categoriaDefault - Nombre de la categoría por defecto ("Computo" o "Multimedia")
  */
-function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCreated }) {
+function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCreated, categoriaDefault }) {
     const [minHoraInicio, setMinHoraInicio] = useState(getMinTime()); // Mantengo setMinHoraInicio pero no se usa explícitamente en el código restante
     const [categorias, setCategorias] = useState([]);
     const [subcategorias, setSubcategorias] = useState([]);
@@ -82,19 +83,22 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
 
     useEffect(() => {
         // Recargar categorías cada vez que se abre el modal (show cambia)
-        const categoriasPermitidas = ["Computo", "Multimedia"];
         if (!show) return;
         obtenerCategoria()
             .then(data => {
-                const categoriasFiltradas = (Array.isArray(data) ? data : []).filter(cat => 
-                    categoriasPermitidas.includes(cat.nom_cat)
-                );
-                setCategorias(categoriasFiltradas);
+                const arr = Array.isArray(data) ? data : [];
+                // Solo dejar la categoría que corresponde al apartado
+                const categoriaFiltrada = arr.filter(cat => cat.nom_cat === categoriaDefault);
+                setCategorias(categoriaFiltrada);
+                // Seleccionar automáticamente la categoría
+                if (categoriaFiltrada.length > 0) {
+                    setForm(prevForm => ({ ...prevForm, id_categoria: String(categoriaFiltrada[0].id_cat) }));
+                } else {
+                    setForm(prevForm => ({ ...prevForm, id_categoria: "" }));
+                }
             })
             .catch(err => console.error("Error al cargar categorías:", err));
-
-        // Nota: no se cargan espacios en este modal
-    }, [show]);
+    }, [show, categoriaDefault]);
 
 // ----------------------------------------------------------------------
 // 🚨 FILTRO APLICADO 2: Filtrar Subcategorías (solo "Portatil")
@@ -105,18 +109,18 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
             obtenerSubcategorias()
                 .then(data => {
                     const arr = Array.isArray(data) ? data : [];
-                    const subcategoriasFiltradas = arr.filter(sub => {
-                        // Normalizar posible campo de id de categoría en la subcategoría
+                    let subcategoriasFiltradas = arr.filter(sub => {
                         const scCatId = (sub.id_cat ?? sub.id_categoria ?? sub.categoria_id ?? sub.categoria);
                         return scCatId !== undefined && scCatId !== null && String(scCatId) === String(form.id_categoria);
                     });
+                    // Filtrar por nombre según categoriaDefault
+                    let nombreSubcat = categoriaDefault === "Computo" ? "Portatil" : "Portatil de edición";
+                    subcategoriasFiltradas = subcategoriasFiltradas.filter(sub => (sub.nom_subcateg === nombreSubcat));
                     setSubcategorias(subcategoriasFiltradas);
-
-                    // Si hay exactamente una subcategoría, seleccionarla automáticamente
-                    if (subcategoriasFiltradas.length === 1) {
+                    // Seleccionar automáticamente la subcategoría
+                    if (subcategoriasFiltradas.length > 0) {
                         setForm(prevForm => ({ ...prevForm, id_subcategoria: String(subcategoriasFiltradas[0].id) }));
                     } else {
-                        // Resetear selección si la categoría cambió y hay 0 o varias subcategorías
                         setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
                     }
                 })
@@ -125,7 +129,7 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
             setSubcategorias([]);
             setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
         }
-    }, [form.id_categoria, show]);
+    }, [form.id_categoria, show, categoriaDefault]);
 
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
@@ -259,67 +263,58 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
             <Modal.Body>
                 <Form onSubmit={handleFormSubmit}>
                     
-                    {/* DROPDOWN 1: Categoría */}
+                    {/* CAMPO CATEGORÍA: Solo muestra la categoría actual, no editable */}
                     <Form.Group className="mb-3">
                         <Form.Label>Categoría</Form.Label>
                         <Form.Control
                             as="select"
                             name="id_categoria"
                             value={form.id_categoria}
-                            onChange={handleChange}
+                            disabled
                             required
                         >
-                            <option value="">Selecciona una categoría</option>
-                            {categorias.map(cat => (
-                                <option key={cat.id_cat} value={cat.id_cat}>{cat.nom_cat}</option>
-                            ))}
+                            {categorias.length > 0 ? (
+                                <option value={categorias[0].id_cat}>{categorias[0].nom_cat}</option>
+                            ) : (
+                                <option value="">Sin categoría</option>
+                            )}
                         </Form.Control>
                     </Form.Group>
                     
-                    {/* DROPDOWN 2: Subcategoría (Depende de Categoría) */}
+                    {/* CAMPO SUBCATEGORÍA: Solo muestra la subcategoría actual, no editable */}
                     <Form.Group className="mb-3">
                         <Form.Label>Subcategoría</Form.Label>
                         <Form.Control
                             as="select"
                             name="id_subcategoria"
                             value={form.id_subcategoria}
-                            onChange={handleChange}
+                            disabled
                             required
-                            disabled={!form.id_categoria || subcategorias.length === 0} 
                         >
-                            <option value="">Selecciona una subcategoría</option>
-                            {subcategorias.map(sub => (
-                                <option key={sub.id} value={sub.id}>{sub.nom_subcateg}</option>
-                            ))}
+                            {subcategorias.length > 0 ? (
+                                <option value={subcategorias[0].id}>{subcategorias[0].nom_subcateg}</option>
+                            ) : (
+                                <option value="">Sin subcategoría</option>
+                            )}
                         </Form.Control>
                     </Form.Group>
 
-                    {/* DROPDOWN 3: Elemento específico (Número de ficha) */}
+                    {/* CAMPO EQUIPO: Solo muestra 'Portatil' o 'Portatil de edición', no editable, sin número */}
                     <Form.Group className="mb-3">
-                        <Form.Label>Selecione el equipo</Form.Label>
+                        <Form.Label>Equipo</Form.Label>
                         <Form.Control
                             as="select"
                             name="id_elemen"
                             value={form.id_elemen}
-                            onChange={handleChange}
+                            disabled
                             required
-                            disabled={maxCantidad === 0}
                         >
-                            <option value="">Selecciona el equipo a solicitar</option>
-                            
-                            {elementosFiltradosPorSubcategoria.map((equipo) => (
-                                <option 
-                                    key={equipo.id_elemen ?? equipo.id ?? equipo.identifier}
-                                    value={equipo.id_elemen ?? equipo.id ?? equipo.identifier}
-                                >
-                                    {(equipo.num_ficha ?? equipo.num_fich ?? equipo.ficha ?? equipo.numero_ficha ?? equipo.numFicha) || (equipo.nom_elemento ?? equipo.nom_elem ?? equipo.nombre) || String(equipo.id_elemen ?? equipo.id)} {" - "} {(equipo.sub_catg ?? equipo.nom_subcateg ?? equipo.subcategoria ?? '')}
+                            {elementosFiltradosPorSubcategoria.length > 0 ? (
+                                <option value={elementosFiltradosPorSubcategoria[0].id_elemen ?? elementosFiltradosPorSubcategoria[0].id}>
+                                    {categoriaDefault === "Computo" ? "Portatil" : "Portatil de edición"}
                                 </option>
-                            ))}
-                            
-                            {maxCantidad === 0 && (
-                                <option value="" disabled>
-                                    No hay equipos disponibles.
-                                </option>
+                            ) : (
+                                <option value="">No hay equipos disponibles</option>
                             )}
                         </Form.Control>
                     </Form.Group>

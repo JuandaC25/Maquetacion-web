@@ -39,8 +39,9 @@ const todayDate = getMinMaxDate();
  * @param {function} handleHide
  * @param {Array<object>} equiposDisponibles
  * @param {number} userId
+ * @param {string} categoriaDefault
  */
-function SolicitudModalEscr({ show, handleHide, equiposDisponibles, userId }) {
+function SolicitudModalEscr({ show, handleHide, equiposDisponibles, userId, categoriaDefault }) {
     const [categorias, setCategorias] = useState([]);
     const [subcategorias, setSubcategorias] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,41 +73,44 @@ function SolicitudModalEscr({ show, handleHide, equiposDisponibles, userId }) {
     
     // ⭐ 1. FILTRO DE CATEGORÍAS (Solo "Computo" y "Multimedia")
     useEffect(() => {
-        // ⭐ Definición de las únicas categorías permitidas
-        const categoriasPermitidas = ["Computo", "Multimedia"]; 
-
+        // Solo mostrar la categoría correspondiente al filtro
         obtenerCategoria()
             .then(data => {
-                const categoriasFiltradas = data.filter(cat => 
-                    categoriasPermitidas.includes(cat.nom_cat)
-                );
-                setCategorias(categoriasFiltradas);
+                const arr = Array.isArray(data) ? data : [];
+                const categoriaFiltrada = arr.filter(cat => cat.nom_cat === categoriaDefault);
+                setCategorias(categoriaFiltrada);
+                // Seleccionar automáticamente la categoría
+                if (categoriaFiltrada.length > 0) {
+                    setForm(prevForm => ({ ...prevForm, id_categoria: String(categoriaFiltrada[0].id_cat) }));
+                } else {
+                    setForm(prevForm => ({ ...prevForm, id_categoria: "" }));
+                }
             })
             .catch(err => console.error("Error al cargar categorías:", err));
-    }, []);
+    }, [show, categoriaDefault]);
 
     // ⭐ 2. FILTRO Y CARGA DE SUBCATEGORÍAS (Solo "Equipo de mesa" y "Equipo de edición")
     useEffect(() => {
-        // ⭐ Definición de las únicas subcategorías permitidas
-        const subcategoriasPermitidas = ["Equipo de mesa", "Equipo de edición"];
-
+        // Solo mostrar la subcategoría correspondiente al filtro
         if (form.id_categoria) {
-            obtenerSubcategorias(form.id_categoria) 
+            obtenerSubcategorias(form.id_categoria)
                 .then(data => {
-                    // Se aplica el filtro estricto sobre los datos de la API
-                    const subcategoriasFiltradas = data.filter(sub => 
-                        subcategoriasPermitidas.includes(sub.nom_subcateg)
-                    );
+                    let nombreSubcat = categoriaDefault === "Computo" ? "Equipo de mesa" : "Equipo de edición";
+                    const subcategoriasFiltradas = data.filter(sub => sub.nom_subcateg === nombreSubcat);
                     setSubcategorias(subcategoriasFiltradas);
-                    // Reiniciar la subcategoría al cambiar de categoría
-                    setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
+                    // Seleccionar automáticamente la subcategoría
+                    if (subcategoriasFiltradas.length > 0) {
+                        setForm(prevForm => ({ ...prevForm, id_subcategoria: String(subcategoriasFiltradas[0].id_subcateg || subcategoriasFiltradas[0].id) }));
+                    } else {
+                        setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
+                    }
                 })
                 .catch(err => console.error("Error al cargar subcategorías:", err));
         } else {
             setSubcategorias([]);
-            setForm(prevForm => ({ ...prevForm, id_subcategoria: "" })); // Asegura que se borre si no hay categoría
+            setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
         }
-    }, [form.id_categoria]);
+    }, [form.id_categoria, show, categoriaDefault]);
 
     const handleChange = useCallback((e) => {
         const { name, value } = e.target;
@@ -189,76 +193,58 @@ function SolicitudModalEscr({ show, handleHide, equiposDisponibles, userId }) {
             <Modal.Body>
                 <Form onSubmit={handleFormSubmit}>
                     
-                    {/* Select de Categoría */}
+                    {/* CAMPO CATEGORÍA: Solo muestra la categoría actual, no editable */}
                     <Form.Group className="mb-3">
                         <Form.Label>Categoría</Form.Label>
                         <Form.Control
                             as="select"
                             name="id_categoria"
                             value={form.id_categoria}
-                            onChange={handleChange}
+                            disabled
                             required
                         >
-                            <option value="">Selecciona una categoría</option>
-                            {/* Solo mostrará las categorías filtradas ("Computo" y "Multimedia") */}
-                            {categorias.map(cat => (
-                                <option key={cat.id_cat} value={cat.id_cat}>{cat.nom_cat}</option>
-                            ))}
+                            {categorias.length > 0 ? (
+                                <option value={categorias[0].id_cat}>{categorias[0].nom_cat}</option>
+                            ) : (
+                                <option value="">Sin categoría</option>
+                            )}
                         </Form.Control>
                     </Form.Group>
                     
-                    {/* Select de Subcategoría */}
+                    {/* CAMPO SUBCATEGORÍA: Solo muestra la subcategoría actual, no editable */}
                     <Form.Group className="mb-3">
                         <Form.Label>Subcategoría</Form.Label>
                         <Form.Control
                             as="select"
                             name="id_subcategoria"
                             value={form.id_subcategoria}
-                            onChange={handleChange}
+                            disabled
                             required
-                            // El desplegable estará deshabilitado si no se ha seleccionado una categoría 
-                            // O si no hay subcategorías (lo cual sucederá si el filtro estricto no encuentra coincidencias)
-                            disabled={!form.id_categoria || subcategorias.length === 0} 
                         >
-                            <option value="">Selecciona una subcategoría</option>
-                            {/* Solo mostrará las subcategorías filtradas ("Equipo de mesa" y "Equipo de edición") */}
-                            {subcategorias.map(sub => (
-                                <option 
-                                    key={sub.id_subcateg || sub.id} 
-                                    value={sub.id_subcateg || sub.id} // Se asume 'id' o 'id_subcateg' contiene el ID
-                                >
-                                    {sub.nom_subcateg}
-                                </option>
-                            ))}
+                            {subcategorias.length > 0 ? (
+                                <option value={subcategorias[0].id_subcateg || subcategorias[0].id}>{subcategorias[0].nom_subcateg}</option>
+                            ) : (
+                                <option value="">Sin subcategoría</option>
+                            )}
                         </Form.Control>
                     </Form.Group>
                     
-                    {/* Select de Equipo Específico */}
+                    {/* CAMPO EQUIPO: Solo muestra 'Equipo de mesa' o 'Equipo de edición', no editable, sin número */}
                     <Form.Group className="mb-3">
-                        <Form.Label>Selecione el equipo</Form.Label>
+                        <Form.Label>Equipo</Form.Label>
                         <Form.Control
                             as="select"
                             name="id_elemen"
                             value={form.id_elemen}
-                            onChange={handleChange}
+                            disabled
                             required
-                            disabled={maxCantidad === 0}
                         >
-                            <option value="">Selecciona el equipo a solicitar</option>
-                            
-                            {equiposDisponibles.map((equipo) => (
-                                <option 
-                                    key={equipo.id_elemen} 
-                                    value={equipo.id_elemen}
-                                >
-                                    {equipo.num_ficha} - {equipo.sub_catg}
+                            {equiposDisponibles.length > 0 ? (
+                                <option value={equiposDisponibles[0].id_elemen}>
+                                    {categoriaDefault === "Computo" ? "Equipo de mesa" : "Equipo de edición"}
                                 </option>
-                            ))}
-                            
-                            {maxCantidad === 0 && (
-                                <option value="" disabled>
-                                    No hay equipos disponibles.
-                                </option>
+                            ) : (
+                                <option value="">No hay equipos disponibles</option>
                             )}
                         </Form.Control>
                     </Form.Group>
