@@ -11,6 +11,8 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { authorizedFetch } from '../../../api/http';
 
 function TicketsActivos() {
+  const [categorias, setCategorias] = useState([]);
+  const [subcategorias, setSubcategorias] = useState([]);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [ticketSeleccionado, setTicketSeleccionado] = useState(null); // ticket seleccionado
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,12 +39,50 @@ function TicketsActivos() {
         
         const ticketsJson = await ticketsRes.json();
         console.log('Tickets activos obtenidos:', ticketsJson);
+        console.log('Primer ticket estructura:', JSON.stringify(ticketsJson[0], null, 2));
         setTicketsData(ticketsJson);
         setTicketsFiltrados(ticketsJson);
 
         const elementosRes = await authorizedFetch('/api/elementos');
         const elementosJson = await elementosRes.json();
+        console.log('Elementos obtenidos:', elementosJson);
+        console.log('Primer elemento estructura completa:', JSON.stringify(elementosJson[0], null, 2));
+        console.log('Keys del primer elemento:', elementosJson[0] ? Object.keys(elementosJson[0]) : 'sin datos');
         setElementos(elementosJson);
+
+        // Extraer categorías únicas de los tickets
+        const categoriasMap = ticketsJson
+          .map((ticket, idx) => {
+            // Primero intentar usar nom_cat si existe
+            if (ticket.nom_cat) {
+              console.log(`[Ticket ${idx}] tiene nom_cat: ${ticket.nom_cat}`);
+              return ticket.nom_cat;
+            }
+            
+            // Si no, buscar por elemento
+            console.log(`[Ticket ${idx}] Buscando elemento con id_eleme: ${ticket.id_eleme}`);
+            console.log(`[Ticket ${idx}] IDs de elementos disponibles:`, elementosJson.map(e => e.id_elemen));
+            const elemento = elementosJson.find(el => el.id_elemen === ticket.id_eleme);
+            if (elemento) {
+              console.log(`[Ticket ${idx}] Elemento encontrado:`, elemento);
+              return elemento.tip_catg || elemento.nom_cat || null;
+            } else {
+              console.log(`[Ticket ${idx}] NO se encontró elemento para id_eleme: ${ticket.id_eleme}`);
+              return null;
+            }
+          })
+          .filter(cat => cat);
+        const categoriasUnicas = [...new Set(categoriasMap)];
+        console.log('Categorías extraídas:', categoriasUnicas);
+        setCategorias(categoriasUnicas);
+
+        // Extraer subcategorías únicas de los elementos
+        const subcategoriasMap = elementosJson
+          .map(elem => elem.sub_catg || elem.subcategoria || elem.nom_subc || null)
+          .filter(subcat => subcat);
+        const subcategoriasUnicas = [...new Set(subcategoriasMap)];
+        console.log('Subcategorías extraídas:', subcategoriasUnicas);
+        setSubcategorias(subcategoriasUnicas);
       } catch (error) {
         console.error('Error al obtener datos:', error);
       }
@@ -107,10 +147,9 @@ function TicketsActivos() {
             filtrarTickets(searchTerm, e.target.value, subcategoriaSeleccionada);
           }}>
             <option value="">Todos</option>
-            <option value="Equipo de mesa">Equipo de mesa</option>
-            <option value="Portátiles">Portátiles</option>
-            <option value="Televisores">Televisores</option>
-            <option value="Accesorios">Accesorios</option>
+            {categorias.map((cat, i) => (
+              <option key={i} value={cat}>{cat}</option>
+            ))}
           </select>
 
           <Dropdown className='Drop_histo' style={{ margin: 0, padding: 0, alignSelf: 'center' }}>
@@ -138,15 +177,11 @@ function TicketsActivos() {
               <Dropdown.Item onClick={() => { setSubcategoriaSeleccionada(''); filtrarTickets(searchTerm, categoriaSeleccionada, ''); }} style={{ color: '#00AF00', fontWeight: 500, background: '#fff' }}>
                 Todas las subcategorías
               </Dropdown.Item>
-              <Dropdown.Item onClick={() => { setSubcategoriaSeleccionada('Subcat 1'); filtrarTickets(searchTerm, categoriaSeleccionada, 'Subcat 1'); }} style={{ color: '#00AF00', fontWeight: 500, background: '#fff' }}>
-                Subcat 1
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => { setSubcategoriaSeleccionada('Subcat 2'); filtrarTickets(searchTerm, categoriaSeleccionada, 'Subcat 2'); }} style={{ color: '#00AF00', fontWeight: 500, background: '#fff' }}>
-                Subcat 2
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => { setSubcategoriaSeleccionada('Subcat 3'); filtrarTickets(searchTerm, categoriaSeleccionada, 'Subcat 3'); }} style={{ color: '#00AF00', fontWeight: 500, background: '#fff' }}>
-                Subcat 3
-              </Dropdown.Item>
+              {subcategorias.map((subcat, i) => (
+                <Dropdown.Item key={i} onClick={() => { setSubcategoriaSeleccionada(subcat); filtrarTickets(searchTerm, categoriaSeleccionada, subcat); }} style={{ color: '#00AF00', fontWeight: 500, background: '#fff' }}>
+                  {subcat}
+                </Dropdown.Item>
+              ))}
             </Dropdown.Menu>
           </Dropdown>
 

@@ -7,8 +7,7 @@ import Header_soli_equi_tec from '../header_solicitudes_equ_tec/Header_soli_equi
 import { authorizedFetch } from '../../../api/http';
 
 export default function SoliEquiTec() {
-  const categorias = ['Portátiles', 'Televisores', 'Equipos de escritorio', 'Accesorios', 'Espacios'];
-
+  const [categorias, setCategorias] = useState([]);
   const [prestamos, setPrestamos] = useState([]);
   const [elementos, setElementos] = useState([]);
   const [categoriaFiltro, setCategoriaFiltro] = useState('');
@@ -27,12 +26,24 @@ export default function SoliEquiTec() {
         if (!resSolicitudes.ok) throw new Error(`Error ${resSolicitudes.status}`);
         const dataSolicitudes = await resSolicitudes.json();
         console.log('Solicitudes recibidas:', dataSolicitudes);
+        console.log('Primera solicitud estructura completa:', JSON.stringify(dataSolicitudes[0], null, 2));
+        console.log('Keys disponibles:', dataSolicitudes[0] ? Object.keys(dataSolicitudes[0]) : 'sin datos');
         setPrestamos(dataSolicitudes);
 
         const resElementos = await authorizedFetch('/api/elementos');
         if (!resElementos.ok) throw new Error(`Error ${resElementos.status}`);
         const dataElementos = await resElementos.json();
         setElementos(dataElementos);
+
+        // Extraer categorías únicas de las solicitudes
+        // Buscar en varios campos posibles: nom_cat, categoria, tip_catg, etc
+        const categoriasUnicas = [...new Set(
+          dataSolicitudes
+            .map(sol => sol.nom_cat || sol.categoria || sol.tip_catg || null)
+            .filter(cat => cat)
+        )];
+        console.log('Categorías extraídas:', categoriasUnicas);
+        setCategorias(categoriasUnicas);
       } catch (err) {
         console.error('Error al obtener datos:', err);
       }
@@ -113,7 +124,9 @@ export default function SoliEquiTec() {
         <div className="barra-filtros">
           <select value={categoriaFiltro} onChange={e => setCategoriaFiltro(e.target.value)}>
             <option value="">Todos</option>
-            {categorias.map((cat, i) => <option key={i} value={cat}>{cat}</option>)}
+            {categorias.map((cat, i) => (
+              <option key={i} value={cat}>{cat}</option>
+            ))}
           </select>
 
           <input
