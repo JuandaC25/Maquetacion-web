@@ -43,78 +43,64 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
     const [categorias, setCategorias] = useState([]);
     const [subcategorias, setSubcategorias] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
-    // Función para definir el estado inicial
     const getInitialFormState = (equipos, id) => ({
         fecha_ini: todayDate,
         hora_ini: getMinTime(),
         fecha_fn: todayDate,
         hora_fn: "",
         ambient: "",
-        cantid: "1", 
-        id_elemen: equipos.length > 0 ? equipos[0].id_elemen.toString() : "", 
-        estadosoli: 1, 
-        id_usu: id, 
+        cantid: "1",
+        id_elemen: equipos.length > 0 ? equipos[0].id_elemen.toString() : "",
+        estadosoli: 1,
+        id_usu: id,
         num_ficha: "",
-        id_categoria: "", 
-        id_subcategoria: "", 
+        id_categoria: "",
+        id_subcategoria: "",
     });
-
     const [form, setForm] = useState(getInitialFormState(equiposDisponibles, userId));
-    
-    // Reinicia el estado del formulario al abrir el modal
+
     useEffect(() => {
         if (show) {
-            setForm(getInitialFormState(equiposDisponibles, userId));
+            obtenerCategoria().then(data => {
+                const computoCat = data.find(cat => cat.nom_cat === "Computo");
+                setCategorias(computoCat ? [computoCat] : []);
+                setForm(getInitialFormState(equiposDisponibles, userId));
+                if (computoCat) {
+                    setForm(prevForm => ({
+                        ...prevForm,
+                        id_categoria: String(computoCat.id_cat),
+                        id_subcategoria: ""
+                    }));
+                }
+            });
         }
     }, [equiposDisponibles, show, userId]);
-    
-    // ✅ 1. FILTRO DE CATEGORÍAS (Excluye "Multimedia")
-    useEffect(() => {
-        // ⭐ Definición de las categorías a EXCLUIR
-        const categoriasExcluidas = ["Multimedia"]; 
 
-        obtenerCategoria()
-            .then(data => {
-                // Filtra para EXCLUIR las categorías en la lista
-                const categoriasFiltradas = data.filter(cat => 
-                    !categoriasExcluidas.includes(cat.nom_cat)
-                );
-                setCategorias(categoriasFiltradas);
-                // NOTA: Si la categoría previamente seleccionada ahora está excluida, 
-                // el select se actualizará, pero el valor del form.id_categoria
-                // puede que no se borre automáticamente, por lo que se recomienda 
-                // que el usuario seleccione una nueva.
-            })
-            .catch(err => console.error("Error al cargar categorías:", err));
-    }, []);
-
-    // ✅ 2. FILTRO Y CARGA DE SUBCATEGORÍAS (Excluye las subcategorías especificadas)
     useEffect(() => {
-        // ⭐ Definición de las subcategorías a EXCLUIR
-        const subcategoriasExcluidas = [
-            "Equipo de mesa", 
+        const subcategoriasAExcluir = [
+            "Equipo de mesa",
             "Equipo de edición",
             "Portatil",
             "Portatil de edición"
         ];
-
         if (form.id_categoria) {
-            obtenerSubcategorias(form.id_categoria)
+            obtenerSubcategorias()
                 .then(data => {
-                    console.log("Subcategorías recibidas antes de filtrar:", data); // DEPURACIÓN
-                    // Filtra para EXCLUIR las subcategorías en la lista
-                    const subcategoriasFiltradas = data.filter(sub => 
-                        !subcategoriasExcluidas.includes(sub.nom_subcateg)
+                    const subcategoriasFiltradas = data.filter(sub =>
+                        String(sub.id_cat) === String(form.id_categoria) && !subcategoriasAExcluir.includes(sub.nom_subcateg)
                     );
-                    
                     setSubcategorias(subcategoriasFiltradas);
-                    setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
+                    setForm(prevForm => ({
+                        ...prevForm,
+                        id_subcategoria: subcategoriasFiltradas.length > 0
+                            ? prevForm.id_subcategoria
+                            : ""
+                    }));
                 })
                 .catch(err => console.error("Error al cargar subcategorías:", err));
         } else {
             setSubcategorias([]);
-            setForm(prevForm => ({ ...prevForm, id_subcategoria: "" })); // Asegura que se borre si no hay categoría
+            setForm(prevForm => ({ ...prevForm, id_subcategoria: "" }));
         }
     }, [form.id_categoria]);
 
@@ -122,16 +108,12 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
         const { name, value } = e.target;
         setForm(prevForm => {
             let newState = { ...prevForm, [name]: value };
-
             if (name === "fecha_ini" && value > prevForm.fecha_fn && prevForm.fecha_fn) {
                 newState.fecha_fn = value;
             }
-            
-            // Si cambia la categoría, forzamos a borrar la subcategoría seleccionada
             if (name === "id_categoria") {
-                newState.id_subcategoria = ""; 
+                newState.id_subcategoria = "";
             }
-            
             return newState;
         });
     }, []);
@@ -198,25 +180,20 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleFormSubmit}>
-                    {/* Select de Categoría */}
                     <Form.Group className="mb-3">
                         <Form.Label>Categoría</Form.Label>
                         <Form.Control
                             as="select"
                             name="id_categoria"
                             value={form.id_categoria}
-                            onChange={handleChange}
                             required
+                            disabled
                         >
-                            <option value="">Selecciona una categoría</option>
-                            {/* Ahora muestra TODAS las categorías EXCEPTO "Multimedia" */}
                             {categorias.map(cat => (
                                 <option key={cat.id_cat} value={cat.id_cat}>{cat.nom_cat}</option>
                             ))}
                         </Form.Control>
                     </Form.Group>
-                    
-                    {/* Select de Subcategoría */}
                     <Form.Group className="mb-3">
                         <Form.Label>Subcategoría</Form.Label>
                         <Form.Control
@@ -233,7 +210,6 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
                                     No hay subcategorías disponibles para esta categoría
                                 </option>
                             )}
-                            {/* Ahora solo muestra las subcategorías que NO son de Equipo de Mesa/Edición/Portátil/Edición */}
                             {subcategorias.map(sub => (
                                 <option 
                                     key={sub.id_subcateg || sub.id} 
@@ -245,33 +221,6 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
                         </Form.Control>
                     </Form.Group>
                     
-                    {/* Select de Equipo Específico */}
-                    <Form.Group className="mb-3">
-                        <Form.Label>Selecione el equipo</Form.Label>
-                        <Form.Control
-                            as="select"
-                            name="id_elemen"
-                            value={form.id_elemen}
-                            onChange={handleChange}
-                            required
-                            disabled={maxCantidad === 0}
-                        >
-                            <option value="">Selecciona el equipo a solicitar</option>
-                            {equiposDisponibles.map((equipo) => (
-                                <option 
-                                    key={equipo.id_elemen} 
-                                    value={equipo.id_elemen}
-                                >
-                                    {equipo.num_ficha} - {equipo.sub_catg}
-                                </option>
-                            ))}
-                            {maxCantidad === 0 && (
-                                <option value="" disabled>
-                                    No hay equipos disponibles.
-                                </option>
-                            )}
-                        </Form.Control>
-                    </Form.Group>
                     
                     <Form.Group className="mb-3">
                         <Form.Label>Cantidad a solicitar (Máx: {maxCantidad})</Form.Label>

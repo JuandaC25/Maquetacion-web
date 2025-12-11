@@ -300,6 +300,7 @@ function Datos_escritorio() {
                 handleHide={handleHideModal}
                 equiposDisponibles={equiposDisponibles}
                 userId={USER_ID}
+                categoriaDefault={categoriaFiltro === "computo" ? "Computo" : "Multimedia"}
             />
             
         </div>
