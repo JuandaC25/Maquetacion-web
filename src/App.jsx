@@ -1,5 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './components/Login';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 import Home from './components/Home/Pedidos/Home.jsx';
 import Admin from './components/admin/admin_ad/Admin.jsx';
 import Inventario from './components/admin/inventario_ad/inventario.jsx';
@@ -35,6 +37,8 @@ function App() {
       <Routes>
         <Route path='/' element={<Login/>}/> 
         <Route path='/Login' element={<Login/>}/> 
+        <Route path='/forgot-password' element={<ForgotPassword/>}/> 
+        <Route path='/reset-password' element={<ResetPassword/>}/> 
         <Route path='/Tickets-Tecnico' element={
           <ProtectedRoute roles={['TECNICO']} excludeRoles={['ADMINISTRADOR']}>
             <Cuarta />
