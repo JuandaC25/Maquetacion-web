@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import './App.css';
 import { login, saveToken } from '../api/AuthApi';
 import { useAuth } from '../auth/AuthContext';
+import ForgotPassword from './ForgotPassword';
 
 function Login() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -93,13 +95,21 @@ function Login() {
         )}
 
         <div className="forgot-password">
-          <a href="/recuperar">¿Olvidaste tu contraseña?</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); setShowForgotPassword(true); }}>
+            ¿Olvidaste tu contraseña?
+          </a>
         </div>
 
         <Button className="botton" type="submit" variant="primary" disabled={loading}>
           {loading ? 'Ingresando…' : 'Iniciar sesión'}
         </Button>
       </Form>
+
+      {/* Modal de recuperación de contraseña */}
+      <ForgotPassword 
+        show={showForgotPassword} 
+        handleClose={() => setShowForgotPassword(false)} 
+      />
     </div>
   );
 }
