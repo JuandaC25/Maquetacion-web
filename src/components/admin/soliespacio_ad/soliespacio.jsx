@@ -366,6 +366,8 @@ const Soliespacio = () => {
     cargarEspacios();
   }, []);
 
+  const espacioNames = Array.from(new Set((espacios || []).map(e => (e.nom_espa || '').toString().trim()).filter(Boolean)));
+
   const cargarSolicitudes = async () => {
     try {
       setLoading(true);
@@ -443,6 +445,22 @@ const Soliespacio = () => {
     if (key.includes('auditorio')) return '/imagenes/imagenes_espacios/Auditorio1.jpeg';
     if (key.includes('espacio1') || key.includes('espacio')) return '/imagenes/imagenes_espacios/espacio1.jpeg';
     return '/imagenes/imagenes_espacios/espacio1.jpeg';
+  };
+
+  const getImageForSolicitud = (solicitud) => {
+    try {
+      const id = solicitud?.id_espa || solicitud?.id_esp || solicitud?.id || null;
+      if (id != null && espacios && espacios.length > 0) {
+        const encontrado = espacios.find(e => String(e.id) === String(id) || Number(e.id) === Number(id));
+        if (encontrado) {
+          const imgs = parseImagenes(encontrado.imagenes || encontrado.imagenesRaw || encontrado.imagenes);
+          if (Array.isArray(imgs) && imgs.length > 0) return toFullUrl(imgs[0]);
+        }
+      }
+      return getImageForSpace(solicitud?.nom_espa);
+    } catch (e) {
+      return '/imagenes/imagenes_espacios/espacio1.jpeg';
+    }
   };
 
   const handleEliminar = async (id) => {
@@ -595,24 +613,14 @@ const Soliespacio = () => {
                   {selectedEspacioFilter} <span className="dropdown-arrow-xd32">▼</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
-                  <Dropdown.Item
-                    onClick={() => handleEspacioFilter("Todos los Espacios")}
-                    className="dropdown-item-xd148"
-                  >
-                    Todos los Espacios
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => handleEspacioFilter("Polideportivo")}
-                    className="dropdown-item-xd148"
-                  >
-                    Polideportivo
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => handleEspacioFilter("Auditorio")}
-                    className="dropdown-item-xd148"
-                  >
-                    Auditorio
-                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleEspacioFilter("Todos los Espacios")} className="dropdown-item-xd148">Todos los Espacios</Dropdown.Item>
+                  {espacioNames.length === 0 ? (
+                    <Dropdown.Item className="dropdown-item-xd148">(No hay espacios)</Dropdown.Item>
+                  ) : (
+                    espacioNames.map((nombre, idx) => (
+                      <Dropdown.Item key={nombre + '-' + idx} onClick={() => handleEspacioFilter(nombre)} className="dropdown-item-xd148">{nombre}</Dropdown.Item>
+                    ))
+                  )}
                 </Dropdown.Menu>
               </Dropdown>
 
@@ -878,7 +886,7 @@ const Soliespacio = () => {
                 <div key={solicitud.id_soli || solicitud.id} className="modern-equipment-card-xd01">
                   <div className="card-top-section-xd02" style={{ position: 'relative', padding: 0 }}>
                     <img
-                      src={getImageForSpace(solicitud.nom_espa)}
+                      src={getImageForSolicitud(solicitud)}
                       alt={solicitud.nom_espa || 'Espacio'}
                       style={{ width: '100%', height: '160px', objectFit: 'cover', display: 'block', borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }}
                     />
@@ -1096,7 +1104,16 @@ const Soliespacio = () => {
             </Button>
           </div>
           <div style={{ padding: '0 32px 32px 32px' }}>
-            <CrearEspacio />
+            <CrearEspacio onCreated={(created) => {
+              try {
+                cargarEspacios();
+              } catch (e) { console.warn('Error recargando espacios después de crear', e); }
+              setShowModal(false);
+              try {
+                const nombre = (created && (created.nom_espa || created.nombre || created.nom)) || null;
+                if (nombre) setSelectedEspacioFilter(nombre.toString());
+              } catch (e) { }
+            }} />
           </div>
         </div>
       </Modal>

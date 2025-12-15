@@ -958,12 +958,40 @@ const Admin = () => {
       }
 
       const ticketsList = await obtenerTickets();
-      const ticketsArr = Array.isArray(ticketsList) ? ticketsList : [];
+      let ticketsArr = Array.isArray(ticketsList) ? ticketsList : [];
+      try {
+        const elementos = await ElementosService.obtenerElementos().catch(() => []);
+        if (Array.isArray(elementos) && elementos.length > 0) {
+          ticketsArr = ticketsArr.map(t => {
+            const elemId = t.id_eleme ?? t.id_elem ?? t.id_elemento ?? t.id_elemenn;
+            const nombreElementoTicket = (t.nom_elem || t.nom_eleme || t.elemento || '').toString();
+            let elementoRelacionado = elementos.find(e => e.id_elemen === elemId || e.id_elemen == elemId || e.id === elemId || e.id == elemId) || null;
+            if (!elementoRelacionado && nombreElementoTicket) {
+              const ticketNameLow = nombreElementoTicket.toLowerCase();
+              elementoRelacionado = elementos.find(e => {
+                const en = (e.nom_eleme || e.nom_elemen || e.nom || e.nombre || '').toString().toLowerCase();
+                return en === ticketNameLow || en.includes(ticketNameLow) || ticketNameLow.includes(en);
+              }) || null;
+            }
+
+            const categoriaName = elementoRelacionado ? (elementoRelacionado.tip_catg || elementoRelacionado.nom_cat || '') : (t.nom_cat || '');
+            const subcategoriaName = elementoRelacionado ? (elementoRelacionado.sub_catg || elementoRelacionado.nom_subcateg || '') : (t.nom_subcateg || '');
+
+            return {
+              ...t,
+              elementoRelacionado,
+              categoria: categoriaName,
+              subcategoria: subcategoriaName
+            };
+          });
+        }
+      } catch (e) {
+        console.warn('No se pudo enriquecer tickets antes de generar PDF:', e);
+      }
       const doc = new jsPDF({ unit: 'pt', format: 'a4' });
       const margin = 40;
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
-      // Título principal
       let y = 60;
       doc.setFontSize(18);
       doc.setFont(undefined, 'bold');
@@ -1108,7 +1136,37 @@ const Admin = () => {
     setDfLoading(true);
     try {
       const ticketsList = await obtenerTickets();
-      const ticketsArr = Array.isArray(ticketsList) ? ticketsList : [];
+      let ticketsArr = Array.isArray(ticketsList) ? ticketsList : [];
+      // Enriquecer tickets con elementos para que los PDFs individuales incluyan categoría/subcategoría
+      try {
+        const elementos = await ElementosService.obtenerElementos().catch(() => []);
+        if (Array.isArray(elementos) && elementos.length > 0) {
+          ticketsArr = ticketsArr.map(t => {
+            const elemId = t.id_eleme ?? t.id_elem ?? t.id_elemento ?? t.id_elemenn;
+            const nombreElementoTicket = (t.nom_elem || t.nom_eleme || t.elemento || '').toString();
+            let elementoRelacionado = elementos.find(e => e.id_elemen === elemId || e.id_elemen == elemId || e.id === elemId || e.id == elemId) || null;
+            if (!elementoRelacionado && nombreElementoTicket) {
+              const ticketNameLow = nombreElementoTicket.toLowerCase();
+              elementoRelacionado = elementos.find(e => {
+                const en = (e.nom_eleme || e.nom_elemen || e.nom || e.nombre || '').toString().toLowerCase();
+                return en === ticketNameLow || en.includes(ticketNameLow) || ticketNameLow.includes(en);
+              }) || null;
+            }
+
+            const categoriaName = elementoRelacionado ? (elementoRelacionado.tip_catg || elementoRelacionado.nom_cat || '') : (t.nom_cat || '');
+            const subcategoriaName = elementoRelacionado ? (elementoRelacionado.sub_catg || elementoRelacionado.nom_subcateg || '') : (t.nom_subcateg || '');
+
+            return {
+              ...t,
+              elementoRelacionado,
+              categoria: categoriaName,
+              subcategoria: subcategoriaName
+            };
+          });
+        }
+      } catch (e) {
+        console.warn('No se pudo enriquecer tickets antes de generar PDFs individuales:', e);
+      }
       const rows = [];
 
       for (let i = 0; i < ticketsArr.length; i++) {
