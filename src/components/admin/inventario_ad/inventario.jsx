@@ -255,59 +255,84 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
   );
 };
 
-const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit, guardando, subcategorias, categorias }) => (
-  <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog-xd11">
-    <Modal.Header closeButton className="modern-modal-header-xd12">
-      <Modal.Title className="modern-modal-title-xd13">Añadir Nuevo Equipo</Modal.Title>
-    </Modal.Header>
-    <Modal.Body className="modern-modal-body-xd14">
-      <div className="detail-item-xd15">
-        <label className="detail-label-xd16">Nombre del elemento:</label>
-        <div className="detail-value-display-xd17">
-          <Form.Control
-            type="text"
-            id="nombre"
-            value={nuevoEquipo.nombre}
-            onChange={onChange}
-            placeholder="Ej. Laptop Dell XPS 15"
-            className="modern-form-control-xd18"
-          />
+const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit, guardando, subcategorias, categorias }) => {
+  // Filtrar subcategorías según la categoría seleccionada
+  const subcategoriasFiltradas = nuevoEquipo.id_categoria 
+    ? subcategorias.filter(subcat => subcat.id_cat === parseInt(nuevoEquipo.id_categoria))
+    : [];
+
+  return (
+    <Modal show={show} onHide={onHide} centered dialogClassName="modern-modal-dialog-xd11">
+      <Modal.Header closeButton className="modern-modal-header-xd12">
+        <Modal.Title className="modern-modal-title-xd13">Añadir Nuevo Equipo</Modal.Title>
+      </Modal.Header>
+      <Modal.Body className="modern-modal-body-xd14">
+        <div className="detail-item-xd15">
+          <label className="detail-label-xd16">Nombre del elemento:</label>
+          <div className="detail-value-display-xd17">
+            <Form.Control
+              type="text"
+              id="nombre"
+              value={nuevoEquipo.nombre}
+              onChange={onChange}
+              placeholder="Ej. Laptop Dell XPS 15"
+              className="modern-form-control-xd18"
+            />
+          </div>
         </div>
-      </div>
-      <div className="detail-item-xd15">
-        <label className="detail-label-xd16">Marca:</label>
-        <div className="detail-value-display-xd17">
-          <Form.Control
-            type="text"
-            id="marca"
-            value={nuevoEquipo.marca}
-            onChange={onChange}
-            placeholder="Ej. Dell, HP, Samsung"
-            className="modern-form-control-xd18"
-          />
+        <div className="detail-item-xd15">
+          <label className="detail-label-xd16">Marca:</label>
+          <div className="detail-value-display-xd17">
+            <Form.Control
+              type="text"
+              id="marca"
+              value={nuevoEquipo.marca}
+              onChange={onChange}
+              placeholder="Ej. Dell, HP, Samsung"
+              className="modern-form-control-xd18"
+            />
+          </div>
         </div>
-      </div>
-      <div className="detail-item-xd15">
-        <label className="detail-label-xd16">Subcategoría:</label>
-        <div className="detail-value-display-xd17">
-          <Form.Select
-            id="id_subcateg"
-            value={nuevoEquipo.id_subcateg || ""}
-            onChange={onChange}
-            className="modern-form-control-xd18"
-          >
-            <option value="">Seleccionar subcategoría...</option>
-            {subcategorias.map((subcat) => {
-              const categoria = categorias.find(cat => cat.id_cat === subcat.id_cat);
-              return (
-                <option key={subcat.id} value={subcat.id}>
-                  {subcat.nom_subcateg} ({categoria ? categoria.nom_cat : 'Sin categoría'})
+        <div className="detail-item-xd15">
+          <label className="detail-label-xd16">Categoría:</label>
+          <div className="detail-value-display-xd17">
+            <Form.Select
+              id="id_categoria"
+              value={nuevoEquipo.id_categoria || ""}
+              onChange={onChange}
+              className="modern-form-control-xd18"
+            >
+              <option value="">Seleccionar categoría...</option>
+              {categorias.map((cat) => (
+                <option key={cat.id_cat} value={cat.id_cat}>
+                  {cat.nom_cat}
                 </option>
-              );
-            })}
-          </Form.Select>
+              ))}
+            </Form.Select>
+          </div>
         </div>
-      </div>
+        <div className="detail-item-xd15">
+          <label className="detail-label-xd16">Subcategoría:</label>
+          <div className="detail-value-display-xd17">
+            <Form.Select
+              id="id_subcateg"
+              value={nuevoEquipo.id_subcateg || ""}
+              onChange={onChange}
+              className="modern-form-control-xd18"
+              disabled={!nuevoEquipo.id_categoria}
+            >
+              <option value="">Seleccionar subcategoría...</option>
+              {subcategoriasFiltradas.map((subcat) => (
+                <option key={subcat.id} value={subcat.id}>
+                  {subcat.nom_subcateg}
+                </option>
+              ))}
+            </Form.Select>
+            {!nuevoEquipo.id_categoria && (
+              <small className="text-muted">Selecciona primero una categoría</small>
+            )}
+          </div>
+        </div>
       <div className="detail-item-xd15">
         <label className="detail-label-xd16">Número de serie:</label>
         <div className="detail-value-display-xd17">
@@ -363,8 +388,9 @@ const NuevoEquipoModal = ({ show, onHide, nuevoEquipo, onChange, onSubmit, guard
         {guardando ? <Spinner animation="border" size="sm" /> : "Añadir Equipo"}
       </Button>
     </Modal.Footer>
-  </Modal>
-);
+    </Modal>
+  );
+};
 
 
 const Admin = () => {
@@ -381,6 +407,7 @@ const Admin = () => {
   const [showNuevo, setShowNuevo] = useState(false);
   const [nuevoEquipo, setNuevoEquipo] = useState({
     nombre: "", 
+    id_categoria: "",
     id_subcateg: "", 
     serie: "", 
     observaciones: "",
@@ -543,6 +570,7 @@ const Admin = () => {
     setShowNuevo(false);
     setNuevoEquipo({ 
       nombre: "", 
+      id_categoria: "",
       id_subcateg: "", 
       serie: "", 
       observaciones: "",
@@ -554,7 +582,12 @@ const Admin = () => {
 
   const handleNuevoChange = (e) => {
     const { id, value } = e.target;
-    setNuevoEquipo((prev) => ({ ...prev, [id]: value }));
+    // Si cambia la categoría, resetear la subcategoría
+    if (id === 'id_categoria') {
+      setNuevoEquipo((prev) => ({ ...prev, id_categoria: value, id_subcateg: "" }));
+    } else {
+      setNuevoEquipo((prev) => ({ ...prev, [id]: value }));
+    }
   };
 
 
