@@ -354,6 +354,7 @@ const UserManagementList = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [users, setUsers] = useState([]);
     const [uploadFile, setUploadFile] = useState(null);
+    const [uploadResultUsers, setUploadResultUsers] = useState(null);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [dragActive, setDragActive] = useState(false);
     const fileInputRef = useRef(null);
@@ -539,6 +540,15 @@ const UserManagementList = () => {
 
     const handleFileChange = (e) => {
         const f = e.target.files && e.target.files[0];
+        if (f) {
+            const name = f.name || '';
+            if (!/\.xlsx$/i.test(name)) {
+                alert('Archivo no válido. Por favor selecciona un archivo .xlsx');
+                setUploadFile(null);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+                return;
+            }
+        }
         setUploadFile(f || null);
     };
 
@@ -549,7 +559,7 @@ const UserManagementList = () => {
         }
         try {
             const res = await uploadUsuariosMasivos(uploadFile);
-            alert(`Subida completa. Creados: ${res.creados || 0}. Errores: ${ (res.errores || []).length }`);
+            setUploadResultUsers(res || true);
             await cargarUsuarios();
             setUploadFile(null);
             const input = document.getElementById('excel-file-input'); if (input) input.value = '';
@@ -688,6 +698,12 @@ const UserManagementList = () => {
                     </div>
                 </div>
             </div>
+            
+            {uploadResultUsers && (
+                <Alert variant="success" onClose={() => setUploadResultUsers(null)} dismissible>
+                    Importación completada
+                </Alert>
+            )}
 
             <div className="equipment-list-grid-xd109">
                 {paginatedUsers.length > 0 ? (
@@ -880,7 +896,12 @@ const UserManagementList = () => {
                             const files = e.dataTransfer && e.dataTransfer.files;
                             if (files && files.length > 0) {
                                 const f = files[0];
-                                setUploadFile(f);
+                                const name = f.name || '';
+                                if (!/\.xlsx$/i.test(name)) {
+                                    alert('Archivo no válido. Por favor arrastra un archivo .xlsx');
+                                } else {
+                                    setUploadFile(f);
+                                }
                             }
                         }}
                     >

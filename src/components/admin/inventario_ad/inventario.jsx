@@ -84,7 +84,7 @@ const ListaEquipos = ({ elementos, onVerClick, loading }) => {
   );
 };
 
-const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, onActualizarEstado }) => {
+const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, onActualizarEstado, categorias, subcategorias }) => {
   if (!detalles) return null;
 
   const esAccesorio = detalles.tipo === 'accesorio';
@@ -95,6 +95,11 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
   });
   const [editedObservaciones, setEditedObservaciones] = React.useState("");
   const [editedComponentes, setEditedComponentes] = React.useState("");
+  const [editedNombre, setEditedNombre] = React.useState("");
+  const [editedMarca, setEditedMarca] = React.useState("");
+  const [editedSerie, setEditedSerie] = React.useState("");
+  const [editedCategoryId, setEditedCategoryId] = React.useState("");
+  const [editedSubcategoryId, setEditedSubcategoryId] = React.useState("");
 
   React.useEffect(() => {
     if (detalles) {
@@ -102,17 +107,46 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
       setEditedEstado(estNum === 1 ? 'activo' : 'inactivo');
       setEditedObservaciones(detalles.observaciones || "");
       setEditedComponentes(detalles.componentes || "");
+      setEditedNombre(detalles.nombre || "");
+      setEditedMarca(detalles.marca || "");
+      setEditedSerie(detalles.serie || "");
+      if (detalles.id_subcateg) {
+        setEditedSubcategoryId(String(detalles.id_subcateg));
+        const sub = (subcategorias || []).find(s => s.id === detalles.id_subcateg || String(s.id) === String(detalles.id_subcateg));
+        if (sub) {
+          setEditedCategoryId(String(sub.id_cat));
+        } else if (detalles.id_categoria) {
+          setEditedCategoryId(String(detalles.id_categoria));
+        }
+      } else if (detalles.subcategoria) {
+        const sub = (subcategorias || []).find(s => s.nom_subcateg === detalles.subcategoria);
+        if (sub) {
+          setEditedSubcategoryId(String(sub.id));
+          setEditedCategoryId(String(sub.id_cat));
+        } else {
+          const cat = (categorias || []).find(c => c.nom_cat === detalles.categoria);
+          if (cat) setEditedCategoryId(String(cat.id_cat));
+        }
+      } else {
+        const cat = (categorias || []).find(c => c.nom_cat === detalles.categoria);
+        if (cat) setEditedCategoryId(String(cat.id_cat));
+      }
       setEditMode(false);
     }
-  }, [detalles]);
+  }, [detalles, categorias, subcategorias]);
 
   const handleSaveEstado = async () => {
     try {
       const payload = {
         id_elem: detalles.id,
         est: editedEstado === 'activo' ? 1 : 0,
-        obse: editedObservaciones,
-        componen: editedComponentes
+        nom_elem: editedNombre,
+        marc: editedMarca,
+        num_seri: editedSerie,
+        obser: editedObservaciones,
+        componentes: editedComponentes,
+        ...(editedSubcategoryId ? { id_subcat: parseInt(editedSubcategoryId) } : (detalles.id_subcateg ? { id_subcat: parseInt(detalles.id_subcateg) } : {})),
+        ...(editedCategoryId ? { id_categ: parseInt(editedCategoryId) } : (detalles.id_categoria ? { id_categ: parseInt(detalles.id_categoria) } : {}))
       };
       if (onActualizarEstado) {
         await onActualizarEstado(detalles.id, payload);
@@ -139,13 +173,21 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
         <div className="detail-item-xd15">
           <label className="detail-label-xd16">Nombre:</label>
           <div className="detail-value-display-xd17">
-            <Form.Control type="text" value={detalles.nombre} readOnly className="modern-form-control-xd18" />
+            {editMode ? (
+              <Form.Control type="text" value={editedNombre} onChange={e => setEditedNombre(e.target.value)} className="modern-form-control-xd18" />
+            ) : (
+              <Form.Control type="text" value={detalles.nombre} readOnly className="modern-form-control-xd18" />
+            )}
           </div>
         </div>
         <div className="detail-item-xd15">
           <label className="detail-label-xd16">Marca:</label>
           <div className="detail-value-display-xd17">
-            <Form.Control type="text" value={detalles.marca || "N/A"} readOnly className="modern-form-control-xd18" />
+            {editMode ? (
+              <Form.Control type="text" value={editedMarca} onChange={e => setEditedMarca(e.target.value)} className="modern-form-control-xd18" />
+            ) : (
+              <Form.Control type="text" value={detalles.marca || "N/A"} readOnly className="modern-form-control-xd18" />
+            )}
           </div>
         </div>
         
@@ -160,7 +202,11 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
             <div className="detail-item-xd15">
               <label className="detail-label-xd16">Número de serie:</label>
               <div className="detail-value-display-xd17">
-                <Form.Control type="text" value={detalles.serie} readOnly className="modern-form-control-xd18" />
+                {editMode ? (
+                  <Form.Control type="text" value={editedSerie} onChange={e => setEditedSerie(e.target.value)} className="modern-form-control-xd18" />
+                ) : (
+                  <Form.Control type="text" value={detalles.serie} readOnly className="modern-form-control-xd18" />
+                )}
               </div>
             </div>
           </>
@@ -169,19 +215,51 @@ const DetallesEquipoModal = ({ show, onHide, detalles, onEliminar, eliminando, o
             <div className="detail-item-xd15">
               <label className="detail-label-xd16">Categoría:</label>
               <div className="detail-value-display-xd17">
-                <Form.Control type="text" value={detalles.categoria} readOnly className="modern-form-control-xd18" />
+                {editMode ? (
+                  <Form.Select
+                    value={editedCategoryId}
+                    onChange={(e) => { setEditedCategoryId(e.target.value); setEditedSubcategoryId(""); }}
+                    className="modern-form-control-xd18"
+                  >
+                    <option value="">Seleccionar categoría...</option>
+                    {(categorias || []).map((cat) => (
+                      <option key={cat.id_cat} value={cat.id_cat}>{cat.nom_cat}</option>
+                    ))}
+                  </Form.Select>
+                ) : (
+                  <Form.Control type="text" value={detalles.categoria} readOnly className="modern-form-control-xd18" />
+                )}
               </div>
             </div>
             <div className="detail-item-xd15">
               <label className="detail-label-xd16">Subcategoría:</label>
               <div className="detail-value-display-xd17">
-                <Form.Control type="text" value={detalles.subcategoria || "N/A"} readOnly className="modern-form-control-xd18" />
+                {editMode ? (
+                  <Form.Select
+                    value={editedSubcategoryId}
+                    onChange={(e) => setEditedSubcategoryId(e.target.value)}
+                    className="modern-form-control-xd18"
+                    disabled={!editedCategoryId}
+                  >
+                    <option value="">Seleccionar subcategoría...</option>
+                    {/* filtrar subcategorías por categoría seleccionada */}
+                    {((subcategorias || []).filter(s => String(s.id_cat) === String(editedCategoryId))).map((sub) => (
+                      <option key={sub.id} value={sub.id}>{sub.nom_subcateg}</option>
+                    ))}
+                  </Form.Select>
+                ) : (
+                  <Form.Control type="text" value={detalles.subcategoria || "N/A"} readOnly className="modern-form-control-xd18" />
+                )}
               </div>
             </div>
             <div className="detail-item-xd15">
               <label className="detail-label-xd16">Número de serie:</label>
               <div className="detail-value-display-xd17">
-                <Form.Control type="text" value={detalles.serie} readOnly className="modern-form-control-xd18" />
+                {editMode ? (
+                  <Form.Control type="text" value={editedSerie} onChange={e => setEditedSerie(e.target.value)} className="modern-form-control-xd18" />
+                ) : (
+                  <Form.Control type="text" value={detalles.serie} readOnly className="modern-form-control-xd18" />
+                )}
               </div>
             </div>
             <div className="detail-item-xd15">
@@ -517,6 +595,8 @@ const Admin = () => {
           nombre: detallesCompletos.nom_eleme,
           subcategoria: subcategoria ? subcategoria.nom_subcateg : "Sin subcategoría",
           categoria: categoriaPadre ? categoriaPadre.nom_cat : "Sin categoría",
+          id_subcateg: idSubcat,
+          id_categoria: categoriaPadre ? categoriaPadre.id_cat : null,
           serie: detallesCompletos.num_seri?.toString() || "",
           observaciones: detallesCompletos.obse,
           componentes: detallesCompletos.componen,
@@ -593,6 +673,15 @@ const Admin = () => {
 
   const handleFileChange = (e) => {
     const f = e.target.files && e.target.files[0];
+    if (f) {
+      const name = f.name || '';
+      if (!/\.xlsx$/i.test(name)) {
+        alert('Archivo no válido. Por favor selecciona un archivo .xlsx');
+        setUploadFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+    }
     setUploadFile(f || null);
   };
 
@@ -909,6 +998,8 @@ const Admin = () => {
         onEliminar={eliminarItem}
         eliminando={eliminando}
         onActualizarEstado={handleUpdateItemState}
+        categorias={categorias}
+        subcategorias={subcategorias}
       />
       <Modal show={showUploadModal} onHide={() => { setShowUploadModal(false); setUploadFile(null); setDragActive(false); }} centered dialogClassName="modern-modal-dialog-xd11">
         <Modal.Header closeButton className="modern-modal-header-xd12">
@@ -925,7 +1016,13 @@ const Admin = () => {
               setDragActive(false);
               const files = e.dataTransfer && e.dataTransfer.files;
               if (files && files.length > 0) {
-                setUploadFile(files[0]);
+                const f = files[0];
+                const name = f.name || '';
+                if (!/\.xlsx$/i.test(name)) {
+                  alert('Archivo no válido. Por favor arrastra un archivo .xlsx');
+                  return;
+                }
+                setUploadFile(f);
               }
             }}
           >
@@ -985,18 +1082,8 @@ const Admin = () => {
         </Modal.Footer>
       </Modal>
       {uploadResult && (
-        <Alert variant="info" onClose={() => setUploadResult(null)} dismissible>
-          <div><strong>Resultado de la carga:</strong></div>
-          <div>Total filas procesadas: {uploadResult.resultado?.total ?? uploadResult.total ?? 'N/A'}</div>
-          <div>Guardados: {uploadResult.resultado?.guardados ?? uploadResult.guardados ?? 'N/A'}</div>
-          {uploadResult.resultado?.errores && uploadResult.resultado.errores.length > 0 && (
-            <div>
-              <strong>Errores:</strong>
-              <ul>
-                {uploadResult.resultado.errores.map((e, i) => (<li key={i}>{e}</li>))}
-              </ul>
-            </div>
-          )}
+        <Alert variant="success" onClose={() => setUploadResult(null)} dismissible>
+          Importación completada
         </Alert>
       )}
       
