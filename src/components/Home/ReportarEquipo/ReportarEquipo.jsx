@@ -23,8 +23,18 @@ function ReportarEquipo() {
     setSuccess
   } = useReportarEquipo();
   return (
-    <div className="reportar-equipo-card">
-      <div className="reportar-equipo-inner">
+    <div className="reportar-equipo-container">
+      <div className="reportar-equipo-card">
+        <div className="reportar-equipo-header">
+          <div className="header-icon-wrapper">
+            <div className="icon-circle">
+              <span className="header-icon">🔧</span>
+            </div>
+          </div>
+          <h2 className="titulo-reportar">Reporta los equipos que presenten fallas</h2>
+        </div>
+
+        <div className="reportar-equipo-inner">
 
         {error && (
           <Alert variant="danger" onClose={() => setError(null)} dismissible>
@@ -32,16 +42,14 @@ function ReportarEquipo() {
           </Alert>
         )}
 
-        {success && (
-          <Alert variant="success" onClose={() => setSuccess(null)} dismissible>
-            <div style={{ whiteSpace: 'pre-line' }}>{success}</div>
-          </Alert>
-        )}
+        {success && (() => { window.alert(success); setSuccess(null); return null; })()}
 
         <Form onSubmit={handleSubmit}>
 
-          <Form.Group className="mb-3">
-            <Form.Label>ID del Equipo *</Form.Label>
+          <Form.Group className="mb-3 form-group-enhanced">
+            <Form.Label className="label-with-icon">
+              ID del Equipo *
+            </Form.Label>
             <Form.Control
               type="number"
               name="idElemento"
@@ -49,11 +57,14 @@ function ReportarEquipo() {
               value={formData.idElemento}
               onChange={handleInputChange}
               required
+              className="input-enhanced"
             />
           </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Ambiente/Ubicación *</Form.Label>
+          <Form.Group className="mb-3 form-group-enhanced">
+            <Form.Label className="label-with-icon">
+              Ambiente/Ubicación *
+            </Form.Label>
             <Form.Control
               type="text"
               name="ambiente"
@@ -61,11 +72,15 @@ function ReportarEquipo() {
               value={formData.ambiente}
               onChange={handleInputChange}
               required
+              className="input-enhanced"
             />
           </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Seleccione los problemas *</Form.Label>
+          <Form.Group className="mb-3 form-group-enhanced">
+            <Form.Label className="label-with-icon">
+              <span className="label-icon">⚠️</span>
+              Seleccione los problemas *
+            </Form.Label>
             {loading ? (
               <div className="text-center py-3">
                 <Spinner animation="border" size="sm" />
@@ -75,13 +90,16 @@ function ReportarEquipo() {
               <div className="problemas-grid">
                 {problemas.map(problema => (
                   <div key={problema.id} className="problema-item">
-                    <Form.Check
-                      type="checkbox"
-                      id={`problema-${problema.id}`}
-                      label={problema.descr_problem}
-                      checked={formData.problemasSeleccionados.includes(problema.id)}
-                      onChange={() => handleProblemaChange(problema.id)}
-                    />
+                    <label className="custom-checkbox">
+                      <input
+                        type="checkbox"
+                        name="problemas"
+                        checked={formData.problemasSeleccionados.includes(problema.id)}
+                        onChange={() => handleProblemaChange(problema.id)}
+                      />
+                      <span className="checkmark"></span>
+                      <span>{problema.descr_problem}</span>
+                    </label>
                   </div>
                 ))}
               </div>
@@ -89,8 +107,10 @@ function ReportarEquipo() {
           </Form.Group>
 
           {/* ✅ Observaciones */}
-          <Form.Group className="mb-3">
-            <Form.Label>Observaciones (Opcional)</Form.Label>
+          <Form.Group className="mb-3 form-group-enhanced">
+            <Form.Label className="label-with-icon">
+              Observaciones (Opcional)
+            </Form.Label>
             <Form.Control
               as="textarea"
               name="observaciones"
@@ -99,18 +119,32 @@ function ReportarEquipo() {
               value={formData.observaciones}
               onChange={handleInputChange}
               maxLength={255}
+              className="input-enhanced textarea-enhanced"
             />
-            <Form.Text className="text-muted">
+            <Form.Text className="text-muted counter-text">
+              <span className="counter-icon">✏️</span>
               {formData.observaciones.length}/255 caracteres
             </Form.Text>
           </Form.Group>
 
           {/* ✅ Sección de imágenes */}
-          <Form.Group className="mb-3">
-            <div className="d-flex justify-content-between align-items-center mb-2">
-              <Form.Label>Imágenes (Opcional)</Form.Label>
-              <Button variant="secondary" size="sm" as="label" disabled={imagenCargando}>
-                {imagenCargando ? 'Procesando...' : '📷 Agregar Imagen'}
+          <Form.Group className="mb-3 form-group-enhanced">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <Form.Label className="label-with-icon">
+                <span className="label-icon">📸</span>
+                Imágenes (Opcional)
+              </Form.Label>
+              <Button variant="outline-success" size="sm" as="label" disabled={imagenCargando} className="btn-agregar-imagen-modern">
+                {imagenCargando ? (
+                  <>
+                    <Spinner animation="border" size="sm" className="me-1" />
+                    Procesando...
+                  </>
+                ) : (
+                  <>
+                    Agregar Imagen
+                  </>
+                )}
                 <input
                   type="file"
                   accept="image/*"
@@ -123,41 +157,42 @@ function ReportarEquipo() {
 
             {/* Preview de imágenes */}
             {imagenes.length > 0 && (
-              <div className="row g-2 mb-3">
+              <div className="imagenes-preview-grid">
                 {imagenes.map((img, index) => (
-                  <div key={index} className="col-md-3">
-                    <Card>
-                      <Card.Img 
-                        variant="top" 
-                        src={img} 
-                        style={{ height: '150px', objectFit: 'cover' }}
-                      />
-                      <Card.Body className="p-2">
+                  <div key={index} className="imagen-preview-card">
+                    <div className="imagen-wrapper">
+                      <img src={img} alt={`Preview ${index + 1}`} className="imagen-preview" />
+                      <div className="imagen-overlay">
                         <Button
-                          variant="danger"
+                          variant="outline-success"
                           size="sm"
-                          className="w-100"
+                          className="btn-eliminar-imagen"
                           onClick={() => handleEliminarImagen(index)}
                         >
+                          <span className="btn-icon">🗑️</span>
                           Eliminar
                         </Button>
-                      </Card.Body>
-                    </Card>
+                      </div>
+                    </div>
+                    <div className="imagen-numero">Imagen {index + 1}</div>
                   </div>
                 ))}
               </div>
             )}
 
-            <Form.Text className="text-muted">
-              {imagenes.length > 0 
-                ? `${imagenes.length} imagen(es) agregada(s)` 
-                : 'No hay imágenes agregadas'}
-            </Form.Text>
+            <div className="imagenes-info">
+              <span className="info-icon">ℹ️</span>
+              <Form.Text className="text-muted">
+                {imagenes.length > 0 
+                  ? `${imagenes.length} imagen(es) agregada(s)` 
+                  : 'No hay imágenes agregadas'}
+              </Form.Text>
+            </div>
           </Form.Group>
 
           <div className="botones-accion">
             <Button 
-              variant="danger"
+              variant="outline-success"
               type="submit"
               disabled={submitting}
               className="btn-reportar"
@@ -165,24 +200,28 @@ function ReportarEquipo() {
               {submitting ? (
                 <>
                   <Spinner animation="border" size="sm" className="me-2" />
-                  Tomando...
+                  Reportando...
                 </>
               ) : (
-                '✋ Tomar'
+                <>
+                  Reportar
+                </>
               )}
             </Button>
 
             <Button 
-              variant="secondary"
+              variant="outline-secondary"
               onClick={handleLimpiar}
               disabled={submitting}
               className="btn-limpiar"
             >
-              🔄 Limpiar Formulario
+              <span className="btn-icon">🔄</span>
+              Limpiar Formulario
             </Button>
           </div>
 
         </Form>
+        </div>
       </div>
     </div>
   );
