@@ -3,7 +3,7 @@ import './Crear_espacio.css';
 import { Form, Button, Alert, Spinner, Card, Row, Col } from 'react-bootstrap';
 import { crearEspacio, subirImagenesEspacio } from '../../../../api/EspaciosApi';
 
-function CrearEspacio() {
+function CrearEspacio({ onCreated }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -116,7 +116,7 @@ function CrearEspacio() {
       console.log('Creando espacio con datos:', espacioData);
       const response = await crearEspacio(espacioData);
 
-      setSuccess(`✓ Espacio "${formData.nom_espa}" creado exitosamente!`);
+      try { if (typeof onCreated === 'function') onCreated(response?.data || response); } catch (e) { console.warn('onCreated callback error', e); }
       setFormData({
         nom_espa: '',
         descripcion: '',

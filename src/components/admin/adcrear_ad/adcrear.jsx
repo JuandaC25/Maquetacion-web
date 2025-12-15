@@ -155,6 +155,7 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
                                     onChange={(e) => handleEditChange('password', e.target.value)}
                                     placeholder="Ingrese nueva contraseña (dejar vacío para no cambiar)"
                                     className="modern-form-control-xd118"
+                                    autoComplete="new-password"
                                 />
                             ) : (
                                 <>
@@ -182,6 +183,7 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
                                 onChange={(e) => handleEditChange('corre', e.target.value)}
                                 placeholder="ejemplo@dominio.com"
                                 className="modern-form-control-xd118"
+                                autoComplete="off"
                             />
                         ) : (
                             <Form.Control 
@@ -390,7 +392,21 @@ const UserManagementList = () => {
         return rolesUnicos.sort();
     };
 
-    const handleShowAddUserModal = () => setShowAddUserModal(true);
+    const handleShowAddUserModal = () => {
+        setNewUserData({ 
+            nom_su: '', 
+            ape_su: '', 
+            corre: '', 
+            num_docu: '', 
+            pasword: '',
+            estad: 1,
+            id_tip_docu: '', 
+            id_role: '' 
+        });
+        setEmailError('');
+        setPasswordError('');
+        setShowAddUserModal(true);
+    };
     
     const handleCloseAddUserModal = () => {
         setShowAddUserModal(false);
@@ -810,6 +826,7 @@ const UserManagementList = () => {
                                 onChange={handleNewUserChange}
                                 isInvalid={!!emailError}
                                 className="modern-form-control-xd118"
+                                autoComplete="off"
                             />
                             <Form.Control.Feedback type="invalid">
                                 {emailError}
@@ -828,6 +845,7 @@ const UserManagementList = () => {
                                 onChange={handleNewUserChange}
                                 isInvalid={!!passwordError}
                                 className="modern-form-control-xd118"
+                                autoComplete="new-password"
                                 />
                                 <Form.Control.Feedback type="invalid">
                                     {passwordError}
