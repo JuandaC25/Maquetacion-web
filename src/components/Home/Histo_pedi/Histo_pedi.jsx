@@ -68,7 +68,7 @@ function Historial_ped() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [solicitudesPerPage] = useState(5);
+    const [solicitudesPerPage] = useState(6);
     const [activeTab, setActiveTab] = useState('solicitudes'); 
 
     const cargarSubcategorias = async () => {
@@ -344,7 +344,7 @@ function Historial_ped() {
     } else {
         if (activeTab === 'solicitudes') {
             historialContent = (
-                <Stack gap={1}>
+                <div className="p-3">
                     {currentSolicitudes.map((sol) => {
                         const status = getStatusDetails(sol.est_soli);
                         const subcatId = (
@@ -363,16 +363,14 @@ function Historial_ped() {
                         const nombreEspacio = sol.nom_espa || sol.nombre_espacio || 'N/A';
                         const puedeCancelar = sol.est_soli?.toLowerCase().includes('pendiente');
                         return (
-                            <div className="p-3 item_historial" key={sol.id_soli}>
+                            <div className="item_historial" key={sol.id_soli}>
                                 <span className='emoji_historial'>{esEspacio ? '🏢' : '📦'}</span>
-                                
                                 <Badge 
                                     className='let_histo' 
                                     bg={status.variant} 
                                 >
                                     {status.text}
                                 </Badge>
-                                
                                 <span className='texto_pedido'>
                                     Usuario: {sol.nom_usu || 'N/A'} <br/>
                                     {esEspacio ? (
@@ -390,7 +388,6 @@ function Historial_ped() {
                                 <div className='Cont_botones_histo'>
                                     <div>
                                     </div>
-
                                     <Button 
                                         variant="danger" 
                                         size="sm" 
@@ -405,28 +402,25 @@ function Historial_ped() {
                             </div>
                         );
                     })}
-                </Stack>
+                </div>
             );
         } else {
             // Renderizado de tickets
             historialContent = (
-                <Stack gap={1}>
+                <div className="p-3">
                     {currentSolicitudes.map((ticket) => {
                         const statusTicket = ticket.id_est_tick === 2 ? 
                             { text: 'Activo', variant: 'danger' } : 
                             { text: 'Resuelto', variant: 'success' };
-                        
                         return (
-                            <div className="p-3 item_historial" key={ticket.id_tickets}>
+                            <div className="item_historial" key={ticket.id_tickets}>
                                 <span className='emoji_historial'>🔧</span>
-                                
                                 <Badge 
                                     className='let_histo' 
                                     bg={statusTicket.variant} 
                                 >
                                     {statusTicket.text}
                                 </Badge>
-                                
                                 <span className='texto_pedido'>
                                     ID Ticket: {ticket.id_tickets || 'N/A'} | Equipo: {ticket.nom_elem || `ID ${ticket.id_eleme}`} <br/>
                                     Problema: {ticket.nom_problm || 'N/A'} <br/>
@@ -469,7 +463,7 @@ function Historial_ped() {
                             </div>
                         );
                     })}
-                </Stack>
+                </div>
             );
         }
     }

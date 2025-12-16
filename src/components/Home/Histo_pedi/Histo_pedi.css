@@ -72,13 +72,13 @@
 .p-3 {
   margin-top: 1rem;
   display: flex;
-  gap: 1rem;
-  border-color: black;
-  border-style: inset;
-  border-radius: 15px;
-  border-width: 2px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  border: none;
   margin-left: 1rem;
   margin-right: 1rem;
+  padding: 0;
+  column-gap: 2%;
 }
 
 .item_historial {
@@ -88,6 +88,12 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
+  width: 49%;
+  min-width: 320px;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 
 .emoji_historial {

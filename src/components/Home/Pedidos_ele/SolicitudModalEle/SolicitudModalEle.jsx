@@ -62,16 +62,10 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
     useEffect(() => {
         if (show) {
             obtenerCategoria().then(data => {
-                const computoCat = data.find(cat => cat.nom_cat === "Computo");
-                setCategorias(computoCat ? [computoCat] : []);
+                // Excluir la categoría 'Multimedia'
+                const categoriasFiltradas = (data || []).filter(cat => cat.nom_cat !== "Multimedia");
+                setCategorias(categoriasFiltradas);
                 setForm(getInitialFormState(equiposDisponibles, userId));
-                if (computoCat) {
-                    setForm(prevForm => ({
-                        ...prevForm,
-                        id_categoria: String(computoCat.id_cat),
-                        id_subcategoria: ""
-                    }));
-                }
             });
         }
     }, [equiposDisponibles, show, userId]);
@@ -186,9 +180,10 @@ function SolicitudModalEle({ show, handleHide, equiposDisponibles, userId }) {
                             as="select"
                             name="id_categoria"
                             value={form.id_categoria}
+                            onChange={handleChange}
                             required
-                            disabled
                         >
+                            <option value="">Selecciona una categoría</option>
                             {categorias.map(cat => (
                                 <option key={cat.id_cat} value={cat.id_cat}>{cat.nom_cat}</option>
                             ))}
