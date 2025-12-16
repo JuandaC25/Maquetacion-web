@@ -1,0 +1,47 @@
+.trazabilidad-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(9, 180, 26, 0.15);
+  padding: 2.5rem 2rem 2rem 2rem;
+  margin: 2rem auto;
+  max-width: 1100px;
+  border: 2px solid rgba(9, 180, 26, 0.15);
+}
+.trazabilidad-title {
+  color: #09b41a;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 8px rgba(9, 180, 26, 0.08);
+}
+.trazabilidad-form {
+  background: rgba(9, 180, 26, 0.07);
+  border-radius: 12px;
+  padding: 1.5rem 1rem 1rem 1rem;
+  margin-bottom: 2rem;
+}
+.trazabilidad-table {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(9, 180, 26, 0.08);
+  overflow: hidden;
+}
+.trazabilidad-table th {
+  background: #09b41a;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+}
+.trazabilidad-table td {
+  border: none;
+  color: #222;
+}
+.trazabilidad-table tr:nth-child(even) {
+  background: #f5fff7;
+}
+.trazabilidad-no-tickets {
+  color: #888;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-top: 2rem;
+}

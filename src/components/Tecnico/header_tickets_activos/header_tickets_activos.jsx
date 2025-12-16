@@ -63,6 +63,10 @@ function Header_informacion() {
                 <p className="text-primary-xd210tec"><i className="bi bi-lightning-charge"></i> Tickets Activos</p>
                 <p className="text-secondary-xd211tec">Ver solo tickets activos</p>
               </Link>
+              <Link to="/Trazabilidad-Tecnico" className='card-xd209tec'>
+                <p className="text-primary-xd210tec"><i className="bi bi-graph-up"></i> Trazabilidad</p>
+                <p className="text-secondary-xd211tec">Ver historial de acciones de tickets</p>
+              </Link>
               <Link to="/Solicitudes-Espacios-Tecnico" className='card-xd209tec'>
                 <p className="text-primary-xd210tec"><i className="bi bi-building"></i> Solicitudes Espacios</p>
                 <p className="text-secondary-xd211tec">Ver solicitudes de espacios</p>

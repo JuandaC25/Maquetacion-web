@@ -3,7 +3,7 @@ import './Soli_Equi_Tec.css';
 import Footer from '../../Footer/Footer';
 import Button from 'react-bootstrap/Button';
 import ModalFormulario from './modal_soli_E/FormularioModal/ModalFormulario';
-import Header_soli_equi_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
+import HeaderTecnicoUnificado from '../HeaderTecnicoUnificado';
 import { authorizedFetch } from '../../../api/http';
 
 export default function SoliEquiTec() {
@@ -99,8 +99,7 @@ export default function SoliEquiTec() {
             <div className="cuadra1" key={prest.id_soli}>
               <div className="cuadra2">
                 <div className="card-tipo">{prest.categoria}</div>
-                <div className="card-modelo">{prest.nom_elem}</div>
-                <div className="card-usuario">Usuario: {prest.nom_usu}</div>
+                <div className="card-nombre">{prest.nom_usu}</div>
                 <div className="card-fecha">Fecha inicio: {new Date(prest.fecha_ini).toLocaleString()}</div>
                 <div className="card-accion">
                   <Button className="botun" size="sm" onClick={() => abrirFormulario(prest)}>
@@ -118,7 +117,7 @@ export default function SoliEquiTec() {
 
   return (
     <>
-      <Header_soli_equi_tec title="Solicitudes de Equipos" />
+      <HeaderTecnicoUnificado title="Préstamos Equipos" />
 
       <main className="contenedor-principal-peq">
         <div className="barra-filtros">
