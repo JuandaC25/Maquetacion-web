@@ -79,44 +79,27 @@ function Historial_ped() {
 
     const cargarImagenesConAuth = async (urls) => {
         setLoadingImages(true);
+        setLoadedImages([]); // Limpiar imágenes anteriores
         console.log('URLs a cargar:', urls);
         
         const BASE_URL = 'http://localhost:8081';
-        const token = localStorage.getItem('auth_token');
         
-        const imagenesPromises = urls.map(async (url) => {
-            try {
-                // Construir URL completa si es una ruta relativa
-                const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
-                console.log('Intentando cargar:', fullUrl);
-                
-                const response = await fetch(fullUrl, {
-                    headers: token ? {
-                        'Authorization': `Bearer ${token}`
-                    } : {}
-                });
-                
-                console.log('Response status:', response.status);
-                
-                if (!response.ok) {
-                    console.error(`Error ${response.status} al cargar imagen: ${fullUrl}`);
-                    return fullUrl; // Fallback a URL directa
-                }
-                
-                const blob = await response.blob();
-                const blobUrl = URL.createObjectURL(blob);
-                console.log('Blob URL creada correctamente');
-                return blobUrl;
-            } catch (err) {
-                console.error('Error al cargar imagen:', err);
-                const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
-                return fullUrl; // Fallback
-            }
-        });
+        // En lugar de usar fetch, construimos las URLs directamente
+        const imagenesValidas = urls.map(url => {
+            // Limpiar corchetes, comillas y espacios
+            let cleanUrl = url.trim()
+                .replace(/^\["|"\]$/g, '') // Eliminar ["  y  "]
+                .replace(/^\[|\]$/g, '')    // Eliminar [ y ]
+                .replace(/^"|"$/g, '')      // Eliminar comillas al inicio y final
+                .trim();
+            
+            const fullUrl = cleanUrl.startsWith('http') ? cleanUrl : `${BASE_URL}${cleanUrl}`;
+            console.log('URL construida:', fullUrl);
+            return fullUrl;
+        }).filter(url => url && url.length > 0);
         
-        const imagenesCargadas = await Promise.all(imagenesPromises);
-        console.log('Total imágenes cargadas:', imagenesCargadas.length);
-        setLoadedImages(imagenesCargadas.filter(img => img !== null));
+        console.log('Total URLs válidas:', imagenesValidas.length);
+        setLoadedImages(imagenesValidas);
         setLoadingImages(false);
     };
 
@@ -459,8 +442,8 @@ function Historial_ped() {
                 <div className="p-3">
                     {currentSolicitudes.map((ticket) => {
                         const statusTicket = ticket.id_est_tick === 2 ? 
-                            { text: 'Activo', variant: 'danger' } : 
-                            { text: 'Resuelto', variant: 'success' };
+                            { text: 'Activo', variant: 'success' } : 
+                            { text: 'Resuelto', variant: 'secondary' };
                         
                         return (
                             <div className="p-3 item_historial" key={ticket.id_tickets}>
@@ -487,25 +470,39 @@ function Historial_ped() {
                                         <div style={{ marginTop: '8px' }}>
                                             <strong style={{ fontSize: '0.9em', color: '#333' }}>📷 Imágenes adjuntas:</strong>
                                             <div style={{ display: 'flex', gap: '10px', marginTop: '5px', flexWrap: 'wrap' }}>
-                                                {ticket.imageness.split(',').map((img, idx) => (
-                                                    <a 
-                                                        key={idx} 
-                                                        href={img.trim()} 
-                                                        target="_blank" 
-                                                        rel="noopener noreferrer"
-                                                        style={{ 
-                                                            display: 'inline-block',
-                                                            padding: '5px 10px',
-                                                            backgroundColor: '#667eea',
-                                                            color: 'white',
-                                                            borderRadius: '5px',
-                                                            textDecoration: 'none',
-                                                            fontSize: '0.85em'
-                                                        }}
-                                                    >
-                                                        🖼️ Ver imagen {idx + 1}
-                                                    </a>
-                                                ))}
+                                                <Button
+                                                    size="sm"
+                                                    variant="primary"
+                                                    onClick={() => {
+                                                        // Limpiar el string de imageness de corchetes y parsear correctamente
+                                                        let imagenesStr = ticket.imageness.trim();
+                                                        
+                                                        // Si viene como array stringificado, parsearlo
+                                                        if (imagenesStr.startsWith('[') && imagenesStr.endsWith(']')) {
+                                                            try {
+                                                                const parsed = JSON.parse(imagenesStr);
+                                                                imagenesStr = Array.isArray(parsed) ? parsed.join(',') : imagenesStr;
+                                                            } catch (e) {
+                                                                // Si falla el parse, quitar corchetes manualmente
+                                                                imagenesStr = imagenesStr.slice(1, -1);
+                                                            }
+                                                        }
+                                                        
+                                                        const urls = imagenesStr
+                                                            .split(',')
+                                                            .map(img => img.trim().replace(/^["']|["']$/g, ''))
+                                                            .filter(img => img.length > 0);
+                                                        
+                                                        console.log('URLs procesadas:', urls);
+                                                        setImgModalTicket(ticket);
+                                                        setImgModalList(urls);
+                                                        setShowImgModal(true);
+                                                        cargarImagenesConAuth(urls);
+                                                    }}
+                                                    style={{ fontSize: '0.85em' }}
+                                                >
+                                                    🖼️ Ver imágenes
+                                                </Button>
                                             </div>
                                         </div>
                                     )}
@@ -540,11 +537,41 @@ function Historial_ped() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
-                            {loadedImages.map((imgBlobUrl, idx) => (
-                                <div key={idx} className="img-gallery-hover" style={{ maxWidth: 220, maxHeight: 220, borderRadius: 10, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', background: '#f7fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', cursor: 'pointer' }}>
-                                    <img src={imgBlobUrl} alt={`Imagen ${idx + 1}`} style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain', display: 'block', margin: '0 auto' }} />
-                                </div>
-                            ))}
+              {loadedImages.map((imgUrl, idx) => (
+                <div 
+                  key={idx} 
+                  className="img-gallery-hover" 
+                  style={{ 
+                    maxWidth: 280, 
+                    maxHeight: 280, 
+                    borderRadius: 10, 
+                    overflow: 'hidden', 
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)', 
+                    background: '#fff', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    padding: '8px'
+                  }}
+                >
+                  <img 
+                    src={imgUrl} 
+                    alt={`Imagen ${idx + 1}`} 
+                    style={{ 
+                      maxWidth: '100%', 
+                      maxHeight: '260px', 
+                      objectFit: 'contain', 
+                      display: 'block', 
+                      margin: '0 auto' 
+                    }}
+                    onError={(e) => {
+                      console.error('Error al cargar imagen:', imgUrl);
+                      e.target.style.display = 'none';
+                      e.target.parentElement.innerHTML = '<p style="color: #dc3545; font-size: 14px; text-align: center;">⚠️ Error al cargar imagen</p>';
+                    }}
+                  />
+                </div>
+              ))}
             </div>
           )}
         </Modal.Body>
