@@ -48,12 +48,12 @@ function ReportarEquipo() {
 
           <Form.Group className="mb-3 form-group-enhanced">
             <Form.Label className="label-with-icon">
-              ID del Equipo *
+              Identificador de Equipo *
             </Form.Label>
             <Form.Control
               type="number"
               name="idElemento"
-              placeholder="Ingrese el ID del equipo"
+              placeholder="Ingrese el identificador del equipo"
               value={formData.idElemento}
               onChange={handleInputChange}
               required

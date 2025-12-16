@@ -60,7 +60,7 @@ class ElementosService {
         } else if (response.status === 401) {
           throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
         } else if (response.status === 409) {
-          throw new Error(errorData.errores1 || errorData.mensaje || 'El elemento ya existe');
+          throw new Error(errorData.error || errorData.errores1 || errorData.mensaje || 'El elemento ya existe');
         } else if (response.status === 400) {
           throw new Error(errorData.message || errorData.error || 'Datos inválidos');
         } else if (response.status === 500) {
