@@ -20,7 +20,6 @@ const Soliespacio = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedEstadoFilter, setSelectedEstadoFilter] = useState("Todos los Estados");
-  const [selectedEspacioFilter, setSelectedEspacioFilter] = useState("Todos los Espacios");
   const [showModal, setShowModal] = useState(false);
   const [nuevaSolicitud, setNuevaSolicitud] = useState({
     id_esp: '',
@@ -366,8 +365,6 @@ const Soliespacio = () => {
     cargarEspacios();
   }, []);
 
-  const espacioNames = Array.from(new Set((espacios || []).map(e => (e.nom_espa || '').toString().trim()).filter(Boolean)));
-
   const cargarSolicitudes = async () => {
     try {
       setLoading(true);
@@ -385,10 +382,6 @@ const Soliespacio = () => {
 
   const handleEstadoFilter = (estado) => {
     setSelectedEstadoFilter(estado);
-  };
-
-  const handleEspacioFilter = (espacio) => {
-    setSelectedEspacioFilter(espacio);
   };
 
   const AVAILABLE_ESTADOS = [
@@ -570,22 +563,46 @@ const Soliespacio = () => {
 
   // Declarar solicitudesFiltradas antes del return
   const solicitudesFiltradas = solicitudes.filter(solicitud => {
-    const effectiveEstadoText = (() => {
-      const estadoNum = Number(solicitud.estadosoli ?? solicitud.est_soli);
-      switch (estadoNum) {
-        case 1: return 'Pendiente';
-        case 2: return 'Aprobado';
-        case 3: return 'Rechazado';
-        case 4: return 'Cancelado';
-        case 5: return 'Finalizado';
-        default: return 'Desconocido';
+    if (selectedEstadoFilter === "Todos los Estados") {
+      return true;
+    }
+
+    // Convertir el estado de la solicitud a texto
+    let estadoTexto = '';
+    const estadoValue = solicitud.estadosoli ?? solicitud.est_soli;
+    
+    if (typeof estadoValue === 'number') {
+      // Si es número
+      switch (Number(estadoValue)) {
+        case 1: estadoTexto = 'Pendiente'; break;
+        case 2: estadoTexto = 'Aprobado'; break;
+        case 3: estadoTexto = 'Rechazado'; break;
+        case 4: estadoTexto = 'Cancelado'; break;
+        case 5: estadoTexto = 'Finalizado'; break;
+        default: estadoTexto = 'Desconocido';
       }
-    })();
-    const sel = String(selectedEstadoFilter || '').toLowerCase();
-    const coincideEstado = selectedEstadoFilter === "Todos los Estados" ||
-      effectiveEstadoText.toLowerCase() === sel;
-    const coincideEspacio = selectedEspacioFilter === "Todos los Espacios" || ((solicitud.nom_espa || 'N/A').toString().toUpperCase() === String(selectedEspacioFilter).toUpperCase());
-    return coincideEstado && coincideEspacio;
+    } else if (typeof estadoValue === 'string') {
+      // Si es string, mapear valores comunes
+      const estadoMap = {
+        'PENDIENTE': 'Pendiente',
+        'APROBADO': 'Aprobado',
+        'RECHAZADO': 'Rechazado',
+        'EN USO': 'Cancelado',
+        'CANCELADO': 'Cancelado',
+        'FINALIZADO': 'Finalizado',
+        '1': 'Pendiente',
+        '2': 'Aprobado',
+        '3': 'Rechazado',
+        '4': 'Cancelado',
+        '5': 'Finalizado'
+      };
+      estadoTexto = estadoMap[String(estadoValue).toUpperCase()] || 'Desconocido';
+    } else {
+      estadoTexto = 'Desconocido';
+    }
+
+    // Comparar con el filtro seleccionado
+    return estadoTexto === selectedEstadoFilter;
   });
 
   return (
@@ -604,73 +621,21 @@ const Soliespacio = () => {
             <h1 className="inventory-main-title-xd29">Solicitudes de Espacios</h1>
 
             <div className="filters-row-xd30" style={{ marginTop: '15px' }}>
-              <Dropdown className="category-filter-dropdown-xd31">
-                <Dropdown.Toggle
-                  variant="success"
-                  id="dropdown-espacio"
-                  className="dropdown-toggle-xd146"
-                >
-                  {selectedEspacioFilter} <span className="dropdown-arrow-xd32">▼</span>
-                </Dropdown.Toggle>
-                <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
-                  <Dropdown.Item onClick={() => handleEspacioFilter("Todos los Espacios")} className="dropdown-item-xd148">Todos los Espacios</Dropdown.Item>
-                  {espacioNames.length === 0 ? (
-                    <Dropdown.Item className="dropdown-item-xd148">(No hay espacios)</Dropdown.Item>
-                  ) : (
-                    espacioNames.map((nombre, idx) => (
-                      <Dropdown.Item key={nombre + '-' + idx} onClick={() => handleEspacioFilter(nombre)} className="dropdown-item-xd148">{nombre}</Dropdown.Item>
-                    ))
-                  )}
-                </Dropdown.Menu>
-              </Dropdown>
-
-              <Dropdown className="category-filter-dropdown-xd31">
-                <Dropdown.Toggle
-                  variant="success"
-                  id="dropdown-estado"
-                  className="dropdown-toggle-xd146"
-                >
-                  {selectedEstadoFilter} <span className="dropdown-arrow-xd32">▼</span>
-                </Dropdown.Toggle>
-                <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
-                  <Dropdown.Item
-                    onClick={() => handleEstadoFilter("Todos los Estados")}
-                    className="dropdown-item-xd148"
-                  >
-                    Todos los Estados
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => handleEstadoFilter("Pendiente")}
-                    className="dropdown-item-xd148"
-                  >
-                    Pendiente
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => handleEstadoFilter("Aprobado")}
-                    className="dropdown-item-xd148"
-                  >
-                    Aprobado
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => handleEstadoFilter("Rechazado")}
-                    className="dropdown-item-xd148"
-                  >
-                    Rechazado
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => handleEstadoFilter("Cancelado")}
-                    className="dropdown-item-xd148"
-                  >
-                    Cancelado
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => handleEstadoFilter("Finalizado")}
-                    className="dropdown-item-xd148"
-                  >
-                    Finalizado
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
+              <select 
+                value={selectedEstadoFilter}
+                onChange={(e) => handleEstadoFilter(e.target.value)}
+                className="estado-filter-select-xd31"
+              >
+                <option value="Todos los Estados">Todos los Estados</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Aprobado">Aprobado</option>
+                <option value="Rechazado">Rechazado</option>
+                <option value="Cancelado">Cancelado</option>
+                <option value="Finalizado">Finalizado</option>
+              </select>
+              <span style={{ marginLeft: '15px', fontSize: '0.9rem', opacity: 0.7 }}>
+                ({solicitudesFiltradas.length} solicitudes)
+              </span>
             </div>
           </div>
 
@@ -1089,9 +1054,23 @@ const Soliespacio = () => {
             </Form>
           )}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setEditEspacio(null)}>Cancelar</Button>
-          <Button variant="success" onClick={handleSaveEsp} disabled={savingEsp}>{savingEsp ? 'Guardando...' : 'Guardar Cambios'}</Button>
+        <Modal.Footer style={{ justifyContent: 'space-between' }}>
+          <Button 
+            variant="danger" 
+            onClick={() => {
+              if (editEspacio && editEspacio.id) {
+                handleDeleteEsp(editEspacio.id);
+              }
+              setEditEspacio(null);
+            }}
+            title="Eliminar este espacio"
+          >
+            🗑️ Eliminar Espacio
+          </Button>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <Button variant="secondary" onClick={() => setEditEspacio(null)}>Cancelar</Button>
+            <Button variant="success" onClick={handleSaveEsp} disabled={savingEsp}>{savingEsp ? 'Guardando...' : 'Guardar Cambios'}</Button>
+          </div>
         </Modal.Footer>
       </Modal>
 
