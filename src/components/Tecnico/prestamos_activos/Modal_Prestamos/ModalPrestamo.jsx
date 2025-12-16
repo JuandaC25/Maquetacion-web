@@ -87,7 +87,7 @@ function ModalPrestamo({ show, onHide, prestamo, onActualizado }) {
             </div>
             <div className="campo-prestamo">
               <label>Fecha Entrega:</label>
-              <input type="date" disabled value={formatDate(prestamo.fecha_entreg)} />
+              <input type="text" disabled value={formatDateTime(prestamo.fecha_entreg)} />
             </div>
             <div className="campo-prestamo">
               <label>Fecha Recepción:</label>

@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import {useAuth} from '../../../auth/AuthContext';
-import { actualizarMiPerfil } from  "../../../api/UsuariosApi";
-import { Navbar, Modal, Form, Button, Offcanvas } from "react-bootstrap";
+import { Navbar, Offcanvas, Modal, Form, Button } from "react-bootstrap";
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../auth/AuthContext';
+    import { actualizarMiPerfil } from "../../api/UsuariosApi";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import './Header_soli_equi_tec.css'
+import './header_solicitudes_equ_tec/Header_soli_equi_tec.css';
 
-
-function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
+function HeaderTecnicoUnificado({ title }) {
     const [showMenu, setShowMenu] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const { user } = useAuth();
-    
     const [formData, setFormData] = useState({
         nom_us: '',
         ape_us: '',
@@ -21,21 +19,13 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
         password: '',
         confirmPassword: ''
     });
-    
     const handleCloseMenu = () => setShowMenu(false);
     const handleShowMenu = () => setShowMenu(true);
     const handleCloseProfile = () => setShowProfile(false);
     const handleShowProfile = () => setShowProfile(true);
     const handleCloseEditModal = () => {
         setShowEditModal(false);
-        setFormData({
-            nom_us: '',
-            ape_us: '',
-            corre: '',
-            currentPassword: '',
-            password: '',
-            confirmPassword: ''
-        });
+        setFormData({ nom_us: '', ape_us: '', corre: '', currentPassword: '', password: '', confirmPassword: '' });
     };
     const handleShowEditModal = () => {
         setShowProfile(false);
@@ -49,19 +39,12 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
         });
         setShowEditModal(true);
     };
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
-
     const handleSaveChanges = async (e) => {
         e.preventDefault();
-        
-        // Si se quiere cambiar la contraseña, validar que se ingresó la actual
         if (formData.password) {
             if (!formData.currentPassword) {
                 alert('Debes ingresar tu contraseña actual para poder cambiarla');
@@ -72,29 +55,23 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
                 return;
             }
         }
-
         try {
             const dataToSend = {
                 nom_us: formData.nom_us,
                 ape_us: formData.ape_us,
                 corre: formData.corre
             };
-
             if (formData.password) {
                 dataToSend.currentPassword = formData.currentPassword;
                 dataToSend.password = formData.password;
             }
-
             await actualizarMiPerfil(dataToSend);
             alert('Información actualizada con éxito. Por favor, inicia sesión nuevamente.');
             handleCloseEditModal();
             handleLogout();
         } catch (error) {
-            // Mensajes de error personalizados
             let errorMessage = 'Error al actualizar perfil';
-            
-            if (error.message?.includes('contraseña actual es incorrecta') || 
-                error.message?.includes('contraseña actual no coincide')) {
+            if (error.message?.includes('contraseña actual es incorrecta') || error.message?.includes('contraseña actual no coincide')) {
                 errorMessage = '❌ La contraseña actual que ingresaste es incorrecta. Por favor, verifica e intenta nuevamente.';
             } else if (error.message?.includes('proporcionar tu contraseña actual')) {
                 errorMessage = '❌ Debes ingresar tu contraseña actual para poder cambiarla.';
@@ -103,25 +80,20 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
             } else if (error.message) {
                 errorMessage = `❌ ${error.message}`;
             }
-            
             alert(errorMessage);
         }
-    }
-
+    };
     const handleLogout = () => {
         localStorage.clear();
         sessionStorage.clear();
         window.location.replace("/Login");
-    }
-
+    };
     const navigateToHome = () => {
         window.location.href = "http://localhost:5173/Login";
     };
-
     const navigateToBlog = () => {
         window.location.href = "https://electricidadelectronicaytelecomu.blogspot.com/";
     };
-
     return (
         <div className='header-pedidos__container'>
             <Navbar expand="xxxl" className="w-100">
@@ -136,7 +108,6 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
                         </span>
                         <span className="menu-button__text">MENU</span>
                     </button>
-
                     <Offcanvas show={showMenu} onHide={handleCloseMenu}>
                         <Offcanvas.Header className="offcanvas-header" closeButton>
                             <Offcanvas.Title className="offcanvas-title">
@@ -145,61 +116,36 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
                         </Offcanvas.Header>
                         <Offcanvas.Body className="menu-cards">
                             <Link to="/Prestamos-Tecnico" className="menu-card">
-                                <p className="card-title">
-                                    <i className="bi bi-ticket-detailed"></i> Prestamos
-                                </p>
-                                <p className="card-subtitle">
-                                    Ver solicitudes de prestamos 
-                                </p>
+                                <p className="card-title"><i className="bi bi-ticket-detailed"></i> Prestamos</p>
+                                <p className="card-subtitle">Ver solicitudes de prestamos</p>
                             </Link>
                             <Link to="/PrestamosActivos" className="menu-card">
-                                <p className="card-title">
-                                    <i className="bi bi-search"></i> Prestamos Activos
-                                </p>
+                                <p className="card-title"><i className="bi bi-search"></i> Prestamos Activos</p>
                                 <p className="card-subtitle">Ver solo prestamos activos</p>
                             </Link>
                             <Link to="/Tickets-Tecnico" className="menu-card">
-                                <p className="card-title">
-                                    <i className="bi bi-person-plus"></i> Tickets
-                                </p>
-                                <p className="card-subtitle">
-                                  Ver tickets de equipos 
-                                </p>
+                                <p className="card-title"><i className="bi bi-person-plus"></i> Tickets</p>
+                                <p className="card-subtitle">Ver tickets de equipos</p>
                             </Link>
                             <Link to="/TicketsActivos" className="menu-card">
-                                <p className="card-title">
-                                    <i className="bi bi-box-seam"></i> Tickets Activos 
-                                </p>
-                                <p className="card-subtitle">
-                                    Ver solo tickets activos
-                                </p>
-                                    
+                                <p className="card-title"><i className="bi bi-box-seam"></i> Tickets Activos</p>
+                                <p className="card-subtitle">Ver solo tickets activos</p>
                             </Link>
                             <Link to="/Trazabilidad-Tecnico" className="menu-card">
-                                <p className="card-title">
-                                    <i className="bi bi-graph-up"></i> Trazabilidad
-                                </p>
+                                <p className="card-title"><i className="bi bi-graph-up"></i> Trazabilidad</p>
                                 <p className="card-subtitle">Ver historial de acciones de tickets</p>
                             </Link>
                             <Link to="/Solicitudes-Espacios-Tecnico" className="menu-card">
-                                <p className="card-title">
-                                    <i className="bi bi-building"></i> Solicitudes Espacios
-                                </p>
-                                <p className="card-subtitle">
-                                    Ver solicitudes de espacios 
-                                </p>
+                                <p className="card-title"><i className="bi bi-building"></i> Solicitudes Espacios</p>
+                                <p className="card-subtitle">Ver solicitudes de espacios</p>
                             </Link>
                             <Link to="/HistorialTec" className="menu-card">
-                                <p className="card-title">
-                                    <i className="bi bi-search"></i> Historial
-                                </p>
+                                <p className="card-title"><i className="bi bi-search"></i> Historial</p>
                                 <p className="card-subtitle">Ver registros(prestamos y tickets)</p>
                             </Link>
                         </Offcanvas.Body>
                     </Offcanvas>
-
                     <h1 className='header-pedidos__title-main'>{title}</h1>
-                    
                     <div className='header-pedidos__icons-container'>
                         <div className="header-pedidos__buttons-wrapper">
                             <div className="icon-button-group">
@@ -210,7 +156,6 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
                                 </button>
                                 <span className="icon-button-group__text">Home</span>
                             </div>
-
                             <div className="icon-button-group">
                                 <button className="icon-button" onClick={navigateToBlog}>
                                     <svg className="icon-button__svg" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -219,7 +164,6 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
                                 </button>
                                 <span className="icon-button-group__text">Blog CEET</span>
                             </div>
-
                             <div className="icon-button-group">
                                 <button className="icon-button" onClick={handleShowProfile}>
                                     <svg className="icon-button__svg" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -232,7 +176,6 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
                     </div>
                 </div>
             </Navbar>
-            
             {showProfile && (
                 <div className="profile-card">
                     <div className="profile-card-border-top"></div>
@@ -245,17 +188,12 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
                     <div className="profile-card-img">
                         <i className="bi bi-person-circle" style={{fontSize:'2.2rem',color:'#fff'}}></i>
                     </div>
-                    <span className="profile-card-title">
-                        ¡Hola, {user?.nombre || user?.name || user?.username || 'usuario'}!
-                    </span>
-                    <span className="profile-card-email">
-                        {user?.email || user?.correo || 'Sin correo'}
-                    </span>
+                    <span className="profile-card-title">¡Hola, {user?.nombre || user?.name || user?.username || 'usuario'}!</span>
+                    <span className="profile-card-email">{user?.email || user?.correo || 'Sin correo'}</span>
                     <button className="profile-card-btn" onClick={handleShowEditModal}>Editar información</button>
                     <button className="profile-card-btn" onClick={handleLogout}>Cerrar sesión</button>
                 </div>
             )}
-
             <Modal show={showEditModal} onHide={handleCloseEditModal} centered>
                 <Modal.Header closeButton className="edit-modal-header">
                     <Modal.Title className="edit-modal-title">
@@ -275,47 +213,23 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
                         <Form.Group className="mb-3">
                             <Form.Label>Correo Electrónico</Form.Label>
                             <Form.Control type="email" name="corre" value={formData.corre} onChange={handleInputChange} required />
-                            <Form.Text className="text-muted">
-                                El correo es tu identificador. Si lo cambias, deberás iniciar sesión con el nuevo correo.
-                            </Form.Text>
+                            <Form.Text className="text-muted">El correo es tu identificador. Si lo cambias, deberás iniciar sesión con el nuevo correo.</Form.Text>
                         </Form.Group>
                         <hr className="my-3 edit-modal-divider" />
                         <h5 className="edit-modal-subtitle">Cambio de Contraseña</h5>
-                        <Form.Text className="text-muted d-block mb-3">
-                            Si deseas cambiar tu contraseña, completa los siguientes campos:
-                        </Form.Text>
+                        <Form.Text className="text-muted d-block mb-3">Si deseas cambiar tu contraseña, completa los siguientes campos:</Form.Text>
                         <Form.Group className="mb-3">
                             <Form.Label>Contraseña Actual</Form.Label>
-                            <Form.Control 
-                                type="password" 
-                                name="currentPassword" 
-                                value={formData.currentPassword} 
-                                onChange={handleInputChange}
-                                placeholder="Ingresa tu contraseña actual"
-                            />
-                            <Form.Text className="text-muted">
-                                Requerida solo si deseas cambiar tu contraseña.
-                            </Form.Text>
+                            <Form.Control type="password" name="currentPassword" value={formData.currentPassword} onChange={handleInputChange} placeholder="Ingresa tu contraseña actual" />
+                            <Form.Text className="text-muted">Requerida solo si deseas cambiar tu contraseña.</Form.Text>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Nueva Contraseña</Form.Label>
-                            <Form.Control 
-                                type="password" 
-                                name="password" 
-                                value={formData.password} 
-                                onChange={handleInputChange}
-                                placeholder="Ingresa tu nueva contraseña"
-                            />
+                            <Form.Control type="password" name="password" value={formData.password} onChange={handleInputChange} placeholder="Ingresa tu nueva contraseña" />
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Confirmar Nueva Contraseña</Form.Label>
-                            <Form.Control 
-                                type="password" 
-                                name="confirmPassword" 
-                                value={formData.confirmPassword} 
-                                onChange={handleInputChange}
-                                placeholder="Confirma tu nueva contraseña"
-                            />
+                            <Form.Control type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} placeholder="Confirma tu nueva contraseña" />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -327,6 +241,4 @@ function Header_solicitud_tec({ title = "Solicitudes de Equipos" }) {
         </div>
     );
 }
-export default Header_solicitud_tec;
-
-
+export default HeaderTecnicoUnificado;

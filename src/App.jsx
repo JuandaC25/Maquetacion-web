@@ -29,6 +29,7 @@ import Solicitudes from './paginas/Solicitudes/Solicitudes.jsx';
 import TicketsActivos from './components/Tecnico/tickets_activos/TicketsActivos.jsx';
 import Categorias from './components/admin/categoria_admin/Categorias.jsx';
 import PrestamosActivos from './components/Tecnico/prestamos_activos/PrestamosActivos.jsx';
+import TrazabilidadTecnico from './components/Tecnico/trazabilidad/TrazabilidadTecnico.jsx';
 function App() {
   return (
 
@@ -137,6 +138,11 @@ function App() {
         <Route path='/PrestamosActivos' element={
           <ProtectedRoute roles={['TECNICO']} excludeRoles={['ADMINISTRADOR']}>
             <PrestamosActivos/>
+          </ProtectedRoute>
+        }/>
+        <Route path='/Trazabilidad-Tecnico' element={
+          <ProtectedRoute roles={['TECNICO']} excludeRoles={['ADMINISTRADOR']}>
+            <TrazabilidadTecnico/>
           </ProtectedRoute>
         }/>
         <Route path='/Categorias' element={

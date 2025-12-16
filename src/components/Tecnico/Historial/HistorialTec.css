@@ -179,7 +179,7 @@
 
 .filtro-icono.btn:hover,
 .filtro-icono .dropdown-toggle:hover {
-  background-color: #a9d7ac !important;
+  background-color: rgba(9, 180, 26, 0.901) !important;
   transform: translateY(-1px);
   color: white !important;
 }
@@ -199,7 +199,7 @@
 #dropdown-general.btn-primary:hover,
 #dropdown-general.dropdown-toggle:hover,
 #dropdown-general.show {
-  background-color: #a9d7ac !important;
+  background-color: rgba(9, 180, 26, 0.901) !important;
   color: white !important;
   transform: translateY(-1px);
 }

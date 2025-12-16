@@ -3,7 +3,7 @@ import '../solicitudes_de_equipos/Soli_Equi_Tec.css';
 import Footer from '../../Footer/Footer';
 import Button from 'react-bootstrap/Button';
 import ModalEspacios from './ModalEspacios/ModalEspacios';
-import Header_soli_equi_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
+import HeaderTecnicoUnificado from '../HeaderTecnicoUnificado';
 import { authorizedFetch } from '../../../api/http';
 
 export default function SoliEspaciosTec() {
@@ -24,15 +24,31 @@ export default function SoliEspaciosTec() {
         if (!resSolicitudes.ok) throw new Error(`Error ${resSolicitudes.status}`);
         const dataSolicitudes = await resSolicitudes.json();
         console.log('Solicitudes recibidas:', dataSolicitudes);
-        
-        // Filtrar solo solicitudes de espacios (Pendiente o Aprobado)
-        const espacios = Array.isArray(dataSolicitudes) 
-          ? dataSolicitudes.filter(sol => 
-              sol.id_espa !== null && 
-              sol.id_espa !== undefined && 
-              (sol.est_soli === "Pendiente" || sol.est_soli === "Aprobado")
-            )
+
+        // Normalizar campo de estado que puede venir como `est_soli`, `estadosoli` o `id_est_soli`
+        const estadoNombreFromId = id => {
+          const map = {1: 'Pendiente', 2: 'Aprobado', 3: 'Rechazado', 4: 'Cancelado', 5: 'En uso', 6: 'Finalizado'};
+          return map[Number(id)] || '';
+        };
+        const getEstadoName = raw => {
+          if (raw === null || typeof raw === 'undefined') return '';
+          if (typeof raw === 'number' || (!isNaN(Number(raw)) && String(raw).trim() !== '')) {
+            return estadoNombreFromId(raw);
+          }
+          return String(raw).trim();
+        };
+
+        // Mapear solicitudes para añadir `est_soli` legible (cadena)
+        const normalizadas = Array.isArray(dataSolicitudes)
+          ? dataSolicitudes.map(s => {
+              const rawEstado = s.est_soli ?? s.estadosoli ?? s.id_est_soli ?? s.estadosoli;
+              return { ...s, est_soli: getEstadoName(rawEstado) };
+            })
           : [];
+
+        const espacios = normalizadas.filter(sol => sol.id_espa !== null && sol.id_espa !== undefined && (sol.est_soli === 'Pendiente' || sol.est_soli === 'Aprobado'));
+
+        setSolicitudes(espacios);
         
         setSolicitudes(espacios);
       } catch (err) {
@@ -54,7 +70,19 @@ export default function SoliEspaciosTec() {
          esp.nom_usu?.toLowerCase().includes(busquedaEspacio.toLowerCase()))
       : true;
     
-    const cumpleEstado = estadoFiltro ? esp.est_soli === estadoFiltro : true;
+    // comparar estadoFiltro soportando nombres e ids
+    let cumpleEstado = true;
+    if (estadoFiltro) {
+      const raw = esp.est_soli;
+      const filtroLower = String(estadoFiltro).trim().toLowerCase();
+      if (typeof raw === 'number' || (!isNaN(Number(raw)) && String(raw).trim() !== '')) {
+        const id = Number(raw);
+        const map = {1: 'pendiente', 2: 'aprobado', 3: 'rechazado', 4: 'en uso', 5: 'finalizado'};
+        cumpleEstado = map[id] === filtroLower;
+      } else {
+        cumpleEstado = String(raw || '').trim().toLowerCase() === filtroLower;
+      }
+    }
     
     const cumpleFecha =
       (!fechaInicio || new Date(esp.fecha_ini) >= new Date(fechaInicio)) &&
@@ -123,7 +151,7 @@ export default function SoliEspaciosTec() {
 
   return (
     <>
-      <Header_soli_equi_tec title="Solicitudes de Espacios" />
+      <HeaderTecnicoUnificado title="Solicitudes de Espacios" />
 
       <main className="contenedor-principal-peq">
         <div className="barra-filtros">

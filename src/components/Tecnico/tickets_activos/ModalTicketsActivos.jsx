@@ -165,7 +165,15 @@ function ModalTicketsActivos({ show, onHide, ticket, elementos, onTicketUpdated 
             )}
             <div className='modal-item-full'>
               <label className='modal-label'>Observaciones</label>
-              <textarea value={ticket.observaciones || 'Sin observaciones'} readOnly className="modal-textarea" />
+              <textarea
+                value={
+                  (ticket && (ticket.obser || ticket.obse || ticket.observaciones || ticket.observacion))
+                    ? (ticket.obser || ticket.obse || ticket.observaciones || ticket.observacion)
+                    : 'Sin observaciones'
+                }
+                readOnly
+                className="modal-textarea"
+              />
             </div>
           </div>
         ) : (

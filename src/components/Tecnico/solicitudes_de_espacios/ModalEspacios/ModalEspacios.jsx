@@ -17,10 +17,12 @@ function ModalEspacios({ show, onHide, espacio }) {
   const formatDate = (fecha) => {
     if (!fecha) return '';
     const d = new Date(fecha);
+    const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${year}-${month}-${day}`;
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
   const abrirConfirmacionAprobacion = () => {
@@ -187,10 +189,7 @@ function ModalEspacios({ show, onHide, espacio }) {
               <label className="info-label">🏢 Espacio Solicitado</label>
               <span className="info-value">{espacio.nom_espa || 'N/A'}</span>
             </div>
-            <div className="info-row">
-              <label className="info-label">🏛️ Ambiente</label>
-              <span className="info-value">{espacio.ambient || 'N/A'}</span>
-            </div>
+            {/* Ambiente eliminado por solicitud */}
           </div>
         </Modal.Body>
         <Modal.Footer>

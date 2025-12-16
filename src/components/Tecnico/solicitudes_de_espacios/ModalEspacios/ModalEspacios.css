@@ -40,6 +40,10 @@
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
+/* make grid rows equal height so boxes match */
+.detalle-info {
+  grid-auto-rows: 1fr;
+}
 
 .info-row {
   display: flex;
@@ -77,9 +81,7 @@
   border-left: none;
 }
 
-.info-row:last-child {
-  grid-column: 1 / -1;
-}
+/* Removed forcing last child to span full width so all boxes keep same size */
 
 .estado-badge {
   font-weight: 600;
