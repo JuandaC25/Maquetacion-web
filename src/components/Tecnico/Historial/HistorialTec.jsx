@@ -9,6 +9,8 @@ import { FaFilter } from "react-icons/fa";
 import ModalTickets from "./ModalHistorial/ModalTickets.jsx";
 import TicketsActivosTec from "./TicketsActivosTec.jsx";
 import { authorizedFetch } from "../../../api/http";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const HistorialTec = () => {
   const [categoriaGeneral, setCategoriaGeneral] = useState("Tickets"); 
@@ -188,6 +190,75 @@ const HistorialTec = () => {
 
   const cerrarModal = () => setMostrarModal(false);
 
+  const exportToPDF = () => {
+    try {
+      if (!historialFiltrado || historialFiltrado.length === 0) {
+        alert('No hay registros para exportar');
+        return;
+      }
+
+      const doc = new jsPDF();
+      const title = `Elemento - Historial`;
+      doc.setFontSize(14);
+      doc.text(title, 14, 18);
+
+      let columns = [];
+      let rows = [];
+
+      const getDescription = (it) => {
+        return (
+          it.descripcion || it.descripcion_ticket || it.descripcion_ticket || it.descripcion_tic || it.detalle || it.obs || it.observacion || it.tipo_pres || ''
+        );
+      };
+
+      if (categoriaGeneral === 'Tickets') {
+        columns = ['ID', 'Elemento', 'Estado', 'Usuario', 'Fecha'];
+        rows = historialFiltrado.map((t) => [
+          t.id_tickets || t.id || '',
+          t.nom_elem || t.nom_espa || t.titulo || t.titulo_ticket || '',
+          t.est_soli || t.estado || t.estado_ticket || '',
+          t.nom_usu || t.nombre_usuario || '',
+          new Date(t.fecha_in || t.fecha_actualizacion || t.fecha_creacion || '').toLocaleString()
+        ]);
+      } else if (categoriaGeneral === 'Préstamos') {
+        columns = ['ID', 'Elemento', 'Categoría', 'Usuario', 'Fecha', 'Estado'];
+        rows = historialFiltrado.map((p) => [
+          p.id_prest || '',
+          p.nom_elem || '',
+          p.categoria || p.nom_cat || '',
+          p.nom_usu || '',
+          new Date(p.fecha_entreg || p.fecha_in || '').toLocaleDateString(),
+          p.nom_estado || (p.estado === 0 ? 'Finalizado' : (p.estado || ''))
+        ]);
+      } else {
+        columns = ['ID', 'Espacio', 'Usuario', 'Fecha', 'Estado'];
+        rows = historialFiltrado.map((e) => [
+          e.id_soli || '',
+          e.nom_espa || '',
+          e.nom_usu || '',
+          new Date(e.fecha_fn || e.fecha_ini || '').toLocaleDateString(),
+          e.est_soli || e.nom_estado || ''
+        ]);
+      }
+
+      // use autotable function
+      autoTable(doc, {
+        startY: 26,
+        head: [columns],
+        body: rows,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [63, 187, 52] }
+      });
+
+      const fecha = new Date().toISOString().split('T')[0];
+      const nombre = `${categoriaGeneral.toLowerCase()}_historial_${fecha}.pdf`;
+      doc.save(nombre);
+    } catch (err) {
+      console.error('Error exportando PDF:', err);
+      alert('Ocurrió un error al generar el PDF');
+    }
+  };
+
   return (
     <>
       <HeaderTecnicoUnificado title="Historial" />
@@ -319,6 +390,12 @@ const HistorialTec = () => {
           )}
         </div>
       </section>
+
+      <div className="export-container">
+        <button className="button-export" onClick={exportToPDF}>
+          📄 Exportar PDF
+        </button>
+      </div>
 
       {ticketSeleccionado && (
         <ModalTickets
