@@ -29,8 +29,11 @@
   border-radius: 0.5rem !important;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
               0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   margin-top: 0.5rem !important;
+  z-index: 1050 !important;
+  position: absolute !important;
+  min-width: 200px !important;
 }
 
 .dropdown-item-xd148 {
@@ -490,6 +493,8 @@ textarea.form-control {
   margin-bottom: 20px;
   padding: 14px 16px;
   box-shadow: 0 8px 20px rgba(2,6,23,0.06);
+  z-index: 1005 !important;
+  overflow: visible !important;
 }
 
 .fade.solielementos-header-bar-se01.alert,
@@ -516,6 +521,8 @@ textarea.form-control {
   gap: 15px;
   flex-wrap: wrap;
   align-items: center;
+  overflow: visible !important;
+  position: relative !important;
 }
 
 .category-filter-dropdown-se06,
@@ -548,6 +555,9 @@ textarea.form-control {
   border-radius: 5px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border: 1px solid #ddd;
+  z-index: 1050 !important;
+  position: absolute !important;
+  min-width: 200px !important;
 }
 
 .dropdown-item-se146 {
@@ -594,6 +604,9 @@ textarea.form-control {
   opacity: 0;
   transform: translateY(-6px) scale(.992);
   transition: transform 220ms cubic-bezier(.2,.9,.3,1), opacity 200ms ease;
+  z-index: 1050 !important;
+  position: absolute !important;
+  min-width: 200px !important;
 }
 
 .filters-row-se05 .category-filter-dropdown-se06.show .dropdown-menu-se145,

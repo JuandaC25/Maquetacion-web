@@ -23,8 +23,11 @@
   border-radius: 0.5rem !important;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
               0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   margin-top: 0.5rem !important;
+  z-index: 1050 !important;
+  position: absolute !important;
+  min-width: 200px !important;
 }
 
 .dropdown-item-xd148 {
@@ -74,9 +77,10 @@
   padding: 18px 40px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 1000;
+  position: sticky; top: 0; z-index: 1005;
   border-radius: 8px;
   margin: 8px 0 0 0;
+  overflow: visible !important;
 }
 
 .header-bar-content-xd27 {
@@ -402,6 +406,8 @@
   gap: 16px;
   flex-wrap: nowrap;
   width: 100%;
+  overflow: visible !important;
+  position: relative !important;
 }
 .pagination-1215-xd36 {
   display: flex;
