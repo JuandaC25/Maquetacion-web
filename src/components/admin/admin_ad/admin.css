@@ -170,6 +170,7 @@ background-color: #ffffff00;
   text-align: start;
   border-bottom: none !important;
   box-shadow: none !important;
+  overflow: visible !important;
 }
 
 .container-1201 {
@@ -184,8 +185,8 @@ background-color: #ffffff00;
   display: flex;
   align-items: center;
 }
-.flex-1203 { gap: 10px; }
-.flex-inner-1204 { gap: 10px; }
+.flex-1203 { gap: 10px; overflow: visible !important; }
+.flex-inner-1204 { gap: 10px; overflow: visible !important; position: relative !important; }
 
 .contador-ticket-1207 {
   font-weight: 500;
@@ -364,8 +365,11 @@ textarea.form-control {
   border-radius: 0.5rem !important;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
               0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   margin-top: 0.5rem !important;
+  z-index: 1050 !important;
+  position: absolute !important;
+  min-width: 200px !important;
 }
 
 .custom-dropdown-item {

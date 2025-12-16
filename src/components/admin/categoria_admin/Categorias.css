@@ -678,4 +678,5 @@
 
 .dropdown-menu-xd147 {
   min-width: 180px;
+  z-index: 1050 !important;
 }

@@ -7,7 +7,7 @@ import "./admin.css";
 import Footer from '../../Footer/Footer.jsx';
 import HeaderAd from '../headers/AdminHeader.jsx'; 
 import { Ticket } from 'react-bootstrap-icons';
-import { obtenerTickets, actualizarTicket } from '../../../api/ticket.js';
+import { obtenerTickets, actualizarTicket, obtenerTicketPorId } from '../../../api/ticket.js';
 import { getToken } from '../../../api/AuthApi';
 import ReportarEquipo from '../../Home/ReportarEquipo/ReportarEquipo.jsx';
 import { obtenerCategoria } from '../../../api/CategoriaApi.js';
@@ -18,6 +18,7 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
   // --- MODAL HISTORIAL DE TICKETS ---
   const [showHistorialModal, setShowHistorialModal] = useState(false);
   const [historialTicket, setHistorialTicket] = useState([]);
+  const [ticketDetails, setTicketDetails] = useState(null);
   const [historialEdit, setHistorialEdit] = useState({});
   const [historialLoading, setHistorialLoading] = useState(false);
   const [historialError, setHistorialError] = useState(null);
@@ -174,19 +175,26 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
     setHistorialError(null);
     setHistorialTicketId(ticket.id || ticket.id_tickets);
     try {
+      // Obtener detalles del ticket desde la API (asegura que mostramos la observación guardada en BD)
+      let fetchedTicket = null;
+      try {
+        fetchedTicket = await obtenerTicketPorId(ticket.id || ticket.id_tickets);
+        setTicketDetails(fetchedTicket || null);
+      } catch (errTicket) {
+        console.warn('No se pudo obtener detalles del ticket:', errTicket);
+        setTicketDetails(null);
+      }
+
+      // Obtener todas las entradas de trazabilidad para mostrar debajo
       const data = await obtenerHistorialPorTicket(ticket.id || ticket.id_tickets);
       console.log('Historial recibido para ticket', ticket.id || ticket.id_tickets, data);
-      let ultimaTrazabilidad = [];
-      if (data && data.length > 0) {
-        const sortedData = [...data].sort((a, b) => {
-          const fechaA = new Date(a.fech || a.fecha || 0);
-          const fechaB = new Date(b.fech || b.fecha || 0);
-          return fechaB - fechaA;
-        });
-        ultimaTrazabilidad = [sortedData[0]];
-      }
-      
-      setHistorialTicket(ultimaTrazabilidad);
+      const trazabilidades = Array.isArray(data) ? data.sort((a, b) => {
+        const fechaA = new Date(a.fech || a.fecha || 0);
+        const fechaB = new Date(b.fech || b.fecha || 0);
+        return fechaB - fechaA;
+      }) : [];
+
+      setHistorialTicket(trazabilidades);
       setHistorialEdit({});
     } catch (err) {
       setHistorialError(err.message);
@@ -715,12 +723,40 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
             <div className="text-center py-4">Cargando historial...</div>
           ) : historialError ? (
             <Alert variant="danger">{historialError}</Alert>
-          ) : historialTicket && historialTicket.length > 0 ? (
+          ) : (ticketDetails || (historialTicket && historialTicket.length > 0)) ? (
             <div className="historial-list" style={{ maxHeight: 400, overflowY: 'auto' }}>
+              {/* Observación principal del ticket (desde BD) */}
+              {ticketDetails && (() => {
+                const td = ticketDetails;
+                const ticketObs = td.obser ?? td.Obser ?? td.observa ?? td.descripcion ?? td.observacion ?? td.observ ?? td.obserb ?? '';
+                return (
+                  <div key={`ticket-observ-${td.id || td.id_tickets || historialTicketId}`} className="historial-card report-card">
+                    <div className="report-header">
+                      <div className="report-title">Ticket — Observación principal</div>
+                      <div className="report-sub">Ticket: <span className="mono">{td.id_tickets ?? td.id ?? historialTicketId}</span></div>
+                    </div>
+                    <div className="report-meta">
+                      <div className="meta-item">
+                        <div className="meta-label">Fecha apertura</div>
+                        <div className="meta-value">{td.fecha_in ?? td.fecha_creacion ?? td.fecha ?? td.fech ?? ''}</div>
+                      </div>
+                      <div className="meta-item">
+                        <div className="meta-label">Elemento</div>
+                        <div className="meta-value">{td.nom_elem ?? td.elemento ?? td.nom_eleme ?? ''}</div>
+                      </div>
+                    </div>
+                    <div className="report-body">
+                      <div className="report-section-label">Observación del Ticket (BD)</div>
+                      <div className="report-observacion">{ticketObs ? ticketObs : 'Sin observación en la base de datos'}</div>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {historialTicket.map((h) => {
                 const id = h.id_trsa ?? h.id ?? '';
                 const fecha = h.fech ?? h.fecha ?? '';
-                const observ = h.obser ?? h.obse ?? h.descripcion ?? '';
+                const observ = h.obser ?? h.obse ?? h.descripcion ?? h.observa ?? h.observ ?? '';
                 const elemento = h.nom_elemen ?? h.nom_elem ?? h.elemento ?? '';
                 const ticketNum = h.id_ticet ?? h.id_tickets ?? historialTicketId ?? '';
                 
@@ -731,11 +767,13 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
                 // Quién reportó
                 const usuarioReporta = h.nom_us_reporta ?? '';
                 const cedulaReporta = h.num_doc_reporta ?? '';
-                
+                const isTrasabilidad = typeof h.id_trsa !== 'undefined' || typeof h.id_trs !== 'undefined' || !!h.nom_us;
+                const isTicketRecord = !isTrasabilidad && (typeof h.id_tickets !== 'undefined' || typeof h.id_ticet !== 'undefined' || typeof h.id !== 'undefined' && (h.fecha_in || h.obser));
+
                 return (
                   <div key={id || Math.random()} className="historial-card report-card">
                     <div className="report-header">
-                      <div className="report-title">Trazabilidad — Entrada #{id}</div>
+                      <div className="report-title">{isTrasabilidad ? 'Trazabilidad' : 'Ticket'} — Entrada #{id || ticketNum}</div>
                       <div className="report-sub">Ticket: <span className="mono">{ticketNum}</span></div>
                     </div>
 
@@ -744,14 +782,15 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
                         <div className="meta-label">Fecha</div>
                         <div className="meta-value">{fecha}</div>
                       </div>
+
                       <div className="meta-item" style={{ gridColumn: '1 / -1' }}>
                         <div className="meta-label">Reportado por / Respondido por</div>
                         <div className="meta-value" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
                           <div>
-                            <strong>Reportó:</strong> {usuarioReporta || 'N/A'}
+                            <strong>Reportó:</strong> {usuarioReporta || (isTicketRecord ? (h.nom_us || h.nombre || 'N/A') : 'N/A')}
                           </div>
                           <div style={{ borderLeft: '1px solid #ddd', paddingLeft: '20px' }}>
-                            <strong>Respondió (Técnico):</strong> {tecnico}
+                            <strong>Respondió (Técnico):</strong> {tecnico || (isTicketRecord ? 'N/A' : tecnico)}
                           </div>
                         </div>
                       </div>
@@ -763,11 +802,22 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
                     </div>
 
                     <div className="report-body">
-                      <div className="report-section-label">Respuesta del Técnico</div>
-                      <div className="report-observacion">{observ || 'Sin respuesta registrada'}</div>
+                      {isTicketRecord && (
+                        <>
+                          <div className="report-section-label">Observación del Ticket</div>
+                          <div className="report-observacion">{h.obser ?? h.observa ?? h.descripcion ?? 'Sin observación en el ticket'}</div>
+                        </>
+                      )}
+
+                      {isTrasabilidad && (
+                        <>
+                          <div className="report-section-label">Respuesta del Técnico (Trazabilidad)</div>
+                          <div className="report-observacion">{observ || 'Sin observación en la base de datos'}</div>
+                        </>
+                      )}
                     </div>
 
-                    {editMode && (
+                    {editMode && isTrasabilidad && (
                       <div className="historial-edit">
                         <Form.Control 
                           as="textarea" 
@@ -958,12 +1008,40 @@ const Admin = () => {
       }
 
       const ticketsList = await obtenerTickets();
-      const ticketsArr = Array.isArray(ticketsList) ? ticketsList : [];
+      let ticketsArr = Array.isArray(ticketsList) ? ticketsList : [];
+      try {
+        const elementos = await ElementosService.obtenerElementos().catch(() => []);
+        if (Array.isArray(elementos) && elementos.length > 0) {
+          ticketsArr = ticketsArr.map(t => {
+            const elemId = t.id_eleme ?? t.id_elem ?? t.id_elemento ?? t.id_elemenn;
+            const nombreElementoTicket = (t.nom_elem || t.nom_eleme || t.elemento || '').toString();
+            let elementoRelacionado = elementos.find(e => e.id_elemen === elemId || e.id_elemen == elemId || e.id === elemId || e.id == elemId) || null;
+            if (!elementoRelacionado && nombreElementoTicket) {
+              const ticketNameLow = nombreElementoTicket.toLowerCase();
+              elementoRelacionado = elementos.find(e => {
+                const en = (e.nom_eleme || e.nom_elemen || e.nom || e.nombre || '').toString().toLowerCase();
+                return en === ticketNameLow || en.includes(ticketNameLow) || ticketNameLow.includes(en);
+              }) || null;
+            }
+
+            const categoriaName = elementoRelacionado ? (elementoRelacionado.tip_catg || elementoRelacionado.nom_cat || '') : (t.nom_cat || '');
+            const subcategoriaName = elementoRelacionado ? (elementoRelacionado.sub_catg || elementoRelacionado.nom_subcateg || '') : (t.nom_subcateg || '');
+
+            return {
+              ...t,
+              elementoRelacionado,
+              categoria: categoriaName,
+              subcategoria: subcategoriaName
+            };
+          });
+        }
+      } catch (e) {
+        console.warn('No se pudo enriquecer tickets antes de generar PDF:', e);
+      }
       const doc = new jsPDF({ unit: 'pt', format: 'a4' });
       const margin = 40;
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
-      // Título principal
       let y = 60;
       doc.setFontSize(18);
       doc.setFont(undefined, 'bold');
@@ -1108,7 +1186,37 @@ const Admin = () => {
     setDfLoading(true);
     try {
       const ticketsList = await obtenerTickets();
-      const ticketsArr = Array.isArray(ticketsList) ? ticketsList : [];
+      let ticketsArr = Array.isArray(ticketsList) ? ticketsList : [];
+      // Enriquecer tickets con elementos para que los PDFs individuales incluyan categoría/subcategoría
+      try {
+        const elementos = await ElementosService.obtenerElementos().catch(() => []);
+        if (Array.isArray(elementos) && elementos.length > 0) {
+          ticketsArr = ticketsArr.map(t => {
+            const elemId = t.id_eleme ?? t.id_elem ?? t.id_elemento ?? t.id_elemenn;
+            const nombreElementoTicket = (t.nom_elem || t.nom_eleme || t.elemento || '').toString();
+            let elementoRelacionado = elementos.find(e => e.id_elemen === elemId || e.id_elemen == elemId || e.id === elemId || e.id == elemId) || null;
+            if (!elementoRelacionado && nombreElementoTicket) {
+              const ticketNameLow = nombreElementoTicket.toLowerCase();
+              elementoRelacionado = elementos.find(e => {
+                const en = (e.nom_eleme || e.nom_elemen || e.nom || e.nombre || '').toString().toLowerCase();
+                return en === ticketNameLow || en.includes(ticketNameLow) || ticketNameLow.includes(en);
+              }) || null;
+            }
+
+            const categoriaName = elementoRelacionado ? (elementoRelacionado.tip_catg || elementoRelacionado.nom_cat || '') : (t.nom_cat || '');
+            const subcategoriaName = elementoRelacionado ? (elementoRelacionado.sub_catg || elementoRelacionado.nom_subcateg || '') : (t.nom_subcateg || '');
+
+            return {
+              ...t,
+              elementoRelacionado,
+              categoria: categoriaName,
+              subcategoria: subcategoriaName
+            };
+          });
+        }
+      } catch (e) {
+        console.warn('No se pudo enriquecer tickets antes de generar PDFs individuales:', e);
+      }
       const rows = [];
 
       for (let i = 0; i < ticketsArr.length; i++) {

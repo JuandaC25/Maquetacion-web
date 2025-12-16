@@ -18,36 +18,11 @@
   transform: translateY(0) !important;
 }
 
-.dropdown-menu-xd147 {
-  border: none !important;
-  border-radius: 0.5rem !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-              0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
-  overflow: hidden !important;
-  margin-top: 0.5rem !important;
+.category-filter-dropdown-xd31 {
+  position: relative !important;
 }
 
-.dropdown-item-xd148 {
-  padding: 0.75rem 1.5rem !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-  border: none !important;
-  background-color: transparent !important;
-  color: var(--text) !important;
-}
 
-.dropdown-item-xd148:hover,
-.dropdown-item-xd148:focus {
-  background-color: rgba(40, 167, 69, 0.15) !important;
-  color: var(--green) !important;
-}
-
-.dropdown-item-xd148:active,
-.dropdown-item-xd148.active,
-.dropdown-item-xd148[aria-selected="true"] {
-  background-color: var(--green) !important;
-  color: #fff !important;
-}
 .solicitud-alert {
 background-color: #ffffff00;
   text-align: start;
@@ -583,6 +558,85 @@ background-color: #ffffff00;
 }
 
 
+/* Dropdown Styles - Select Element */
+.filters-row-xd30 {
+  position: relative;
+  z-index: 1000;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+  overflow: visible !important;
+}
+
+.estado-filter-select-xd31 {
+  background-color: var(--green) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  font-size: 1rem !important;
+  min-width: 200px !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 1rem center !important;
+  background-size: 12px !important;
+  padding-right: 2.5rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.estado-filter-select-xd31:hover {
+  background-color: var(--green-dark) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.estado-filter-select-xd31:focus {
+  outline: none !important;
+  background-color: var(--green-dark) !important;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25) !important;
+}
+
+.estado-filter-select-xd31 option {
+  background-color: #fff !important;
+  color: #333 !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 500 !important;
+}
+
+/* Estilos para botón de eliminar espacio */
+.button-Espacio-delete .shadow {
+  background: #ffcccc !important;
+}
+
+.button-Espacio-delete .edge {
+  background: linear-gradient(
+    to left,
+    hsl(0, 70%, 50%) 0%,    
+    hsl(0, 90%, 35%) 92%, 
+    hsl(0, 90%, 35%) 92%,
+    hsl(0, 70%, 50%) 100%
+  ) !important;
+}
+
+.button-Espacio-delete .front {
+  background: hsl(0, 90%, 45%) !important;
+}
+
+.button-Espacio-delete:hover .shadow {
+  box-shadow: 0 6px 12px rgba(220, 53, 69, 0.85) !important;
+}
+
+.button-Espacio-delete:hover .front {
+  background: hsla(0, 100%, 55%, 0.808) !important;
+  box-shadow: 0 8px 18px rgba(220, 53, 69, 0.9) !important;
+}
+
 @media (max-width: 576px) {
   .solicitud-action-group { flex-direction: column-reverse; align-items: stretch; }
   .solicitud-active-badge { align-self: flex-end; }
@@ -600,3 +654,5 @@ background-color: #ffffff00;
 @media (max-width: 576px) {
   .modern-equipment-card-xd01 { padding-bottom: 18px; }
 }
+
+

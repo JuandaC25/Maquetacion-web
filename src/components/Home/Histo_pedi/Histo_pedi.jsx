@@ -13,6 +13,7 @@ import {
 } from '../../../api/solicitudesApi.js';
 import { obtenerTickets, eliminarTicket } from '../../../api/ticket.js';
 import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js'; 
+import Modal from 'react-bootstrap/Modal';
 
 // --- Funciones de Formato ---
 
@@ -70,6 +71,54 @@ function Historial_ped() {
     const [currentPage, setCurrentPage] = useState(1);
     const [solicitudesPerPage] = useState(6);
     const [activeTab, setActiveTab] = useState('solicitudes'); 
+    const [showImgModal, setShowImgModal] = useState(false);
+    const [imgModalList, setImgModalList] = useState([]);
+    const [imgModalTicket, setImgModalTicket] = useState(null);
+    const [loadedImages, setLoadedImages] = useState([]);
+    const [loadingImages, setLoadingImages] = useState(false);
+
+    const cargarImagenesConAuth = async (urls) => {
+        setLoadingImages(true);
+        console.log('URLs a cargar:', urls);
+        
+        const BASE_URL = 'http://localhost:8081';
+        const token = localStorage.getItem('auth_token');
+        
+        const imagenesPromises = urls.map(async (url) => {
+            try {
+                // Construir URL completa si es una ruta relativa
+                const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
+                console.log('Intentando cargar:', fullUrl);
+                
+                const response = await fetch(fullUrl, {
+                    headers: token ? {
+                        'Authorization': `Bearer ${token}`
+                    } : {}
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    console.error(`Error ${response.status} al cargar imagen: ${fullUrl}`);
+                    return fullUrl; // Fallback a URL directa
+                }
+                
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                console.log('Blob URL creada correctamente');
+                return blobUrl;
+            } catch (err) {
+                console.error('Error al cargar imagen:', err);
+                const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
+                return fullUrl; // Fallback
+            }
+        });
+        
+        const imagenesCargadas = await Promise.all(imagenesPromises);
+        console.log('Total imágenes cargadas:', imagenesCargadas.length);
+        setLoadedImages(imagenesCargadas.filter(img => img !== null));
+        setLoadingImages(false);
+    };
 
     const cargarSubcategorias = async () => {
         try {
@@ -412,15 +461,18 @@ function Historial_ped() {
                         const statusTicket = ticket.id_est_tick === 2 ? 
                             { text: 'Activo', variant: 'danger' } : 
                             { text: 'Resuelto', variant: 'success' };
+                        
                         return (
-                            <div className="item_historial" key={ticket.id_tickets}>
+                            <div className="p-3 item_historial" key={ticket.id_tickets}>
                                 <span className='emoji_historial'>🔧</span>
+                                
                                 <Badge 
                                     className='let_histo' 
                                     bg={statusTicket.variant} 
                                 >
                                     {statusTicket.text}
                                 </Badge>
+                                
                                 <span className='texto_pedido'>
                                     ID Ticket: {ticket.id_tickets || 'N/A'} | Equipo: {ticket.nom_elem || `ID ${ticket.id_eleme}`} <br/>
                                     Problema: {ticket.nom_problm || 'N/A'} <br/>
@@ -468,6 +520,37 @@ function Historial_ped() {
         }
     }
     
+    // Modal de galería de imágenes
+    const ImgGalleryModal = (
+      <Modal show={showImgModal} onHide={() => { setShowImgModal(false); setLoadedImages([]); }} centered size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Imágenes del Ticket {imgModalTicket?.id_tickets}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {loadingImages ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <div className="spinner-border text-success" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </div>
+              <p style={{ marginTop: '15px', color: '#666' }}>Cargando imágenes...</p>
+            </div>
+          ) : loadedImages.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+              No se pudieron cargar las imágenes.
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
+                            {loadedImages.map((imgBlobUrl, idx) => (
+                                <div key={idx} className="img-gallery-hover" style={{ maxWidth: 220, maxHeight: 220, borderRadius: 10, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', background: '#f7fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', cursor: 'pointer' }}>
+                                    <img src={imgBlobUrl} alt={`Imagen ${idx + 1}`} style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain', display: 'block', margin: '0 auto' }} />
+                                </div>
+                            ))}
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
+    );
+
     // Nombre actual del filtro seleccionado
     const currentFilterName = subcategoriaOptions.find(opt => opt.id === selectedSubcategoriaId)?.nombre || 'Todas las subcategorías';
 
@@ -570,6 +653,7 @@ function Historial_ped() {
             <div className='Footer_historial'>
                 <Footer />
             </div>
+            {ImgGalleryModal}
         </div>
     ); 
 }

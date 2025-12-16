@@ -1,3 +1,12 @@
+.img-gallery-hover {
+  transition: transform 0.5s cubic-bezier(.21,1.02,.73,1), box-shadow 0.5s;
+}
+
+.img-gallery-hover:hover {
+  transform: scale(1.07);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.18), 0 2px 8px rgba(0,0,0,0.08);
+  z-index: 2;
+}
 .Drop_histo {
   margin-top: 1.5rem;
   margin-left: 1rem;
