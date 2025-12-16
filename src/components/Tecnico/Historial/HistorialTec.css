@@ -246,3 +246,25 @@
   transform: translateY(0);
   box-shadow: 0 2px 8px rgba(63, 187, 52, 0.3);
 }
+
+.export-container {
+  width: 75%;
+  margin: 1rem auto 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.button-export {
+  padding: 0.8rem 1.2rem;
+  background: linear-gradient(135deg, #3fbb34 0%, #2a9428 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(63, 187, 52, 0.28);
+}
+
+.button-export:hover {
+  transform: translateY(-2px);
+}
