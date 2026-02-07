@@ -87,19 +87,31 @@ function ReportarEquipo() {
                 <span className="ms-2">Cargando problemas...</span>
               </div>
             ) : (
-              <div className="problemas-grid">
-                {problemas.map(problema => (
-                  <div key={problema.id} className="problema-item">
-                    <label className="custom-checkbox">
-                      <input
-                        type="checkbox"
-                        name="problemas"
-                        checked={formData.problemasSeleccionados.includes(problema.id)}
-                        onChange={() => handleProblemaChange(problema.id)}
-                      />
-                      <span className="checkmark"></span>
-                      <span>{problema.descr_problem}</span>
-                    </label>
+              <div className="problemas-grid" style={{display: 'flex', gap: 24}}>
+                {Object.entries(
+                  problemas.reduce((acc, problema) => {
+                    const tipo = problema.tipo_problema || 'Otros';
+                    if (!acc[tipo]) acc[tipo] = [];
+                    acc[tipo].push(problema);
+                    return acc;
+                  }, {})
+                ).map(([tipo, lista]) => (
+                  <div key={tipo} style={{minWidth: 220, flex: 1}}>
+                    <div style={{fontWeight: 700, color: '#38a169', fontSize: '1.1rem', marginBottom: 10, textAlign: 'center'}}>{tipo}</div>
+                    {lista.map(problema => (
+                      <div key={problema.id} className="problema-item">
+                        <label className="custom-checkbox">
+                          <input
+                            type="checkbox"
+                            name="problemas"
+                            checked={formData.problemasSeleccionados.includes(problema.id)}
+                            onChange={() => handleProblemaChange(problema.id)}
+                          />
+                          <span className="checkmark"></span>
+                          <span>{problema.descr_problem}</span>
+                        </label>
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
