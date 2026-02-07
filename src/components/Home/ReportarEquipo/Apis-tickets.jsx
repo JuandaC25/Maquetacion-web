@@ -65,16 +65,27 @@ export const subirImagenesAlServidor = async (imagenes) => {
  */
 export const crearTicketsParaEquipo = async (formData, problemas, imageUrls, idUsuario) => {
   try {
-    const problemasNombres = problemas
-      .filter(p => formData.problemasSeleccionados.includes(p.id))
-      .map(p => p.descr_problem);
+    const problemasSeleccionados = problemas.filter(p => formData.problemasSeleccionados.includes(p.id));
+    
+    // Agrupar problemas por tipo_problema
+    const gruposPorTipo = problemasSeleccionados.reduce((grupos, problema) => {
+      const tipo = problema.tipo_problema || 'Sin tipo';
+      if (!grupos[tipo]) {
+        grupos[tipo] = [];
+      }
+      grupos[tipo].push(problema);
+      return grupos;
+    }, {});
 
-    const promesas = formData.problemasSeleccionados.map(async idProblema => {
+    console.log('Grupos por tipo:', gruposPorTipo);
+
+    // Crear un ticket por cada tipo de problema
+    const promesasTickets = Object.entries(gruposPorTipo).map(async ([tipo, problemasDelTipo]) => {
       const response = await authorizedFetch('/api/tickets', {
         method: 'POST',
         body: JSON.stringify({
           id_elem: parseInt(formData.idElemento),
-          id_problem: idProblema,
+          id_problems: problemasDelTipo.map(p => p.id), // Array de problemas del mismo tipo
           ambiente: formData.ambiente,
           obser: formData.observaciones || '',
           imageness: imageUrls.length > 0 ? JSON.stringify(imageUrls) : null,
@@ -92,14 +103,31 @@ export const crearTicketsParaEquipo = async (formData, problemas, imageUrls, idU
         throw new Error(`Error ${response.status}: ${errorText}`);
       }
       
-      return await response.json();
+      return {
+        tipo,
+        problemas: problemasDelTipo.map(p => p.descr_problem),
+        response: await response.json()
+      };
     });
 
-    await Promise.all(promesas);
+    const resultados = await Promise.all(promesasTickets);
+
+    // Generar mensaje de éxito
+    const totalTickets = resultados.length;
+    const totalProblemas = problemasSeleccionados.length;
+    let mensaje = `✓ Reporte exitoso! Se crearon ${totalTickets} ticket(s) agrupados por tipo para el equipo ID ${formData.idElemento}:\n\n`;
+    
+    resultados.forEach((resultado, index) => {
+      mensaje += `📋 Ticket ${index + 1} - Tipo: ${resultado.tipo}\n`;
+      resultado.problemas.forEach(problema => {
+        mensaje += `  • ${problema}\n`;
+      });
+      mensaje += '\n';
+    });
 
     return {
       success: true,
-      mensaje: `✓ Reporte exitoso! Se crearon ${formData.problemasSeleccionados.length} ticket(s) para el equipo ID ${formData.idElemento}:\n• ${problemasNombres.join('\n• ')}`
+      mensaje
     };
   } catch (err) {
     console.error('Error al crear tickets:', err);
