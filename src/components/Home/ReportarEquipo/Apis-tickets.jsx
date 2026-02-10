@@ -63,10 +63,10 @@ export const subirImagenesAlServidor = async (imagenes) => {
 /**
  * Crea múltiples tickets para diferentes problemas del mismo equipo
  */
-export const crearTicketsParaEquipo = async (formData, problemas, imageUrls, idUsuario) => {
+export const crearTicketsParaEquipo = async (formData, problemas, detallesProblemas, idUsuario) => {
   try {
     const problemasSeleccionados = problemas.filter(p => formData.problemasSeleccionados.includes(p.id));
-    
+
     // Agrupar problemas por tipo_problema
     const gruposPorTipo = problemasSeleccionados.reduce((grupos, problema) => {
       const tipo = problema.tipo_problema || 'Sin tipo';
@@ -77,35 +77,46 @@ export const crearTicketsParaEquipo = async (formData, problemas, imageUrls, idU
       return grupos;
     }, {});
 
-    console.log('Grupos por tipo:', gruposPorTipo);
-
     // Crear un ticket por cada tipo de problema
     const promesasTickets = Object.entries(gruposPorTipo).map(async ([tipo, problemasDelTipo]) => {
+      // Construir array de problemas con detalles
+      const problemasConDetalles = problemasDelTipo.map(p => ({
+        id: p.id,
+        descripcion: detallesProblemas[p.id]?.descripcion || '',
+        imagenes: detallesProblemas[p.id]?.imagenes || []
+      }));
+
+      // Subir imágenes de cada problema y reemplazar base64 por URLs
+      for (let prob of problemasConDetalles) {
+        if (prob.imagenes && prob.imagenes.length > 0) {
+          const res = await subirImagenesAlServidor(prob.imagenes);
+          prob.imagenes = res.success ? res.urls : [];
+        }
+      }
+
       const response = await authorizedFetch('/api/tickets', {
         method: 'POST',
         body: JSON.stringify({
           id_elem: parseInt(formData.idElemento),
-          id_problems: problemasDelTipo.map(p => p.id), // Array de problemas del mismo tipo
           ambiente: formData.ambiente,
-          obser: formData.observaciones || '',
-          imageness: imageUrls.length > 0 ? JSON.stringify(imageUrls) : null,
           id_usu: idUsuario,
           fecha_in: new Date().toISOString(),
-          id_est_tick: 2
+          id_est_tick: 2,
+          problemas: problemasConDetalles
         }),
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Error ${response.status}: ${errorText}`);
       }
-      
+
       return {
         tipo,
-        problemas: problemasDelTipo.map(p => p.descr_problem),
+        problemas: problemasConDetalles.map(p => p.descripcion ? `${p.id}: ${p.descripcion}` : `${p.id}`),
         response: await response.json()
       };
     });
@@ -114,9 +125,8 @@ export const crearTicketsParaEquipo = async (formData, problemas, imageUrls, idU
 
     // Generar mensaje de éxito
     const totalTickets = resultados.length;
-    const totalProblemas = problemasSeleccionados.length;
     let mensaje = `✓ Reporte exitoso! Se crearon ${totalTickets} ticket(s) agrupados por tipo para el equipo ID ${formData.idElemento}:\n\n`;
-    
+
     resultados.forEach((resultado, index) => {
       mensaje += `📋 Ticket ${index + 1} - Tipo: ${resultado.tipo}\n`;
       resultado.problemas.forEach(problema => {
@@ -176,9 +186,65 @@ export const obtenerIdUsuario = () => {
  * Custom Hook: Maneja toda la lógica del formulario de reportar equipos
  */
 export const useReportarEquipo = () => {
+
+    // Estado para detalles individuales de cada problema
+    const [detallesProblemas, setDetallesProblemas] = useState({});
+
     const handleInputChange = (e) => {
       const { name, value } = e.target;
       setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    // Mostrar/ocultar detalles para un problema
+    const toggleDetalles = (problemaId) => {
+      setDetallesProblemas(prev => ({
+        ...prev,
+        [problemaId]: {
+          ...prev[problemaId],
+          mostrar: !prev[problemaId]?.mostrar,
+          descripcion: prev[problemaId]?.descripcion || "",
+          imagenes: prev[problemaId]?.imagenes || []
+        }
+      }));
+    };
+
+    // Actualizar descripción de un problema
+    const actualizarDescripcion = (problemaId, descripcion) => {
+      setDetallesProblemas(prev => ({
+        ...prev,
+        [problemaId]: {
+          ...prev[problemaId],
+          descripcion
+        }
+      }));
+    };
+
+    // Agregar imágenes a un problema
+    const agregarImagenes = async (problemaId, files) => {
+      if (!files || files.length === 0) return;
+      setImagenCargando(true);
+      setError(null);
+      try {
+        // Convertir todas las imágenes a base64
+        const base64Imgs = await Promise.all(Array.from(files).map(convertirImagenABase64));
+        setDetallesProblemas(prev => {
+          const nuevasImagenes = [...(prev[problemaId]?.imagenes || []), ...base64Imgs];
+          return {
+            ...prev,
+            [problemaId]: {
+              ...prev[problemaId],
+              imagenes: nuevasImagenes,
+              // Si hay imágenes, ocultar el texto de 'Ningún archivo seleccionado' en el renderizado
+            }
+          };
+        });
+        setSuccess('✓ Imagen(es) agregada(s) correctamente');
+        setTimeout(() => setSuccess(null), 2000);
+      } catch (err) {
+        setError("No se pudo cargar la(s) imagen(es).");
+      } finally {
+        setImagenCargando(false);
+      }
     };
 
     const handleAgregarImagen = async (e) => {
@@ -327,6 +393,7 @@ export const useReportarEquipo = () => {
     imagenCargando,
     formData,
     imagenes,
+    detallesProblemas,
     // Funciones
     handleProblemaChange,
     handleInputChange,
@@ -335,6 +402,9 @@ export const useReportarEquipo = () => {
     handleSubmit,
     handleLimpiar,
     setError,
-    setSuccess
+    setSuccess,
+    toggleDetalles,
+    actualizarDescripcion,
+    agregarImagenes
   };
 };

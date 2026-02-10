@@ -1,8 +1,6 @@
 import React from 'react';
-import './ReportarEquipo.css';
-import { Form, Button, Alert, Spinner, Card } from 'react-bootstrap';
+import { Form, Button, Alert, Spinner, Modal } from 'react-bootstrap';
 import { useReportarEquipo } from './Apis-tickets';
-
 function ReportarEquipo() {
   const {
     problemas,
@@ -12,16 +10,21 @@ function ReportarEquipo() {
     submitting,
     imagenCargando,
     formData,
-    imagenes,
     handleProblemaChange,
     handleInputChange,
-    handleAgregarImagen,
-    handleEliminarImagen,
     handleSubmit,
     handleLimpiar,
     setError,
-    setSuccess
+    setSuccess,
+    detallesProblemas,
+    toggleDetalles,
+    actualizarDescripcion,
+    agregarImagenes
   } = useReportarEquipo();
+
+  // Estado para modal de detalles
+  const [modalProblemaId, setModalProblemaId] = React.useState(null);
+
   return (
     <div className="reportar-equipo-container">
       <div className="reportar-equipo-card">
@@ -98,109 +101,124 @@ function ReportarEquipo() {
                 ).map(([tipo, lista]) => (
                   <div key={tipo} style={{minWidth: 220, flex: 1}}>
                     <div style={{fontWeight: 700, color: '#38a169', fontSize: '1.1rem', marginBottom: 10, textAlign: 'center'}}>{tipo}</div>
-                    {lista.map(problema => (
-                      <div key={problema.id} className="problema-item">
-                        <label className="custom-checkbox">
-                          <input
-                            type="checkbox"
-                            name="problemas"
-                            checked={formData.problemasSeleccionados.includes(problema.id)}
-                            onChange={() => handleProblemaChange(problema.id)}
-                          />
-                          <span className="checkmark"></span>
-                          <span>{problema.descr_problem}</span>
-                        </label>
-                      </div>
-                    ))}
+                    {lista.map(problema => {
+                      const seleccionado = formData.problemasSeleccionados.includes(problema.id);
+                      const detalles = detallesProblemas[problema.id] || {};
+                      return (
+                        <div key={problema.id} className="problema-item" style={{marginBottom: 8}}>
+                          <label className="custom-checkbox">
+                            <input
+                              type="checkbox"
+                              name="problemas"
+                              checked={seleccionado}
+                              onChange={() => handleProblemaChange(problema.id)}
+                            />
+                            <span className="checkmark"></span>
+                            <span>{problema.descr_problem}</span>
+                          </label>
+                          {seleccionado && (
+                            <div style={{marginLeft: 24, marginTop: 4}}>
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                style={{marginBottom: 4, fontWeight: 600, letterSpacing: 0.5}}
+                                onClick={() => setModalProblemaId(problema.id)}
+                              >
+                                <span style={{display:'inline-flex',alignItems:'center'}}>
+                                  <span style={{fontSize:18,marginRight:4}}>📝</span> Detalles
+                                </span>
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 ))}
               </div>
             )}
           </Form.Group>
 
-          {/* ✅ Observaciones */}
-          <Form.Group className="mb-3 form-group-enhanced">
-            <Form.Label className="label-with-icon">
-              Observaciones (Opcional)
-            </Form.Label>
-            <Form.Control
-              as="textarea"
-              name="observaciones"
-              rows={3}
-              placeholder="Detalles adicionales del problema..."
-              value={formData.observaciones}
-              onChange={handleInputChange}
-              maxLength={255}
-              className="input-enhanced textarea-enhanced"
-            />
-            <Form.Text className="text-muted counter-text">
-              <span className="counter-icon">✏️</span>
-              {formData.observaciones.length}/255 caracteres
-            </Form.Text>
-          </Form.Group>
 
-          {/* ✅ Sección de imágenes */}
-          <Form.Group className="mb-3 form-group-enhanced">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <Form.Label className="label-with-icon">
-                <span className="label-icon">📸</span>
-                Imágenes (Opcional)
-              </Form.Label>
-              <Button variant="outline-success" size="sm" as="label" disabled={imagenCargando} className="btn-agregar-imagen-modern">
-                {imagenCargando ? (
+          {/* MODAL para detalles de problema */}
+          <Modal show={!!modalProblemaId} onHide={() => setModalProblemaId(null)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Detalles del problema</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {modalProblemaId && (() => {
+                const detalles = detallesProblemas[modalProblemaId] || {};
+                const problema = problemas.find(p => p.id === modalProblemaId);
+                return (
                   <>
-                    <Spinner animation="border" size="sm" className="me-1" />
-                    Procesando...
+                    <div style={{fontWeight:600,marginBottom:8}}>{problema?.descr_problem}</div>
+                    <Form.Group>
+                      <Form.Label>Descripción (opcional)</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        placeholder="Describe el problema con más detalle"
+                        value={detalles.descripcion || ''}
+                        onChange={e => actualizarDescripcion(modalProblemaId, e.target.value)}
+                        maxLength={255}
+                      />
+                      <Form.Text className="text-muted">{(detalles.descripcion||'').length}/255 caracteres</Form.Text>
+                    </Form.Group>
+                    <Form.Group className="mt-3">
+                      <Form.Label>Imágenes (opcional)</Form.Label>
+                      <div style={{display:'flex',alignItems:'center',gap:8}}>
+                        <Form.Control
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={e => agregarImagenes(modalProblemaId, e.target.files)}
+                          disabled={imagenCargando}
+                          style={{maxWidth:220}}
+                        />
+                        {/* Eliminar el texto 'Ningún archivo seleccionado' para que solo se vea el botón */}
+                      </div>
+                      {detalles.imagenes && detalles.imagenes.length > 0 && (
+                        <div className="imagenes-preview-grid mt-2">
+                          {detalles.imagenes.map((img, idx) => (
+                            <div key={idx} className="imagen-preview-card">
+                              <div className="imagen-wrapper">
+                                <img 
+                                  src={img} 
+                                  alt={`img-${idx}`} 
+                                  className="imagen-preview imagen-modal-preview"
+                                />
+                                <div className="imagen-overlay">
+                                  <button
+                                    type="button"
+                                    className="btn-eliminar-imagen"
+                                    onClick={() => {
+                                      const nuevasImagenes = detalles.imagenes.filter((_, i) => i !== idx);
+                                      detallesProblemas[modalProblemaId].imagenes = nuevasImagenes;
+                                      agregarImagenes(modalProblemaId, []); // Refrescar
+                                      setTimeout(() => setModalProblemaId(modalProblemaId), 0);
+                                    }}
+                                    title="Eliminar imagen"
+                                  >
+                                    <span className="btn-icon">🗑️</span> Quitar imagen
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="imagen-numero">Imagen {idx + 1}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </Form.Group>
                   </>
-                ) : (
-                  <>
-                    Agregar Imagen
-                  </>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  onChange={handleAgregarImagen}
-                  disabled={imagenCargando}
-                />
+                );
+              })()}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setModalProblemaId(null)}>
+                Cerrar
               </Button>
-            </div>
-
-            {/* Preview de imágenes */}
-            {imagenes.length > 0 && (
-              <div className="imagenes-preview-grid">
-                {imagenes.map((img, index) => (
-                  <div key={index} className="imagen-preview-card">
-                    <div className="imagen-wrapper">
-                      <img src={img} alt={`Preview ${index + 1}`} className="imagen-preview" />
-                      <div className="imagen-overlay">
-                        <Button
-                          variant="outline-success"
-                          size="sm"
-                          className="btn-eliminar-imagen"
-                          onClick={() => handleEliminarImagen(index)}
-                        >
-                          <span className="btn-icon">🗑️</span>
-                          Eliminar
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="imagen-numero">Imagen {index + 1}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="imagenes-info">
-              <span className="info-icon">ℹ️</span>
-              <Form.Text className="text-muted">
-                {imagenes.length > 0 
-                  ? `${imagenes.length} imagen(es) agregada(s)` 
-                  : 'No hay imágenes agregadas'}
-              </Form.Text>
-            </div>
-          </Form.Group>
+            </Modal.Footer>
+          </Modal>
 
           <div className="botones-accion">
             <Button 
@@ -222,7 +240,7 @@ function ReportarEquipo() {
             </Button>
 
             <Button 
-              variant="outline-secondary"
+             variant="outline-secondary"
               onClick={handleLimpiar}
               disabled={submitting}
               className="btn-limpiar"
