@@ -17,7 +17,6 @@ function ReportarEquipo() {
     setError,
     setSuccess,
     detallesProblemas,
-    toggleDetalles,
     actualizarDescripcion,
     agregarImagenes
   } = useReportarEquipo();
@@ -193,9 +192,14 @@ function ReportarEquipo() {
                                     className="btn-eliminar-imagen"
                                     onClick={() => {
                                       const nuevasImagenes = detalles.imagenes.filter((_, i) => i !== idx);
-                                      detallesProblemas[modalProblemaId].imagenes = nuevasImagenes;
-                                      agregarImagenes(modalProblemaId, []); // Refrescar
-                                      setTimeout(() => setModalProblemaId(modalProblemaId), 0);
+                                      // Actualizar el estado de forma inmutable
+                                      setDetallesProblemas(prev => ({
+                                        ...prev,
+                                        [modalProblemaId]: {
+                                          ...prev[modalProblemaId],
+                                          imagenes: nuevasImagenes
+                                        }
+                                      }));
                                     }}
                                     title="Eliminar imagen"
                                   >

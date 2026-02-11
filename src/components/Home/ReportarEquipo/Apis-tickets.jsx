@@ -86,6 +86,9 @@ export const crearTicketsParaEquipo = async (formData, problemas, detallesProble
         imagenes: detallesProblemas[p.id]?.imagenes || []
       }));
 
+      console.log('➡️ detallesProblemas:', detallesProblemas);
+      console.log('➡️ problemasConDetalles:', problemasConDetalles);
+
       // Subir imágenes de cada problema y reemplazar base64 por URLs
       for (let prob of problemasConDetalles) {
         if (prob.imagenes && prob.imagenes.length > 0) {
@@ -94,16 +97,19 @@ export const crearTicketsParaEquipo = async (formData, problemas, detallesProble
         }
       }
 
+      const payload = {
+        id_elem: parseInt(formData.idElemento),
+        ambiente: formData.ambiente,
+        id_usu: idUsuario,
+        fecha_in: new Date().toISOString(),
+        id_est_tick: 2,
+        problemas: problemasConDetalles
+      };
+      console.log('➡️ Payload enviado a /api/tickets:', payload);
+
       const response = await authorizedFetch('/api/tickets', {
         method: 'POST',
-        body: JSON.stringify({
-          id_elem: parseInt(formData.idElemento),
-          ambiente: formData.ambiente,
-          id_usu: idUsuario,
-          fecha_in: new Date().toISOString(),
-          id_est_tick: 2,
-          problemas: problemasConDetalles
-        }),
+        body: JSON.stringify(payload),
         headers: {
           'Content-Type': 'application/json'
         }
@@ -234,7 +240,6 @@ export const useReportarEquipo = () => {
             [problemaId]: {
               ...prev[problemaId],
               imagenes: nuevasImagenes,
-              // Si hay imágenes, ocultar el texto de 'Ningún archivo seleccionado' en el renderizado
             }
           };
         });
@@ -242,26 +247,6 @@ export const useReportarEquipo = () => {
         setTimeout(() => setSuccess(null), 2000);
       } catch (err) {
         setError("No se pudo cargar la(s) imagen(es).");
-      } finally {
-        setImagenCargando(false);
-      }
-    };
-
-    const handleAgregarImagen = async (e) => {
-      const archivo = e.target.files[0];
-      if (!archivo) return;
-
-      setImagenCargando(true);
-      setError(null);
-
-      try {
-        const base64 = await convertirImagenABase64(archivo);
-        setImagenes(prev => [...prev, base64]);
-        setSuccess('✓ Imagen agregada correctamente');
-        setTimeout(() => setSuccess(null), 2000);
-      } catch (err) {
-        console.error("Error al procesar la imagen", err);
-        setError("No se pudo cargar la imagen.");
       } finally {
         setImagenCargando(false);
       }
@@ -283,14 +268,10 @@ export const useReportarEquipo = () => {
   const [imagenCargando, setImagenCargando] = useState(false);
 
   const [formData, setFormData] = useState({
-    numeroSerie: '',
     idElemento: '',
     ambiente: '',
-    observaciones: '',
     problemasSeleccionados: []
   });
-
-  const [imagenes, setImagenes] = useState([]);
 
   // Cargar problemas al montar el componente
   useEffect(() => {
@@ -313,10 +294,6 @@ export const useReportarEquipo = () => {
     setLoading(false);
   };
 
-  const handleEliminarImagen = (index) => {
-    setImagenes(prev => prev.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -331,20 +308,17 @@ export const useReportarEquipo = () => {
     setSubmitting(true);
 
     try {
+      // 1. Obtener ID de usuario
       const usuarioResult = obtenerIdUsuario();
       if (!usuarioResult.success) {
         throw new Error(usuarioResult.error);
       }
 
-      const imagenesResult = await subirImagenesAlServidor(imagenes);
-      if (!imagenesResult.success) {
-        throw new Error(imagenesResult.error);
-      }
 
       const ticketsResult = await crearTicketsParaEquipo(
         formData,
         problemas,
-        imagenesResult.urls,
+        detallesProblemas, 
         usuarioResult.idUsuario
       );
 
@@ -353,16 +327,7 @@ export const useReportarEquipo = () => {
       }
 
       setSuccess(ticketsResult.mensaje);
-      
-      // Limpiar formulario
-      setFormData({
-        numeroSerie: '',
-        idElemento: '',
-        ambiente: '',
-        observaciones: '',
-        problemasSeleccionados: []
-      });
-      setImagenes([]);
+      handleLimpiar();
 
     } catch (err) {
       setError(err.message);
@@ -373,13 +338,11 @@ export const useReportarEquipo = () => {
 
   const handleLimpiar = () => {
     setFormData({
-      numeroSerie: '',
       idElemento: '',
       ambiente: '',
-      observaciones: '',
       problemasSeleccionados: []
     });
-    setImagenes([]);
+    setDetallesProblemas({}); 
     setError(null);
     setSuccess(null);
   };
@@ -392,13 +355,10 @@ export const useReportarEquipo = () => {
     submitting,
     imagenCargando,
     formData,
-    imagenes,
     detallesProblemas,
     // Funciones
     handleProblemaChange,
     handleInputChange,
-    handleAgregarImagen,
-    handleEliminarImagen,
     handleSubmit,
     handleLimpiar,
     setError,
