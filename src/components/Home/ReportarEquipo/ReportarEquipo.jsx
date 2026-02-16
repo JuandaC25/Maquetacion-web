@@ -23,6 +23,21 @@ function ReportarEquipo() {
 
   // Estado para modal de detalles
   const [modalProblemaId, setModalProblemaId] = React.useState(null);
+  const [selectedTipo, setSelectedTipo] = React.useState(null);
+
+  React.useEffect(() => {
+    if (problemas && problemas.length > 0) {
+      const tipos = Object.keys(
+        problemas.reduce((acc, problema) => {
+          const tipo = problema.tipo_problema || 'Otros';
+          if (!acc[tipo]) acc[tipo] = [];
+          acc[tipo].push(problema);
+          return acc;
+        }, {})
+      );
+      setSelectedTipo(prev => prev || tipos[0] || null);
+    }
+  }, [problemas]);
 
   return (
     <div className="reportar-equipo-container">
@@ -89,18 +104,33 @@ function ReportarEquipo() {
                 <span className="ms-2">Cargando problemas...</span>
               </div>
             ) : (
-              <div className="problemas-grid" style={{display: 'flex', gap: 24}}>
-                {Object.entries(
-                  problemas.reduce((acc, problema) => {
-                    const tipo = problema.tipo_problema || 'Otros';
-                    if (!acc[tipo]) acc[tipo] = [];
-                    acc[tipo].push(problema);
-                    return acc;
-                  }, {})
-                ).map(([tipo, lista]) => (
-                  <div key={tipo} style={{minWidth: 220, flex: 1}}>
-                    <div style={{fontWeight: 700, color: '#38a169', fontSize: '1.1rem', marginBottom: 10, textAlign: 'center'}}>{tipo}</div>
-                    {lista.map(problema => {
+              <div className="problemas-grid two-column">
+                <div className="tipos-list">
+                  {Object.entries(
+                    problemas.reduce((acc, problema) => {
+                      const tipo = problema.tipo_problema || 'Otros';
+                      if (!acc[tipo]) acc[tipo] = [];
+                      acc[tipo].push(problema);
+                      return acc;
+                    }, {})
+                  ).map(([tipo, lista]) => (
+                    <div
+                      key={tipo}
+                      className={`tipo-item ${selectedTipo === tipo ? 'active' : ''}`}
+                      onClick={() => setSelectedTipo(tipo)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter') setSelectedTipo(tipo); }}
+                    >
+                      {tipo} <span className="tipo-count">({lista.length})</span>
+                    </div>
+                  ))}
+                </div>
+
+                
+                <div className="descripciones-list">
+                  {selectedTipo ? (
+                    (problemas.filter(p => (p.tipo_problema || 'Otros') === selectedTipo)).map(problema => {
                       const seleccionado = formData.problemasSeleccionados.includes(problema.id);
                       const detalles = detallesProblemas[problema.id] || {};
                       return (
@@ -131,9 +161,11 @@ function ReportarEquipo() {
                           )}
                         </div>
                       );
-                    })}
-                  </div>
-                ))}
+                    })
+                  ) : (
+                    <div className="text-muted">Selecciona un tipo para ver las descripciones</div>
+                  )}
+                </div>
               </div>
             )}
           </Form.Group>

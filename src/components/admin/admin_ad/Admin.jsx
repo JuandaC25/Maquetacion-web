@@ -13,6 +13,7 @@ import ReportarEquipo from '../../Home/ReportarEquipo/ReportarEquipo.jsx';
 import { obtenerCategoria } from '../../../api/CategoriaApi.js';
 import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js';
 import ElementosService from '../../../api/ElementosApi.js';
+import { obtenerProblemas, crearProblema } from '../../../api/ProblemasApi.js';
 
 const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger }) => {
   // --- MODAL HISTORIAL DE TICKETS ---
@@ -25,7 +26,12 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
   const [historialTicketId, setHistorialTicketId] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
-  // Descargar historial en PDF (individual) - formato vertical, etiqueta en su propia línea
+  const [showCrearProblemaModal, setShowCrearProblemaModal] = useState(false);
+  const [nuevoTipo, setNuevoTipo] = useState('');
+  const [nuevaDescripcion, setNuevaDescripcion] = useState('');
+  const [savingProblema, setSavingProblema] = useState(false);
+  const [crearError, setCrearError] = useState(null);
+  
   const handleDownloadPDF = async () => {
     try {
       const doc = new jsPDF({ unit: 'pt', format: 'a4' });
@@ -438,6 +444,8 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
 
   const startIdx = (currentPage - 1) * CARDS_PER_PAGE;
 
+  const safePaginatedTickets = Array.isArray(paginatedTickets) ? paginatedTickets : [];
+
   return (
     <div className="container-1201">
       <Alert className="alert-1202" style={{ background: '#fff', border: 'none', boxShadow: 'none', marginBottom: 0 }}>
@@ -448,10 +456,10 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
               {/* ...Filtros existentes... */}
               <Dropdown className="category-filter-dropdown-xd31">
                 <Dropdown.Toggle 
-                  variant="success" 
-                  id="dropdown-category-xd31"
-                  className="dropdown-toggle-xd146"
-                >
+                    variant="success" 
+                    id="dropdown-category-xd31"
+                    className="dropdown-toggle-xd146 uiverse-btn uiverse-dropdown"
+                  >
                   {selectedCategoryFilter} <span className="dropdown-arrow-xd32">▼</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
@@ -475,10 +483,10 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
 
               <Dropdown className="category-filter-dropdown-xd31">
                 <Dropdown.Toggle 
-                  variant="success" 
-                  id="dropdown-subcategory-xd31"
-                  className="dropdown-toggle-xd146"
-                >
+                    variant="success" 
+                    id="dropdown-subcategory-xd31"
+                    className="dropdown-toggle-xd146 uiverse-btn uiverse-dropdown"
+                  >
                   {selectedSubcategoryFilter} <span className="dropdown-arrow-xd32">▼</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
@@ -502,10 +510,10 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
 
               <Dropdown className="category-filter-dropdown-xd31">
                 <Dropdown.Toggle 
-                  variant="success" 
-                  id="dropdown-status-xd31"
-                  className="dropdown-toggle-xd146"
-                >
+                    variant="success" 
+                    id="dropdown-status-xd31"
+                    className="dropdown-toggle-xd146 uiverse-btn uiverse-dropdown"
+                  >
                   {selectedStatusFilter} <span className="dropdown-arrow-xd32">▼</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
@@ -544,115 +552,17 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
             </div>
           </div>
           <div className="header-buttons-section">
-            <div style={{ 
-              display: 'inline-block', 
-              marginRight: 8,
-              marginLeft: 0,
-              height: '40px' 
-            }}>
-              <button 
-                onClick={onCrearClick}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: '#28a745',
-                  border: 'none',
-                  borderRadius: '0.5rem',
-                  padding: '0.6rem 1.2rem',
-                  color: 'white',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  fontSize: '0.9375rem',
-                  fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                  outline: 'none',
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'none',
-                  msAppearance: 'none',
-                  appearance: 'none',
-                  WebkitTapHighlightColor: 'transparent',
-                  WebkitUserSelect: 'none',
-                  MozUserSelect: 'none',
-                  msUserSelect: 'none',
-                  userSelect: 'none',
-                  whiteSpace: 'nowrap',
-                  height: '40px',
-                  boxSizing: 'border-box',
-                  lineHeight: '1.5',
-                  textAlign: 'center',
-                  textTransform: 'none',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = '#218838';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = '#28a745';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.transform = 'translateY(1px)';
-                  e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
-                }}
-              >
-                <span style={{ 
-                  fontSize: '16px',
-                  lineHeight: '1',
-                  color: '#9C27B0',
-                  fontWeight: 'bold',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '22px',
-                  height: '22px',
-                  backgroundColor: 'white',
-                  borderRadius: '50%',
-                  marginRight: '10px',
-                  position: 'relative',
-                  flexShrink: 0,
-                  boxSizing: 'border-box',
-                  paddingBottom: '1px'
-                }}>+</span>
-                <span style={{ 
-                  whiteSpace: 'nowrap',
-                  position: 'relative',
-                  top: '1px'
-                }}>Añadir Ticket</span>
+            <div>
+              <button onClick={onCrearClick} className="uiverse-btn uiverse-btn--small" type="button">
+                <span style={{ fontSize: '16px', lineHeight: '1', color: '#9C27B0', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '22px', height: '22px', backgroundColor: 'white', borderRadius: '50%', marginRight: '10px', paddingBottom: '1px' }}>+</span>
+                <span className="uiverse-label" style={{ whiteSpace: 'nowrap', position: 'relative', top: '1px' }}>Añadir Ticket</span>
               </button>
             </div>
-            <div style={{ display: 'inline-block', marginLeft: 8 }}>
-              <button 
-                type="button"
-                onClick={() => onOpenAllHistorial && onOpenAllHistorial()}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: '#28a745',
-                  border: 'none',
-                  borderRadius: '0.5rem',
-                  padding: '0.6rem 1.2rem',
-                  color: 'white',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  fontSize: '0.9375rem',
-                  height: '40px',
-                  boxSizing: 'border-box'
-                }}
-              >
-                Historial de tickets
-              </button>
+            <div>
+              <button type="button" onClick={() => setShowCrearProblemaModal(true)} className="create-problem-btn uiverse-btn uiverse-btn--small">Crear problema</button>
+            </div>
+            <div>
+              <button type="button" onClick={() => onOpenAllHistorial && onOpenAllHistorial()} className="uiverse-btn uiverse-btn--small" style={{ boxSizing: 'border-box' }}>Historial de tickets</button>
             </div>
           </div>
         </div>
@@ -673,7 +583,7 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
           gridTemplateRows: `repeat(${ROWS_PER_PAGE}, auto)`,
           gap: '24px',
         }}>
-          {paginatedTickets.map((t, i) => (
+          {safePaginatedTickets.map((t, i) => (
             <div className="card-ticket-1209" key={t?.id || i}>
               <div className="header-card-1210"></div>
               <div className="info-card-1211">
@@ -713,6 +623,59 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
           ))}
         </div>
       )}
+      
+      <Modal show={showCrearProblemaModal} onHide={() => { setShowCrearProblemaModal(false); setCrearError(null); }} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Crear problema</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {crearError && <Alert variant="danger">{crearError}</Alert>}
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Tipo de problema</Form.Label>
+              <Form.Control
+                type="text"
+                value={nuevoTipo}
+                onChange={(e) => setNuevoTipo(e.target.value)}
+                placeholder="Ej: Hardware, Software, Redes..."
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Descripción</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={4}
+                value={nuevaDescripcion}
+                onChange={(e) => setNuevaDescripcion(e.target.value)}
+                placeholder="Descripción del problema"
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => { setShowCrearProblemaModal(false); setCrearError(null); }} disabled={savingProblema}>Cancelar</Button>
+          <Button variant="success" onClick={async () => {
+            try {
+              setSavingProblema(true);
+              setCrearError(null);
+              if (!nuevoTipo || nuevoTipo.trim() === '') {
+                setCrearError('Ingrese el tipo de problema');
+                return;
+              }
+              await crearProblema({ tipo: nuevoTipo.trim(), descripcion: nuevaDescripcion.trim() });
+              alert('Problema creado correctamente');
+              setShowCrearProblemaModal(false);
+              setNuevoTipo(''); setNuevaDescripcion('');
+            } catch (err) {
+              console.error('Error creando problema:', err);
+              setCrearError(err.message || 'Error al crear problema');
+            } finally {
+              setSavingProblema(false);
+            }
+          }} disabled={savingProblema}>{savingProblema ? 'Guardando...' : 'Guardar'}</Button>
+        </Modal.Footer>
+      </Modal>
+
       {/* MODAL HISTORIAL DE TICKETS - Rendered once at the root */}
       <Modal show={showHistorialModal} onHide={handleCloseHistorialModal} size="lg" centered>
         <Modal.Header closeButton>

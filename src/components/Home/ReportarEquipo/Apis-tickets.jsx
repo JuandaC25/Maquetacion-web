@@ -65,6 +65,23 @@ export const subirImagenesAlServidor = async (imagenes) => {
  */
 export const crearTicketsParaEquipo = async (formData, problemas, detallesProblemas, idUsuario) => {
   try {
+    // Pre-check: verificar disponibilidad del elemento en backend
+    try {
+      const elResp = await authorizedFetch(`/api/elementos/${formData.idElemento}`);
+      if (!elResp.ok) {
+        const txt = await elResp.text().catch(() => 'Error al verificar elemento');
+        return { success: false, error: txt || (`Elemento ${formData.idElemento} no encontrado`) };
+      }
+      const elementoJson = await elResp.json().catch(() => null);
+      const estadoElem = elementoJson?.estadosoelement ?? elementoJson?.est ?? elementoJson?.estado ?? null;
+      if (estadoElem != null && Number(estadoElem) !== 1) {
+        const estadoTexto = Number(estadoElem) === 2 ? 'Mantenimiento' : Number(estadoElem) === 0 ? 'Inactivo' : String(estadoElem);
+        return { success: false, error: `El elemento no está disponible: ${estadoTexto}` };
+      }
+    } catch (err) {
+      return { success: false, error: 'No se pudo verificar disponibilidad del elemento: ' + (err.message || err) };
+    }
+
     const problemasSeleccionados = problemas.filter(p => formData.problemasSeleccionados.includes(p.id));
 
     // Agrupar problemas por tipo_problema
