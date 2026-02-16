@@ -1258,9 +1258,15 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
             <Form.Label>Equipo</Form.Label>
             <Form.Control as="select" name="id_elemen" value={form.id_elemen} onChange={handleChange} required>
               <option value="">-- Seleccione equipo --</option>
-              {elementosFiltrados.map(el => (
-                <option key={el.id_elemen ?? el.id} value={el.id_elemen ?? el.id}>{(el.nom_elemento || el.nom_elem || el.nom_eleme || el.nombre || el.num_ficha || '').toString()}</option>
-              ))}
+              {elementosFiltrados.map(el => {
+                const estado = el.estadosoelement ?? el.est ?? el.estado ?? 1;
+                const disponible = Number(estado) === 1;
+                const estadoTexto = !disponible ? (Number(estado) === 2 ? 'Mantenimiento' : (Number(estado) === 0 ? 'Inactivo' : String(estado))) : '';
+                const label = ((el.nom_elemento || el.nom_elem || el.nom_eleme || el.nombre || el.num_ficha || '') || '').toString() + (estadoTexto ? ` — ${estadoTexto}` : '');
+                return (
+                  <option key={el.id_elemen ?? el.id} value={el.id_elemen ?? el.id} disabled={!disponible} title={estadoTexto}>{label}</option>
+                );
+              })}
             </Form.Control>
           </Form.Group>
 

@@ -4,9 +4,7 @@ import { crearSolicitud } from "../../../../api/solicitudesApi";
 import { obtenerCategoria } from "../../../../api/CategoriaApi";
 import { obtenerSubcategorias } from "../../../../api/SubcategotiaApi";
 import ElementosService from "../../../../api/ElementosApi";
-// Se eliminó: import { obtenerEspacio } from "../../../../api/EspaciosApi";
 
-// --- FUNCIONES GLOBALES DE FECHA/HORA (Mantenidas aquí para encapsular la lógica) ---
 
 /**
  * @returns {string} Fecha actual en formato YYYY-MM-DD.
@@ -45,7 +43,7 @@ const todayDate = getMinMaxDate();
  * @param {string} categoriaDefault - Nombre de la categoría por defecto ("Computo" o "Multimedia")
  */
 function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCreated, categoriaDefault }) {
-    const [minHoraInicio, setMinHoraInicio] = useState(getMinTime()); // Mantengo setMinHoraInicio pero no se usa explícitamente en el código restante
+    const [minHoraInicio, setMinHoraInicio] = useState(getMinTime());
     const [categorias, setCategorias] = useState([]);
     const [subcategorias, setSubcategorias] = useState([]);
     const [elementosPorSubcategoria, setElementosPorSubcategoria] = useState([]);
@@ -100,9 +98,6 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
             .catch(err => console.error("Error al cargar categorías:", err));
     }, [show, categoriaDefault]);
 
-// ----------------------------------------------------------------------
-// 🚨 FILTRO APLICADO 2: Filtrar Subcategorías (solo "Portatil")
-// ----------------------------------------------------------------------
     useEffect(() => {
         // Cargar todas las subcategorías y filtrar por la categoría seleccionada
         if (form.id_categoria) {
@@ -171,7 +166,24 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
             return;
         }
 
-        // 3. Crear DTO (Data Transfer Object)
+        try {
+            const selectedId = form.id_elemen ? parseInt(form.id_elemen, 10) : null;
+            if (selectedId) {
+                const elemento = await ElementosService.obtenerPorId(selectedId).catch(() => null);
+                const est = elemento?.estadosoelement ?? elemento?.est ?? elemento?.estado ?? 1;
+                if (Number(est) !== 1) {
+                    const estadoTexto = Number(est) === 2 ? 'Mantenimiento' : Number(est) === 0 ? 'Inactivo' : String(est);
+                    alert('No se puede crear la solicitud: el equipo seleccionado no está disponible — ' + estadoTexto);
+                    setIsSubmitting(false);
+                    return;
+                }
+            }
+        } catch (err) {
+            console.error('Error verificando disponibilidad del elemento:', err);
+            alert('No se pudo verificar la disponibilidad del equipo. Intente nuevamente.');
+            setIsSubmitting(false);
+            return;
+        }
         const dto = {
             fecha_ini: `${form.fecha_ini}T${form.hora_ini}:00`, 
             fecha_fn: `${form.fecha_fn}T${form.hora_fn}:00`, 
@@ -192,7 +204,6 @@ function SolicitudModalPort({ show, handleHide, equiposDisponibles, userId, onCr
             ids_elem: form.id_elemen ? [parseInt(form.id_elemen, 10)] : [], 
         };
 
-        // 4. Llamada a la API
         try {
             const res = await crearSolicitud(dto);
             alert("Solicitud realizada correctamente ✅");
