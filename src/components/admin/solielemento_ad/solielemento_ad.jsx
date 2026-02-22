@@ -618,15 +618,35 @@ const Solielemento = () => {
       const id = detalles?.id_solicitud || detalles?.id || detalles?._id || null;
       if (id) {
         const solicitudFull = await obtenerSolicitudesPorid(id);
-        const idsCsv = solicitudFull?.id_elem || (solicitudFull?.id_elem?.toString && solicitudFull.id_elem.toString()) || '';
+        const getIdsCsvFromSolicitud = (s) => {
+          if (!s) return '';
+          const keys = ['id_elem','ids_elem','id_elemen','id_elem_prestamo','id_elem_prest','ids_elem','id_elementos','elementos'];
+          for (const k of keys) {
+            const v = s[k];
+            if (!v && v !== 0) continue;
+            if (Array.isArray(v)) return v.join(',');
+            if (typeof v === 'string' && v.trim() !== '') return v;
+            if (typeof v === 'number') return String(v);
+            try {
+              const sv = v && v.toString ? v.toString() : '';
+              if (sv && sv.trim() !== '') return sv;
+            } catch (e) { /* ignore */ }
+          }
+          if (s.elementosInfo && Array.isArray(s.elementosInfo) && s.elementosInfo.length > 0) {
+            return s.elementosInfo.map(e => (e?.id ?? e?.id_elemen ?? e?.id_elem)).filter(Boolean).join(',');
+          }
+          return '';
+        };
+
+        const idsCsv = getIdsCsvFromSolicitud(solicitudFull) || '';
         const ids = idsCsv ? idsCsv.toString().split(',').map(x => x.trim()).filter(Boolean) : [];
-        const elementosInfo = await Promise.all(ids.map(i => ElementosService.obtenerPorId(i).catch(() => null)));
-        const elementNames = elementosInfo.map(e => (
+        const elementosInfo = ids.length > 0 ? await Promise.all(ids.map(i => ElementosService.obtenerPorId(i).catch(() => null))) : (solicitudFull.elementosInfo || []);
+        const elementNames = Array.isArray(elementosInfo) ? elementosInfo.map(e => (
           e?.nom_elemento || e?.nom_elem || e?.nombre || e?.nombreElemento || e?.nombre_elemento || e?.nombre_elem || ''
-        )).filter(Boolean);
-        const elementSeries = elementosInfo.map(e => (
+        )).filter(Boolean) : [];
+        const elementSeries = Array.isArray(elementosInfo) ? elementosInfo.map(e => (
           e?.num_seri || e?.num_serie || e?.numero_serie || e?.serie || e?.serial || ''
-        )).filter(Boolean);
+        )).filter(Boolean) : [];
         const estadoStr = solicitudFull?.est_soli || solicitudFull?.estado || (typeof solicitudFull?.estadosolicitud !== 'undefined' ? (
           (function(n){ switch(Number(n)){case 1:return 'Pendiente';case 2:return 'Aprobado';case 3:return 'Rechazado';case 4:return 'Cancelado';case 5:return 'Finalizado';default: return ''}})(solicitudFull.estadosolicitud)
         ) : '');
@@ -644,9 +664,9 @@ const Solielemento = () => {
           fecha1: solicitudFull?.fecha_ini || solicitudFull?.fecha_inicio || solicitudFull?.fecha1 || '',
           fecha2: solicitudFull?.fecha_fn || solicitudFull?.fecha_fin || solicitudFull?.fecha2 || '',
           elementNames: (elementNames.length ? elementNames.join(', ') : fallbackNames.join(', ')),
-          elementSeries: elementSeries.join(', '),
-          elementoserie: elementSeries.join(', '),
-          elementosInfo,
+          elementSeries: (elementSeries.length ? elementSeries.join(', ') : (solicitudFull?.elementoserie || solicitudFull?.elementSeries || '')),
+          elementoserie: (elementSeries.length ? elementSeries.join(', ') : (solicitudFull?.elementoserie || solicitudFull?.elementoserie || '')),
+          elementosInfo: Array.isArray(elementosInfo) ? elementosInfo : (solicitudFull.elementosInfo || []),
         };
 
         normalized.id_solicitud = solicitudFull?.id_soli || solicitudFull?.id || solicitudFull?._id || id;
@@ -663,18 +683,22 @@ const Solielemento = () => {
         setModalDetalles(normalized);
         setEditableDetails(base);
         setIsEditing(false);
+        setShowModal(true);
+        return normalized;
       } else {
         setModalDetalles(detalles);
         setEditableDetails(detalles);
         setIsEditing(false);
+        setShowModal(true);
+        return detalles;
       }
-      setShowModal(true);
     } catch (err) {
       console.error('Error al obtener detalles de la solicitud:', err);
       setModalDetalles(detalles);
       setIsEditing(false);
       setEditableDetails(null);
       setShowModal(true);
+      return detalles;
     }
 
   };
@@ -740,9 +764,14 @@ const Solielemento = () => {
     return () => { mounted = false; };
   }, [showModal]);
 
-  const startEditing = () => {
+    const startEditing = () => {
     const base = { ...modalDetalles };
     try {
+      base.estado = getEstadoId(modalDetalles?.estado ?? modalDetalles?.est_soli ?? modalDetalles?.estadosolicitud ?? modalDetalles?.id_est_soli);
+      const idsFromElements = Array.isArray(modalDetalles?.elementosInfo)
+        ? modalDetalles.elementosInfo.map(e => e?.id ?? e?.id_elemen ?? e?.id_elem).filter(x => x !== undefined && x !== null).map(Number)
+        : [];
+      if (idsFromElements.length > 0) base.ids_elem = idsFromElements;
       const matchedCat = categorias.find(c => (c.nom_cat || c.nom_categoria || c.nombre || '').toString().toLowerCase() === (modalDetalles?.nom_cat || modalDetalles?.categoria || '').toString().toLowerCase());
       if (matchedCat) base.id_cat = matchedCat.id ?? matchedCat.id_cat ?? matchedCat.id_categoria;
       const matchedSub = subcategorias.find(sc => (sc.nom_subcateg || sc.nom_subcat || sc.nombre || '').toString().toLowerCase() === (modalDetalles?.nom_subcat || modalDetalles?.subcategoria || '').toString().toLowerCase());
@@ -854,8 +883,42 @@ const Solielemento = () => {
         id_est_soli: estadoVal || null,
       };
 
+      const extractIdsArray = (src) => {
+        if (!src) return [];
+        if (Array.isArray(src)) return src.map(x => Number(x)).filter(n => !isNaN(n));
+        if (typeof src === 'string') return src.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+        if (typeof src === 'number') return [Number(src)];
+        if (src.elementosInfo && Array.isArray(src.elementosInfo)) return src.elementosInfo.map(e => Number(e?.id ?? e?.id_elemen ?? e?.id_elem)).filter(n => !isNaN(n));
+        return [];
+      };
+
+      const idsFromEditable = extractIdsArray(editableDetails?.id_elem || editableDetails?.ids_elem || editableDetails?.id_elemen || editableDetails);
+      const idsFromModal = extractIdsArray(modalDetalles?.id_elem || modalDetalles?.ids_elem || modalDetalles?.id_elemen || modalDetalles);
+      const idsMerged = Array.from(new Set([...(idsFromEditable || []), ...(idsFromModal || [])]));
+      if (idsMerged.length > 0) payload.ids_elem = idsMerged;
+
       await actualizarSolicitud(id, payload);
-      setModalDetalles(prev => ({ ...(prev || {}), ...(editableDetails || {}), estado: estadoVal || prev?.estado }));
+      // Recargar la solicitud desde el backend para asegurar consistencia de campos (elementos, series, etc.)
+      const prevElements = modalDetalles?.elementosInfo || null;
+      const prevNames = modalDetalles?.elementNames || '';
+      const prevSeries = modalDetalles?.elementSeries || modalDetalles?.elementoserie || '';
+          try {
+            const reloaded = await handleVerClick({ id_solicitud: id });
+            if (reloaded) {
+              const hasElements = Array.isArray(reloaded.elementosInfo) && reloaded.elementosInfo.length > 0;
+              if (!hasElements) {
+                const merged = {
+                  ...reloaded,
+                  elementNames: reloaded.elementNames || prevNames || '',
+                  elementSeries: reloaded.elementSeries || reloaded.elementoserie || prevSeries || '',
+                  elementosInfo: (Array.isArray(reloaded.elementosInfo) && reloaded.elementosInfo.length > 0) ? reloaded.elementosInfo : (prevElements || []),
+                };
+                setModalDetalles(merged);
+              }
+            }
+          } catch (e) {
+            setModalDetalles(prev => ({ ...(prev || {}), ...(editableDetails || {}), estado: estadoVal || prev?.estado }));
+          }
       setIsEditing(false);
       setEditableDetails(null);
 
@@ -864,6 +927,43 @@ const Solielemento = () => {
     } catch (err) {
       console.error('Error actualizando solicitud', err);
       alert('Error al guardar: ' + (err.message || err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleApprove = async () => {
+    if (!modalDetalles) return;
+    const id = modalDetalles?.id_solicitud || modalDetalles?.id || modalDetalles?._id || null;
+    if (!id) { alert('No se encontró ID de la solicitud'); return; }
+
+    const ids = Array.isArray(modalDetalles?.elementosInfo) ? modalDetalles.elementosInfo.map(e => e?.id ?? e?.id_elemen ?? e?.id_elem).filter(Boolean).map(Number) : [];
+    const unavailable = (modalDetalles?.elementosInfo || []).filter(e => {
+      const est = e?.estadosoelement ?? e?.est ?? e?.estado ?? e?.estado_elem ?? null;
+      return est !== undefined && est !== null && Number(est) !== 1;
+    });
+    if (unavailable.length > 0) {
+      const names = unavailable.map(e => e?.nom_elemento || e?.nom_elem || e?.nombre || e?.id || '').join(', ');
+      alert('No se puede aprobar: algunos elementos no están disponibles: ' + names);
+      return;
+    }
+
+    if (!window.confirm('¿Confirmas aprobar esta solicitud?')) return;
+
+    try {
+      const payload = { id_est_soli: 2 };
+      if (ids.length > 0) payload.ids_elem = ids;
+      try { payload.id_tecnico = user?.id || user?.id_usu || user?.id_usuario || null; } catch(e){}
+      try { payload.nombre_tecnico = user?.nombre || user?.name || user?.nom_usu || null; } catch(e){}
+
+      setSaving(true);
+      await actualizarSolicitud(id, payload);
+      await handleVerClick({ id_solicitud: id });
+      setListRefreshKey(k => k + 1);
+      alert('Solicitud aprobada correctamente');
+    } catch (e) {
+      console.error('Error aprobando solicitud', e);
+      alert('Error al aprobar: ' + (e?.message || e));
     } finally {
       setSaving(false);
     }
@@ -1069,6 +1169,11 @@ const Solielemento = () => {
               <Button variant="outline-primary" onClick={startEditing} className="modal-action-button-1635" style={{ marginLeft: 8 }}>
                 Editar
               </Button>
+              {isAdmin ? (
+                <Button variant="success" onClick={handleApprove} className="modal-action-button-1635" style={{ marginLeft: 8 }} disabled={saving}>
+                  Aprobar
+                </Button>
+              ) : null}
             </>
           )}
         </Modal.Footer>
