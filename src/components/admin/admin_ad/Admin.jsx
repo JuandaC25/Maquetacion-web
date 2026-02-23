@@ -70,7 +70,7 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
       const subcategoria = ticket.subcategoria ?? ticket.nom_subcateg ?? '';
       const fechaApertura = ticket.fecha_in ?? ticket.fecha_creacion ?? ticket.fech ?? ticket.fecha ?? '';
       const fechaFin = ticket.fecha_fin ?? ticket.fecha_fn ?? ticket.fecha_fin ?? '';
-      const instructorObservacion = ticket.observacion || ticket.observa || ticket.obser || ticket.descripcion || '';
+      const instructorObservacion = ticket.observacion || ticket.observa || ticket.obser || ticket.descripcion || ticket.observaciones || '';
       const rawEstado = ticket.id_est_tick ?? ticket.estado ?? null;
       const estadoLabel = (() => {
         const n = rawEstado == null ? null : Number(rawEstado);
@@ -691,7 +691,7 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
               {/* Observación principal del ticket (desde BD) */}
               {ticketDetails && (() => {
                 const td = ticketDetails;
-                const ticketObs = td.obser ?? td.Obser ?? td.observa ?? td.descripcion ?? td.observacion ?? td.observ ?? td.obserb ?? '';
+                const ticketObs = td.obser ?? td.Obser ?? td.observa ?? td.descripcion ?? td.observacion ?? td.observ ?? td.obserb ?? td.observaciones ?? '';
                 return (
                   <div key={`ticket-observ-${td.id || td.id_tickets || historialTicketId}`} className="historial-card report-card">
                     <div className="report-header">
@@ -890,10 +890,28 @@ const Admin = () => {
     console.log('📋 Campo Obser (mayúscula):', detalles?.Obser);
     console.log('📋 Campo obser (minúscula):', detalles?.obser);
     console.log('🖼️ Campo imageness (raw):', detalles?.imageness || detalles?.imagenes || detalles?.imagen);
-    setModalDetalles(detalles || {});
-    setShowModal(true);
-    setEditandoProblema(false);
-    setNuevoProblema(String(detalles?.id_problem || detalles?.problem_id || ''));
+    (async () => {
+      try {
+        const id = detalles?.id_tickets || detalles?.id;
+        if (id) {
+          const full = await obtenerTicketPorId(id);
+          if (full) {
+            console.log('🔁 Ticket completo obtenido del backend:', full);
+            setModalDetalles(full);
+            setShowModal(true);
+            setEditandoProblema(false);
+            setNuevoProblema(String(full?.problemas && full.problemas.length > 0 ? (full.problemas[0].problemaId || '') : (detalles?.id_problem || detalles?.problem_id || '')));
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('No se pudo obtener ticket completo al abrir modal:', e);
+      }
+      setModalDetalles(detalles || {});
+      setShowModal(true);
+      setEditandoProblema(false);
+      setNuevoProblema(String(detalles?.id_problem || detalles?.problem_id || ''));
+    })();
   };
 
   const handleCloseModal = () => {
@@ -914,16 +932,16 @@ const Admin = () => {
   const handleGuardarEstado = async () => {
     const ticketId = modalDetalles?.id_tickets || modalDetalles?.id;
     if (!ticketId) {
-      alert('❌ No se encontró el ID del ticket');
+      alert(' No se encontró el ID del ticket');
       console.error('Datos del modal:', modalDetalles);
       return;
     }
     if (!nuevoEstado) {
-      alert('❌ Por favor seleccione un estado');
+      alert('Por favor seleccione un estado');
       return;
     }
     if (editandoProblema && !nuevoProblema) {
-      alert('❌ Selecciona un problema');
+      alert(' Selecciona un problema');
       return;
     }
     setGuardando(true);
@@ -936,18 +954,17 @@ const Admin = () => {
       if (editandoProblema) {
         payload.id_problem = problemaId;
       }
-      console.log('💾 Guardando estado/problema:', { id: ticketId, ...payload });
+      console.log(' Guardando estado/problema:', { id: ticketId, ...payload });
       const resultado = await actualizarTicket(ticketId, payload);
-      console.log('✅ Resultado:', resultado);
+      console.log(' Resultado:', resultado);
       alert('✓ Ticket actualizado exitosamente');
       setEditandoEstado(false);
       setEditandoProblema(false);
       handleCloseModal();
-      // Recargar tickets sin recargar toda la página
       setRefreshTrigger(prev => prev + 1);
     } catch (error) {
-      console.error('❌ Error completo:', error);
-      alert('❌ Error al actualizar el ticket: ' + error.message);
+      console.error('Error completo:', error);
+      alert('Error al actualizar el ticket: ' + error.message);
     } finally {
       setGuardando(false);
     }
@@ -1035,7 +1052,7 @@ const Admin = () => {
           if (!n) return (rawEstado && String(rawEstado)) || 'Desconocido';
           return n === 1 ? 'Activo' : n === 2 ? 'Pendiente' : n === 3 ? 'Terminado' : n === 4 ? 'Inactivo' : String(rawEstado);
         })();
-        const instructorObservacion = t.observacion || t.observa || t.obser || descripcion || '';
+        const instructorObservacion = t.observacion || t.observa || t.obser || descripcion || t.observaciones || '';
 
         doc.setFontSize(14);
         doc.setFont(undefined, 'bold');
@@ -1489,7 +1506,7 @@ const Admin = () => {
             <div className="form-control-wrap-1225">
               <Form.Control 
                 type="text" 
-                value={modalDetalles?.ambient || 'No disponible'} 
+                value={modalDetalles?.ambiente || modalDetalles?.ambient || 'No disponible'} 
                 readOnly 
               />
             </div>
@@ -1509,9 +1526,9 @@ const Admin = () => {
                 <Form.Control 
                   type="text" 
                   value={
-                    modalDetalles?.nom_problm || 
-                    modalDetalles?.nom_problem || 
-                    'No disponible'
+                    (modalDetalles?.problemas && modalDetalles.problemas.length > 0) ?
+                      (modalDetalles.problemas.map(p => p.tipoProblema || p.descripcion).join(', ')) :
+                      (modalDetalles?.nom_problm || modalDetalles?.nom_problem || 'No disponible')
                   } 
                   readOnly 
                 />
@@ -1559,8 +1576,14 @@ const Admin = () => {
                 as="textarea"
                 rows={3}
                 value={
-                  modalDetalles?.obser || 
-                  modalDetalles?.Obser || 
+                  modalDetalles?.obser ||
+                  modalDetalles?.Obser ||
+                  modalDetalles?.observaciones ||
+                  modalDetalles?.observacion ||
+                  modalDetalles?.observa ||
+                  modalDetalles?.descripcion ||
+                  modalDetalles?.descr_problem ||
+                  modalDetalles?.observ ||
                   'No disponible'
                 } 
                 readOnly 
@@ -1572,7 +1595,21 @@ const Admin = () => {
             <label className="form-label-1224">Imagen:</label>
             <div className="form-control-wrap-1225" style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
               {(() => {
-                const raw = modalDetalles?.imageness || modalDetalles?.imagenes || modalDetalles?.imagen || null;
+                const rawTicket = modalDetalles?.imageness || modalDetalles?.imagenes || modalDetalles?.imagen || null;
+                const problemaImgs = Array.isArray(modalDetalles?.problemas) ? modalDetalles.problemas.flatMap(p => {
+                  if (!p) return [];
+                  const imgs = p.imagenes;
+                  if (!imgs) return [];
+                  if (Array.isArray(imgs)) return imgs;
+                  if (typeof imgs === 'string' && imgs.indexOf(',') !== -1) return imgs.split(',').map(x => x.trim()).filter(Boolean);
+                  return [imgs];
+                }) : [];
+
+                // combinar fuentes: ticket images primero, luego problemas
+                let raw = null;
+                if (rawTicket && rawTicket !== null) raw = rawTicket;
+                else if (problemaImgs && problemaImgs.length > 0) raw = problemaImgs;
+                else raw = null;
                 if (!raw) return (<div style={{ color: '#777' }}>No disponible</div>);
 
                 let urls = [];
@@ -1587,8 +1624,11 @@ const Admin = () => {
                       else if (typeof parsed === 'string') urls = [parsed];
                       else urls = [];
                     } else {
-                      // single URL or base64
-                      urls = [s];
+                      if (s.indexOf(',') !== -1) {
+                        urls = s.split(',').map(x => x.trim()).filter(Boolean);
+                      } else {
+                        urls = [s];
+                      }
                     }
                   }
                 } catch (e) {
