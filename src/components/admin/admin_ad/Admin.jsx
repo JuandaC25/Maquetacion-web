@@ -889,7 +889,6 @@ const Admin = () => {
     console.log('🔍 Datos del ticket completos:', detalles);
     console.log('📋 Campo Obser (mayúscula):', detalles?.Obser);
     console.log('📋 Campo obser (minúscula):', detalles?.obser);
-    console.log('🖼️ Campo imageness (raw):', detalles?.imageness || detalles?.imagenes || detalles?.imagen);
     (async () => {
       try {
         const id = detalles?.id_tickets || detalles?.id;
@@ -1513,7 +1512,7 @@ const Admin = () => {
           </div>
           
           <div className="form-row-1223">
-            <label className="form-label-1224">Problema:</label>
+            <label className="form-label-1224">Problema(s):</label>
             <div className="form-control-wrap-1225">
               {editandoProblema ? (
                 <Form.Select value={nuevoProblema} onChange={e => setNuevoProblema(e.target.value)}>
@@ -1523,15 +1522,47 @@ const Admin = () => {
                   ))}
                 </Form.Select>
               ) : (
-                <Form.Control 
-                  type="text" 
-                  value={
-                    (modalDetalles?.problemas && modalDetalles.problemas.length > 0) ?
-                      (modalDetalles.problemas.map(p => p.tipoProblema || p.descripcion).join(', ')) :
-                      (modalDetalles?.nom_problm || modalDetalles?.nom_problem || 'No disponible')
-                  } 
-                  readOnly 
-                />
+                (() => {
+                  const items = Array.isArray(modalDetalles?.problemas) && modalDetalles.problemas.length > 0 ? modalDetalles.problemas : null;
+                  if (!items) {
+                    return (
+                      <Form.Control type="text" value={(modalDetalles?.nom_problm || modalDetalles?.nom_problem || 'No disponible')} readOnly />
+                    );
+                  }
+
+                  return items.map((p, idx) => (
+                    <div key={idx} style={{ display: 'flex', gap: 12, marginBottom: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                      <div style={{ flex: '0 0 220px', maxWidth: 320 }}>
+                        <label className="form-label-1224">Tipo</label>
+                        <div className="form-control-wrap-1225">
+                          <Form.Control
+                            type="text"
+                            value={(() => {
+                              try {
+                                return p?.problema?.Tip_problema || p?.problema?.tip_problema || p?.tipoProblema || '';
+                              } catch (e) { return ''; }
+                            })()}
+                            readOnly
+                            style={{ whiteSpace: 'normal', overflowWrap: 'break-word', wordBreak: 'break-word' }}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ flex: '1 1 420px', minWidth: 220 }}>
+                        <label className="form-label-1224">Descripción</label>
+                        <div className="form-control-wrap-1225">
+                          <Form.Control
+                            as="textarea"
+                            rows={3}
+                            value={p?.problemaDesc || (p?.problema && (p.problema.desc_problema || p.problema.desc)) || p?.descripcion || p?.descr || ''}
+                            readOnly
+                            style={{ resize: 'vertical', whiteSpace: 'pre-wrap', overflowWrap: 'break-word', wordBreak: 'break-word' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ));
+                })()
               )}
             </div>
           </div>
@@ -1575,17 +1606,24 @@ const Admin = () => {
               <Form.Control 
                 as="textarea"
                 rows={3}
-                value={
-                  modalDetalles?.obser ||
-                  modalDetalles?.Obser ||
-                  modalDetalles?.observaciones ||
-                  modalDetalles?.observacion ||
-                  modalDetalles?.observa ||
-                  modalDetalles?.descripcion ||
-                  modalDetalles?.descr_problem ||
-                  modalDetalles?.observ ||
-                  'No disponible'
-                } 
+                value={(() => {
+                  try {
+                    if (Array.isArray(modalDetalles?.problemas) && modalDetalles.problemas.length > 0) {
+                      const textos = modalDetalles.problemas.map(p => (p?.descripcion || p?.descr || p?.descr_problem || '')).filter(Boolean);
+                      if (textos.length > 0) return textos.join('\n\n');
+                    }
+                  } catch (e) {}
+                  return (
+                    modalDetalles?.obser ||
+                    modalDetalles?.Obser ||
+                    modalDetalles?.observacion ||
+                    modalDetalles?.observa ||
+                    modalDetalles?.descripcion ||
+                    modalDetalles?.descr_problem ||
+                    modalDetalles?.observ ||
+                    'No disponible'
+                  );
+                })()} 
                 readOnly 
                 style={{ resize: 'vertical' }}
               />
@@ -1595,7 +1633,7 @@ const Admin = () => {
             <label className="form-label-1224">Imagen:</label>
             <div className="form-control-wrap-1225" style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
               {(() => {
-                const rawTicket = modalDetalles?.imageness || modalDetalles?.imagenes || modalDetalles?.imagen || null;
+                const rawTicket = modalDetalles?.imagenes || modalDetalles?.imagen || null;
                 const problemaImgs = Array.isArray(modalDetalles?.problemas) ? modalDetalles.problemas.flatMap(p => {
                   if (!p) return [];
                   const imgs = p.imagenes;
