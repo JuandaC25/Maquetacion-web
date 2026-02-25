@@ -38,8 +38,8 @@
 }
 .pcesito{
     
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     margin: auto;
     margin-bottom: 10px;
     aspect-ratio: 1;
@@ -60,6 +60,7 @@
     padding-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
+    padding-bottom: 15px;
     border: 1px solid rgba(0, 128, 0, 0.818);
     margin: 25px auto !important;
     height: auto;
@@ -69,6 +70,7 @@
     justify-content: space-between;
     box-sizing: border-box;
     overflow: hidden;
+    background-color: white;
 }
 .reportes:hover{
     box-shadow:  4px 4px 4px 4px rgb(224, 248, 221) ;
@@ -96,7 +98,7 @@ padding: 5px 12px !important;
 border: none;
 background-color: rgb(9, 180, 26) !important;
 width: 70%;
-margin: 10px auto 5px auto;
+margin: 10px auto 15px auto;
 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 height: auto;
 min-height: 28px;
@@ -121,7 +123,12 @@ font-weight: 500;
     align-items: center;
     flex-wrap: wrap;
     gap: 20px;
-    padding: 20px;
+    padding: 30px;
+    background-color: #e8f9e8;
+    border: 2px solid #c8e6c9;
+    border-radius: 15px;
+    margin: 20px;
+    min-height: 500px;
 }
 .carousel-control-prev{
     width: 3%;
@@ -133,8 +140,8 @@ font-weight: 500;
 
 .comp{
     position: relative;
-    width: 110px;
-    height: 110px;
+    width: 140px;
+    height: 140px;
     margin: auto;
     object-fit: cover;
     border-radius: 4px;
