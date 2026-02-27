@@ -264,7 +264,7 @@ function TicketsActivos() {
                           )}
                         </div>
                         <h5>Ambiente:</h5>
-                        <h6>{ticket.ambiente || ticket.ambient || 'No registrado'}</h6>
+                        <h6>{(typeof ticket.ambiente === 'string' && ticket.ambiente.trim() !== '') ? ticket.ambiente : (typeof ticket.ambient === 'string' && ticket.ambient.trim() !== '' ? ticket.ambient : 'No registrado')}</h6>
                         <h5>Categoría:</h5>
                         <h6>{categoriaElem}</h6>
                         <Button className='buttoninfo' onClick={() => abrirModal(ticket)}>Reportar</Button>

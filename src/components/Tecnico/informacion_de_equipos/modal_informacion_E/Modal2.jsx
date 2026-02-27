@@ -86,7 +86,7 @@ function Modal2({ show, onHide, ticket, elementos }) {
               </div>
               <div className='modal-item'>
                 <label className='modal-label'>Ambiente</label>
-                <input type="text" value={ticket.ambient || 'No registrado'} readOnly className="modal-input" />
+                <input type="text" value={(typeof ticket.ambiente === 'string' && ticket.ambiente.trim() !== '') ? ticket.ambiente : (typeof ticket.ambient === 'string' && ticket.ambient.trim() !== '' ? ticket.ambient : 'No registrado')} readOnly className="modal-input" />
               </div>
               <div className='modal-item'>
                 <label className='modal-label'>Elemento</label>
