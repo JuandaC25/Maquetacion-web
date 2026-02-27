@@ -18,7 +18,8 @@ function ReportarEquipo() {
     setSuccess,
     detallesProblemas,
     actualizarDescripcion,
-    agregarImagenes
+    agregarImagenes,
+    eliminarImagen
   } = useReportarEquipo();
 
   // Estado para modal de detalles
@@ -59,7 +60,20 @@ function ReportarEquipo() {
           </Alert>
         )}
 
-        {success && (() => { window.alert(success); setSuccess(null); return null; })()}
+        {success && (
+          <Alert variant="success" onClose={() => setSuccess(null)} dismissible>
+            <Alert.Heading>¡Operación exitosa!</Alert.Heading>
+            <div style={{ whiteSpace: 'pre-wrap' }}>
+              {success}
+            </div>
+            <hr />
+            <div className="d-flex justify-content-end">
+              <Button onClick={() => setSuccess(null)} variant="outline-success">
+                Cerrar mensaje
+              </Button>
+            </div>
+          </Alert>
+        )}
 
         <Form onSubmit={handleSubmit}>
 
@@ -222,17 +236,7 @@ function ReportarEquipo() {
                                   <button
                                     type="button"
                                     className="btn-eliminar-imagen"
-                                    onClick={() => {
-                                      const nuevasImagenes = detalles.imagenes.filter((_, i) => i !== idx);
-                                      // Actualizar el estado de forma inmutable
-                                      setDetallesProblemas(prev => ({
-                                        ...prev,
-                                        [modalProblemaId]: {
-                                          ...prev[modalProblemaId],
-                                          imagenes: nuevasImagenes
-                                        }
-                                      }));
-                                    }}
+                                    onClick={() => eliminarImagen(modalProblemaId, idx)}
                                     title="Eliminar imagen"
                                   >
                                     <span className="btn-icon">🗑️</span> Quitar imagen

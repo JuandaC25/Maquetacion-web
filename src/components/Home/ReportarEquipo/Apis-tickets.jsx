@@ -244,29 +244,47 @@ export const useReportarEquipo = () => {
 
     // Agregar imágenes a un problema
     const agregarImagenes = async (problemaId, files) => {
-      if (!files || files.length === 0) return;
-      setImagenCargando(true);
-      setError(null);
-      try {
-        // Convertir todas las imágenes a base64
-        const base64Imgs = await Promise.all(Array.from(files).map(convertirImagenABase64));
-        setDetallesProblemas(prev => {
-          const nuevasImagenes = [...(prev[problemaId]?.imagenes || []), ...base64Imgs];
-          return {
-            ...prev,
-            [problemaId]: {
-              ...prev[problemaId],
-              imagenes: nuevasImagenes,
+        if (!files || files.length === 0) return;
+        setImagenCargando(true);
+        setError(null);
+        try {
+            // Convertir todas las imágenes a base64
+            const base64Imgs = [];
+            for (const file of files) {
+                const base64 = await convertirImagenABase64(file);
+                base64Imgs.push(base64);
             }
-          };
+            
+            setDetallesProblemas(prev => {
+                const nuevasImagenes = [...(prev[problemaId]?.imagenes || []), ...base64Imgs];
+                return {
+                    ...prev,
+                    [problemaId]: {
+                        ...prev[problemaId] || {},
+                        imagenes: nuevasImagenes
+                    }
+                };
+            });
+        } catch (err) {
+            setError("No se pudo cargar la(s) imagen(es): " + err.message);
+        } finally {
+            setImagenCargando(false);
+        }
+    };
+
+    // Eliminar una imagen específica
+    const eliminarImagen = (problemaId, index) => {
+        setDetallesProblemas(prev => {
+            const currentImages = prev[problemaId]?.imagenes || [];
+            const nuevasImagenes = currentImages.filter((_, i) => i !== index);
+            return {
+                ...prev,
+                [problemaId]: {
+                    ...prev[problemaId] || {},
+                    imagenes: nuevasImagenes
+                }
+            };
         });
-        setSuccess('✓ Imagen(es) agregada(s) correctamente');
-        setTimeout(() => setSuccess(null), 2000);
-      } catch (err) {
-        setError("No se pudo cargar la(s) imagen(es).");
-      } finally {
-        setImagenCargando(false);
-      }
     };
 
     const handleProblemaChange = (problemaId) => {
@@ -382,6 +400,7 @@ export const useReportarEquipo = () => {
     setSuccess,
     toggleDetalles,
     actualizarDescripcion,
-    agregarImagenes
+    agregarImagenes,
+    eliminarImagen
   };
 };

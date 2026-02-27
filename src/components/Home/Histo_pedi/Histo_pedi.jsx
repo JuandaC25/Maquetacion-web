@@ -62,6 +62,7 @@ const getStatusDetails = (estadoValor) => {
 function Historial_ped() {
     const [solicitudes, setSolicitudes] = useState([]);
     const [tickets, setTickets] = useState([]);
+    const [problemas, setProblemas] = useState([]);
     const [subcategorias, setSubcategorias] = useState({}); 
     const [subcategoriaOptions, setSubcategoriaOptions] = useState([]);
     const [selectedSubcategoriaId, setSelectedSubcategoriaId] = useState(null);
@@ -86,15 +87,29 @@ function Historial_ped() {
         
         // En lugar de usar fetch, construimos las URLs directamente
         const imagenesValidas = urls.map(url => {
-            // Limpiar corchetes, comillas y espacios
-            let cleanUrl = url.trim()
-                .replace(/^\["|"\]$/g, '') // Eliminar ["  y  "]
-                .replace(/^\[|\]$/g, '')    // Eliminar [ y ]
-                .replace(/^"|"$/g, '')      // Eliminar comillas al inicio y final
-                .trim();
+            if (!url) return null;
             
-            const fullUrl = cleanUrl.startsWith('http') ? cleanUrl : `${BASE_URL}${cleanUrl}`;
-            console.log('URL construida:', fullUrl);
+            // Limpieza exhaustiva
+            let cleanUrl = url.trim();
+            
+            // Eliminar corchetes y comillas
+            cleanUrl = cleanUrl.replace(/[\[\]"']/g, '');
+            
+            // Asegurar que no empiece con barra extra si la vamos a añadir, o manejarlo
+            if (cleanUrl.startsWith('/')) {
+                cleanUrl = cleanUrl.substring(1);
+            }
+            
+            // Si ya es una URL completa, usarla
+            if (cleanUrl.startsWith('http')) {
+                return cleanUrl;
+            }
+            
+            // Construir URL completa asegurando la barra
+            // Asumimos que la ruta relativa necesita un slash antes
+            const fullUrl = `${BASE_URL}/${cleanUrl}`;
+            
+            console.log('URL final imagen:', fullUrl);
             return fullUrl;
         }).filter(url => url && url.length > 0);
         
@@ -192,6 +207,15 @@ function Historial_ped() {
         }
     };
 
+    const cargarProblemas = async () => {
+        try {
+            const data = await import('../../../api/ProblemasApi.js').then(mod => mod.obtenerProblemas());
+            setProblemas(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error("Fallo al obtener problemas:", err);
+        }
+    };
+
     useEffect(() => {
         cargarSubcategorias();
     }, []); 
@@ -204,6 +228,7 @@ function Historial_ped() {
             cargarSolicitudes();
         } else {
             cargarTickets();
+            cargarProblemas();
         }
     }, [activeTab]);
     
@@ -444,71 +469,117 @@ function Historial_ped() {
                         const statusTicket = ticket.id_est_tick === 2 ? 
                             { text: 'Activo', variant: 'success' } : 
                             { text: 'Resuelto', variant: 'secondary' };
-                        
+                        // Determinar si hay detalles de problemas individuales
+                        const tieneProblemasDetallados = ticket.problemas && Array.isArray(ticket.problemas) && ticket.problemas.length > 0;
+
+                        // Equipo
+                        const equipo = ticket.nom_elem || ticket.elemento || ticket.nom_eleme || ticket.id_elem || ticket.id_eleme || 'N/A';
+        
+                        // Fecha y hora
+                        let fechaHora = 'N/A';
+                        if (ticket.fecha_in) {
+                            try {
+                                // Asegurar que sea tratado como UTC local si no tiene 'Z'
+                                const fechaStr = ticket.fecha_in.endsWith('Z') ? ticket.fecha_in : `${ticket.fecha_in}Z`;
+                                const fechaObj = new Date(fechaStr);
+                                fechaHora = fechaObj.toLocaleString('es-ES', { 
+                                    year: 'numeric', month: 'numeric', day: 'numeric', 
+                                    hour: '2-digit', minute: '2-digit', hour12: false
+                                });
+                            } catch (e) {
+                                fechaHora = ticket.fecha_in;
+                            }
+                        }
+
+                        // Función auxiliar para procesar y mostrar botón de imágenes
+                        const renderBotonImagenes = (imagenesRaw) => {
+                            if (!imagenesRaw || imagenesRaw === 'null' || imagenesRaw === '[]' || imagenesRaw === '') return null;
+                            return (
+                                <div style={{ marginTop: '5px' }}>
+                                    <Button
+                                        size="sm"
+                                        variant="outline-primary"
+                                        style={{ fontSize: '0.85em', padding: '2px 8px' }}
+                                        onClick={() => {
+                                            let imagenesStr = typeof imagenesRaw === 'string' ? imagenesRaw.trim() : '';
+
+                                            // Intento de parseo si es un string de array
+                                            if (imagenesStr.startsWith('[') && imagenesStr.endsWith(']')) {
+                                                try {
+                                                    const parsed = JSON.parse(imagenesStr);
+                                                    imagenesStr = Array.isArray(parsed) ? parsed.join(',') : imagenesStr;
+                                                } catch (e) {
+                                                    imagenesStr = imagenesStr.slice(1, -1);
+                                                }
+                                            }
+
+                                            // Separar por comas y limpiar URLs incompletas o vacías
+                                            const urls = imagenesStr
+                                                .split(',')
+                                                .map(img => img.trim().replace(/^["']|["']$/g, ''))
+                                                .filter(img => img && img.length > 0 && !img.includes('undefined') && !img.includes('null'));
+                                                
+                                            if (urls.length > 0) {
+                                                console.log("URLs procesadas para mostrar:", urls);
+                                                setImgModalTicket(ticket);
+                                                setImgModalList(urls);
+                                                setShowImgModal(true);
+                                                cargarImagenesConAuth(urls);
+                                            } else {
+                                                alert('No se encontraron imágenes válidas.');
+                                            }
+                                        }}
+                                    >
+                                        📷 Ver imágenes
+                                    </Button>
+                                </div>
+                            );
+                        };
+
                         return (
                             <div className="p-3 item_historial" key={ticket.id_tickets}>
                                 <span className='emoji_historial'>🔧</span>
-                                
                                 <Badge 
                                     className='let_histo' 
                                     bg={statusTicket.variant} 
                                 >
                                     {statusTicket.text}
                                 </Badge>
-                                
                                 <span className='texto_pedido'>
-                                    ID Ticket: {ticket.id_tickets || 'N/A'} | Equipo: {ticket.nom_elem || `ID ${ticket.id_eleme}`} <br/>
-                                    Problema: {ticket.nom_problm || 'N/A'} <br/>
-                                    Ambiente: {ticket.ambient || 'N/A'} <br/>
-                                    Fecha: {formatFecha(ticket.fecha_in || 'N/A')}
-                                    {ticket.Obser && (
-                                        <div style={{ marginTop: '5px', fontSize: '0.9em', color: '#555' }}>
-                                            Observaciones: {ticket.Obser}
+                                    ID Ticket: {ticket.id_tickets || 'N/A'} <br/>
+                                    <strong>Equipo:</strong> {equipo} <br/>
+                                    <strong>Fecha y hora:</strong> {fechaHora} <br/>
+                                    <strong>Ambiente:</strong> {ticket.ambiente || ticket.ambient || 'N/A'} <br/>
+                                    
+                                    {tieneProblemasDetallados ? (
+                                        <div style={{ marginTop: '8px', borderTop: '1px solid #eee', paddingTop: '5px' }}>
+                                            <strong style={{ color: '#0056b3' }}>Detalle de Problemas:</strong>
+                                            <ul style={{ paddingLeft: '15px', marginTop: '5px', marginBottom: '0' }}>
+                                                {ticket.problemas.map((prob, idx) => (
+                                                    <li key={idx} style={{ marginBottom: '8px', fontSize: '0.95em' }}>
+                                                        <strong>Tipo:</strong> {prob.tipoProblema || prob.nom_problm || 'General'} <br/>
+                                                        {prob.problemaDesc && <><strong>Problema:</strong> {prob.problemaDesc}<br/></>}
+                                                        {prob.descripcion && <><strong>Observación:</strong> {prob.descripcion}<br/></>}
+                                                        {renderBotonImagenes(prob.imagenes)}
+                                                    </li>
+                                                ))}
+                                            </ul>
                                         </div>
+                                    ) : (
+                                        <>
+                                            Tipo de problema: {ticket.nom_problm || 'N/A'} <br/>
+                                            {ticket.Obser && <strong>Descripción:</strong>} {ticket.Obser || ''} <br/>
+                                            {renderBotonImagenes(ticket.imageness)}
+                                        </>
                                     )}
-                                    {ticket.imageness && ticket.imageness !== 'null' && (
-                                        <div style={{ marginTop: '8px' }}>
-                                            <strong style={{ fontSize: '0.9em', color: '#333' }}>📷 Imágenes adjuntas:</strong>
-                                            <div style={{ display: 'flex', gap: '10px', marginTop: '5px', flexWrap: 'wrap' }}>
-                                                <Button
-                                                    size="sm"
-                                                    variant="primary"
-                                                    onClick={() => {
-                                                        // Limpiar el string de imageness de corchetes y parsear correctamente
-                                                        let imagenesStr = ticket.imageness.trim();
-                                                        
-                                                        // Si viene como array stringificado, parsearlo
-                                                        if (imagenesStr.startsWith('[') && imagenesStr.endsWith(']')) {
-                                                            try {
-                                                                const parsed = JSON.parse(imagenesStr);
-                                                                imagenesStr = Array.isArray(parsed) ? parsed.join(',') : imagenesStr;
-                                                            } catch (e) {
-                                                                // Si falla el parse, quitar corchetes manualmente
-                                                                imagenesStr = imagenesStr.slice(1, -1);
-                                                            }
-                                                        }
-                                                        
-                                                        const urls = imagenesStr
-                                                            .split(',')
-                                                            .map(img => img.trim().replace(/^["']|["']$/g, ''))
-                                                            .filter(img => img.length > 0);
-                                                        
-                                                        console.log('URLs procesadas:', urls);
-                                                        setImgModalTicket(ticket);
-                                                        setImgModalList(urls);
-                                                        setShowImgModal(true);
-                                                        cargarImagenesConAuth(urls);
-                                                    }}
-                                                    style={{ fontSize: '0.85em' }}
-                                                >
-                                                    🖼️ Ver imágenes
-                                                </Button>
-                                            </div>
-                                        </div>
+
+                                    {ticket.trasabilidad && ticket.trasabilidad.length > 0 && (
+                                         <div style={{ marginTop: '5px', fontSize: '0.9em', color: '#555', borderTop: '1px solid #eee', paddingTop: '5px' }}>
+                                            <em>Historial de cambios ({ticket.trasabilidad.length} eventos)</em>
+                                         </div>
                                     )}
                                 </span>
-                                <div className='Cont_botones_histo'>
-                                </div>
+                                <div className='Cont_botones_histo'></div>
                             </div>
                         );
                     })}
