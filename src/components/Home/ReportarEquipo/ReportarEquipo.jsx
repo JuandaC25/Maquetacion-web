@@ -1,6 +1,8 @@
 import React from 'react';
 import { Form, Button, Alert, Spinner, Modal } from 'react-bootstrap';
 import { useReportarEquipo } from './Apis-tickets';
+import { useAuth } from '../../../auth/AuthContext';
+import { authorizedFetch } from '../../../api/http';
 function ReportarEquipo() {
   const {
     problemas,
@@ -22,7 +24,23 @@ function ReportarEquipo() {
     eliminarImagen
   } = useReportarEquipo();
 
-  // Estado para modal de detalles
+  const { roles } = useAuth();
+  const isAdmin = Array.isArray(roles) && roles.includes('ADMINISTRADOR');
+
+  const [editModalProblemId, setEditModalProblemId] = React.useState(null);
+  const [editText, setEditText] = React.useState('');
+  const [editSubmitting, setEditSubmitting] = React.useState(false);
+
+  const [deleteConfirmProblemId, setDeleteConfirmProblemId] = React.useState(null);
+  const [deleting, setDeleting] = React.useState(false);
+
+  const [editTipoOriginal, setEditTipoOriginal] = React.useState(null);
+  const [editTipoNombre, setEditTipoNombre] = React.useState('');
+  const [editTipoSubmitting, setEditTipoSubmitting] = React.useState(false);
+
+  const [deleteTipoConfirm, setDeleteTipoConfirm] = React.useState(null);
+  const [deletingTipo, setDeletingTipo] = React.useState(false);
+
   const [modalProblemaId, setModalProblemaId] = React.useState(null);
   const [selectedTipo, setSelectedTipo] = React.useState(null);
 
@@ -135,8 +153,33 @@ function ReportarEquipo() {
                       role="button"
                       tabIndex={0}
                       onKeyDown={(e) => { if (e.key === 'Enter') setSelectedTipo(tipo); }}
+                      style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8}}
                     >
-                      {tipo} <span className="tipo-count">({lista.length})</span>
+                      <div style={{display:'inline-flex',alignItems:'center',gap:8}}>
+                        <div>{tipo} <span className="tipo-count">({lista.length})</span></div>
+                      </div>
+                      {isAdmin && (
+                        <div style={{display:'inline-flex',gap:6,alignItems:'center'}} onClick={e => e.stopPropagation()}>
+                          <button
+                            type="button"
+                            className="icon-btn small"
+                            title={`Editar tipo ${tipo}`}
+                            onClick={() => { setEditTipoOriginal(tipo); setEditTipoNombre(tipo); }}
+                            style={{border:'none',background:'transparent',cursor:'pointer',padding:4}}
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            type="button"
+                            className="icon-btn small"
+                            title={`Eliminar tipo ${tipo}`}
+                            onClick={() => setDeleteTipoConfirm(tipo)}
+                            style={{border:'none',background:'transparent',cursor:'pointer',padding:4}}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -185,7 +228,7 @@ function ReportarEquipo() {
           </Form.Group>
 
 
-          {/* MODAL para detalles de problema */}
+          
           <Modal show={!!modalProblemaId} onHide={() => setModalProblemaId(null)} centered>
             <Modal.Header closeButton>
               <Modal.Title>Detalles del problema</Modal.Title>
@@ -196,7 +239,30 @@ function ReportarEquipo() {
                 const problema = problemas.find(p => p.id === modalProblemaId);
                 return (
                   <>
-                    <div style={{fontWeight:600,marginBottom:8}}>{problema?.descr_problem}</div>
+                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
+                      <div style={{fontWeight:600}}>{problema?.descr_problem}</div>
+                      {isAdmin && (
+                        <div style={{display:'flex',gap:8}}>
+                          <Button
+                            variant="warning"
+                            size="sm"
+                            onClick={() => {
+                              setEditModalProblemId(problema.id);
+                              setEditText(problema?.descr_problem || '');
+                            }}
+                          >
+                            ✏️ Editar
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => setDeleteConfirmProblemId(problema.id)}
+                          >
+                            🗑️ Eliminar
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                     <Form.Group>
                       <Form.Label>Descripción (opcional)</Form.Label>
                       <Form.Control
@@ -220,7 +286,7 @@ function ReportarEquipo() {
                           disabled={imagenCargando}
                           style={{maxWidth:220}}
                         />
-                        {/* Eliminar el texto 'Ningún archivo seleccionado' para que solo se vea el botón */}
+                        
                       </div>
                       {detalles.imagenes && detalles.imagenes.length > 0 && (
                         <div className="imagenes-preview-grid mt-2">
@@ -256,6 +322,188 @@ function ReportarEquipo() {
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setModalProblemaId(null)}>
                 Cerrar
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          
+          <Modal show={!!editModalProblemId} onHide={() => setEditModalProblemId(null)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Editar problema</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group>
+                <Form.Label>Descripción</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={editText}
+                  onChange={e => setEditText(e.target.value)}
+                  maxLength={255}
+                />
+                <Form.Text className="text-muted">{editText.length}/255 caracteres</Form.Text>
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setEditModalProblemId(null)}>Cancelar</Button>
+              <Button
+                variant="primary"
+                onClick={async () => {
+                  if (!editModalProblemId) return;
+                  setEditSubmitting(true);
+                  try {
+                    const res = await authorizedFetch(`/api/problemas/${editModalProblemId}`, {
+                      method: 'PUT',
+                      body: JSON.stringify({ descr_problem: editText })
+                    });
+                    if (!res.ok) {
+                      const t = await res.text();
+                      throw new Error(t || `Error ${res.status}`);
+                    }
+                    setEditModalProblemId(null);
+                    setSuccess('Problema actualizado correctamente');
+                    setTimeout(() => window.location.reload(), 700);
+                  } catch (e) {
+                    setError(e.message || 'Error actualizando problema');
+                  } finally {
+                    setEditSubmitting(false);
+                  }
+                }}
+                disabled={editSubmitting}
+              >
+                {editSubmitting ? 'Guardando...' : 'Guardar'}
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          
+          <Modal show={!!deleteConfirmProblemId} onHide={() => setDeleteConfirmProblemId(null)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmar eliminación</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>¿Desea eliminar este problema? Esta acción no se puede deshacer.</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setDeleteConfirmProblemId(null)}>Cancelar</Button>
+              <Button
+                variant="danger"
+                onClick={async () => {
+                  if (!deleteConfirmProblemId) return;
+                  setDeleting(true);
+                  try {
+                    const res = await authorizedFetch(`/api/problemas/${deleteConfirmProblemId}`, { method: 'DELETE' });
+                    if (!res.ok) {
+                      const t = await res.text();
+                      throw new Error(t || `Error ${res.status}`);
+                    }
+                    setDeleteConfirmProblemId(null);
+                    setSuccess('Problema eliminado correctamente');
+                    setTimeout(() => window.location.reload(), 700);
+                  } catch (e) {
+                    setError(e.message || 'Error eliminando problema');
+                  } finally {
+                    setDeleting(false);
+                  }
+                }}
+                disabled={deleting}
+              >
+                {deleting ? 'Eliminando...' : 'Eliminar'}
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          
+          <Modal show={!!editTipoOriginal} onHide={() => setEditTipoOriginal(null)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Editar tipo de problema</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group>
+                <Form.Label>Nombre del tipo</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={editTipoNombre}
+                  onChange={e => setEditTipoNombre(e.target.value)}
+                  maxLength={80}
+                />
+                <Form.Text className="text-muted">{editTipoNombre.length}/80 caracteres</Form.Text>
+              </Form.Group>
+              <div className="mt-2 text-muted">Al renombrar este tipo, todas las descripciones relacionadas cambiarán a este nuevo tipo.</div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setEditTipoOriginal(null)}>Cancelar</Button>
+              <Button
+                variant="primary"
+                disabled={editTipoSubmitting}
+                onClick={async () => {
+                  if (!editTipoOriginal) return;
+                  if (!editTipoNombre || editTipoNombre.trim() === '') {
+                    setError('El nombre del tipo no puede estar vacío');
+                    return;
+                  }
+                  setEditTipoSubmitting(true);
+                  try {
+                    const relacionados = (problemas || []).filter(p => (p.tipo_problema || 'Otros') === editTipoOriginal);
+                    await Promise.all(relacionados.map(async p => {
+                      const res = await authorizedFetch(`/api/problemas/${p.id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ tipo_problema: editTipoNombre })
+                      });
+                      if (!res.ok) {
+                        const t = await res.text();
+                        throw new Error(t || `Error ${res.status}`);
+                      }
+                    }));
+                    setEditTipoOriginal(null);
+                    setSuccess('Tipo actualizado correctamente');
+                    setTimeout(() => window.location.reload(), 700);
+                  } catch (e) {
+                    setError(e.message || 'Error renombrando tipo');
+                  } finally {
+                    setEditTipoSubmitting(false);
+                  }
+                }}
+              >
+                {editTipoSubmitting ? 'Guardando...' : 'Guardar'}
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          
+          <Modal show={!!deleteTipoConfirm} onHide={() => setDeleteTipoConfirm(null)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Eliminar tipo de problema</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              ¿Estás seguro de eliminar el tipo "{deleteTipoConfirm}"? Esto también eliminará todas las descripciones/problemas relacionados.
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setDeleteTipoConfirm(null)}>Cancelar</Button>
+              <Button
+                variant="danger"
+                disabled={deletingTipo}
+                onClick={async () => {
+                  if (!deleteTipoConfirm) return;
+                  setDeletingTipo(true);
+                  try {
+                    const relacionados = (problemas || []).filter(p => (p.tipo_problema || 'Otros') === deleteTipoConfirm);
+                    await Promise.all(relacionados.map(async p => {
+                      const res = await authorizedFetch(`/api/problemas/${p.id}`, { method: 'DELETE' });
+                      if (!res.ok) {
+                        const t = await res.text();
+                        throw new Error(t || `Error ${res.status}`);
+                      }
+                    }));
+                    setDeleteTipoConfirm(null);
+                    setSuccess('Tipo y descripciones relacionadas eliminadas correctamente');
+                    setTimeout(() => window.location.reload(), 700);
+                  } catch (e) {
+                    setError(e.message || 'Error eliminando tipo');
+                  } finally {
+                    setDeletingTipo(false);
+                  }
+                }}
+              >
+                {deletingTipo ? 'Eliminando...' : 'Eliminar'}
               </Button>
             </Modal.Footer>
           </Modal>
