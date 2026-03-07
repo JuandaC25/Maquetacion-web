@@ -1266,17 +1266,35 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
         const all = await ElementosService.obtenerElementos();
         if (!mounted) return;
         const arr = Array.isArray(all) ? all : [];
-        if (!form.id_subcategoria) {
+
+        const match = (value, target) => {
+          if (value === undefined || value === null || target === undefined || target === null) return false;
+          try { return String(value).toLowerCase() === String(target).toLowerCase(); } catch (e) { return false; }
+        };
+
+        if (!form.id_categoria && !form.id_subcategoria) {
           setElementosPorSubcategoria(arr);
           return;
         }
+
         const filtered = arr.filter(el => {
+          const elCatId = (el.id_cat ?? el.id_categoria ?? el.categoria_id ?? el.categoria);
+          const elCatName = (el.nom_cat ?? el.nom_categoria ?? el.categoria_nombre ?? el.categoria);
+
           const elSubId = (el.id_subcat ?? el.id_subcategoria ?? el.subcategoria_id ?? el.sub_catg_id ?? el.sub_catg);
           const elSubName = (el.nom_subcateg ?? el.nom_subcat ?? el.subcategoria ?? el.sub_catg ?? el.subcategoria_nombre);
-          if (elSubId !== undefined && elSubId !== null && String(elSubId) === String(form.id_subcategoria)) return true;
-          if (elSubName !== undefined && elSubName !== null && String(elSubName).toLowerCase() === String(form.id_subcategoria).toLowerCase()) return true;
-          return false;
+          if (form.id_categoria && form.id_subcategoria) {
+            const catMatch = (match(elCatId, form.id_categoria) || match(elCatName, form.id_categoria));
+            const subMatch = (match(elSubId, form.id_subcategoria) || match(elSubName, form.id_subcategoria));
+            return catMatch && subMatch;
+          }
+          if (form.id_categoria) {
+            return match(elCatId, form.id_categoria) || match(elCatName, form.id_categoria);
+          }
+
+          return match(elSubId, form.id_subcategoria) || match(elSubName, form.id_subcategoria);
         });
+
         setElementosPorSubcategoria(filtered);
       } catch (e) {
         console.error('Error cargando elementos (admin):', e);
@@ -1285,9 +1303,9 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
     };
     load();
     return () => { mounted = false; };
-  }, [form.id_subcategoria, show]);
+  }, [form.id_categoria, form.id_subcategoria, show]);
 
-  const elementosFiltrados = (elementosPorSubcategoria && elementosPorSubcategoria.length > 0)
+  const elementosFiltrados = (Array.isArray(elementosPorSubcategoria) && elementosPorSubcategoria.length > 0)
     ? elementosPorSubcategoria
     : (Array.isArray(equiposDisponibles) ? equiposDisponibles : []);
 
