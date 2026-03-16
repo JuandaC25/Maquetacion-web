@@ -60,6 +60,32 @@ function ReportarEquipo() {
 
   return (
     <div className="reportar-equipo-container">
+      {/* Alertas completamente fuera de la tarjeta y formulario */}
+      {(error || success) && (
+        <div className="alert-overlay">
+          <div className="alert-content">
+            {error && (
+              <Alert variant="danger" onClose={() => setError(null)} dismissible>
+                {error}
+              </Alert>
+            )}
+            {success && (
+              <Alert variant="success" onClose={() => setSuccess(null)} dismissible>
+                <Alert.Heading>¡Operación exitosa!</Alert.Heading>
+                <div style={{ whiteSpace: 'pre-wrap' }}>
+                  {success}
+                </div>
+                <hr />
+                <div className="d-flex justify-content-end">
+                  <Button onClick={() => setSuccess(null)} variant="outline-success">
+                    Cerrar mensaje
+                  </Button>
+                </div>
+              </Alert>
+            )}
+          </div>
+        </div>
+      )}
       <div className="reportar-equipo-card">
         <div className="reportar-equipo-header">
           <div className="header-icon-wrapper">
@@ -69,30 +95,7 @@ function ReportarEquipo() {
           </div>
           <h2 className="titulo-reportar">Reporta los equipos que presenten fallas</h2>
         </div>
-
         <div className="reportar-equipo-inner">
-
-        {error && (
-          <Alert variant="danger" onClose={() => setError(null)} dismissible>
-            {error}
-          </Alert>
-        )}
-
-        {success && (
-          <Alert variant="success" onClose={() => setSuccess(null)} dismissible>
-            <Alert.Heading>¡Operación exitosa!</Alert.Heading>
-            <div style={{ whiteSpace: 'pre-wrap' }}>
-              {success}
-            </div>
-            <hr />
-            <div className="d-flex justify-content-end">
-              <Button onClick={() => setSuccess(null)} variant="outline-success">
-                Cerrar mensaje
-              </Button>
-            </div>
-          </Alert>
-        )}
-
         <Form onSubmit={handleSubmit}>
 
           <Form.Group className="mb-3 form-group-enhanced">
@@ -226,7 +229,6 @@ function ReportarEquipo() {
               </div>
             )}
           </Form.Group>
-
 
           
           <Modal show={!!modalProblemaId} onHide={() => setModalProblemaId(null)} centered>
