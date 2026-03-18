@@ -454,7 +454,7 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
           estadoOptions={estadoOptions}
           searchTerm={searchTerm}
           handleSearch={handleSearch}
-          onAgregarClick={onAgregarClick}
+          onAgregarClick={() => onAgregarClick(selectedCategoryId, selectedSubcategoryId)}
         />
 
         {ticketsFiltrados.length === 0 ? (
@@ -578,8 +578,12 @@ const Solielemento = () => {
   const [editableDetails, setEditableDetails] = useState(null);
   const [categorias, setCategorias] = useState([]);
   const [subcategorias, setSubcategorias] = useState([]);
+  const [elementsList, setElementsList] = useState([]);
+  const [selectedElements, setSelectedElements] = useState([]); // array of numeric ids
   const [loadingCats, setLoadingCats] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [newSolicitudCategory, setNewSolicitudCategory] = useState('');
+  const [newSolicitudSubcategory, setNewSolicitudSubcategory] = useState('');
 
   const ESTADOS = [
     { id: 1, label: 'Pendiente' },
@@ -703,14 +707,13 @@ const Solielemento = () => {
 
   };
 
-  const handleAgregarClick = async () => {
+  const handleAgregarClick = async (catId, subId) => {
     try {
+      setNewSolicitudCategory(catId || '');
+      setNewSolicitudSubcategory(subId || '');
       const data = await ElementosService.obtenerElementos();
-      const subcategoria = 'Portatil';
-      const portatiles = Array.isArray(data) ? data.filter((item) => (
-        (item.sub_catg === subcategoria || item.nom_eleme === subcategoria || item.nom_elemento === subcategoria) && item.est === 1
-      )) : [];
-      setEquiposDisponibles(portatiles);
+      const arr = Array.isArray(data) ? data : [];
+      setEquiposDisponibles(arr);
       setShowSolicitudModal(true);
     } catch (e) {
       console.error('Error cargando equipos disponibles para solicitud:', e);
@@ -1185,6 +1188,8 @@ const Solielemento = () => {
           handleHide={() => setShowSolicitudModal(false)}
           equiposDisponibles={equiposDisponibles}
           userId={user?.id || user?.id_usu || user?.id_usuario || 1}
+          initialCategoria={newSolicitudCategory}
+          initialSubcategoria={newSolicitudSubcategory}
           onCreated={() => setListRefreshKey(k => k + 1)}
         />
       ) : (
@@ -1202,10 +1207,11 @@ const Solielemento = () => {
 
 export default Solielemento;
 
-function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId, onCreated }) {
+function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId, onCreated, initialCategoria, initialSubcategoria }) {
   const [categorias, setCategorias] = useState([]);
   const [subcategorias, setSubcategorias] = useState([]);
-  const [elementosPorSubcategoria, setElementosPorSubcategoria] = useState([]);
+  const [elementsList, setElementsList] = useState([]);
+  const [selectedElements, setSelectedElements] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const todayDate = (() => { const d = new Date(); const yyyy = d.getFullYear(); const mm = String(d.getMonth()+1).padStart(2,'0'); const dd = String(d.getDate()).padStart(2,'0'); return `${yyyy}-${mm}-${dd}` })();
@@ -1218,7 +1224,6 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
     hora_fn: '',
     ambient: '',
     cantid: '1',
-    id_elemen: equiposDisponibles.length > 0 ? String(equiposDisponibles[0].id_elemen ?? equiposDisponibles[0].id ?? '') : '',
     estadosoli: 1,
     id_usu: userId,
     num_ficha: '',
@@ -1229,8 +1234,12 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
   const [form, setForm] = useState(initialFormState);
 
   useEffect(() => {
-    setForm(prev => ({ ...initialFormState, id_elemen: equiposDisponibles.length > 0 ? String(equiposDisponibles[0].id_elemen ?? equiposDisponibles[0].id ?? '') : '', id_usu: userId }));
-  }, [equiposDisponibles, show, userId]);
+    setForm(prev => ({ ...initialFormState, id_usu: userId, id_categoria: initialCategoria || '', id_subcategoria: initialSubcategoria || '' }));
+  }, [show, userId, initialCategoria, initialSubcategoria]);
+  useEffect(() => {
+    if (!show) return;
+    setForm(prev => ({ ...prev, id_categoria: initialCategoria || prev.id_categoria || '', id_subcategoria: initialSubcategoria || prev.id_subcategoria || '' }));
+  }, [initialCategoria, initialSubcategoria, show]);
 
   useEffect(() => {
     if (!show) return;
@@ -1259,61 +1268,131 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
       })
       .catch(err => console.error('Error cargando subcategorías (admin):', err));
   }, [form.id_categoria]);
+
+  // Cargar elementos filtrados por categoría/subcategoría cuando el modal está abierto
   useEffect(() => {
     let mounted = true;
     const load = async () => {
+      if (!show) return;
       try {
-        const all = await ElementosService.obtenerElementos();
+        const all = (Array.isArray(equiposDisponibles) && equiposDisponibles.length > 0)
+          ? equiposDisponibles
+          : await ElementosService.obtenerElementos();
         if (!mounted) return;
         const arr = Array.isArray(all) ? all : [];
-
-        const match = (value, target) => {
-          if (value === undefined || value === null || target === undefined || target === null) return false;
-          try { return String(value).toLowerCase() === String(target).toLowerCase(); } catch (e) { return false; }
-        };
-
-        if (!form.id_categoria && !form.id_subcategoria) {
-          setElementosPorSubcategoria(arr);
-          return;
-        }
-
+        console.debug('SolicitudModalAdmin: elementos totales recibidos', arr.length, 'categoria=', form.id_categoria, 'subcategoria=', form.id_subcategoria);
         const filtered = arr.filter(el => {
-          const elCatId = (el.id_cat ?? el.id_categoria ?? el.categoria_id ?? el.categoria);
-          const elCatName = (el.nom_cat ?? el.nom_categoria ?? el.categoria_nombre ?? el.categoria);
+          const safe = v => (v === undefined || v === null) ? null : v;
 
-          const elSubId = (el.id_subcat ?? el.id_subcategoria ?? el.subcategoria_id ?? el.sub_catg_id ?? el.sub_catg);
-          const elSubName = (el.nom_subcateg ?? el.nom_subcat ?? el.subcategoria ?? el.sub_catg ?? el.subcategoria_nombre);
+          const gatherIds = (obj, keys) => {
+            const out = [];
+            keys.forEach(k => {
+              const v = safe(obj?.[k]);
+              if (v !== null) out.push(String(v));
+            });
+            return out;
+          };
+
+          // posibles rutas/propiedades donde puede estar la categoría/subcategoría
+          const catIdKeys = ['id_cat','id_categoria','categoria_id','categoria','cat_id','categoriaId','idCat','id_categ'];
+          const catNameKeys = ['nom_cat','nom_categoria','categoria_nombre','categoria','nombre','name','tip_catg'];
+          const subIdKeys = ['id_subcat','id_subcategoria','subcategoria_id','sub_catg_id','sub_catg','idSubcat','idSubcategoria'];
+          const subNameKeys = ['nom_subcateg','nom_subcat','subcategoria','subcategoria_nombre','nombre','name','sub_catg'];
+
+          const elCatIds = [];
+          catIdKeys.forEach(k => {
+            const v = safe(el?.[k]) || safe(el?.categoria?.[k]) || safe(el?.categoria_id);
+            if (v !== null) elCatIds.push(String(v));
+          });
+          // incluir id dentro de un objeto categoria
+          if (el?.categoria && (el.categoria.id || el.categoria.id_cat || el.categoria.id_categoria)) {
+            elCatIds.push(String(el.categoria.id ?? el.categoria.id_cat ?? el.categoria.id_categoria));
+          }
+
+          const elCatNames = [];
+          catNameKeys.forEach(k => {
+            const v = safe(el?.[k]) || safe(el?.categoria?.[k]);
+            if (v !== null) elCatNames.push(String(v).toLowerCase());
+          });
+
+          const elSubIds = [];
+          subIdKeys.forEach(k => {
+            const v = safe(el?.[k]) || safe(el?.subcategoria?.[k]) || safe(el?.subcategoria_id);
+            if (v !== null) elSubIds.push(String(v));
+          });
+          if (el?.subcategoria && (el.subcategoria.id || el.subcategoria.id_subcat || el.subcategoria.id_subcategoria)) {
+            elSubIds.push(String(el.subcategoria.id ?? el.subcategoria.id_subcat ?? el.subcategoria.id_subcategoria));
+          }
+
+          const elSubNames = [];
+          subNameKeys.forEach(k => {
+            const v = safe(el?.[k]) || safe(el?.subcategoria?.[k]);
+            if (v !== null) elSubNames.push(String(v).toLowerCase());
+          });
+
+          const matchId = (list, val) => {
+            if (!list || list.length === 0) return false;
+            return list.some(x => String(x) === String(val));
+          };
+          const matchName = (list, val) => {
+            if (!val) return false;
+            const s = String(val).toLowerCase();
+            return list.some(x => String(x).toLowerCase() === s);
+          };
+
+          // Si hay categoría y subcategoría seleccionadas, ambas deben coincidir
           if (form.id_categoria && form.id_subcategoria) {
-            const catMatch = (match(elCatId, form.id_categoria) || match(elCatName, form.id_categoria));
-            const subMatch = (match(elSubId, form.id_subcategoria) || match(elSubName, form.id_subcategoria));
+            const catMatch = matchId(elCatIds, form.id_categoria) || matchName(elCatNames, form.id_categoria);
+            const subMatch = matchId(elSubIds, form.id_subcategoria) || matchName(elSubNames, form.id_subcategoria);
             return catMatch && subMatch;
           }
+
           if (form.id_categoria) {
-            return match(elCatId, form.id_categoria) || match(elCatName, form.id_categoria);
+            return matchId(elCatIds, form.id_categoria) || matchName(elCatNames, form.id_categoria);
+          }
+          if (form.id_subcategoria) {
+            return matchId(elSubIds, form.id_subcategoria) || matchName(elSubNames, form.id_subcategoria);
           }
 
-          return match(elSubId, form.id_subcategoria) || match(elSubName, form.id_subcategoria);
+          return false;
         });
-
-        setElementosPorSubcategoria(filtered);
+        setElementsList(filtered);
+        // reset selection when category/subcategory changes
+        setSelectedElements([]);
+        console.debug('SolicitudModalAdmin: elementos filtrados', filtered.length);
       } catch (e) {
         console.error('Error cargando elementos (admin):', e);
-        setElementosPorSubcategoria([]);
+        setElementsList([]);
       }
     };
     load();
     return () => { mounted = false; };
   }, [form.id_categoria, form.id_subcategoria, show]);
-
-  const elementosFiltrados = (Array.isArray(elementosPorSubcategoria) && elementosPorSubcategoria.length > 0)
-    ? elementosPorSubcategoria
-    : (Array.isArray(equiposDisponibles) ? equiposDisponibles : []);
-
-  const maxCantidad = Math.min(3, Array.isArray(elementosFiltrados) ? elementosFiltrados.length : 0);
+  const maxCantidad = 2;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const toggleSelectElement = (id) => {
+    const numId = Number(id);
+    setSelectedElements(prev => {
+      const exists = prev.some(x => Number(x) === numId);
+      let next;
+      if (exists) {
+        next = prev.filter(x => Number(x) !== numId);
+      } else {
+        if ((prev.length || 0) >= maxCantidad) {
+          alert(`Máximo ${maxCantidad} elementos`);
+          return prev;
+        }
+        next = [...prev, numId];
+      }
+      // sincronizar cantidad solicitada con la cantidad de elementos seleccionados
+      setForm(fprev => ({ ...fprev, cantid: String(next.length > 0 ? next.length : 1) }));
+      return next;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -1322,7 +1401,6 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
     try {
       const parsed = parseInt(form.cantid, 10);
       if (isNaN(parsed) || parsed <= 0 || parsed > maxCantidad) { alert(`Cantidad inválida (1-${maxCantidad})`); setIsSubmitting(false); return; }
-      if (!form.id_elemen) { alert('Seleccione un elemento'); setIsSubmitting(false); return; }
       const fechaInicio = new Date(`${form.fecha_ini}T${form.hora_ini}:00`);
       const fechaFin = new Date(`${form.fecha_fn}T${form.hora_fn}:00`);
       if (fechaFin <= fechaInicio) { alert('Fecha fin debe ser posterior'); setIsSubmitting(false); return; }
@@ -1337,8 +1415,15 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
         id_categoria: form.id_categoria ? parseInt(form.id_categoria,10) : null,
         id_subcategoria: form.id_subcategoria ? parseInt(form.id_subcategoria,10) : null,
         id_usu: form.id_usu,
-        ids_elem: form.id_elemen ? [parseInt(form.id_elemen,10)] : [],
       };
+
+      // Adjuntar ids seleccionados si hay
+      if (!Array.isArray(selectedElements) || selectedElements.length === 0) {
+        alert('Seleccione al menos un elemento para la solicitud');
+        setIsSubmitting(false);
+        return;
+      }
+      dto.ids_elem = selectedElements.map(x => Number(x)).filter(n => !isNaN(n));
 
       const res = await crearSolicitud(dto);
       alert('Solicitud creada (admin)');
@@ -1377,26 +1462,80 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
             </Form.Control>
           </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Equipo</Form.Label>
-            <Form.Control as="select" name="id_elemen" value={form.id_elemen} onChange={handleChange} required>
-              <option value="">-- Seleccione equipo --</option>
-              {elementosFiltrados.map(el => {
-                const estado = el.estadosoelement ?? el.est ?? el.estado ?? 1;
-                const disponible = Number(estado) === 1;
-                const estadoTexto = !disponible ? (Number(estado) === 2 ? 'Mantenimiento' : (Number(estado) === 0 ? 'Inactivo' : String(estado))) : '';
-                const label = ((el.nom_elemento || el.nom_elem || el.nom_eleme || el.nombre || el.num_ficha || '') || '').toString() + (estadoTexto ? ` — ${estadoTexto}` : '');
-                return (
-                  <option key={el.id_elemen ?? el.id} value={el.id_elemen ?? el.id} disabled={!disponible} title={estadoTexto}>{label}</option>
-                );
-              })}
-            </Form.Control>
-          </Form.Group>
+          {/* Campo 'Equipo' eliminado del front (admin) */}
 
           <Form.Group className="mb-3">
             <Form.Label>Cantidad a solicitar (Máx: {maxCantidad})</Form.Label>
             <Form.Control type="number" name="cantid" value={form.cantid} onChange={handleChange} min="1" max={String(maxCantidad)} required disabled={maxCantidad===0} />
           </Form.Group>
+
+          {/* Lista de elementos filtrados y seleccionables */}
+          <div className="modal-content-flex">
+            <div className="detail-item-1631">
+              <label className="detail-label-1632">Elementos</label>
+              <div className="detail-value-display-1633">
+                <div className="elements-list">
+                  {elementsList && elementsList.length > 0 ? (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+                      {elementsList.map(el => {
+                        const id = el.id_elemen ?? el.id;
+                        const nombre = (el.nom_elemento || el.nom_elem || el.nom_eleme || el.nombre || el.num_ficha || '').toString();
+                        const serial = el.num_seri || el.num_serie || el.serial || '';
+                        const estado = el.estadosoelement ?? el.est ?? el.estado ?? 1;
+                        const disabled = Number(estado) !== 1;
+                        const checked = selectedElements.some(x => Number(x) === Number(id));
+
+                        const estadoLabel = Number(estado) === 1 ? 'Disponible' : (Number(estado) === 2 ? 'Mantenimiento' : (Number(estado) === 0 ? 'Inactivo' : String(estado)));
+
+                        return (
+                          <div
+                            key={id}
+                            role="button"
+                            onClick={() => { if (!disabled) toggleSelectElement(id); }}
+                            className={`element-card ${disabled ? 'disabled' : ''} ${checked ? 'selected' : ''}`}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 12,
+                              padding: 12,
+                              border: checked ? '2px solid #28a745' : '1px solid #e9e9e9',
+                              borderRadius: 8,
+                              background: disabled ? '#f8f9fa' : (checked ? '#e8f7ef' : '#ffffff'),
+                              cursor: disabled ? 'not-allowed' : 'pointer'
+                            }}
+                          >
+                            <div style={{ flexShrink: 0 }}>
+                              <input
+                                type="checkbox"
+                                value={id}
+                                checked={checked}
+                                onChange={() => toggleSelectElement(id)}
+                                disabled={disabled && !checked}
+                                aria-label={`Seleccionar ${nombre}`}
+                                style={{ width: 18, height: 18 }}
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                                <strong style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{nombre}</strong>
+                                <small style={{ color: '#6c757d' }}>{estadoLabel}</small>
+                              </div>
+                              {serial ? <div style={{ fontSize: 12, color: '#6c757d', marginTop: 6 }}>Serie: {serial}</div> : null}
+                              {el.marc || el.marca || el.mar || el.marc ? <div style={{ fontSize: 12, color: '#6c757d', marginTop: 6 }}>Marca: {el.marc || el.marca || el.mar}</div> : null}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="no-elements">No hay elementos para la categoría/subcategoría seleccionada</div>
+                  )}
+                </div>
+                <small className="text-muted">Seleccione hasta {maxCantidad} elementos</small>
+              </div>
+            </div>
+          </div>
 
           <Form.Group className="mb-3">
             <Form.Label>Fecha y Hora de Inicio</Form.Label>
