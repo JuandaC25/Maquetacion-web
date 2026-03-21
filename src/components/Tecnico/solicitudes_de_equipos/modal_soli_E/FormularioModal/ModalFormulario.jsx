@@ -17,10 +17,12 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
   const formatDate = (fecha) => {
     if (!fecha) return '';
     const d = new Date(fecha);
+    const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${year}-${month}-${day}`;
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
 
@@ -147,11 +149,11 @@ function ModalFormulario({ show, onHide, prest, onActualizado }) {
             </div>
             <div className="Cont_label_tec">
               <label className="origin">Fecha de inicio:</label>
-              <input type="date" className="tecito" disabled value={formatDate(prest.fecha_ini)} />
+              <input type="text" className="tecito" disabled value={formatDate(prest.fecha_ini)} />
             </div>
             <div className="Cont_label_tec">
               <label className="origin">Fecha de fin:</label>
-              <input type="date" className="tecito" disabled value={formatDate(prest.fecha_fn)} />
+              <input type="text" className="tecito" disabled value={formatDate(prest.fecha_fn)} />
             </div>
             <div className="Cont_label_tec">
               <label className="origin">Ambiente:</label>

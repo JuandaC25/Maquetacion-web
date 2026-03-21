@@ -22,17 +22,13 @@ function Login() {
     setLoading(true);
     try {
       const { token } = await login({ username: email, password });
-      saveToken(token); // Guarda, incluye el prefijo Bearer que envía el backend
+      saveToken(token);
       
-      // Limpiar flags previos
       localStorage.removeItem('force_admin');
       localStorage.removeItem('force_tecnico');
       
-      // Cargar info de usuario y roles desde el backend
       await refreshMe();
       
-      // Obtener roles actualizados después de refreshMe
-      // Como refreshMe es async, necesitamos obtener los roles directamente del backend
       const res = await fetch('http://localhost:8081/auth/me', {
         headers: { 'Authorization': token }
       });
@@ -41,7 +37,6 @@ function Login() {
         const userData = await res.json();
         const userRoles = userData?.roles || [];
         
-        // Redirigir según el rol del usuario
         if (userRoles.includes('ADMINISTRADOR')) {
           localStorage.setItem('force_admin', '1');
           navigate('/Admin');
@@ -52,11 +47,11 @@ function Login() {
           navigate('/Inicio');
         }
       } else {
-        // Si falla obtener roles, ir a inicio por defecto
         navigate('/Inicio');
       }
     } catch (err) {
-      setError(err.message || 'Error al iniciar sesión');
+      const mensajeError = err?.response?.data?.error || err.message || 'Error al iniciar sesión';
+      setError(mensajeError);
     } finally {
       setLoading(false);
     }
@@ -105,7 +100,6 @@ function Login() {
         </Button>
       </Form>
 
-      {/* Modal de recuperación de contraseña */}
       <ForgotPassword 
         show={showForgotPassword} 
         handleClose={() => setShowForgotPassword(false)} 

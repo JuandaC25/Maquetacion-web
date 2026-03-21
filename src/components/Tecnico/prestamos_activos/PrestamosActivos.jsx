@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Footer from '../../Footer/Footer';
-import Header_soli_equi_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
+import HeaderTecnicoUnificado from '../HeaderTecnicoUnificado';
 import '../informacion_de_equipos/Info_equipos_tec.css';
 import { authorizedFetch } from '../../../api/http';
 import ModalPrestamo from './Modal_Prestamos/ModalPrestamo';
@@ -11,7 +11,10 @@ function PrestamosActivos() {
   const [categorias, setCategorias] = useState([]);
   const [prestamos, setPrestamos] = useState([]);
   const [elementos, setElementos] = useState([]);
+  const [subcategorias, setSubcategorias] = useState([]);
+  const [allSubcategorias, setAllSubcategorias] = useState([]);
   const [categoriaFiltro, setCategoriaFiltro] = useState('');
+  const [subcategoriaFiltro, setSubcategoriaFiltro] = useState('');
   const [busquedaMarca, setBusquedaMarca] = useState('');
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
@@ -38,14 +41,42 @@ function PrestamosActivos() {
       console.log("Elementos cargados:", dataElementos);
       console.log("Primer elemento estructura:", JSON.stringify(dataElementos[0], null, 2));
       setElementos(dataElementos);
+      
+      // Mapear préstamos para asignar categoría/subcategoría desde el elemento relacionado
+      const elementosMap = {};
+      (dataElementos || []).forEach(el => { elementosMap[String(el.id_elemen ?? el.id ?? el.id_elemento)] = el; });
 
-      // Extraer categorías únicas de los elementos asociados a los préstamos
-      const categoriasMap = prestamosFiltrados
-        .map(prest => prest.nom_cat || prest.categoria || null)
-        .filter(cat => cat);
-      const categoriasUnicas = [...new Set(categoriasMap)];
-      console.log('Categorías extraídas:', categoriasUnicas);
-      setCategorias(categoriasUnicas);
+      const prestamosConInfo = prestamosFiltrados.map(prest => {
+        const elementoId = String(prest.id_eleme ?? prest.id_elemen ?? prest.id_elemento ?? prest.id_eleme);
+        const el = elementosMap[elementoId];
+        return {
+          ...prest,
+          categoria: el ? (el.tip_catg || el.nom_cat || el.nombre || '') : (prest.nom_cat || prest.categoria || ''),
+          categoriaId: el ? (el.id_categ ?? el.id_cat ?? el.id_categoria ?? null) : (prest.id_categ || prest.id_cat || null),
+          subcategoria: el ? (el.sub_catg || el.nom_subcateg || el.nom_subc || '') : (prest.nom_subcateg || prest.subcat || ''),
+          subcategoriaId: el ? (el.id_subcat ?? el.id_subcategoria ?? null) : (prest.id_subcat || null)
+        };
+      });
+
+      setPrestamos(prestamosConInfo);
+
+      // Extraer categorías y subcategorías únicas desde los elementos
+      const cats = [];
+      const subs = [];
+      (dataElementos || []).forEach(el => {
+        const catId = el.id_categ ?? el.id_cat ?? el.id_categoria ?? null;
+        const catName = el.tip_catg || el.nom_cat || el.nombre || null;
+        if (catId && !cats.some(c => String(c.id) === String(catId))) cats.push({ id: catId, nombre: catName });
+
+        const subId = el.id_subcat ?? el.id_subcategoria ?? null;
+        const subName = el.sub_catg || el.nom_subcateg || el.nombre || null;
+        if (subId && !subs.some(s => String(s.id) === String(subId))) subs.push({ id: subId, nombre: subName, id_cat: catId });
+      });
+      console.log('Categorías extraídas:', cats);
+      console.log('Subcategorías extraídas:', subs);
+      setCategorias(cats);
+      setSubcategorias(subs);
+      setAllSubcategorias(subs);
     } catch (err) {
       console.error('Error al obtener préstamos activos:', err);
       setPrestamos([]);
@@ -64,23 +95,55 @@ function PrestamosActivos() {
   };
 
   useEffect(() => setPaginaActual(1), [categoriaFiltro, busquedaMarca, fechaInicio, fechaFin]);
+  useEffect(() => setPaginaActual(1), [subcategoriaFiltro]);
 
   const prestamosArray = Array.isArray(prestamos) ? prestamos : [];
   const prestamosConCategoria = prestamosArray.map(p => {
     return { 
-      ...p, 
-      categoria: p.nom_cat || p.tipo_pres || 'Sin categoría',
+      ...p,
+      categoria: p.categoria || p.nom_cat || p.tipo_pres || 'Sin categoría',
+      categoriaId: p.categoriaId || p.id_categ || p.id_cat || null,
+      subcategoria: p.subcategoria || p.nom_subcateg || '',
+      subcategoriaId: p.subcategoriaId || p.id_subcat || null,
       nom_elem: p.nom_elem || ''
     };
   });
 
   const prestamosFiltrados = prestamosConCategoria.filter(eq => {
-    const cumpleCategoria = categoriaFiltro ? eq.categoria?.toLowerCase().includes(categoriaFiltro.toLowerCase()) : true;
+    // Filtrar por categoría/subcategoría usando elementos asociados
+    let cumpleCategoria = true;
+    let cumpleSubcategoria = true;
+    if (categoriaFiltro) {
+      // Preferir comparar por categoriaId asignada al préstamo
+      if (eq.categoriaId) {
+        cumpleCategoria = String(eq.categoriaId) === String(categoriaFiltro);
+      } else {
+        // fallback: buscar por elemento asociado
+        const matchingElementIds = (elementos || []).filter(el => String(el.id_categ ?? el.id_cat ?? el.id_categoria) === String(categoriaFiltro)).map(el => String(el.id_elemen ?? el.id));
+        if (matchingElementIds.length > 0) {
+          cumpleCategoria = matchingElementIds.includes(String(eq.id_eleme ?? eq.id_elemen ?? eq.id_elemento));
+        } else {
+          cumpleCategoria = eq.categoria ? String(eq.categoria).toLowerCase().includes(String(categoriaFiltro).toLowerCase()) : false;
+        }
+      }
+    }
+    if (subcategoriaFiltro) {
+      if (eq.subcategoriaId) {
+        cumpleSubcategoria = String(eq.subcategoriaId) === String(subcategoriaFiltro);
+      } else {
+        const matchingElementIdsSub = (elementos || []).filter(el => String(el.id_subcat ?? el.id_subcategoria ?? el.sub_catg) === String(subcategoriaFiltro)).map(el => String(el.id_elemen ?? el.id));
+        if (matchingElementIdsSub.length > 0) {
+          cumpleSubcategoria = matchingElementIdsSub.includes(String(eq.id_eleme ?? eq.id_elemen ?? eq.id_elemento));
+        } else {
+          cumpleSubcategoria = eq.subcategoria ? String(eq.subcategoria).toLowerCase().includes(String(subcategoriaFiltro).toLowerCase()) : true;
+        }
+      }
+    }
     const cumpleMarca = busquedaMarca ? eq.nom_elem?.toLowerCase().includes(busquedaMarca.toLowerCase()) : true;
     const cumpleFecha =
       (!fechaInicio || new Date(eq.fecha_entreg) >= new Date(fechaInicio)) &&
       (!fechaFin || new Date(eq.fecha_entreg) <= new Date(fechaFin));
-    return cumpleCategoria && cumpleMarca && cumpleFecha;
+    return cumpleCategoria && cumpleSubcategoria && cumpleMarca && cumpleFecha;
   });
 
   const itemsPorPagina = 8;
@@ -151,12 +214,19 @@ function PrestamosActivos() {
 
   return (
     <>
-      <Header_soli_equi_tec title="Préstamos Activos" />
+      <HeaderTecnicoUnificado title="Préstamos Activos" />
       <main className="contenedor-principal-peq">
         <div className="barra-filtros">
-          <select value={categoriaFiltro} onChange={e => setCategoriaFiltro(e.target.value)}>
-            <option value="">Todos</option>
-            {categorias.map((cat, i) => <option key={i} value={cat}>{cat}</option>)}
+          <select value={categoriaFiltro} onChange={e => { setCategoriaFiltro(e.target.value); setSubcategoriaFiltro(''); }}>
+            <option value="">Todas</option>
+            {categorias.map((cat) => <option key={String(cat.id)} value={cat.id}>{cat.nombre || cat.nombre}</option>)}
+          </select>
+
+          <select value={subcategoriaFiltro} onChange={e => setSubcategoriaFiltro(e.target.value)} style={{ marginLeft: '8px' }}>
+            <option value="">Todas subcategorías</option>
+            {(subcategorias || []).filter(s => !categoriaFiltro || String(s.id_cat) === String(categoriaFiltro)).map(s => (
+              <option key={String(s.id)} value={s.id}>{s.nombre}</option>
+            ))}
           </select>
 
           <input

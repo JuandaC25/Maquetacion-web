@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./HistorialTec.css";
-import Header_soli_equi_tec from "../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx";
+import HeaderTecnicoUnificado from "../HeaderTecnicoUnificado";
 import Footer from "../../Footer/Footer";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -9,11 +9,15 @@ import { FaFilter } from "react-icons/fa";
 import ModalTickets from "./ModalHistorial/ModalTickets.jsx";
 import TicketsActivosTec from "./TicketsActivosTec.jsx";
 import { authorizedFetch } from "../../../api/http";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const HistorialTec = () => {
   const [categoriaGeneral, setCategoriaGeneral] = useState("Tickets"); 
   const [categoriaEquipo, setCategoriaEquipo] = useState("Todos");
   const [categoriasDisponibles, setCategoriasDisponibles] = useState([]);
+  const [subcategoriaEquipo, setSubcategoriaEquipo] = useState("Todos");
+  const [subcategoriasDisponibles, setSubcategoriasDisponibles] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
@@ -66,38 +70,40 @@ const HistorialTec = () => {
         setElementos(dataElementos);
         setTrasabilidad(dataTrasabilidad);
 
-        // Extraer categorías dinámicamente
+        // Extraer categorías y subcategorías dinámicamente
         let categoriasUnicas = [];
+        let subcategoriasUnicas = [];
         if (categoriaGeneral === "Espacios") {
           categoriasUnicas = ["Espacios"];
+          subcategoriasUnicas = ["Todos"];
         } else {
           const categoriasMap = dataHistorial
             .map((item, idx) => {
-              // Primero intentar usar nom_cat si existe
-              if (item.nom_cat) {
-                console.log(`[${categoriaGeneral} ${idx}] tiene nom_cat: ${item.nom_cat}`);
-                return item.nom_cat;
-              }
-              
-              // Si no, buscar por elemento
+              if (item.nom_cat) return item.nom_cat;
               const idElemento = item.id_eleme || item.id_elem || item.elemento_id || null;
-              console.log(`[${categoriaGeneral} ${idx}] Buscando elemento con ID: ${idElemento}`);
-              console.log(`[${categoriaGeneral} ${idx}] IDs disponibles:`, dataElementos.map(e => e.id_elemen));
               const elemento = dataElementos.find(el => el.id_elemen === idElemento);
-              if (elemento) {
-                console.log(`[${categoriaGeneral} ${idx}] Elemento encontrado:`, elemento);
-                return elemento.tip_catg || elemento.nom_cat || null;
-              } else {
-                console.log(`[${categoriaGeneral} ${idx}] NO se encontró elemento para ID: ${idElemento}`);
-                return null;
-              }
+              if (elemento) return elemento.tip_catg || elemento.nom_cat || null;
+              return null;
             })
             .filter(cat => cat);
           categoriasUnicas = [...new Set(categoriasMap)];
+
+          // Subcategorías: buscar nom_subcat o subcat en elemento relacionado
+          const subcategoriasMap = dataHistorial
+            .map((item) => {
+              if (item.nom_subcat) return item.nom_subcat;
+              const idElemento = item.id_eleme || item.id_elem || item.elemento_id || null;
+              const elemento = dataElementos.find(el => el.id_elemen === idElemento);
+              if (elemento) return elemento.nom_subcat || elemento.subcat || null;
+              return null;
+            })
+            .filter(subcat => subcat);
+          subcategoriasUnicas = ["Todos", ...new Set(subcategoriasMap)];
         }
-        console.log('Categorías extraídas del historial:', categoriasUnicas);
         setCategoriasDisponibles(categoriasUnicas);
         setCategoriaEquipo("Todos"); // Reset al cambiar de categoría general
+        setSubcategoriasDisponibles(subcategoriasUnicas);
+        setSubcategoriaEquipo("Todos");
       } catch (err) {
         console.error("Error al obtener historial:", err);
         setError("No se pudo conectar con el backend. Verifica que esté corriendo y la URL sea correcta.");
@@ -123,37 +129,55 @@ const HistorialTec = () => {
         );
         return {
           ...item,
-          categoria: elementoRelacionado ? elementoRelacionado.tip_catg : "Sin categoría",
-          numSerie: elementoRelacionado ? elementoRelacionado.num_seri : "No registrada",
+          categoria: elementoRelacionado
+            ? (elementoRelacionado.tip_catg || elementoRelacionado.nom_cat)
+            : (item.nom_cat || "Sin categoría"),
+          numSerie: elementoRelacionado ? elementoRelacionado.num_seri : (item.numero_serie || "No registrada"),
         };
       }
     });
 
   const filtrarHistorial = () => {
     return historialConCategoria.filter((item) => {
-      // Para espacios, no aplicar filtro de categoría de equipos
+      // Para espacios, no aplicar filtro de categoría de equipos ni subcategoría
       const coincideCategoria =
-        categoriaGeneral === "Espacios" 
-          ? true 
+        categoriaGeneral === "Espacios"
+          ? true
           : (categoriaEquipo === "Todos" ||
-             (item.categoria && item.categoria.toLowerCase() === categoriaEquipo.toLowerCase()));
+            (item.categoria && item.categoria.toLowerCase() === categoriaEquipo.toLowerCase()));
+
+      // Subcategoría: buscar en item.nom_subcat o en el elemento relacionado
+      let subcatItem = null;
+      if (categoriaGeneral !== "Espacios") {
+        if (item.nom_subcat) subcatItem = item.nom_subcat;
+        else {
+          const idElemento = item.id_eleme || item.id_elem || item.elemento_id || null;
+          const elemento = elementos.find(el => el.id_elemen === idElemento);
+          if (elemento) subcatItem = elemento.nom_subcat || elemento.subcat || null;
+        }
+      }
+      const coincideSubcategoria =
+        categoriaGeneral === "Espacios"
+          ? true
+          : (subcategoriaEquipo === "Todos" ||
+            (subcatItem && subcatItem.toLowerCase() === subcategoriaEquipo.toLowerCase()));
 
       const itemFecha =
-        categoriaGeneral === "Tickets" 
-          ? item.fecha_in 
+        categoriaGeneral === "Tickets"
+          ? item.fecha_in
           : (categoriaGeneral === "Préstamos" ? item.fecha_entreg : item.fecha_fn);
 
       const coincideBusqueda =
         searchTerm === "" ||
         ((item.nom_elem && item.nom_elem.toLowerCase().includes(searchTerm.toLowerCase())) ||
-         (item.nom_espa && item.nom_espa.toLowerCase().includes(searchTerm.toLowerCase())) ||
-         (item.categoria && item.categoria.toLowerCase().includes(searchTerm.toLowerCase())));
+          (item.nom_espa && item.nom_espa.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (item.categoria && item.categoria.toLowerCase().includes(searchTerm.toLowerCase())));
 
       const coincideFecha =
         (!fechaInicio || itemFecha >= fechaInicio) &&
         (!fechaFin || itemFecha <= fechaFin);
 
-      return coincideCategoria && coincideBusqueda && coincideFecha;
+      return coincideCategoria && coincideSubcategoria && coincideBusqueda && coincideFecha;
     });
   };
 
@@ -166,9 +190,78 @@ const HistorialTec = () => {
 
   const cerrarModal = () => setMostrarModal(false);
 
+  const exportToPDF = () => {
+    try {
+      if (!historialFiltrado || historialFiltrado.length === 0) {
+        alert('No hay registros para exportar');
+        return;
+      }
+
+      const doc = new jsPDF();
+      const title = `Elemento - Historial`;
+      doc.setFontSize(14);
+      doc.text(title, 14, 18);
+
+      let columns = [];
+      let rows = [];
+
+      const getDescription = (it) => {
+        return (
+          it.descripcion || it.descripcion_ticket || it.descripcion_ticket || it.descripcion_tic || it.detalle || it.obs || it.observacion || it.tipo_pres || ''
+        );
+      };
+
+      if (categoriaGeneral === 'Tickets') {
+        columns = ['ID', 'Elemento', 'Estado', 'Usuario', 'Fecha'];
+        rows = historialFiltrado.map((t) => [
+          t.id_tickets || t.id || '',
+          t.nom_elem || t.nom_espa || t.titulo || t.titulo_ticket || '',
+          t.est_soli || t.estado || t.estado_ticket || '',
+          t.nom_usu || t.nombre_usuario || '',
+          new Date(t.fecha_in || t.fecha_actualizacion || t.fecha_creacion || '').toLocaleString()
+        ]);
+      } else if (categoriaGeneral === 'Préstamos') {
+        columns = ['ID', 'Elemento', 'Categoría', 'Usuario', 'Fecha', 'Estado'];
+        rows = historialFiltrado.map((p) => [
+          p.id_prest || '',
+          p.nom_elem || '',
+          p.categoria || p.nom_cat || '',
+          p.nom_usu || '',
+          new Date(p.fecha_entreg || p.fecha_in || '').toLocaleDateString(),
+          p.nom_estado || (p.estado === 0 ? 'Finalizado' : (p.estado || ''))
+        ]);
+      } else {
+        columns = ['ID', 'Espacio', 'Usuario', 'Fecha', 'Estado'];
+        rows = historialFiltrado.map((e) => [
+          e.id_soli || '',
+          e.nom_espa || '',
+          e.nom_usu || '',
+          new Date(e.fecha_fn || e.fecha_ini || '').toLocaleDateString(),
+          e.est_soli || e.nom_estado || ''
+        ]);
+      }
+
+      // use autotable function
+      autoTable(doc, {
+        startY: 26,
+        head: [columns],
+        body: rows,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [63, 187, 52] }
+      });
+
+      const fecha = new Date().toISOString().split('T')[0];
+      const nombre = `${categoriaGeneral.toLowerCase()}_historial_${fecha}.pdf`;
+      doc.save(nombre);
+    } catch (err) {
+      console.error('Error exportando PDF:', err);
+      alert('Ocurrió un error al generar el PDF');
+    }
+  };
+
   return (
     <>
-      <Header_soli_equi_tec title="Historial" />
+      <HeaderTecnicoUnificado title="Historial" />
       <section className="tecnico-historial">
         <div className="barra-filtros">
           <DropdownButton
@@ -191,6 +284,17 @@ const HistorialTec = () => {
             <Dropdown.Item eventKey="Todos">Todos</Dropdown.Item>
             {categoriasDisponibles.map((cat, i) => (
               <Dropdown.Item key={i} eventKey={cat}>{cat}</Dropdown.Item>
+            ))}
+          </DropdownButton>
+
+          {/* Subcategoría filter icon */}
+          <DropdownButton
+            title={<FaFilter style={{ color: '#007bff' }} />}
+            className="filtro-icono"
+            onSelect={(key) => setSubcategoriaEquipo(key)}
+          >
+            {subcategoriasDisponibles.map((subcat, i) => (
+              <Dropdown.Item key={i} eventKey={subcat}>{subcat}</Dropdown.Item>
             ))}
           </DropdownButton>
 
@@ -253,14 +357,18 @@ const HistorialTec = () => {
                     <h3 className="historial-item__titulo">
                       {titulo}
                     </h3>
-                    <p className="historial-item__descripcion">
-                      {descripcion}
-                    </p>
-                    <p className="historial-item__detalle">
-                      <strong>Elemento:</strong> {elemento || "Desconocido"} |{" "}
-                      <strong>Categoría:</strong> {item.categoria} |{" "}
-                      <strong>Número de serie:</strong> {item.numSerie}
-                    </p>
+                    {/* Descripción eliminada por solicitud */}
+                    {categoriaGeneral === "Espacios" ? (
+                      <p className="historial-item__detalle">
+                        <strong>Espacio:</strong> {item.nom_espa || "Desconocido"}
+                      </p>
+                    ) : (
+                      <p className="historial-item__detalle">
+                        <strong>Elemento:</strong> {elemento || "Desconocido"} |{" "}
+                        <strong>Categoría:</strong> {item.categoria} |{" "}
+                        <strong>Número de serie:</strong> {item.numSerie}
+                      </p>
+                    )}
                     <button
                       className="buttoninfo"
                       onClick={() => abrirModal(item)}
@@ -282,6 +390,12 @@ const HistorialTec = () => {
           )}
         </div>
       </section>
+
+      <div className="export-container">
+        <button className="button-export" onClick={exportToPDF}>
+          📄 Exportar PDF
+        </button>
+      </div>
 
       {ticketSeleccionado && (
         <ModalTickets

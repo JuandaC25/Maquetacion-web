@@ -21,6 +21,17 @@
 .add-new-equipment-button-xd35:hover {
   background: #0e9c15 !important;
 }
+.create-problem-btn {
+  background: #0e9c15 !important;
+  border: none !important;
+  color: #fff !important;
+  padding: 0.5rem 0.9rem !important;
+  border-radius: 0.5rem !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  height: 40px;
+}
+.create-problem-btn:hover { background: #0c8a12 !important; }
 .grid-1208 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -186,7 +197,15 @@ background-color: #ffffff00;
   align-items: center;
 }
 .flex-1203 { gap: 10px; overflow: visible !important; }
-.flex-inner-1204 { gap: 10px; overflow: visible !important; position: relative !important; }
+.flex-inner-1204 { gap: 12px; overflow: visible !important; position: relative !important; }
+
+.header-buttons-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-buttons-section > div { display: inline-flex; }
 
 .contador-ticket-1207 {
   font-weight: 500;
@@ -486,3 +505,57 @@ textarea.form-control {
   .report-meta { grid-template-columns: 1fr; }
   .historial-card { padding: 12px; }
 }
+
+.uiverse-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 32px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  background: #12bb1a;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.06), inset 0 0 8px rgba(0,0,0,0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.uiverse-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 12px rgba(0,0,0,0.08); }
+
+.uiverse-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 2px;
+  background: linear-gradient(180deg, rgba(9,180,26,0.12), rgba(9,130,20,0.06));
+  z-index: 0;
+}
+.uiverse-btn::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0.04) 100%);
+  z-index: 0;
+  opacity: 0.9;
+}
+.uiverse-btn > .uiverse-label {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  font-size: 1rem;
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.12);
+}
+.uiverse-btn::selection { background: transparent; }
+
+.uiverse-btn--small { height: 40px; padding: 0 18px; border-radius: 10px; }
+
+.uiverse-dropdown { height: 40px; padding: 0 14px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; background: #12bb1a; color: #fff; }
+.uiverse-dropdown::before, .uiverse-dropdown::after { border-radius: 10px; }
+
+.uiverse-btn:focus, .uiverse-dropdown:focus { outline: 2px solid rgba(199,135,246,0.18); outline-offset: 2px; }

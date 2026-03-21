@@ -62,6 +62,7 @@ const getStatusDetails = (estadoValor) => {
 function Historial_ped() {
     const [solicitudes, setSolicitudes] = useState([]);
     const [tickets, setTickets] = useState([]);
+    const [problemas, setProblemas] = useState([]);
     const [subcategorias, setSubcategorias] = useState({}); 
     const [subcategoriaOptions, setSubcategoriaOptions] = useState([]);
     const [selectedSubcategoriaId, setSelectedSubcategoriaId] = useState(null);
@@ -79,44 +80,41 @@ function Historial_ped() {
 
     const cargarImagenesConAuth = async (urls) => {
         setLoadingImages(true);
+        setLoadedImages([]); // Limpiar imágenes anteriores
         console.log('URLs a cargar:', urls);
         
         const BASE_URL = 'http://localhost:8081';
-        const token = localStorage.getItem('auth_token');
         
-        const imagenesPromises = urls.map(async (url) => {
-            try {
-                // Construir URL completa si es una ruta relativa
-                const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
-                console.log('Intentando cargar:', fullUrl);
-                
-                const response = await fetch(fullUrl, {
-                    headers: token ? {
-                        'Authorization': `Bearer ${token}`
-                    } : {}
-                });
-                
-                console.log('Response status:', response.status);
-                
-                if (!response.ok) {
-                    console.error(`Error ${response.status} al cargar imagen: ${fullUrl}`);
-                    return fullUrl; // Fallback a URL directa
-                }
-                
-                const blob = await response.blob();
-                const blobUrl = URL.createObjectURL(blob);
-                console.log('Blob URL creada correctamente');
-                return blobUrl;
-            } catch (err) {
-                console.error('Error al cargar imagen:', err);
-                const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
-                return fullUrl; // Fallback
+        // En lugar de usar fetch, construimos las URLs directamente
+        const imagenesValidas = urls.map(url => {
+            if (!url) return null;
+            
+            // Limpieza exhaustiva
+            let cleanUrl = url.trim();
+            
+            // Eliminar corchetes y comillas
+            cleanUrl = cleanUrl.replace(/[\[\]"']/g, '');
+            
+            // Asegurar que no empiece con barra extra si la vamos a añadir, o manejarlo
+            if (cleanUrl.startsWith('/')) {
+                cleanUrl = cleanUrl.substring(1);
             }
-        });
+            
+            // Si ya es una URL completa, usarla
+            if (cleanUrl.startsWith('http')) {
+                return cleanUrl;
+            }
+            
+            // Construir URL completa asegurando la barra
+            // Asumimos que la ruta relativa necesita un slash antes
+            const fullUrl = `${BASE_URL}/${cleanUrl}`;
+            
+            console.log('URL final imagen:', fullUrl);
+            return fullUrl;
+        }).filter(url => url && url.length > 0);
         
-        const imagenesCargadas = await Promise.all(imagenesPromises);
-        console.log('Total imágenes cargadas:', imagenesCargadas.length);
-        setLoadedImages(imagenesCargadas.filter(img => img !== null));
+        console.log('Total URLs válidas:', imagenesValidas.length);
+        setLoadedImages(imagenesValidas);
         setLoadingImages(false);
     };
 
@@ -209,6 +207,15 @@ function Historial_ped() {
         }
     };
 
+    const cargarProblemas = async () => {
+        try {
+            const data = await import('../../../api/ProblemasApi.js').then(mod => mod.obtenerProblemas());
+            setProblemas(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error("Fallo al obtener problemas:", err);
+        }
+    };
+
     useEffect(() => {
         cargarSubcategorias();
     }, []); 
@@ -221,6 +228,7 @@ function Historial_ped() {
             cargarSolicitudes();
         } else {
             cargarTickets();
+            cargarProblemas();
         }
     }, [activeTab]);
     
@@ -459,59 +467,119 @@ function Historial_ped() {
                 <div className="p-3">
                     {currentSolicitudes.map((ticket) => {
                         const statusTicket = ticket.id_est_tick === 2 ? 
-                            { text: 'Activo', variant: 'danger' } : 
-                            { text: 'Resuelto', variant: 'success' };
-                        
+                            { text: 'Activo', variant: 'success' } : 
+                            { text: 'Resuelto', variant: 'secondary' };
+                        // Determinar si hay detalles de problemas individuales
+                        const tieneProblemasDetallados = ticket.problemas && Array.isArray(ticket.problemas) && ticket.problemas.length > 0;
+
+                        // Equipo
+                        const equipo = ticket.nom_elem || ticket.elemento || ticket.nom_eleme || ticket.id_elem || ticket.id_eleme || 'N/A';
+        
+                        // Fecha y hora
+                        let fechaHora = 'N/A';
+                        if (ticket.fecha_in) {
+                            try {
+                                // Asegurar que sea tratado como UTC local si no tiene 'Z'
+                                const fechaStr = ticket.fecha_in.endsWith('Z') ? ticket.fecha_in : `${ticket.fecha_in}Z`;
+                                const fechaObj = new Date(fechaStr);
+                                fechaHora = fechaObj.toLocaleString('es-ES', { 
+                                    year: 'numeric', month: 'numeric', day: 'numeric', 
+                                    hour: '2-digit', minute: '2-digit', hour12: false
+                                });
+                            } catch (e) {
+                                fechaHora = ticket.fecha_in;
+                            }
+                        }
+
+                        // Función auxiliar para procesar y mostrar botón de imágenes
+                        const renderBotonImagenes = (imagenesRaw) => {
+                            if (!imagenesRaw || imagenesRaw === 'null' || imagenesRaw === '[]' || imagenesRaw === '') return null;
+                            return (
+                                <div style={{ marginTop: '5px' }}>
+                                    <Button
+                                        size="sm"
+                                        variant="outline-primary"
+                                        style={{ fontSize: '0.85em', padding: '2px 8px' }}
+                                        onClick={() => {
+                                            let imagenesStr = typeof imagenesRaw === 'string' ? imagenesRaw.trim() : '';
+
+                                            // Intento de parseo si es un string de array
+                                            if (imagenesStr.startsWith('[') && imagenesStr.endsWith(']')) {
+                                                try {
+                                                    const parsed = JSON.parse(imagenesStr);
+                                                    imagenesStr = Array.isArray(parsed) ? parsed.join(',') : imagenesStr;
+                                                } catch (e) {
+                                                    imagenesStr = imagenesStr.slice(1, -1);
+                                                }
+                                            }
+
+                                            // Separar por comas y limpiar URLs incompletas o vacías
+                                            const urls = imagenesStr
+                                                .split(',')
+                                                .map(img => img.trim().replace(/^["']|["']$/g, ''))
+                                                .filter(img => img && img.length > 0 && !img.includes('undefined') && !img.includes('null'));
+                                                
+                                            if (urls.length > 0) {
+                                                console.log("URLs procesadas para mostrar:", urls);
+                                                setImgModalTicket(ticket);
+                                                setImgModalList(urls);
+                                                setShowImgModal(true);
+                                                cargarImagenesConAuth(urls);
+                                            } else {
+                                                alert('No se encontraron imágenes válidas.');
+                                            }
+                                        }}
+                                    >
+                                        📷 Ver imágenes
+                                    </Button>
+                                </div>
+                            );
+                        };
+
                         return (
                             <div className="p-3 item_historial" key={ticket.id_tickets}>
                                 <span className='emoji_historial'>🔧</span>
-                                
                                 <Badge 
                                     className='let_histo' 
                                     bg={statusTicket.variant} 
                                 >
                                     {statusTicket.text}
                                 </Badge>
-                                
                                 <span className='texto_pedido'>
-                                    ID Ticket: {ticket.id_tickets || 'N/A'} | Equipo: {ticket.nom_elem || `ID ${ticket.id_eleme}`} <br/>
-                                    Problema: {ticket.nom_problm || 'N/A'} <br/>
-                                    Ambiente: {ticket.ambient || 'N/A'} <br/>
-                                    Fecha: {formatFecha(ticket.fecha_in || 'N/A')}
-                                    {ticket.Obser && (
-                                        <div style={{ marginTop: '5px', fontSize: '0.9em', color: '#555' }}>
-                                            Observaciones: {ticket.Obser}
-                                        </div>
-                                    )}
-                                    {ticket.imageness && ticket.imageness !== 'null' && (
-                                        <div style={{ marginTop: '8px' }}>
-                                            <strong style={{ fontSize: '0.9em', color: '#333' }}>📷 Imágenes adjuntas:</strong>
-                                            <div style={{ display: 'flex', gap: '10px', marginTop: '5px', flexWrap: 'wrap' }}>
-                                                {ticket.imageness.split(',').map((img, idx) => (
-                                                    <a 
-                                                        key={idx} 
-                                                        href={img.trim()} 
-                                                        target="_blank" 
-                                                        rel="noopener noreferrer"
-                                                        style={{ 
-                                                            display: 'inline-block',
-                                                            padding: '5px 10px',
-                                                            backgroundColor: '#667eea',
-                                                            color: 'white',
-                                                            borderRadius: '5px',
-                                                            textDecoration: 'none',
-                                                            fontSize: '0.85em'
-                                                        }}
-                                                    >
-                                                        🖼️ Ver imagen {idx + 1}
-                                                    </a>
+                                    ID Ticket: {ticket.id_tickets || 'N/A'} <br/>
+                                    <strong>Equipo:</strong> {equipo} <br/>
+                                    <strong>Fecha y hora:</strong> {fechaHora} <br/>
+                                    <strong>Ambiente:</strong> {ticket.ambiente || ticket.ambient || 'N/A'} <br/>
+                                    
+                                    {tieneProblemasDetallados ? (
+                                        <div style={{ marginTop: '8px', borderTop: '1px solid #eee', paddingTop: '5px' }}>
+                                            <strong style={{ color: '#0056b3' }}>Detalle de Problemas:</strong>
+                                            <ul style={{ paddingLeft: '15px', marginTop: '5px', marginBottom: '0' }}>
+                                                {ticket.problemas.map((prob, idx) => (
+                                                    <li key={idx} style={{ marginBottom: '8px', fontSize: '0.95em' }}>
+                                                        <strong>Tipo:</strong> {prob.tipoProblema || prob.nom_problm || 'General'} <br/>
+                                                        {prob.problemaDesc && <><strong>Problema:</strong> {prob.problemaDesc}<br/></>}
+                                                        {prob.descripcion && <><strong>Observación:</strong> {prob.descripcion}<br/></>}
+                                                        {renderBotonImagenes(prob.imagenes)}
+                                                    </li>
                                                 ))}
-                                            </div>
+                                            </ul>
                                         </div>
+                                    ) : (
+                                        <>
+                                            Tipo de problema: {ticket.nom_problm || 'N/A'} <br/>
+                                            {ticket.Obser && <strong>Descripción:</strong>} {ticket.Obser || ''} <br/>
+                                            {renderBotonImagenes(ticket.imageness)}
+                                        </>
+                                    )}
+
+                                    {ticket.trasabilidad && ticket.trasabilidad.length > 0 && (
+                                         <div style={{ marginTop: '5px', fontSize: '0.9em', color: '#555', borderTop: '1px solid #eee', paddingTop: '5px' }}>
+                                            <em>Historial de cambios ({ticket.trasabilidad.length} eventos)</em>
+                                         </div>
                                     )}
                                 </span>
-                                <div className='Cont_botones_histo'>
-                                </div>
+                                <div className='Cont_botones_histo'></div>
                             </div>
                         );
                     })}
@@ -540,11 +608,41 @@ function Historial_ped() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
-                            {loadedImages.map((imgBlobUrl, idx) => (
-                                <div key={idx} className="img-gallery-hover" style={{ maxWidth: 220, maxHeight: 220, borderRadius: 10, overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', background: '#f7fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', cursor: 'pointer' }}>
-                                    <img src={imgBlobUrl} alt={`Imagen ${idx + 1}`} style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain', display: 'block', margin: '0 auto' }} />
-                                </div>
-                            ))}
+              {loadedImages.map((imgUrl, idx) => (
+                <div 
+                  key={idx} 
+                  className="img-gallery-hover" 
+                  style={{ 
+                    maxWidth: 280, 
+                    maxHeight: 280, 
+                    borderRadius: 10, 
+                    overflow: 'hidden', 
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)', 
+                    background: '#fff', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    padding: '8px'
+                  }}
+                >
+                  <img 
+                    src={imgUrl} 
+                    alt={`Imagen ${idx + 1}`} 
+                    style={{ 
+                      maxWidth: '100%', 
+                      maxHeight: '260px', 
+                      objectFit: 'contain', 
+                      display: 'block', 
+                      margin: '0 auto' 
+                    }}
+                    onError={(e) => {
+                      console.error('Error al cargar imagen:', imgUrl);
+                      e.target.style.display = 'none';
+                      e.target.parentElement.innerHTML = '<p style="color: #dc3545; font-size: 14px; text-align: center;">⚠️ Error al cargar imagen</p>';
+                    }}
+                  />
+                </div>
+              ))}
             </div>
           )}
         </Modal.Body>

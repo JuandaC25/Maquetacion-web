@@ -1,3 +1,4 @@
+  // ...existing code...
 // Helpers para la gestión de Tickets - Consumo directo de APIs
 import { useState, useEffect } from 'react';
 import { getJson, authorizedFetch } from '../../../api/http';
@@ -7,7 +8,7 @@ import { getJson, authorizedFetch } from '../../../api/http';
  */
 export const cargarProblemasDesdeAPI = async () => {
   try {
-    const data = await getJson('/api/problemas/descripcion');
+    const data = await getJson('/api/problemas');
     return { success: true, data: Array.isArray(data) ? data : [] };
   } catch (err) {
     return { success: false, error: 'No se pudieron cargar los problemas: ' + err.message };
@@ -62,43 +63,104 @@ export const subirImagenesAlServidor = async (imagenes) => {
 /**
  * Crea múltiples tickets para diferentes problemas del mismo equipo
  */
-export const crearTicketsParaEquipo = async (formData, problemas, imageUrls, idUsuario) => {
+export const crearTicketsParaEquipo = async (formData, problemas, detallesProblemas, idUsuario) => {
   try {
-    const problemasNombres = problemas
-      .filter(p => formData.problemasSeleccionados.includes(p.id))
-      .map(p => p.descr_problem);
+    // Pre-check: verificar disponibilidad del elemento en backend
+    try {
+      const elResp = await authorizedFetch(`/api/elementos/${formData.idElemento}`);
+      if (!elResp.ok) {
+        const txt = await elResp.text().catch(() => 'Error al verificar elemento');
+        return { success: false, error: txt || (`Elemento ${formData.idElemento} no encontrado`) };
+      }
+      const elementoJson = await elResp.json().catch(() => null);
+      const estadoElem = elementoJson?.estadosoelement ?? elementoJson?.est ?? elementoJson?.estado ?? null;
+      if (estadoElem != null && Number(estadoElem) !== 1) {
+        const estadoTexto = Number(estadoElem) === 2 ? 'Mantenimiento' : Number(estadoElem) === 0 ? 'Inactivo' : String(estadoElem);
+        return { success: false, error: `El elemento no está disponible: ${estadoTexto}` };
+      }
+    } catch (err) {
+      return { success: false, error: 'No se pudo verificar disponibilidad del elemento: ' + (err.message || err) };
+    }
 
-    const promesas = formData.problemasSeleccionados.map(async idProblema => {
+    const problemasSeleccionados = problemas.filter(p => formData.problemasSeleccionados.includes(p.id));
+
+    // Agrupar problemas por tipo_problema
+    const gruposPorTipo = problemasSeleccionados.reduce((grupos, problema) => {
+      const tipo = problema.tipo_problema || 'Sin tipo';
+      if (!grupos[tipo]) {
+        grupos[tipo] = [];
+      }
+      grupos[tipo].push(problema);
+      return grupos;
+    }, {});
+
+    // Crear un ticket por cada tipo de problema
+    const promesasTickets = Object.entries(gruposPorTipo).map(async ([tipo, problemasDelTipo]) => {
+      // Construir array de problemas con detalles
+      const problemasConDetalles = problemasDelTipo.map(p => ({
+        id: p.id,
+        descripcion: detallesProblemas[p.id]?.descripcion || '',
+        imagenes: detallesProblemas[p.id]?.imagenes || []
+      }));
+
+      console.log('➡️ detallesProblemas:', detallesProblemas);
+      console.log('➡️ problemasConDetalles:', problemasConDetalles);
+
+      // Subir imágenes de cada problema y reemplazar base64 por URLs
+      for (let prob of problemasConDetalles) {
+        if (prob.imagenes && prob.imagenes.length > 0) {
+          const res = await subirImagenesAlServidor(prob.imagenes);
+          prob.imagenes = res.success ? res.urls : [];
+        }
+      }
+
+      const payload = {
+        id_elem: parseInt(formData.idElemento),
+        ambiente: formData.ambiente,
+        id_usu: idUsuario,
+        fecha_in: new Date().toISOString(),
+        id_est_tick: 2,
+        problemas: problemasConDetalles
+      };
+      console.log('➡️ Payload enviado a /api/tickets:', payload);
+
       const response = await authorizedFetch('/api/tickets', {
         method: 'POST',
-        body: JSON.stringify({
-          id_elem: parseInt(formData.idElemento),
-          id_problem: idProblema,
-          ambient: formData.ambiente,
-          obser: formData.observaciones || '',
-          imageness: imageUrls.length > 0 ? JSON.stringify(imageUrls) : null,
-          id_usu: idUsuario,
-          fecha_in: new Date().toISOString(),
-          id_est_tick: 2
-        }),
+        body: JSON.stringify(payload),
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Error ${response.status}: ${errorText}`);
       }
-      
-      return await response.json();
+
+      return {
+        tipo,
+        problemas: problemasConDetalles.map(p => p.descripcion ? `${p.id}: ${p.descripcion}` : `${p.id}`),
+        response: await response.json()
+      };
     });
 
-    await Promise.all(promesas);
+    const resultados = await Promise.all(promesasTickets);
+
+    // Generar mensaje de éxito
+    const totalTickets = resultados.length;
+    let mensaje = `✓ Reporte exitoso! Se crearon ${totalTickets} ticket(s) agrupados por tipo para el equipo ID ${formData.idElemento}:\n\n`;
+
+    resultados.forEach((resultado, index) => {
+      mensaje += `📋 Ticket ${index + 1} - Tipo: ${resultado.tipo}\n`;
+      resultado.problemas.forEach(problema => {
+        mensaje += `  • ${problema}\n`;
+      });
+      mensaje += '\n';
+    });
 
     return {
       success: true,
-      mensaje: `✓ Reporte exitoso! Se crearon ${formData.problemasSeleccionados.length} ticket(s) para el equipo ID ${formData.idElemento}:\n• ${problemasNombres.join('\n• ')}`
+      mensaje
     };
   } catch (err) {
     console.error('Error al crear tickets:', err);
@@ -147,6 +209,92 @@ export const obtenerIdUsuario = () => {
  * Custom Hook: Maneja toda la lógica del formulario de reportar equipos
  */
 export const useReportarEquipo = () => {
+
+    // Estado para detalles individuales de cada problema
+    const [detallesProblemas, setDetallesProblemas] = useState({});
+
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    // Mostrar/ocultar detalles para un problema
+    const toggleDetalles = (problemaId) => {
+      setDetallesProblemas(prev => ({
+        ...prev,
+        [problemaId]: {
+          ...prev[problemaId],
+          mostrar: !prev[problemaId]?.mostrar,
+          descripcion: prev[problemaId]?.descripcion || "",
+          imagenes: prev[problemaId]?.imagenes || []
+        }
+      }));
+    };
+
+    // Actualizar descripción de un problema
+    const actualizarDescripcion = (problemaId, descripcion) => {
+      setDetallesProblemas(prev => ({
+        ...prev,
+        [problemaId]: {
+          ...prev[problemaId],
+          descripcion
+        }
+      }));
+    };
+
+    // Agregar imágenes a un problema
+    const agregarImagenes = async (problemaId, files) => {
+        if (!files || files.length === 0) return;
+        setImagenCargando(true);
+        setError(null);
+        try {
+            // Convertir todas las imágenes a base64
+            const base64Imgs = [];
+            for (const file of files) {
+                const base64 = await convertirImagenABase64(file);
+                base64Imgs.push(base64);
+            }
+            
+            setDetallesProblemas(prev => {
+                const nuevasImagenes = [...(prev[problemaId]?.imagenes || []), ...base64Imgs];
+                return {
+                    ...prev,
+                    [problemaId]: {
+                        ...prev[problemaId] || {},
+                        imagenes: nuevasImagenes
+                    }
+                };
+            });
+        } catch (err) {
+            setError("No se pudo cargar la(s) imagen(es): " + err.message);
+        } finally {
+            setImagenCargando(false);
+        }
+    };
+
+    // Eliminar una imagen específica
+    const eliminarImagen = (problemaId, index) => {
+        setDetallesProblemas(prev => {
+            const currentImages = prev[problemaId]?.imagenes || [];
+            const nuevasImagenes = currentImages.filter((_, i) => i !== index);
+            return {
+                ...prev,
+                [problemaId]: {
+                    ...prev[problemaId] || {},
+                    imagenes: nuevasImagenes
+                }
+            };
+        });
+    };
+
+    const handleProblemaChange = (problemaId) => {
+      setFormData(prev => {
+        const problemas = prev.problemasSeleccionados.includes(problemaId)
+          ? prev.problemasSeleccionados.filter(id => id !== problemaId)
+          : [...prev.problemasSeleccionados, problemaId];
+        return { ...prev, problemasSeleccionados: problemas };
+      });
+    };
   const [problemas, setProblemas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -155,14 +303,10 @@ export const useReportarEquipo = () => {
   const [imagenCargando, setImagenCargando] = useState(false);
 
   const [formData, setFormData] = useState({
-    numeroSerie: '',
     idElemento: '',
     ambiente: '',
-    observaciones: '',
     problemasSeleccionados: []
   });
-
-  const [imagenes, setImagenes] = useState([]);
 
   // Cargar problemas al montar el componente
   useEffect(() => {
@@ -172,54 +316,17 @@ export const useReportarEquipo = () => {
   const cargarProblemas = async () => {
     setLoading(true);
     setError(null);
-    
-    const resultado = await cargarProblemasDesdeAPI();
-    
-    if (resultado.success) {
-      setProblemas(resultado.data);
-    } else {
-      setError(resultado.error);
-    }
-    
-    setLoading(false);
-  };
-
-  const handleProblemaChange = (problemaId) => {
-    setFormData(prev => {
-      const problemas = prev.problemasSeleccionados.includes(problemaId)
-        ? prev.problemasSeleccionados.filter(id => id !== problemaId)
-        : [...prev.problemasSeleccionados, problemaId];
-      return { ...prev, problemasSeleccionados: problemas };
-    });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleAgregarImagen = async (e) => {
-    const archivo = e.target.files[0];
-    if (!archivo) return;
-
-    setImagenCargando(true);
-    setError(null);
-
     try {
-      const base64 = await convertirImagenABase64(archivo);
-      setImagenes(prev => [...prev, base64]);
-      setSuccess('✓ Imagen agregada correctamente');
-      setTimeout(() => setSuccess(null), 2000);
+      const resultado = await cargarProblemasDesdeAPI();
+      if (resultado.success) {
+        setProblemas(resultado.data);
+      } else {
+        setError(resultado.error);
+      }
     } catch (err) {
-      console.error("Error al procesar la imagen", err);
-      setError("No se pudo cargar la imagen.");
-    } finally {
-      setImagenCargando(false);
+      setError('Error al cargar los problemas: ' + err.message);
     }
-  };
-
-  const handleEliminarImagen = (index) => {
-    setImagenes(prev => prev.filter((_, i) => i !== index));
+    setLoading(false);
   };
 
   const handleSubmit = async (e) => {
@@ -236,20 +343,17 @@ export const useReportarEquipo = () => {
     setSubmitting(true);
 
     try {
+      // 1. Obtener ID de usuario
       const usuarioResult = obtenerIdUsuario();
       if (!usuarioResult.success) {
         throw new Error(usuarioResult.error);
       }
 
-      const imagenesResult = await subirImagenesAlServidor(imagenes);
-      if (!imagenesResult.success) {
-        throw new Error(imagenesResult.error);
-      }
 
       const ticketsResult = await crearTicketsParaEquipo(
         formData,
         problemas,
-        imagenesResult.urls,
+        detallesProblemas, 
         usuarioResult.idUsuario
       );
 
@@ -258,16 +362,7 @@ export const useReportarEquipo = () => {
       }
 
       setSuccess(ticketsResult.mensaje);
-      
-      // Limpiar formulario
-      setFormData({
-        numeroSerie: '',
-        idElemento: '',
-        ambiente: '',
-        observaciones: '',
-        problemasSeleccionados: []
-      });
-      setImagenes([]);
+      handleLimpiar();
 
     } catch (err) {
       setError(err.message);
@@ -278,17 +373,14 @@ export const useReportarEquipo = () => {
 
   const handleLimpiar = () => {
     setFormData({
-      numeroSerie: '',
       idElemento: '',
       ambiente: '',
-      observaciones: '',
       problemasSeleccionados: []
     });
-    setImagenes([]);
+    setDetallesProblemas({}); 
     setError(null);
-    setSuccess(null);
+    // No borrar success para que la alerta se mantenga visible
   };
-
   return {
     // Estado
     problemas,
@@ -298,19 +390,17 @@ export const useReportarEquipo = () => {
     submitting,
     imagenCargando,
     formData,
-    imagenes,
+    detallesProblemas,
     // Funciones
     handleProblemaChange,
     handleInputChange,
-    handleAgregarImagen,
-    handleEliminarImagen,
     handleSubmit,
     handleLimpiar,
     setError,
-    setSuccess
+    setSuccess,
+    toggleDetalles,
+    actualizarDescripcion,
+    agregarImagenes,
+    eliminarImagen
   };
 };
-
-
-
-

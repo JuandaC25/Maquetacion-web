@@ -25,11 +25,15 @@ function ModalReportar({ show, onHide, ticket, onSuccess }) {
       const ticketId = ticket.id_tickets || ticket.id;
       
       console.log(`Cambiar ticket ${ticketId} a estado ${estadoSeleccionado}`);
-      
+      // Preparar payload: si el estado es TERMINAR(3) o INACTIVAR(4), añadir fecha_fin
+      const formatLocalDateTime = (d) => new Date(d).toISOString().split('.')[0];
+      const payload = { id_est_tick: estadoSeleccionado };
+      if (estadoSeleccionado === 3 || estadoSeleccionado === 4) {
+        payload.fecha_fin = formatLocalDateTime(new Date());
+      }
+
       // Cambiar estado del ticket
-      await actualizarTicket(ticketId, {
-        id_est_tick: estadoSeleccionado
-      });
+      await actualizarTicket(ticketId, payload);
       
       // Crear registro de trasabilidad con la observación
       try {

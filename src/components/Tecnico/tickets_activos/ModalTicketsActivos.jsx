@@ -59,12 +59,10 @@ function ModalTicketsActivos({ show, onHide, ticket, elementos, onTicketUpdated 
               <input type="text" value={ticket.fecha_in ? new Date(ticket.fecha_in).toLocaleString() : 'No registrada'} readOnly className="modal-input" />
             </div>
             <div className='modal-item'>
-              <label className='modal-label'>Fecha fin</label>
-              <input type="text" value={ticket.fecha_fin ? new Date(ticket.fecha_fin).toLocaleString() : 'No registrada'} readOnly className="modal-input" />
             </div>
             <div className='modal-item'>
               <label className='modal-label'>Ambiente</label>
-              <input type="text" value={ticket.ambiente || ticket.ambient || 'No registrado'} readOnly className="modal-input" />
+              <input type="text" value={(typeof ticket.ambiente === 'string' && ticket.ambiente.trim() !== '') ? ticket.ambiente : (typeof ticket.ambient === 'string' && ticket.ambient.trim() !== '' ? ticket.ambient : 'No registrado')} readOnly className="modal-input" />
             </div>
             <div className='modal-item'>
               <label className='modal-label'>Elemento</label>
@@ -80,7 +78,16 @@ function ModalTicketsActivos({ show, onHide, ticket, elementos, onTicketUpdated 
             </div>
             <div className='modal-item'>
               <label className='modal-label'>Problema reportado</label>
-              <input type="text" value={ticket.nom_problm || 'No registrado'} readOnly className="modal-input" />
+              <input
+                type="text"
+                value={
+                  (Array.isArray(ticket.problemas) && ticket.problemas.length > 0 && ticket.problemas[0]?.tipoProblema)
+                    ? ticket.problemas[0].tipoProblema
+                    : (ticket.nom_problm || 'No registrado')
+                }
+                readOnly
+                className="modal-input"
+              />
             </div>
             {imagenes.length > 0 ? (
               <div className='modal-item-full'>
@@ -165,7 +172,15 @@ function ModalTicketsActivos({ show, onHide, ticket, elementos, onTicketUpdated 
             )}
             <div className='modal-item-full'>
               <label className='modal-label'>Observaciones</label>
-              <textarea value={ticket.observaciones || 'Sin observaciones'} readOnly className="modal-textarea" />
+              <textarea
+                value={
+                  (ticket && (ticket.obser || ticket.obse || ticket.observaciones || ticket.observacion))
+                    ? (ticket.obser || ticket.obse || ticket.observaciones || ticket.observacion)
+                    : 'Sin observaciones'
+                }
+                readOnly
+                className="modal-textarea"
+              />
             </div>
           </div>
         ) : (

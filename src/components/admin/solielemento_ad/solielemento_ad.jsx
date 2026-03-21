@@ -454,7 +454,7 @@ const Ticketxd = ({ estado, onVerClick, detalles }) => {
           estadoOptions={estadoOptions}
           searchTerm={searchTerm}
           handleSearch={handleSearch}
-          onAgregarClick={onAgregarClick}
+          onAgregarClick={() => onAgregarClick(selectedCategoryId, selectedSubcategoryId)}
         />
 
         {ticketsFiltrados.length === 0 ? (
@@ -578,8 +578,12 @@ const Solielemento = () => {
   const [editableDetails, setEditableDetails] = useState(null);
   const [categorias, setCategorias] = useState([]);
   const [subcategorias, setSubcategorias] = useState([]);
+  const [elementsList, setElementsList] = useState([]);
+  const [selectedElements, setSelectedElements] = useState([]); // array of numeric ids
   const [loadingCats, setLoadingCats] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [newSolicitudCategory, setNewSolicitudCategory] = useState('');
+  const [newSolicitudSubcategory, setNewSolicitudSubcategory] = useState('');
 
   const ESTADOS = [
     { id: 1, label: 'Pendiente' },
@@ -618,15 +622,35 @@ const Solielemento = () => {
       const id = detalles?.id_solicitud || detalles?.id || detalles?._id || null;
       if (id) {
         const solicitudFull = await obtenerSolicitudesPorid(id);
-        const idsCsv = solicitudFull?.id_elem || (solicitudFull?.id_elem?.toString && solicitudFull.id_elem.toString()) || '';
+        const getIdsCsvFromSolicitud = (s) => {
+          if (!s) return '';
+          const keys = ['id_elem','ids_elem','id_elemen','id_elem_prestamo','id_elem_prest','ids_elem','id_elementos','elementos'];
+          for (const k of keys) {
+            const v = s[k];
+            if (!v && v !== 0) continue;
+            if (Array.isArray(v)) return v.join(',');
+            if (typeof v === 'string' && v.trim() !== '') return v;
+            if (typeof v === 'number') return String(v);
+            try {
+              const sv = v && v.toString ? v.toString() : '';
+              if (sv && sv.trim() !== '') return sv;
+            } catch (e) { /* ignore */ }
+          }
+          if (s.elementosInfo && Array.isArray(s.elementosInfo) && s.elementosInfo.length > 0) {
+            return s.elementosInfo.map(e => (e?.id ?? e?.id_elemen ?? e?.id_elem)).filter(Boolean).join(',');
+          }
+          return '';
+        };
+
+        const idsCsv = getIdsCsvFromSolicitud(solicitudFull) || '';
         const ids = idsCsv ? idsCsv.toString().split(',').map(x => x.trim()).filter(Boolean) : [];
-        const elementosInfo = await Promise.all(ids.map(i => ElementosService.obtenerPorId(i).catch(() => null)));
-        const elementNames = elementosInfo.map(e => (
+        const elementosInfo = ids.length > 0 ? await Promise.all(ids.map(i => ElementosService.obtenerPorId(i).catch(() => null))) : (solicitudFull.elementosInfo || []);
+        const elementNames = Array.isArray(elementosInfo) ? elementosInfo.map(e => (
           e?.nom_elemento || e?.nom_elem || e?.nombre || e?.nombreElemento || e?.nombre_elemento || e?.nombre_elem || ''
-        )).filter(Boolean);
-        const elementSeries = elementosInfo.map(e => (
+        )).filter(Boolean) : [];
+        const elementSeries = Array.isArray(elementosInfo) ? elementosInfo.map(e => (
           e?.num_seri || e?.num_serie || e?.numero_serie || e?.serie || e?.serial || ''
-        )).filter(Boolean);
+        )).filter(Boolean) : [];
         const estadoStr = solicitudFull?.est_soli || solicitudFull?.estado || (typeof solicitudFull?.estadosolicitud !== 'undefined' ? (
           (function(n){ switch(Number(n)){case 1:return 'Pendiente';case 2:return 'Aprobado';case 3:return 'Rechazado';case 4:return 'Cancelado';case 5:return 'Finalizado';default: return ''}})(solicitudFull.estadosolicitud)
         ) : '');
@@ -644,9 +668,9 @@ const Solielemento = () => {
           fecha1: solicitudFull?.fecha_ini || solicitudFull?.fecha_inicio || solicitudFull?.fecha1 || '',
           fecha2: solicitudFull?.fecha_fn || solicitudFull?.fecha_fin || solicitudFull?.fecha2 || '',
           elementNames: (elementNames.length ? elementNames.join(', ') : fallbackNames.join(', ')),
-          elementSeries: elementSeries.join(', '),
-          elementoserie: elementSeries.join(', '),
-          elementosInfo,
+          elementSeries: (elementSeries.length ? elementSeries.join(', ') : (solicitudFull?.elementoserie || solicitudFull?.elementSeries || '')),
+          elementoserie: (elementSeries.length ? elementSeries.join(', ') : (solicitudFull?.elementoserie || solicitudFull?.elementoserie || '')),
+          elementosInfo: Array.isArray(elementosInfo) ? elementosInfo : (solicitudFull.elementosInfo || []),
         };
 
         normalized.id_solicitud = solicitudFull?.id_soli || solicitudFull?.id || solicitudFull?._id || id;
@@ -663,30 +687,33 @@ const Solielemento = () => {
         setModalDetalles(normalized);
         setEditableDetails(base);
         setIsEditing(false);
+        setShowModal(true);
+        return normalized;
       } else {
         setModalDetalles(detalles);
         setEditableDetails(detalles);
         setIsEditing(false);
+        setShowModal(true);
+        return detalles;
       }
-      setShowModal(true);
     } catch (err) {
       console.error('Error al obtener detalles de la solicitud:', err);
       setModalDetalles(detalles);
       setIsEditing(false);
       setEditableDetails(null);
       setShowModal(true);
+      return detalles;
     }
 
   };
 
-  const handleAgregarClick = async () => {
+  const handleAgregarClick = async (catId, subId) => {
     try {
+      setNewSolicitudCategory(catId || '');
+      setNewSolicitudSubcategory(subId || '');
       const data = await ElementosService.obtenerElementos();
-      const subcategoria = 'Portatil';
-      const portatiles = Array.isArray(data) ? data.filter((item) => (
-        (item.sub_catg === subcategoria || item.nom_eleme === subcategoria || item.nom_elemento === subcategoria) && item.est === 1
-      )) : [];
-      setEquiposDisponibles(portatiles);
+      const arr = Array.isArray(data) ? data : [];
+      setEquiposDisponibles(arr);
       setShowSolicitudModal(true);
     } catch (e) {
       console.error('Error cargando equipos disponibles para solicitud:', e);
@@ -740,9 +767,14 @@ const Solielemento = () => {
     return () => { mounted = false; };
   }, [showModal]);
 
-  const startEditing = () => {
+    const startEditing = () => {
     const base = { ...modalDetalles };
     try {
+      base.estado = getEstadoId(modalDetalles?.estado ?? modalDetalles?.est_soli ?? modalDetalles?.estadosolicitud ?? modalDetalles?.id_est_soli);
+      const idsFromElements = Array.isArray(modalDetalles?.elementosInfo)
+        ? modalDetalles.elementosInfo.map(e => e?.id ?? e?.id_elemen ?? e?.id_elem).filter(x => x !== undefined && x !== null).map(Number)
+        : [];
+      if (idsFromElements.length > 0) base.ids_elem = idsFromElements;
       const matchedCat = categorias.find(c => (c.nom_cat || c.nom_categoria || c.nombre || '').toString().toLowerCase() === (modalDetalles?.nom_cat || modalDetalles?.categoria || '').toString().toLowerCase());
       if (matchedCat) base.id_cat = matchedCat.id ?? matchedCat.id_cat ?? matchedCat.id_categoria;
       const matchedSub = subcategorias.find(sc => (sc.nom_subcateg || sc.nom_subcat || sc.nombre || '').toString().toLowerCase() === (modalDetalles?.nom_subcat || modalDetalles?.subcategoria || '').toString().toLowerCase());
@@ -854,8 +886,42 @@ const Solielemento = () => {
         id_est_soli: estadoVal || null,
       };
 
+      const extractIdsArray = (src) => {
+        if (!src) return [];
+        if (Array.isArray(src)) return src.map(x => Number(x)).filter(n => !isNaN(n));
+        if (typeof src === 'string') return src.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+        if (typeof src === 'number') return [Number(src)];
+        if (src.elementosInfo && Array.isArray(src.elementosInfo)) return src.elementosInfo.map(e => Number(e?.id ?? e?.id_elemen ?? e?.id_elem)).filter(n => !isNaN(n));
+        return [];
+      };
+
+      const idsFromEditable = extractIdsArray(editableDetails?.id_elem || editableDetails?.ids_elem || editableDetails?.id_elemen || editableDetails);
+      const idsFromModal = extractIdsArray(modalDetalles?.id_elem || modalDetalles?.ids_elem || modalDetalles?.id_elemen || modalDetalles);
+      const idsMerged = Array.from(new Set([...(idsFromEditable || []), ...(idsFromModal || [])]));
+      if (idsMerged.length > 0) payload.ids_elem = idsMerged;
+
       await actualizarSolicitud(id, payload);
-      setModalDetalles(prev => ({ ...(prev || {}), ...(editableDetails || {}), estado: estadoVal || prev?.estado }));
+      // Recargar la solicitud desde el backend para asegurar consistencia de campos (elementos, series, etc.)
+      const prevElements = modalDetalles?.elementosInfo || null;
+      const prevNames = modalDetalles?.elementNames || '';
+      const prevSeries = modalDetalles?.elementSeries || modalDetalles?.elementoserie || '';
+          try {
+            const reloaded = await handleVerClick({ id_solicitud: id });
+            if (reloaded) {
+              const hasElements = Array.isArray(reloaded.elementosInfo) && reloaded.elementosInfo.length > 0;
+              if (!hasElements) {
+                const merged = {
+                  ...reloaded,
+                  elementNames: reloaded.elementNames || prevNames || '',
+                  elementSeries: reloaded.elementSeries || reloaded.elementoserie || prevSeries || '',
+                  elementosInfo: (Array.isArray(reloaded.elementosInfo) && reloaded.elementosInfo.length > 0) ? reloaded.elementosInfo : (prevElements || []),
+                };
+                setModalDetalles(merged);
+              }
+            }
+          } catch (e) {
+            setModalDetalles(prev => ({ ...(prev || {}), ...(editableDetails || {}), estado: estadoVal || prev?.estado }));
+          }
       setIsEditing(false);
       setEditableDetails(null);
 
@@ -864,6 +930,43 @@ const Solielemento = () => {
     } catch (err) {
       console.error('Error actualizando solicitud', err);
       alert('Error al guardar: ' + (err.message || err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleApprove = async () => {
+    if (!modalDetalles) return;
+    const id = modalDetalles?.id_solicitud || modalDetalles?.id || modalDetalles?._id || null;
+    if (!id) { alert('No se encontró ID de la solicitud'); return; }
+
+    const ids = Array.isArray(modalDetalles?.elementosInfo) ? modalDetalles.elementosInfo.map(e => e?.id ?? e?.id_elemen ?? e?.id_elem).filter(Boolean).map(Number) : [];
+    const unavailable = (modalDetalles?.elementosInfo || []).filter(e => {
+      const est = e?.estadosoelement ?? e?.est ?? e?.estado ?? e?.estado_elem ?? null;
+      return est !== undefined && est !== null && Number(est) !== 1;
+    });
+    if (unavailable.length > 0) {
+      const names = unavailable.map(e => e?.nom_elemento || e?.nom_elem || e?.nombre || e?.id || '').join(', ');
+      alert('No se puede aprobar: algunos elementos no están disponibles: ' + names);
+      return;
+    }
+
+    if (!window.confirm('¿Confirmas aprobar esta solicitud?')) return;
+
+    try {
+      const payload = { id_est_soli: 2 };
+      if (ids.length > 0) payload.ids_elem = ids;
+      try { payload.id_tecnico = user?.id || user?.id_usu || user?.id_usuario || null; } catch(e){}
+      try { payload.nombre_tecnico = user?.nombre || user?.name || user?.nom_usu || null; } catch(e){}
+
+      setSaving(true);
+      await actualizarSolicitud(id, payload);
+      await handleVerClick({ id_solicitud: id });
+      setListRefreshKey(k => k + 1);
+      alert('Solicitud aprobada correctamente');
+    } catch (e) {
+      console.error('Error aprobando solicitud', e);
+      alert('Error al aprobar: ' + (e?.message || e));
     } finally {
       setSaving(false);
     }
@@ -1069,6 +1172,11 @@ const Solielemento = () => {
               <Button variant="outline-primary" onClick={startEditing} className="modal-action-button-1635" style={{ marginLeft: 8 }}>
                 Editar
               </Button>
+              {isAdmin ? (
+                <Button variant="success" onClick={handleApprove} className="modal-action-button-1635" style={{ marginLeft: 8 }} disabled={saving}>
+                  Aprobar
+                </Button>
+              ) : null}
             </>
           )}
         </Modal.Footer>
@@ -1080,6 +1188,8 @@ const Solielemento = () => {
           handleHide={() => setShowSolicitudModal(false)}
           equiposDisponibles={equiposDisponibles}
           userId={user?.id || user?.id_usu || user?.id_usuario || 1}
+          initialCategoria={newSolicitudCategory}
+          initialSubcategoria={newSolicitudSubcategory}
           onCreated={() => setListRefreshKey(k => k + 1)}
         />
       ) : (
@@ -1097,10 +1207,11 @@ const Solielemento = () => {
 
 export default Solielemento;
 
-function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId, onCreated }) {
+function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId, onCreated, initialCategoria, initialSubcategoria }) {
   const [categorias, setCategorias] = useState([]);
   const [subcategorias, setSubcategorias] = useState([]);
-  const [elementosPorSubcategoria, setElementosPorSubcategoria] = useState([]);
+  const [elementsList, setElementsList] = useState([]);
+  const [selectedElements, setSelectedElements] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const todayDate = (() => { const d = new Date(); const yyyy = d.getFullYear(); const mm = String(d.getMonth()+1).padStart(2,'0'); const dd = String(d.getDate()).padStart(2,'0'); return `${yyyy}-${mm}-${dd}` })();
@@ -1113,7 +1224,6 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
     hora_fn: '',
     ambient: '',
     cantid: '1',
-    id_elemen: equiposDisponibles.length > 0 ? String(equiposDisponibles[0].id_elemen ?? equiposDisponibles[0].id ?? '') : '',
     estadosoli: 1,
     id_usu: userId,
     num_ficha: '',
@@ -1124,8 +1234,12 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
   const [form, setForm] = useState(initialFormState);
 
   useEffect(() => {
-    setForm(prev => ({ ...initialFormState, id_elemen: equiposDisponibles.length > 0 ? String(equiposDisponibles[0].id_elemen ?? equiposDisponibles[0].id ?? '') : '', id_usu: userId }));
-  }, [equiposDisponibles, show, userId]);
+    setForm(prev => ({ ...initialFormState, id_usu: userId, id_categoria: initialCategoria || '', id_subcategoria: initialSubcategoria || '' }));
+  }, [show, userId, initialCategoria, initialSubcategoria]);
+  useEffect(() => {
+    if (!show) return;
+    setForm(prev => ({ ...prev, id_categoria: initialCategoria || prev.id_categoria || '', id_subcategoria: initialSubcategoria || prev.id_subcategoria || '' }));
+  }, [initialCategoria, initialSubcategoria, show]);
 
   useEffect(() => {
     if (!show) return;
@@ -1154,43 +1268,131 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
       })
       .catch(err => console.error('Error cargando subcategorías (admin):', err));
   }, [form.id_categoria]);
+
+  // Cargar elementos filtrados por categoría/subcategoría cuando el modal está abierto
   useEffect(() => {
     let mounted = true;
     const load = async () => {
+      if (!show) return;
       try {
-        const all = await ElementosService.obtenerElementos();
+        const all = (Array.isArray(equiposDisponibles) && equiposDisponibles.length > 0)
+          ? equiposDisponibles
+          : await ElementosService.obtenerElementos();
         if (!mounted) return;
         const arr = Array.isArray(all) ? all : [];
-        if (!form.id_subcategoria) {
-          setElementosPorSubcategoria(arr);
-          return;
-        }
+        console.debug('SolicitudModalAdmin: elementos totales recibidos', arr.length, 'categoria=', form.id_categoria, 'subcategoria=', form.id_subcategoria);
         const filtered = arr.filter(el => {
-          const elSubId = (el.id_subcat ?? el.id_subcategoria ?? el.subcategoria_id ?? el.sub_catg_id ?? el.sub_catg);
-          const elSubName = (el.nom_subcateg ?? el.nom_subcat ?? el.subcategoria ?? el.sub_catg ?? el.subcategoria_nombre);
-          if (elSubId !== undefined && elSubId !== null && String(elSubId) === String(form.id_subcategoria)) return true;
-          if (elSubName !== undefined && elSubName !== null && String(elSubName).toLowerCase() === String(form.id_subcategoria).toLowerCase()) return true;
+          const safe = v => (v === undefined || v === null) ? null : v;
+
+          const gatherIds = (obj, keys) => {
+            const out = [];
+            keys.forEach(k => {
+              const v = safe(obj?.[k]);
+              if (v !== null) out.push(String(v));
+            });
+            return out;
+          };
+
+          // posibles rutas/propiedades donde puede estar la categoría/subcategoría
+          const catIdKeys = ['id_cat','id_categoria','categoria_id','categoria','cat_id','categoriaId','idCat','id_categ'];
+          const catNameKeys = ['nom_cat','nom_categoria','categoria_nombre','categoria','nombre','name','tip_catg'];
+          const subIdKeys = ['id_subcat','id_subcategoria','subcategoria_id','sub_catg_id','sub_catg','idSubcat','idSubcategoria'];
+          const subNameKeys = ['nom_subcateg','nom_subcat','subcategoria','subcategoria_nombre','nombre','name','sub_catg'];
+
+          const elCatIds = [];
+          catIdKeys.forEach(k => {
+            const v = safe(el?.[k]) || safe(el?.categoria?.[k]) || safe(el?.categoria_id);
+            if (v !== null) elCatIds.push(String(v));
+          });
+          // incluir id dentro de un objeto categoria
+          if (el?.categoria && (el.categoria.id || el.categoria.id_cat || el.categoria.id_categoria)) {
+            elCatIds.push(String(el.categoria.id ?? el.categoria.id_cat ?? el.categoria.id_categoria));
+          }
+
+          const elCatNames = [];
+          catNameKeys.forEach(k => {
+            const v = safe(el?.[k]) || safe(el?.categoria?.[k]);
+            if (v !== null) elCatNames.push(String(v).toLowerCase());
+          });
+
+          const elSubIds = [];
+          subIdKeys.forEach(k => {
+            const v = safe(el?.[k]) || safe(el?.subcategoria?.[k]) || safe(el?.subcategoria_id);
+            if (v !== null) elSubIds.push(String(v));
+          });
+          if (el?.subcategoria && (el.subcategoria.id || el.subcategoria.id_subcat || el.subcategoria.id_subcategoria)) {
+            elSubIds.push(String(el.subcategoria.id ?? el.subcategoria.id_subcat ?? el.subcategoria.id_subcategoria));
+          }
+
+          const elSubNames = [];
+          subNameKeys.forEach(k => {
+            const v = safe(el?.[k]) || safe(el?.subcategoria?.[k]);
+            if (v !== null) elSubNames.push(String(v).toLowerCase());
+          });
+
+          const matchId = (list, val) => {
+            if (!list || list.length === 0) return false;
+            return list.some(x => String(x) === String(val));
+          };
+          const matchName = (list, val) => {
+            if (!val) return false;
+            const s = String(val).toLowerCase();
+            return list.some(x => String(x).toLowerCase() === s);
+          };
+
+          // Si hay categoría y subcategoría seleccionadas, ambas deben coincidir
+          if (form.id_categoria && form.id_subcategoria) {
+            const catMatch = matchId(elCatIds, form.id_categoria) || matchName(elCatNames, form.id_categoria);
+            const subMatch = matchId(elSubIds, form.id_subcategoria) || matchName(elSubNames, form.id_subcategoria);
+            return catMatch && subMatch;
+          }
+
+          if (form.id_categoria) {
+            return matchId(elCatIds, form.id_categoria) || matchName(elCatNames, form.id_categoria);
+          }
+          if (form.id_subcategoria) {
+            return matchId(elSubIds, form.id_subcategoria) || matchName(elSubNames, form.id_subcategoria);
+          }
+
           return false;
         });
-        setElementosPorSubcategoria(filtered);
+        setElementsList(filtered);
+        // reset selection when category/subcategory changes
+        setSelectedElements([]);
+        console.debug('SolicitudModalAdmin: elementos filtrados', filtered.length);
       } catch (e) {
         console.error('Error cargando elementos (admin):', e);
-        setElementosPorSubcategoria([]);
+        setElementsList([]);
       }
     };
     load();
     return () => { mounted = false; };
-  }, [form.id_subcategoria, show]);
-
-  const elementosFiltrados = (elementosPorSubcategoria && elementosPorSubcategoria.length > 0)
-    ? elementosPorSubcategoria
-    : (Array.isArray(equiposDisponibles) ? equiposDisponibles : []);
-
-  const maxCantidad = Math.min(3, Array.isArray(elementosFiltrados) ? elementosFiltrados.length : 0);
+  }, [form.id_categoria, form.id_subcategoria, show]);
+  const maxCantidad = 2;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const toggleSelectElement = (id) => {
+    const numId = Number(id);
+    setSelectedElements(prev => {
+      const exists = prev.some(x => Number(x) === numId);
+      let next;
+      if (exists) {
+        next = prev.filter(x => Number(x) !== numId);
+      } else {
+        if ((prev.length || 0) >= maxCantidad) {
+          alert(`Máximo ${maxCantidad} elementos`);
+          return prev;
+        }
+        next = [...prev, numId];
+      }
+      // sincronizar cantidad solicitada con la cantidad de elementos seleccionados
+      setForm(fprev => ({ ...fprev, cantid: String(next.length > 0 ? next.length : 1) }));
+      return next;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -1199,7 +1401,6 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
     try {
       const parsed = parseInt(form.cantid, 10);
       if (isNaN(parsed) || parsed <= 0 || parsed > maxCantidad) { alert(`Cantidad inválida (1-${maxCantidad})`); setIsSubmitting(false); return; }
-      if (!form.id_elemen) { alert('Seleccione un elemento'); setIsSubmitting(false); return; }
       const fechaInicio = new Date(`${form.fecha_ini}T${form.hora_ini}:00`);
       const fechaFin = new Date(`${form.fecha_fn}T${form.hora_fn}:00`);
       if (fechaFin <= fechaInicio) { alert('Fecha fin debe ser posterior'); setIsSubmitting(false); return; }
@@ -1214,8 +1415,15 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
         id_categoria: form.id_categoria ? parseInt(form.id_categoria,10) : null,
         id_subcategoria: form.id_subcategoria ? parseInt(form.id_subcategoria,10) : null,
         id_usu: form.id_usu,
-        ids_elem: form.id_elemen ? [parseInt(form.id_elemen,10)] : [],
       };
+
+      // Adjuntar ids seleccionados si hay
+      if (!Array.isArray(selectedElements) || selectedElements.length === 0) {
+        alert('Seleccione al menos un elemento para la solicitud');
+        setIsSubmitting(false);
+        return;
+      }
+      dto.ids_elem = selectedElements.map(x => Number(x)).filter(n => !isNaN(n));
 
       const res = await crearSolicitud(dto);
       alert('Solicitud creada (admin)');
@@ -1254,20 +1462,80 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
             </Form.Control>
           </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Equipo</Form.Label>
-            <Form.Control as="select" name="id_elemen" value={form.id_elemen} onChange={handleChange} required>
-              <option value="">-- Seleccione equipo --</option>
-              {elementosFiltrados.map(el => (
-                <option key={el.id_elemen ?? el.id} value={el.id_elemen ?? el.id}>{(el.nom_elemento || el.nom_elem || el.nom_eleme || el.nombre || el.num_ficha || '').toString()}</option>
-              ))}
-            </Form.Control>
-          </Form.Group>
+          {/* Campo 'Equipo' eliminado del front (admin) */}
 
           <Form.Group className="mb-3">
             <Form.Label>Cantidad a solicitar (Máx: {maxCantidad})</Form.Label>
             <Form.Control type="number" name="cantid" value={form.cantid} onChange={handleChange} min="1" max={String(maxCantidad)} required disabled={maxCantidad===0} />
           </Form.Group>
+
+          {/* Lista de elementos filtrados y seleccionables */}
+          <div className="modal-content-flex">
+            <div className="detail-item-1631">
+              <label className="detail-label-1632">Elementos</label>
+              <div className="detail-value-display-1633">
+                <div className="elements-list">
+                  {elementsList && elementsList.length > 0 ? (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+                      {elementsList.map(el => {
+                        const id = el.id_elemen ?? el.id;
+                        const nombre = (el.nom_elemento || el.nom_elem || el.nom_eleme || el.nombre || el.num_ficha || '').toString();
+                        const serial = el.num_seri || el.num_serie || el.serial || '';
+                        const estado = el.estadosoelement ?? el.est ?? el.estado ?? 1;
+                        const disabled = Number(estado) !== 1;
+                        const checked = selectedElements.some(x => Number(x) === Number(id));
+
+                        const estadoLabel = Number(estado) === 1 ? 'Disponible' : (Number(estado) === 2 ? 'Mantenimiento' : (Number(estado) === 0 ? 'Inactivo' : String(estado)));
+
+                        return (
+                          <div
+                            key={id}
+                            role="button"
+                            onClick={() => { if (!disabled) toggleSelectElement(id); }}
+                            className={`element-card ${disabled ? 'disabled' : ''} ${checked ? 'selected' : ''}`}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 12,
+                              padding: 12,
+                              border: checked ? '2px solid #28a745' : '1px solid #e9e9e9',
+                              borderRadius: 8,
+                              background: disabled ? '#f8f9fa' : (checked ? '#e8f7ef' : '#ffffff'),
+                              cursor: disabled ? 'not-allowed' : 'pointer'
+                            }}
+                          >
+                            <div style={{ flexShrink: 0 }}>
+                              <input
+                                type="checkbox"
+                                value={id}
+                                checked={checked}
+                                onChange={() => toggleSelectElement(id)}
+                                disabled={disabled && !checked}
+                                aria-label={`Seleccionar ${nombre}`}
+                                style={{ width: 18, height: 18 }}
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                                <strong style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{nombre}</strong>
+                                <small style={{ color: '#6c757d' }}>{estadoLabel}</small>
+                              </div>
+                              {serial ? <div style={{ fontSize: 12, color: '#6c757d', marginTop: 6 }}>Serie: {serial}</div> : null}
+                              {el.marc || el.marca || el.mar || el.marc ? <div style={{ fontSize: 12, color: '#6c757d', marginTop: 6 }}>Marca: {el.marc || el.marca || el.mar}</div> : null}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="no-elements">No hay elementos para la categoría/subcategoría seleccionada</div>
+                  )}
+                </div>
+                <small className="text-muted">Seleccione hasta {maxCantidad} elementos</small>
+              </div>
+            </div>
+          </div>
 
           <Form.Group className="mb-3">
             <Form.Label>Fecha y Hora de Inicio</Form.Label>

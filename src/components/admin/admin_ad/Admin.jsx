@@ -13,6 +13,7 @@ import ReportarEquipo from '../../Home/ReportarEquipo/ReportarEquipo.jsx';
 import { obtenerCategoria } from '../../../api/CategoriaApi.js';
 import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js';
 import ElementosService from '../../../api/ElementosApi.js';
+import { obtenerProblemas, crearProblema } from '../../../api/ProblemasApi.js';
 
 const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger }) => {
   // --- MODAL HISTORIAL DE TICKETS ---
@@ -25,7 +26,12 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
   const [historialTicketId, setHistorialTicketId] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [currentTicket, setCurrentTicket] = useState(null);
-  // Descargar historial en PDF (individual) - formato vertical, etiqueta en su propia línea
+  const [showCrearProblemaModal, setShowCrearProblemaModal] = useState(false);
+  const [nuevoTipo, setNuevoTipo] = useState('');
+  const [nuevaDescripcion, setNuevaDescripcion] = useState('');
+  const [savingProblema, setSavingProblema] = useState(false);
+  const [crearError, setCrearError] = useState(null);
+  
   const handleDownloadPDF = async () => {
     try {
       const doc = new jsPDF({ unit: 'pt', format: 'a4' });
@@ -64,7 +70,7 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
       const subcategoria = ticket.subcategoria ?? ticket.nom_subcateg ?? '';
       const fechaApertura = ticket.fecha_in ?? ticket.fecha_creacion ?? ticket.fech ?? ticket.fecha ?? '';
       const fechaFin = ticket.fecha_fin ?? ticket.fecha_fn ?? ticket.fecha_fin ?? '';
-      const instructorObservacion = ticket.observacion || ticket.observa || ticket.obser || ticket.descripcion || '';
+      const instructorObservacion = ticket.observacion || ticket.observa || ticket.obser || ticket.descripcion || ticket.observaciones || '';
       const rawEstado = ticket.id_est_tick ?? ticket.estado ?? null;
       const estadoLabel = (() => {
         const n = rawEstado == null ? null : Number(rawEstado);
@@ -438,6 +444,8 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
 
   const startIdx = (currentPage - 1) * CARDS_PER_PAGE;
 
+  const safePaginatedTickets = Array.isArray(paginatedTickets) ? paginatedTickets : [];
+
   return (
     <div className="container-1201">
       <Alert className="alert-1202" style={{ background: '#fff', border: 'none', boxShadow: 'none', marginBottom: 0 }}>
@@ -448,10 +456,10 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
               {/* ...Filtros existentes... */}
               <Dropdown className="category-filter-dropdown-xd31">
                 <Dropdown.Toggle 
-                  variant="success" 
-                  id="dropdown-category-xd31"
-                  className="dropdown-toggle-xd146"
-                >
+                    variant="success" 
+                    id="dropdown-category-xd31"
+                    className="dropdown-toggle-xd146 uiverse-btn uiverse-dropdown"
+                  >
                   {selectedCategoryFilter} <span className="dropdown-arrow-xd32">▼</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
@@ -475,10 +483,10 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
 
               <Dropdown className="category-filter-dropdown-xd31">
                 <Dropdown.Toggle 
-                  variant="success" 
-                  id="dropdown-subcategory-xd31"
-                  className="dropdown-toggle-xd146"
-                >
+                    variant="success" 
+                    id="dropdown-subcategory-xd31"
+                    className="dropdown-toggle-xd146 uiverse-btn uiverse-dropdown"
+                  >
                   {selectedSubcategoryFilter} <span className="dropdown-arrow-xd32">▼</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
@@ -502,10 +510,10 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
 
               <Dropdown className="category-filter-dropdown-xd31">
                 <Dropdown.Toggle 
-                  variant="success" 
-                  id="dropdown-status-xd31"
-                  className="dropdown-toggle-xd146"
-                >
+                    variant="success" 
+                    id="dropdown-status-xd31"
+                    className="dropdown-toggle-xd146 uiverse-btn uiverse-dropdown"
+                  >
                   {selectedStatusFilter} <span className="dropdown-arrow-xd32">▼</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu-xd147 category-dropdown-menu-xd33">
@@ -544,115 +552,17 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
             </div>
           </div>
           <div className="header-buttons-section">
-            <div style={{ 
-              display: 'inline-block', 
-              marginRight: 8,
-              marginLeft: 0,
-              height: '40px' 
-            }}>
-              <button 
-                onClick={onCrearClick}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: '#28a745',
-                  border: 'none',
-                  borderRadius: '0.5rem',
-                  padding: '0.6rem 1.2rem',
-                  color: 'white',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  fontSize: '0.9375rem',
-                  fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                  outline: 'none',
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'none',
-                  msAppearance: 'none',
-                  appearance: 'none',
-                  WebkitTapHighlightColor: 'transparent',
-                  WebkitUserSelect: 'none',
-                  MozUserSelect: 'none',
-                  msUserSelect: 'none',
-                  userSelect: 'none',
-                  whiteSpace: 'nowrap',
-                  height: '40px',
-                  boxSizing: 'border-box',
-                  lineHeight: '1.5',
-                  textAlign: 'center',
-                  textTransform: 'none',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = '#218838';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = '#28a745';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
-                }}
-                onMouseDown={(e) => {
-                  e.currentTarget.style.transform = 'translateY(1px)';
-                  e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
-                }}
-                onMouseUp={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
-                }}
-              >
-                <span style={{ 
-                  fontSize: '16px',
-                  lineHeight: '1',
-                  color: '#9C27B0',
-                  fontWeight: 'bold',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '22px',
-                  height: '22px',
-                  backgroundColor: 'white',
-                  borderRadius: '50%',
-                  marginRight: '10px',
-                  position: 'relative',
-                  flexShrink: 0,
-                  boxSizing: 'border-box',
-                  paddingBottom: '1px'
-                }}>+</span>
-                <span style={{ 
-                  whiteSpace: 'nowrap',
-                  position: 'relative',
-                  top: '1px'
-                }}>Añadir Ticket</span>
+            <div>
+              <button onClick={onCrearClick} className="uiverse-btn uiverse-btn--small" type="button">
+                <span style={{ fontSize: '16px', lineHeight: '1', color: '#9C27B0', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '22px', height: '22px', backgroundColor: 'white', borderRadius: '50%', marginRight: '10px', paddingBottom: '1px' }}>+</span>
+                <span className="uiverse-label" style={{ whiteSpace: 'nowrap', position: 'relative', top: '1px' }}>Añadir Ticket</span>
               </button>
             </div>
-            <div style={{ display: 'inline-block', marginLeft: 8 }}>
-              <button 
-                type="button"
-                onClick={() => onOpenAllHistorial && onOpenAllHistorial()}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: '#28a745',
-                  border: 'none',
-                  borderRadius: '0.5rem',
-                  padding: '0.6rem 1.2rem',
-                  color: 'white',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  fontSize: '0.9375rem',
-                  height: '40px',
-                  boxSizing: 'border-box'
-                }}
-              >
-                Historial de tickets
-              </button>
+            <div>
+              <button type="button" onClick={() => setShowCrearProblemaModal(true)} className="create-problem-btn uiverse-btn uiverse-btn--small">Crear problema</button>
+            </div>
+            <div>
+              <button type="button" onClick={() => onOpenAllHistorial && onOpenAllHistorial()} className="uiverse-btn uiverse-btn--small" style={{ boxSizing: 'border-box' }}>Historial de tickets</button>
             </div>
           </div>
         </div>
@@ -673,7 +583,7 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
           gridTemplateRows: `repeat(${ROWS_PER_PAGE}, auto)`,
           gap: '24px',
         }}>
-          {paginatedTickets.map((t, i) => (
+          {safePaginatedTickets.map((t, i) => (
             <div className="card-ticket-1209" key={t?.id || i}>
               <div className="header-card-1210"></div>
               <div className="info-card-1211">
@@ -713,6 +623,59 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
           ))}
         </div>
       )}
+      
+      <Modal show={showCrearProblemaModal} onHide={() => { setShowCrearProblemaModal(false); setCrearError(null); }} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Crear problema</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {crearError && <Alert variant="danger">{crearError}</Alert>}
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Tipo de problema</Form.Label>
+              <Form.Control
+                type="text"
+                value={nuevoTipo}
+                onChange={(e) => setNuevoTipo(e.target.value)}
+                placeholder="Ej: Hardware, Software, Redes..."
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Descripción</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={4}
+                value={nuevaDescripcion}
+                onChange={(e) => setNuevaDescripcion(e.target.value)}
+                placeholder="Descripción del problema"
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => { setShowCrearProblemaModal(false); setCrearError(null); }} disabled={savingProblema}>Cancelar</Button>
+          <Button variant="success" onClick={async () => {
+            try {
+              setSavingProblema(true);
+              setCrearError(null);
+              if (!nuevoTipo || nuevoTipo.trim() === '') {
+                setCrearError('Ingrese el tipo de problema');
+                return;
+              }
+              await crearProblema({ tipo: nuevoTipo.trim(), descripcion: nuevaDescripcion.trim() });
+              alert('Problema creado correctamente');
+              setShowCrearProblemaModal(false);
+              setNuevoTipo(''); setNuevaDescripcion('');
+            } catch (err) {
+              console.error('Error creando problema:', err);
+              setCrearError(err.message || 'Error al crear problema');
+            } finally {
+              setSavingProblema(false);
+            }
+          }} disabled={savingProblema}>{savingProblema ? 'Guardando...' : 'Guardar'}</Button>
+        </Modal.Footer>
+      </Modal>
+
       {/* MODAL HISTORIAL DE TICKETS - Rendered once at the root */}
       <Modal show={showHistorialModal} onHide={handleCloseHistorialModal} size="lg" centered>
         <Modal.Header closeButton>
@@ -728,7 +691,7 @@ const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger 
               {/* Observación principal del ticket (desde BD) */}
               {ticketDetails && (() => {
                 const td = ticketDetails;
-                const ticketObs = td.obser ?? td.Obser ?? td.observa ?? td.descripcion ?? td.observacion ?? td.observ ?? td.obserb ?? '';
+                const ticketObs = td.obser ?? td.Obser ?? td.observa ?? td.descripcion ?? td.observacion ?? td.observ ?? td.obserb ?? td.observaciones ?? '';
                 return (
                   <div key={`ticket-observ-${td.id || td.id_tickets || historialTicketId}`} className="historial-card report-card">
                     <div className="report-header">
@@ -926,11 +889,28 @@ const Admin = () => {
     console.log('🔍 Datos del ticket completos:', detalles);
     console.log('📋 Campo Obser (mayúscula):', detalles?.Obser);
     console.log('📋 Campo obser (minúscula):', detalles?.obser);
-    console.log('🖼️ Campo imageness (raw):', detalles?.imageness || detalles?.imagenes || detalles?.imagen);
-    setModalDetalles(detalles || {});
-    setShowModal(true);
-    setEditandoProblema(false);
-    setNuevoProblema(String(detalles?.id_problem || detalles?.problem_id || ''));
+    (async () => {
+      try {
+        const id = detalles?.id_tickets || detalles?.id;
+        if (id) {
+          const full = await obtenerTicketPorId(id);
+          if (full) {
+            console.log('🔁 Ticket completo obtenido del backend:', full);
+            setModalDetalles(full);
+            setShowModal(true);
+            setEditandoProblema(false);
+            setNuevoProblema(String(full?.problemas && full.problemas.length > 0 ? (full.problemas[0].problemaId || '') : (detalles?.id_problem || detalles?.problem_id || '')));
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('No se pudo obtener ticket completo al abrir modal:', e);
+      }
+      setModalDetalles(detalles || {});
+      setShowModal(true);
+      setEditandoProblema(false);
+      setNuevoProblema(String(detalles?.id_problem || detalles?.problem_id || ''));
+    })();
   };
 
   const handleCloseModal = () => {
@@ -951,16 +931,16 @@ const Admin = () => {
   const handleGuardarEstado = async () => {
     const ticketId = modalDetalles?.id_tickets || modalDetalles?.id;
     if (!ticketId) {
-      alert('❌ No se encontró el ID del ticket');
+      alert(' No se encontró el ID del ticket');
       console.error('Datos del modal:', modalDetalles);
       return;
     }
     if (!nuevoEstado) {
-      alert('❌ Por favor seleccione un estado');
+      alert('Por favor seleccione un estado');
       return;
     }
     if (editandoProblema && !nuevoProblema) {
-      alert('❌ Selecciona un problema');
+      alert(' Selecciona un problema');
       return;
     }
     setGuardando(true);
@@ -973,18 +953,17 @@ const Admin = () => {
       if (editandoProblema) {
         payload.id_problem = problemaId;
       }
-      console.log('💾 Guardando estado/problema:', { id: ticketId, ...payload });
+      console.log(' Guardando estado/problema:', { id: ticketId, ...payload });
       const resultado = await actualizarTicket(ticketId, payload);
-      console.log('✅ Resultado:', resultado);
+      console.log(' Resultado:', resultado);
       alert('✓ Ticket actualizado exitosamente');
       setEditandoEstado(false);
       setEditandoProblema(false);
       handleCloseModal();
-      // Recargar tickets sin recargar toda la página
       setRefreshTrigger(prev => prev + 1);
     } catch (error) {
-      console.error('❌ Error completo:', error);
-      alert('❌ Error al actualizar el ticket: ' + error.message);
+      console.error('Error completo:', error);
+      alert('Error al actualizar el ticket: ' + error.message);
     } finally {
       setGuardando(false);
     }
@@ -1072,7 +1051,7 @@ const Admin = () => {
           if (!n) return (rawEstado && String(rawEstado)) || 'Desconocido';
           return n === 1 ? 'Activo' : n === 2 ? 'Pendiente' : n === 3 ? 'Terminado' : n === 4 ? 'Inactivo' : String(rawEstado);
         })();
-        const instructorObservacion = t.observacion || t.observa || t.obser || descripcion || '';
+        const instructorObservacion = t.observacion || t.observa || t.obser || descripcion || t.observaciones || '';
 
         doc.setFontSize(14);
         doc.setFont(undefined, 'bold');
@@ -1526,14 +1505,14 @@ const Admin = () => {
             <div className="form-control-wrap-1225">
               <Form.Control 
                 type="text" 
-                value={modalDetalles?.ambient || 'No disponible'} 
+                value={modalDetalles?.ambiente || modalDetalles?.ambient || 'No disponible'} 
                 readOnly 
               />
             </div>
           </div>
           
           <div className="form-row-1223">
-            <label className="form-label-1224">Problema:</label>
+            <label className="form-label-1224">Problema(s):</label>
             <div className="form-control-wrap-1225">
               {editandoProblema ? (
                 <Form.Select value={nuevoProblema} onChange={e => setNuevoProblema(e.target.value)}>
@@ -1543,15 +1522,47 @@ const Admin = () => {
                   ))}
                 </Form.Select>
               ) : (
-                <Form.Control 
-                  type="text" 
-                  value={
-                    modalDetalles?.nom_problm || 
-                    modalDetalles?.nom_problem || 
-                    'No disponible'
-                  } 
-                  readOnly 
-                />
+                (() => {
+                  const items = Array.isArray(modalDetalles?.problemas) && modalDetalles.problemas.length > 0 ? modalDetalles.problemas : null;
+                  if (!items) {
+                    return (
+                      <Form.Control type="text" value={(modalDetalles?.nom_problm || modalDetalles?.nom_problem || 'No disponible')} readOnly />
+                    );
+                  }
+
+                  return items.map((p, idx) => (
+                    <div key={idx} style={{ display: 'flex', gap: 12, marginBottom: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                      <div style={{ flex: '0 0 220px', maxWidth: 320 }}>
+                        <label className="form-label-1224">Tipo</label>
+                        <div className="form-control-wrap-1225">
+                          <Form.Control
+                            type="text"
+                            value={(() => {
+                              try {
+                                return p?.problema?.Tip_problema || p?.problema?.tip_problema || p?.tipoProblema || '';
+                              } catch (e) { return ''; }
+                            })()}
+                            readOnly
+                            style={{ whiteSpace: 'normal', overflowWrap: 'break-word', wordBreak: 'break-word' }}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ flex: '1 1 420px', minWidth: 220 }}>
+                        <label className="form-label-1224">Descripción</label>
+                        <div className="form-control-wrap-1225">
+                          <Form.Control
+                            as="textarea"
+                            rows={3}
+                            value={p?.problemaDesc || (p?.problema && (p.problema.desc_problema || p.problema.desc)) || p?.descripcion || p?.descr || ''}
+                            readOnly
+                            style={{ resize: 'vertical', whiteSpace: 'pre-wrap', overflowWrap: 'break-word', wordBreak: 'break-word' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ));
+                })()
               )}
             </div>
           </div>
@@ -1595,11 +1606,24 @@ const Admin = () => {
               <Form.Control 
                 as="textarea"
                 rows={3}
-                value={
-                  modalDetalles?.obser || 
-                  modalDetalles?.Obser || 
-                  'No disponible'
-                } 
+                value={(() => {
+                  try {
+                    if (Array.isArray(modalDetalles?.problemas) && modalDetalles.problemas.length > 0) {
+                      const textos = modalDetalles.problemas.map(p => (p?.descripcion || p?.descr || p?.descr_problem || '')).filter(Boolean);
+                      if (textos.length > 0) return textos.join('\n\n');
+                    }
+                  } catch (e) {}
+                  return (
+                    modalDetalles?.obser ||
+                    modalDetalles?.Obser ||
+                    modalDetalles?.observacion ||
+                    modalDetalles?.observa ||
+                    modalDetalles?.descripcion ||
+                    modalDetalles?.descr_problem ||
+                    modalDetalles?.observ ||
+                    'No disponible'
+                  );
+                })()} 
                 readOnly 
                 style={{ resize: 'vertical' }}
               />
@@ -1609,7 +1633,21 @@ const Admin = () => {
             <label className="form-label-1224">Imagen:</label>
             <div className="form-control-wrap-1225" style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
               {(() => {
-                const raw = modalDetalles?.imageness || modalDetalles?.imagenes || modalDetalles?.imagen || null;
+                const rawTicket = modalDetalles?.imagenes || modalDetalles?.imagen || null;
+                const problemaImgs = Array.isArray(modalDetalles?.problemas) ? modalDetalles.problemas.flatMap(p => {
+                  if (!p) return [];
+                  const imgs = p.imagenes;
+                  if (!imgs) return [];
+                  if (Array.isArray(imgs)) return imgs;
+                  if (typeof imgs === 'string' && imgs.indexOf(',') !== -1) return imgs.split(',').map(x => x.trim()).filter(Boolean);
+                  return [imgs];
+                }) : [];
+
+                // combinar fuentes: ticket images primero, luego problemas
+                let raw = null;
+                if (rawTicket && rawTicket !== null) raw = rawTicket;
+                else if (problemaImgs && problemaImgs.length > 0) raw = problemaImgs;
+                else raw = null;
                 if (!raw) return (<div style={{ color: '#777' }}>No disponible</div>);
 
                 let urls = [];
@@ -1624,8 +1662,11 @@ const Admin = () => {
                       else if (typeof parsed === 'string') urls = [parsed];
                       else urls = [];
                     } else {
-                      // single URL or base64
-                      urls = [s];
+                      if (s.indexOf(',') !== -1) {
+                        urls = s.split(',').map(x => x.trim()).filter(Boolean);
+                      } else {
+                        urls = [s];
+                      }
                     }
                   }
                 } catch (e) {
