@@ -1,0 +1,158 @@
+.notification-wrapper {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: auto;
+  max-width: 420px;
+}
+
+.notification-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(35, 37, 49, 0.98);
+  padding: 12px 14px;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(2, 6, 23, 0.45);
+  backdrop-filter: blur(6px);
+  min-width: 280px;
+}
+
+.notification-card.success {
+  border-left: 4px solid #2b9875;
+}
+
+.notification-card.error {
+  border-left: 4px solid #d65563;
+}
+
+.notification-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.notification-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.icon-svg {
+  width: 20px;
+  height: 20px;
+  color: inherit;
+}
+
+.notification-texts {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.notification-title {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  display: block;
+  max-height: 42px;
+  line-height: 1.2;
+  overflow: hidden;
+}
+
+.notification-desc {
+  color: #9ca3af;
+  font-size: 13px;
+  margin-top: 6px;
+  display: block;
+  line-height: 1.2;
+  max-height: 54px;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.notification-desc {
+  -webkit-line-clamp: 3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.notification-close {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.close-svg {
+  width: 16px;
+  height: 16px;
+  color: #c9c9c9;
+}
+
+.notification-close:hover .close-svg {
+  color: #fff;
+}
+
+.notification-card {
+  transform: translateY(8px);
+  opacity: 0;
+  transition: transform .28s cubic-bezier(.2, .9, .2, 1), opacity .22s ease;
+}
+
+.notification-wrapper.show .notification-card {
+  transform: none;
+  opacity: 1;
+}
+
+.notification-wrapper.hide .notification-card {
+  transform: translateY(8px);
+  opacity: 0;
+}
+
+.notification-card {
+  will-change: transform, opacity;
+}
+
+.notification-card.success .icon-svg {
+  color: #2b9875;
+}
+
+.notification-card.error .icon-svg {
+  color: #d65563;
+}
+
+.notification-card.info .icon-svg {
+  color: #38bdf8;
+}
+
+@media (max-width: 640px) {
+  .notification-wrapper {
+    right: 12px;
+    left: 12px;
+  }
+
+  .notification-card {
+    min-width: unset;
+  }
+
+  .notification-title,
+  .notification-desc {
+    white-space: normal;
+  }
+}
+
