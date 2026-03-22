@@ -4,6 +4,7 @@ import { FaUserCircle, FaSearch } from 'react-icons/fa';
 import "./adcrear_ad.css"; 
 import Footer from '../../Footer/Footer.jsx';
 import HeaderCrear from '../headers/AdminHeader.jsx'; 
+import Notification from '../../common/Notification.jsx';
 import { 
     obtenerUsuarios, 
     crearUsuario, 
@@ -13,7 +14,7 @@ import {
 } from '../../../api/UsuariosApi.js';
 import { downloadTemplate } from '../../../api/UsuariosApi.js';
 
-const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) => {
+const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario, showNotification }) => {
     const [editMode, setEditMode] = useState(false);
     const [editedUser, setEditedUser] = useState(null);
 
@@ -54,7 +55,7 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
             if (editedUser.corre) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(editedUser.corre)) {
-                    alert('Ingrese un correo válido (ejemplo@dominio.com)');
+                    if (showNotification) showNotification('error','Correo inválido','Ingrese un correo válido (ejemplo@dominio.com)');
                     return;
                 }
             }
@@ -76,7 +77,7 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
 
             if (editedUser.password && editedUser.password.length > 0) {
                 if (editedUser.password.length < 6) {
-                    alert('La contraseña debe tener al menos 6 caracteres.');
+                    if (showNotification) showNotification('error','Contraseña inválida','La contraseña debe tener al menos 6 caracteres.');
                     return;
                 }
                 usuarioActualizado.password = editedUser.password;
@@ -90,7 +91,7 @@ const UserDetailsModal = ({ show, onHide, userDetails, onActualizarUsuario }) =>
         } catch (error) {
             console.error('Error completo:', error);
             console.error('Mensaje de error:', error.message);
-            alert('Error al guardar los cambios. Verifica la consola para más detalles.');
+            if (showNotification) showNotification('error','Error','Error al guardar los cambios. Verifica la consola para más detalles.');
         }
     };
 
@@ -361,6 +362,7 @@ const UserManagementList = () => {
     const [downloadingTemplate, setDownloadingTemplate] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [notification, setNotification] = useState(null);
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [selectedRole, setSelectedRole] = useState('todos');
@@ -372,6 +374,10 @@ const UserManagementList = () => {
     useEffect(() => {
         cargarUsuarios();
     }, []);
+
+    const showNotification = (type, title, description, duration) => {
+        setNotification({ type, title, description, duration });
+    };
 
     const cargarUsuarios = async () => {
         try {
@@ -465,21 +471,21 @@ const UserManagementList = () => {
             const requiredFields = ['num_docu', 'nom_su', 'ape_su', 'corre','pasword'];
             const missingField = requiredFields.find(field => !newUserData[field]);
             if (missingField) {
-                alert(`Por favor complete el campo: ${missingField}`);
+                showNotification('error','Campo faltante', `Por favor complete el campo: ${missingField}`);
                 return;
             }
             
             if (emailError) {
-                alert('Por favor corrija el error en el correo electrónico');
+                showNotification('error','Correo inválido','Por favor corrija el error en el correo electrónico');
                 return;
             }
             if(passwordError){
-                alert('Por favor corrija el error en la contraseña');
-                
+                showNotification('error','Contraseña inválida','Por favor corrija el error en la contraseña');
+                return;
             }
 
             if (!newUserData.id_tip_docu || !newUserData.id_role) {
-                alert('Por favor seleccione el tipo de documento y el rol');
+                showNotification('error','Datos incompletos','Por favor seleccione el tipo de documento y el rol');
                 return;
             }
 
@@ -498,11 +504,11 @@ const UserManagementList = () => {
             await crearUsuario(usuarioParaCrear);
             await cargarUsuarios();
             handleCloseAddUserModal();
-            alert('Usuario creado exitosamente');
+            showNotification('success','Usuario creado','Usuario creado exitosamente');
             
         } catch (err) {
             console.error('Error al crear usuario:', err);
-            alert(`Error al crear usuario: ${err.message}`);
+            showNotification('error','Error al crear usuario', err.message || 'Error desconocido');
         }
     };
 
@@ -526,8 +532,7 @@ const UserManagementList = () => {
             await cargarUsuarios();
 
             handleCloseUserDetailsModal();
-            
-            alert('Usuario actualizado exitosamente');
+            showNotification('success','Usuario actualizado','Usuario actualizado exitosamente');
         } catch (err) {
             console.error('Error al actualizar usuario desde modal:', err);
             throw err;
@@ -542,8 +547,8 @@ const UserManagementList = () => {
         const f = e.target.files && e.target.files[0];
         if (f) {
             const name = f.name || '';
-            if (!/\.xlsx$/i.test(name)) {
-                alert('Archivo no válido. Por favor selecciona un archivo .xlsx');
+                if (!/\.xlsx$/i.test(name)) {
+                showNotification('error','Archivo inválido','Archivo no válido. Por favor selecciona un archivo .xlsx');
                 setUploadFile(null);
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 return;
@@ -554,7 +559,7 @@ const UserManagementList = () => {
 
     const handleUploadFile = async () => {
         if (!uploadFile) {
-            alert('Seleccione un archivo .xlsx antes de subir');
+            showNotification('error','Archivo requerido','Seleccione un archivo .xlsx antes de subir');
             return;
         }
         try {
@@ -565,7 +570,7 @@ const UserManagementList = () => {
             const input = document.getElementById('excel-file-input'); if (input) input.value = '';
         } catch (err) {
             console.error('Error al subir archivo:', err);
-            alert('Error al subir archivo: ' + (err.message || err));
+            showNotification('error','Error al subir archivo', err.message || String(err));
         }
     };
 
@@ -898,7 +903,7 @@ const UserManagementList = () => {
                                 const f = files[0];
                                 const name = f.name || '';
                                 if (!/\.xlsx$/i.test(name)) {
-                                    alert('Archivo no válido. Por favor arrastra un archivo .xlsx');
+                                    showNotification('error','Archivo inválido','Archivo no válido. Por favor arrastra un archivo .xlsx');
                                 } else {
                                     setUploadFile(f);
                                 }
@@ -945,7 +950,7 @@ const UserManagementList = () => {
                                 window.URL.revokeObjectURL(url);
                             } catch (err) {
                                 console.error(err);
-                                alert('Error al descargar la plantilla: ' + (err.message || err));
+                                showNotification('error','Error al descargar plantilla', err.message || String(err));
                             } finally {
                                 setDownloadingTemplate(false);
                             }
@@ -969,7 +974,10 @@ const UserManagementList = () => {
                 onHide={handleCloseUserDetailsModal}
                 userDetails={selectedUser}
                 onActualizarUsuario={handleActualizarUsuario}
+                showNotification={showNotification}
             />
+
+            <Notification notification={notification} onClose={() => setNotification(null)} />
 
             <Footer />
         </div>
