@@ -42,6 +42,11 @@ export const subirImagenesTicket = async (base64Images) => {
 export const crearTicket = async (ticketData) => {
   try {
     console.log("[TICKET] Creando ticket:", ticketData);
+    // Forzar el campo 'ambiente' y eliminar 'ambient' si existe
+    if (ticketData.ambient && !ticketData.ambiente) {
+      ticketData.ambiente = ticketData.ambient;
+      delete ticketData.ambient;
+    }
     const res = await authorizedFetch(API_URL, {
       method: 'POST',
       body: JSON.stringify(ticketData),

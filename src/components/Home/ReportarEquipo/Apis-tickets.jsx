@@ -376,7 +376,7 @@ export const useReportarEquipo = () => {
     });
     setDetallesProblemas({}); 
     setError(null);
-    setSuccess(null);
+    // No borrar success para que la alerta se mantenga visible
   };
   return {
     // Estado
