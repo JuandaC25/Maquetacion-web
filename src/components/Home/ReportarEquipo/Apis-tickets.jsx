@@ -2,6 +2,8 @@
 // Helpers para la gestión de Tickets - Consumo directo de APIs
 import { useState, useEffect } from 'react';
 import { getJson, authorizedFetch } from '../../../api/http';
+import { crearTicket, subirImagenesTicket } from '../../../api/ticket';
+import ElementosService from '../../../api/ElementosApi';
 
 /**
  * Carga la lista de problemas desde la API
@@ -65,21 +67,24 @@ export const subirImagenesAlServidor = async (imagenes) => {
  */
 export const crearTicketsParaEquipo = async (formData, problemas, detallesProblemas, idUsuario) => {
   try {
-    // Pre-check: verificar disponibilidad del elemento en backend
+    // 1. Verificación de permisos y existencia del elemento
     try {
-      const elResp = await authorizedFetch(`/api/elementos/${formData.idElemento}`);
-      if (!elResp.ok) {
-        const txt = await elResp.text().catch(() => 'Error al verificar elemento');
-        return { success: false, error: txt || (`Elemento ${formData.idElemento} no encontrado`) };
-      }
-      const elementoJson = await elResp.json().catch(() => null);
-      const estadoElem = elementoJson?.estadosoelement ?? elementoJson?.est ?? elementoJson?.estado ?? null;
+      const elementoJson = await ElementosService.obtenerPorId(formData.idElemento);
+      
+      // Verificar estado del elemento (1 = Disponible)
+      const estadoElem = elementoJson?.estadosoelement ?? 
+                         elementoJson?.est ?? 
+                         elementoJson?.estado ?? null;
+                         
       if (estadoElem != null && Number(estadoElem) !== 1) {
-        const estadoTexto = Number(estadoElem) === 2 ? 'Mantenimiento' : Number(estadoElem) === 0 ? 'Inactivo' : String(estadoElem);
-        return { success: false, error: `El elemento no está disponible: ${estadoTexto}` };
+        const estadoTexto = Number(estadoElem) === 2 ? 'Mantenimiento' : 
+                          Number(estadoElem) === 0 ? 'Inactivo' : 
+                          String(estadoElem);
+        return { success: false, error: `El equipo no se puede reportar porque su estado es: ${estadoTexto}` };
       }
     } catch (err) {
-      return { success: false, error: 'No se pudo verificar disponibilidad del elemento: ' + (err.message || err) };
+      // El servicio ya lanza mensajes limpios como "El equipo solicitado no existe en el sistema."
+      return { success: false, error: err.message };
     }
 
     const problemasSeleccionados = problemas.filter(p => formData.problemasSeleccionados.includes(p.id));
@@ -103,14 +108,16 @@ export const crearTicketsParaEquipo = async (formData, problemas, detallesProble
         imagenes: detallesProblemas[p.id]?.imagenes || []
       }));
 
-      console.log('➡️ detallesProblemas:', detallesProblemas);
-      console.log('➡️ problemasConDetalles:', problemasConDetalles);
-
-      // Subir imágenes de cada problema y reemplazar base64 por URLs
+      // Subir imágenes de cada problema
       for (let prob of problemasConDetalles) {
         if (prob.imagenes && prob.imagenes.length > 0) {
-          const res = await subirImagenesAlServidor(prob.imagenes);
-          prob.imagenes = res.success ? res.urls : [];
+          try {
+              const res = await subirImagenesTicket(prob.imagenes);
+              prob.imagenes = res.urls || [];
+          } catch (error) {
+              console.error("Error subiendo imágenes para problema " + prob.id, error);
+              prob.imagenes = []; // Continuar sin imágenes en caso de error
+          }
         }
       }
 
@@ -122,25 +129,14 @@ export const crearTicketsParaEquipo = async (formData, problemas, detallesProble
         id_est_tick: 2,
         problemas: problemasConDetalles
       };
-      console.log('➡️ Payload enviado a /api/tickets:', payload);
 
-      const response = await authorizedFetch('/api/tickets', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Error ${response.status}: ${errorText}`);
-      }
+      // Crear el ticket usando la función centralizada
+      const ticketCreado = await crearTicket(payload);
 
       return {
         tipo,
         problemas: problemasConDetalles.map(p => p.descripcion ? `${p.id}: ${p.descripcion}` : `${p.id}`),
-        response: await response.json()
+        response: ticketCreado
       };
     });
 
@@ -164,9 +160,10 @@ export const crearTicketsParaEquipo = async (formData, problemas, detallesProble
     };
   } catch (err) {
     console.error('Error al crear tickets:', err);
+    // err.message vendrá limpio desde subirImagenesTicket o crearTicket
     return {
       success: false,
-      error: 'Error al reportar el equipo: ' + (err.message || 'Error desconocido')
+      error: err.message || 'Ocurrió un error inesperado al procesar el reporte.'
     };
   }
 };

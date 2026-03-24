@@ -55,7 +55,22 @@ export const crearTicket = async (ticketData) => {
     if (!res.ok) {
       const errorText = await res.text();
       console.error("[TICKET] Error response:", errorText);
-      throw new Error(`Error al crear ticket: ${res.status}`);
+      
+      let errorMessage = `Error al crear ticket: ${res.status}`;
+      try {
+        const errorJson = JSON.parse(errorText);
+        const serverError = errorJson.error || errorJson.message || errorJson.mensaje;
+        if (serverError) {
+          errorMessage = serverError;
+        }
+        if (errorMessage === "Elemento no encontrado") {
+            errorMessage = "No se pudo crear el ticket debido a que el equipo no existe.";
+        }
+      } catch (e) {
+        if (errorText && errorText.length < 200) errorMessage = errorText;
+      }
+      
+      throw new Error(errorMessage);
     }
 
     const data = await res.json();
@@ -130,8 +145,16 @@ export const actualizarTicket = async (id, ticketData) => {
 
     if (!res.ok) {
       const errorText = await res.text();
-      console.error("[TICKET] Error response:", errorText);
-      throw new Error(`Error al actualizar ticket: ${res.status} - ${errorText}`);
+      console.error("[TICKET] Error al actualizar ticket:", errorText);
+      let errorMessage = `Error al actualizar ticket: ${res.status}`;
+      try {
+        const errorJson = JSON.parse(errorText);
+        const serverError = errorJson.error || errorJson.message || errorJson.mensaje;
+        if (serverError) errorMessage = serverError;
+      } catch (e) {
+         if(errorText && errorText.length < 200) errorMessage = errorText;
+      }
+      throw new Error(errorMessage);
     }
 
     const resultado = await res.json();

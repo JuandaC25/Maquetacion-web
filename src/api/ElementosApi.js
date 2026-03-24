@@ -20,12 +20,20 @@ class ElementosService {
     try {
       const response = await authorizedFetch(`${API_URL}/${id}`);
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        let errorData = {};
+        try { errorData = await response.json(); } catch(e) {}
+        const serverMsg = errorData.error || errorData.message || errorData.mensaje;
+        
+        if (serverMsg === "Elemento no encontrado") {
+            throw new Error("El equipo solicitado no existe en el sistema.");
+        }
+        
+        throw new Error(serverMsg || `Error ${response.status}: ${response.statusText}`);
       }
       return await response.json();
     } catch (error) {
       console.error('Error al obtener elemento por ID:', error);
-      throw error;
+      throw error; // Re-lanzar para que el componente lo maneje
     }
   }
 
