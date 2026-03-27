@@ -23,14 +23,14 @@ function PrestamosActivosIndependiente() {
 
   const cargarPrestamos = async () => {
     try {
-      const response = await authorizedFetch('http://localhost:8081/api/prestamos/estado/1');
+      const response = await authorizedFetch('/api/prestamos/estado/1');
       const data = await response.json();
       const prestamosFiltrados = Array.isArray(data) ? data : [];
       setPrestamos(prestamosFiltrados);
       console.log("Préstamos cargados:", prestamosFiltrados);
       console.log("Primer préstamo estructura:", JSON.stringify(prestamosFiltrados[0], null, 2));
 
-      const resElementos = await authorizedFetch('http://localhost:8081/api/elementos');
+      const resElementos = await authorizedFetch('/api/elementos');
       const dataElementos = await resElementos.json();
       console.log("Elementos cargados:", dataElementos);
       console.log("Primer elemento estructura:", JSON.stringify(dataElementos[0], null, 2));
@@ -51,7 +51,7 @@ function PrestamosActivosIndependiente() {
 
   const cargarElementos = async () => {
     try {
-      const response = await authorizedFetch('http://localhost:8081/api/elementos');
+      const response = await authorizedFetch('/api/elementos');
       const data = await response.json();
       setElementos(Array.isArray(data) ? data : []);
     } catch (err) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Spinner from "react-bootstrap/Spinner";
+import { toApiUrl } from "../../../api/http";
 
 const TicketsActivosTec = () => {
   const [tickets, setTickets] = useState([]);
@@ -11,7 +12,7 @@ const TicketsActivosTec = () => {
       try {
         setError("");
         setLoading(true);
-        const res = await fetch("http://localhost:8081/api/tickets/activos");
+        const res = await fetch(toApiUrl("/api/tickets/activos"));
         if (!res.ok) throw new Error(`Error ${res.status}`);
         const data = await res.json();
         setTickets(Array.isArray(data) ? data : []);

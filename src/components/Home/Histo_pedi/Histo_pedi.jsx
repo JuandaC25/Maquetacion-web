@@ -13,6 +13,7 @@ import {
 } from '../../../api/solicitudesApi.js';
 import { obtenerTickets, eliminarTicket } from '../../../api/ticket.js';
 import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js'; 
+import { BASE_URL } from '../../../api/http';
 import Modal from 'react-bootstrap/Modal';
 
 // --- Funciones de Formato ---
@@ -82,8 +83,6 @@ function Historial_ped() {
         setLoadingImages(true);
         setLoadedImages([]); // Limpiar imágenes anteriores
         console.log('URLs a cargar:', urls);
-        
-        const BASE_URL = 'http://localhost:8081';
         
         // En lugar de usar fetch, construimos las URLs directamente
         const imagenesValidas = urls.map(url => {

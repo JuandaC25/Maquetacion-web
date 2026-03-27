@@ -8,7 +8,7 @@ import Otromodal from './OTRO.MODAL/Otro_modal';
 import Header_soli_equi_tec from '../header_solicitudes_equ_tec/Header_soli_equi_tec.jsx';
 import Carousel from 'react-bootstrap/Carousel';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { authorizedFetch } from '../../../api/http';
+import { authorizedFetch, BASE_URL } from '../../../api/http';
 
 function Cuarta() {
   const [categorias, setCategorias] = useState([]);
@@ -258,7 +258,7 @@ function Cuarta() {
                         ? 'data:...' 
                         : imagenPrincipal.startsWith('http')
                         ? imagenPrincipal
-                        : `http://localhost:8081${imagenPrincipal}`;
+                        : `${BASE_URL}${imagenPrincipal}`;
                       console.log(`[${ticket.id_tickets}] imagenPrincipal original:`, imagenPrincipal);
                       console.log(`[${ticket.id_tickets}] URL final a cargar:`, urlFinal);
                     }
@@ -274,7 +274,7 @@ function Cuarta() {
                                   ? imagenPrincipal 
                                   : imagenPrincipal.startsWith('http')
                                   ? imagenPrincipal
-                                  : `http://localhost:8081${imagenPrincipal}`
+                                  : `${BASE_URL}${imagenPrincipal}`
                               } 
                               alt="ticket" 
                               className='comp'

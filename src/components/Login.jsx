@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './App.css';
 import { login, saveToken } from '../api/AuthApi';
+import { toApiUrl } from '../api/http';
 import { useAuth } from '../auth/AuthContext';
 import ForgotPassword from './ForgotPassword';
 
@@ -29,7 +30,7 @@ function Login() {
       
       await refreshMe();
       
-      const res = await fetch('http://localhost:8081/auth/me', {
+      const res = await fetch(toApiUrl('/auth/me'), {
         headers: { 'Authorization': token }
       });
       

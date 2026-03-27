@@ -1,6 +1,15 @@
 import { getToken, clearToken } from './AuthApi';
 
-const BASE_URL = 'http://localhost:8081';
+export const BASE_URL = import.meta.env.VITE_API_URL || 'http://3.214.21.224:8081';
+
+export function toApiUrl(path = '') {
+  if (!path) return BASE_URL;
+  if (/^https?:\/\//i.test(path) || path.startsWith('data:') || path.startsWith('blob:')) {
+    return path;
+  }
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${BASE_URL}${normalizedPath}`;
+}
 
 // Función para decodificar el token JWT y obtener el usuario
 export function getCurrentUser() {
@@ -53,8 +62,9 @@ export async function authorizedFetch(path, options = {}) {
     headers.set('Content-Type', 'application/json');
   }
 
-  console.log("[FETCH] Request a:", `${BASE_URL}${path}`);
-  const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
+  const url = toApiUrl(path);
+  console.log("[FETCH] Request a:", url);
+  const res = await fetch(url, { ...options, headers });
   console.log("[FETCH] Response status:", res.status);
 
   if (res.status === 401 || res.status === 403) {

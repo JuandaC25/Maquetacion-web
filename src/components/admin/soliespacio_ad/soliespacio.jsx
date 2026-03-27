@@ -9,6 +9,7 @@ import { obtenersolicitudes, crearSolicitud, eliminarSolicitud, actualizarSolici
 import { obtenerUsuarioPorId } from '../../../api/UsuariosApi.js';
 import CrearEspacio from '../../Home/Espacios/Crear_espacio/Crear_espacio.jsx';
 import { listarEspacios, actualizarEspacio, eliminarEspacio, subirImagenesEspacio } from '../../../api/EspaciosApi.js';
+import { BASE_URL } from '../../../api/http';
 
 const Soliespacio = () => {
   const isSpaceRequest = (s) => {
@@ -84,7 +85,7 @@ const Soliespacio = () => {
 
   const toFullUrl = (u) => {
     if (!u) return '/imagenes/imagenes_espacios/default.jpg';
-    return u.startsWith('http') ? u : `http://localhost:8081${u}`;
+    return u.startsWith('http') ? u : `${BASE_URL}${u}`;
   };
 
   const handleEditEsp = (esp) => {
@@ -1027,7 +1028,7 @@ const Soliespacio = () => {
                     editEspacio.imagenesRaw.map((img, idx) => (
                       (editEspacio.removedRawIdxs && editEspacio.removedRawIdxs.has(idx)) ? null : (
                         <div key={idx} style={{ position: 'relative' }}>
-                          <img src={img.startsWith('http') ? img : `http://localhost:8081${img}`} alt={`Imagen ${idx + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '6px' }} />
+                          <img src={img.startsWith('http') ? img : `${BASE_URL}${img}`} alt={`Imagen ${idx + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '6px' }} />
                           <Button variant="danger" size="sm" style={{ position: 'absolute', top: 0, right: 0, borderRadius: '50%'}} onClick={() => handleEliminarImagenExistente(idx)} title="Eliminar imagen">×</Button>
                         </div>
                       )

@@ -4,6 +4,7 @@ import Card from "react-bootstrap/Card";
 import { Carousel, Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
 import { crearSolicitud, verificarDisponibilidadEspacio } from "../../../api/solicitudesApi";
 import { listarEspacios } from "../../../api/EspaciosApi";
+import { BASE_URL } from "../../../api/http";
 
 function Datos_espacio() {
   const [espacios, setEspacios] = useState([]);
@@ -193,7 +194,7 @@ function Datos_espacio() {
                     {imagenes.map((imgUrl, imgIndex) => {
                       const fullUrl = imgUrl.startsWith('http') 
                         ? imgUrl 
-                        : `http://localhost:8081${imgUrl}`;
+                        : `${BASE_URL}${imgUrl}`;
                       
                       console.log(`Imagen ${imgIndex + 1} URL:`, fullUrl);
                       

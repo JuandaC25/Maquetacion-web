@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toApiUrl } from "../../api/http";
 
 export default function Solicitudes() {
   const [solicitudes, setSolicitudes] = useState([]);
@@ -6,7 +7,7 @@ export default function Solicitudes() {
   useEffect(() => {
     console.log("✅ useEffect ejecutado (cargando solicitudes)");
 
-    fetch("http://localhost:8081/api/solicitudes")
+    fetch(toApiUrl("/api/solicitudes"))
       .then((res) => res.json())
       .then((data) => {
         console.log("📦 Datos recibidos:", data);

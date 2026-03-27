@@ -3,6 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import './ModalTicketsActivos.css';
 import { actualizarTicket } from '../../../api/ticket';
 import ModalReportar from './ModalReportar';
+import { BASE_URL } from '../../../api/http';
 
 function ModalTicketsActivos({ show, onHide, ticket, elementos, onTicketUpdated }) {
   const [indiceImagen, setIndiceImagen] = useState(0);
@@ -107,7 +108,7 @@ function ModalTicketsActivos({ show, onHide, ticket, elementos, onTicketUpdated 
                         ? imagenes[indiceImagen]
                         : imagenes[indiceImagen].startsWith('http')
                         ? imagenes[indiceImagen]
-                        : `http://localhost:8081${imagenes[indiceImagen]}`
+                        : `${BASE_URL}${imagenes[indiceImagen]}`
                     }
                     alt={`Ticket ${indiceImagen + 1}`}
                     style={{ 

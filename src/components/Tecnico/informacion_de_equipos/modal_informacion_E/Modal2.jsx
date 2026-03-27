@@ -3,6 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import './Modal2.css';
 import Otromodal from '../OTRO.MODAL/Otro_modal';
 import { actualizarTicket } from '../../../../api/ticket';
+import { BASE_URL } from '../../../../api/http';
 
 function Modal2({ show, onHide, ticket, elementos }) {
   const [mostrarOtromodal, setMostrarOtromodal] = useState(false);
@@ -122,7 +123,7 @@ function Modal2({ show, onHide, ticket, elementos }) {
                           ? imagenes[indiceImagen]
                           : imagenes[indiceImagen].startsWith('http')
                           ? imagenes[indiceImagen]
-                          : `http://localhost:8081${imagenes[indiceImagen]}`
+                            : `${BASE_URL}${imagenes[indiceImagen]}`
                       }
                       alt={`Ticket ${indiceImagen + 1}`}
                       style={{ 

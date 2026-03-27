@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8081/api/prestamos';
+const API_URL = 'http://3.214.21.224:8081/api/prestamos';
 
 class PrestamosServices{
 

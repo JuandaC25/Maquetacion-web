@@ -14,6 +14,7 @@ import { obtenerCategoria } from '../../../api/CategoriaApi.js';
 import { obtenerSubcategorias } from '../../../api/SubcategotiaApi.js';
 import ElementosService from '../../../api/ElementosApi.js';
 import { obtenerProblemas, crearProblema } from '../../../api/ProblemasApi.js';
+import { BASE_URL } from '../../../api/http';
 
 const Listaxd = ({ onVerClick, onCrearClick, onOpenAllHistorial, refreshTrigger }) => {
   // --- MODAL HISTORIAL DE TICKETS ---
@@ -1679,9 +1680,7 @@ const Admin = () => {
                   if (!u) return null;
                   if (u.startsWith('http://') || u.startsWith('https://') || u.startsWith('data:')) return u;
                   if (u.startsWith('/uploads/')) {
-                    const isViteDev = window.location.hostname === 'localhost' && window.location.port === '5173';
-                    const backendOrigin = isViteDev ? 'http://localhost:8081' : window.location.origin;
-                    return backendOrigin + u;
+                    return BASE_URL + u;
                   }
                   return u;
                 };

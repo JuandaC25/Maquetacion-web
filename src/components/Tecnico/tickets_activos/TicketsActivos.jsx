@@ -8,7 +8,7 @@ import Otromodal from '../informacion_de_equipos/OTRO.MODAL/Otro_modal';
 import HeaderTecnicoUnificado from '../HeaderTecnicoUnificado';
 import Carousel from 'react-bootstrap/Carousel';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { authorizedFetch } from '../../../api/http';
+import { authorizedFetch, BASE_URL } from '../../../api/http';
 
 function TicketsActivos() {
   const [categorias, setCategorias] = useState([]);
@@ -249,7 +249,7 @@ function TicketsActivos() {
                     const imagenUrl = imagen 
                       ? (imagen.startsWith('data:') || imagen.startsWith('http') 
                           ? imagen 
-                          : `http://localhost:8081${imagen}`)
+                          : `${BASE_URL}${imagen}`)
                       : null;
                     console.log('URL final:', imagenUrl);
                     
