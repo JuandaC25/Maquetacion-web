@@ -1213,6 +1213,7 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
   const [elementsList, setElementsList] = useState([]);
   const [selectedElements, setSelectedElements] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [unavailableIds, setUnavailableIds] = useState(new Set());
 
   const todayDate = (() => { const d = new Date(); const yyyy = d.getFullYear(); const mm = String(d.getMonth()+1).padStart(2,'0'); const dd = String(d.getDate()).padStart(2,'0'); return `${yyyy}-${mm}-${dd}` })();
   const getMinTime = () => { const now = new Date(); const adjusted = new Date(now.getTime() + 60000); return `${String(adjusted.getHours()).padStart(2,'0')}:${String(adjusted.getMinutes()).padStart(2,'0')}` };
@@ -1368,6 +1369,47 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
     load();
     return () => { mounted = false; };
   }, [form.id_categoria, form.id_subcategoria, show]);
+  useEffect(() => {
+    let mounted = true;
+    const loadUnavailable = async () => {
+      if (!show) return;
+      try {
+        const allS = await obtenersolicitudes();
+        const arr = Array.isArray(allS) ? allS : [];
+        const now = new Date();
+        const idsSet = new Set();
+        arr.forEach(s => {
+          const est = s.id_est_soli || s.est_soli || s.estado || s.estado_solicitud || s.estadosolicitud;
+          const estNum = est != null && !isNaN(Number(est)) ? Number(est) : null;
+          if (estNum === 3 || estNum === 4 || estNum === 5) return; 
+          const fechaFinRaw = s.fecha_fn || s.fecha2 || s.fecha_fin || s.fecha_fin_solicitud || s.fechaFin || s.fechaFinal;
+          const fechaFin = fechaFinRaw ? new Date(fechaFinRaw) : null;
+          if (!fechaFin || isNaN(fechaFin.getTime())) return;
+          if (fechaFin <= now) return;
+          const keys = ['ids_elem','id_elem','id_elemen','elementos','id_elementos','ids','id_elem_prestamo','id_elem_prest'];
+          for (const k of keys) {
+            const v = s[k];
+            if (!v && v !== 0) continue;
+            if (Array.isArray(v)) v.forEach(x => x && idsSet.add(String(x)));
+            else {
+              const str = String(v);
+              str.split(',').map(x => x.trim()).filter(Boolean).forEach(x => idsSet.add(String(x)));
+            }
+          }
+          if (Array.isArray(s.elementosInfo)) {
+            s.elementosInfo.forEach(e => { if (e && (e.id || e.id_elem || e.id_elemen)) idsSet.add(String(e.id || e.id_elem || e.id_elemen)); });
+          }
+        });
+        if (!mounted) return;
+        setUnavailableIds(idsSet);
+      } catch (e) {
+        console.error('Error cargando solicitudes para bloquear elementos:', e);
+        setUnavailableIds(new Set());
+      }
+    };
+    loadUnavailable();
+    return () => { mounted = false; };
+  }, [show]);
   const maxCantidad = 2;
 
   const handleChange = (e) => {
@@ -1482,7 +1524,7 @@ function SolicitudModalAdmin({ show, handleHide, equiposDisponibles = [], userId
                         const nombre = (el.nom_elemento || el.nom_elem || el.nom_eleme || el.nombre || el.num_ficha || '').toString();
                         const serial = el.num_seri || el.num_serie || el.serial || '';
                         const estado = el.estadosoelement ?? el.est ?? el.estado ?? 1;
-                        const disabled = Number(estado) !== 1;
+                        const disabled = Number(estado) !== 1 || unavailableIds.has(String(id));
                         const checked = selectedElements.some(x => Number(x) === Number(id));
 
                         const estadoLabel = Number(estado) === 1 ? 'Disponible' : (Number(estado) === 2 ? 'Mantenimiento' : (Number(estado) === 0 ? 'Inactivo' : String(estado)));
