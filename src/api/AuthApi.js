@@ -1,4 +1,4 @@
-const BASE_URL = 'http://3.214.21.224:8081';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 
 export async function login({ username, password }) {
   try {
@@ -38,7 +38,7 @@ export async function login({ username, password }) {
     return { token };
   } catch (error) {
     if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
-      throw new Error('No se pudo conectar con el servidor. Verifica que el backend esté corriendo en http://3.214.21.224:8081');
+      throw new Error(`No se pudo conectar con el servidor. Verifica que el backend esté corriendo en ${BASE_URL}`);
     }
     throw error;
   }
